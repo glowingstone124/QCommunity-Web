@@ -77,6 +77,7 @@ onBeforeUnmount(() => {
 	flex-direction: row;
 	background-color: #111010;
 	padding: 9rem;
+	max-height: 80vh;
 	overflow: hidden;
 }
 

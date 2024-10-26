@@ -37,7 +37,9 @@ export default {
 	background-color: #5a6268;
 }
 #app {
-	max-height: 100vh;
+	height: 100vh;
 	background-color: #111010;
+	overflow-y: hidden;
+	overflow-x: hidden;
 }
 </style>
