@@ -1,0 +1,21 @@
+:root{
+  --background: #171717;
+  --text: rgb(229, 229, 229)
+}
+@font-face {
+  font-family: 'GSans';
+  src: url('/src/assets/GoogleSans-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'NotoSans';
+  src: url('/src/assets/NotoSansSC-VariableFont_wght.ttf');
+}
+
+@font-face {
+  font-family: "Bahnschrift";
+  src: url("/src/assets/bahnschrift.ttf");
+}
+* {
+  font-family: 'GSans', 'NotoSans', serif;
+}
