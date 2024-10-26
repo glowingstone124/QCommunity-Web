@@ -6,10 +6,9 @@ let pollingInterval = null;
 
 async function getMsgList() {
 	try {
-		const response = await fetch("http://qoriginal.vip:8080/qo/msglist/download");
+		const response = await fetch("http://rock.glowingstone.cn/qo/msglist/download");
 		const data = await response.json();
 
-		// 替换消息内容
 		messageList.value = data.messages.map((message) => {
 			const imageRegex = /\[CQ:image,file=.*?\]/g;
 			const replRegex = /\[CQ:reply.*?\]/g;
@@ -24,10 +23,9 @@ async function getMsgList() {
 				.replace(mdRegex, "[MD消息]");
 		});
 
-		// 滚动到底部
 		const container = document.querySelector(".message-container");
 		if (container) {
-			await nextTick(); // 等待 DOM 更新
+			await nextTick();
 			container.scrollTop = container.scrollHeight;
 		}
 	} catch (error) {
