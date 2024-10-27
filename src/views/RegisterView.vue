@@ -8,11 +8,15 @@ const username = ref("");
 const qq = ref("");
 const password = ref("");
 const isDialogVisible = ref(false);
-const message = ref('')
+const message = ref("");
+const isLoading = ref(false);
+
 function closeDialog() {
 	isDialogVisible.value = false;
 }
+
 function submitForm() {
+	isLoading.value = true;
 	const url =
 		"https://api.glowingstone.cn" +
 		"/qo/upload/registry?name=" +
@@ -21,17 +25,24 @@ function submitForm() {
 		password.value +
 		"&uid=" +
 		qq.value;
-	get(url).then(result => {
+	get(url).then((result) => {
 		if (result.result === true) {
 			isDialogVisible.value = true;
 		} else {
 			message.value = "注册失败了！请检查qq或者用户名是否有重复。";
 		}
-	})
+		setTimeout(() => {}, 1000)
+		isLoading.value = false;
+	}).catch(() => {
+		message.value = "请求失败，请稍后再试。";
+		isLoading.value = false;
+	});
 }
+
 function redirect() {
 	router.push("/");
 }
+
 function validateQQ() {
 	qq.value = qq.value.replace(/\D/g, "");
 }
@@ -70,11 +81,15 @@ function validateQQ() {
 					<input type="password" id="password" v-model="password" required />
 				</div>
 				<p>{{ message }}</p>
-				<button type="submit">注册</button>
+				<button type="submit" :disabled="isLoading">
+					<span v-if="isLoading" class="loading-spinner"></span>
+					<span v-else>注册</span>
+				</button>
 			</form>
 		</div>
 	</div>
 </template>
+
 
 
 <style scoped>
@@ -225,5 +240,26 @@ form {
 .dialog button:hover {
 	background-color: #435e77;
 }
+
+.loading-spinner {
+	border: 3px solid #fff;
+	border-top: 3px solid transparent;
+	border-radius: 50%;
+	width: 1rem;
+	height: 1rem;
+	display: inline-block;
+	animation: spin 1s linear infinite;
+	margin-right: 5px;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
 
 </style>
