@@ -112,8 +112,6 @@ h3.greeting {
 	box-shadow: 0 4px 6px rgba(0,0,0,.1);
 }
 
-.icon-home,
-.icon-login,
 .icon-query,
 .icon-news,
 .icon-messages {
