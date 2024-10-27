@@ -50,6 +50,11 @@ function greeting() {
 				<p>查看服务器之前的聊天记录。</p>
 				<span class="icon-messages"></span>
 			</router-link>
+			<router-link to="/dashboard" class="tile">
+				<h2>仪表板</h2>
+				<p>查看服务器状态。</p>
+				<span class="icon-messages"></span>
+			</router-link>
 		</div>
 	</div>
 </template>
@@ -92,7 +97,7 @@ h3.greeting {
 .tile {
 	background-color: #332f2f;
 	padding: 2rem;
-	min-width: 15vw;
+	min-width: 300px;
 	max-width: 35vw;
 	min-height: 18vh;
 	margin: 30px;

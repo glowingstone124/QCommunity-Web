@@ -1,7 +1,15 @@
+<script setup lang="ts">
+import {useRouter} from "vue-router";
+let route = useRouter();
+function redirect() {
+	route.push('/');
+}
+</script>
+
 <template>
 	<div class="not-found">
 		<h1>404 Not Found</h1>
-		<span class="redirect">
+		<span class="redirect" @click=redirect>
 			<p class="arrow"><</p> <p>回到首页</p>
 		</span>
 	</div>

@@ -6,7 +6,8 @@ import HomeView from './views/HomeView.vue';
 import LoginView from './views/LoginView.vue';
 import QueryView from "@/views/QueryView.vue";
 import MessageView from "./views/MessageView.vue";
-import NotFoundView from './views/NotFoundView.vue'; // 导入404组件
+import NotFoundView from './views/NotFoundView.vue';
+import DashboardView from "./views/DashboardView.vue";
 
 const routes = [
     {
@@ -30,9 +31,14 @@ const routes = [
         component: MessageView
     },
     {
-        path: '/:catchAll(.*)', // 捕获所有未匹配的路由
+        path: '/dashboard',
+        name: 'dashboard',
+        component: DashboardView,
+    },
+    {
+        path: '/:catchAll(.*)',
         name: 'not-found',
-        component: NotFoundView // 指定404组件
+        component: NotFoundView
     }
 ];
 
