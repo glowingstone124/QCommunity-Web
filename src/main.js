@@ -7,7 +7,7 @@ import LoginView from './views/LoginView.vue';
 import QueryView from "./views/QueryView.vue";
 import MessageView from "./views/MessageView.vue";
 import NotFoundView from './views/NotFoundView.vue';
-import DashboardView from "./views/DashboardView.vue";
+import DashboardView from "./views/DashBoardView.vue";
 
 const routes = [
     {
