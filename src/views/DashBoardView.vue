@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup >
 import { useRouter } from "vue-router";
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import { get } from "/src/utils/request";
