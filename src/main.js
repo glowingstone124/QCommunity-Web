@@ -4,7 +4,7 @@ import App from './App.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from './views/HomeView.vue';
 import LoginView from './views/LoginView.vue';
-import QueryView from "@/views/QueryView.vue";
+import QueryView from "./views/QueryView.vue";
 import MessageView from "./views/MessageView.vue";
 import NotFoundView from './views/NotFoundView.vue';
 import DashboardView from "./views/DashboardView.vue";
