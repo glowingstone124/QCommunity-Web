@@ -1,0 +1,229 @@
+<script setup >
+import { useRouter } from "vue-router";
+import { ref } from "vue";
+import { get } from "/src/utils/request";
+
+const router = useRouter();
+const username = ref("");
+const qq = ref("");
+const password = ref("");
+const isDialogVisible = ref(false);
+const message = ref('')
+function closeDialog() {
+	isDialogVisible.value = false;
+}
+function submitForm() {
+	const url =
+		"https://api.glowingstone.cn" +
+		"/qo/upload/registry?name=" +
+		username.value +
+		"&password=" +
+		password.value +
+		"&uid=" +
+		qq.value;
+	get(url).then(result => {
+		if (result.result === true) {
+			isDialogVisible.value = true;
+		} else {
+			message.value = "注册失败了！请检查qq或者用户名是否有重复。";
+		}
+	})
+}
+function redirect() {
+	router.push("/");
+}
+function validateQQ() {
+	qq.value = qq.value.replace(/\D/g, "");
+}
+
+</script>
+
+<template>
+	<div class="dashboard">
+		<div v-if="isDialogVisible" class="dialog-overlay">
+			<div class="dialog">
+				<h2>注册成功！</h2>
+				<p>欢迎加入 QOriginal！请在QQ群中发送确认信息来激活您的账户。</p>
+				<button @click="closeDialog">确认</button>
+			</div>
+		</div>
+		<div style="flex: 3; display: flex; flex-direction: column; align-items: center;">
+			<h1>注册</h1>
+			<span class="redirect" @click="redirect">
+				<p class="arrow"><</p> <p>回到首页</p>
+			</span>
+		</div>
+		<div style="margin-left: 7vw; flex: 7">
+			<h2>让我们开始吧</h2>
+			<h3>您需要一个QQ和一个minecraft用户名来注册QOriginal账户。密码会被SHA加密并且存储在我们的数据库中。</h3>
+			<form class="form" @submit.prevent="submitForm">
+				<div class="input-group">
+					<label for="username">Minecraft 用户名</label>
+					<input type="text" id="username" v-model="username" required />
+				</div>
+				<div class="input-group">
+					<label for="qq">QQ号</label>
+					<input type="text" id="qq" v-model="qq" @input="validateQQ" required />
+				</div>
+				<div class="input-group">
+					<label for="password">密码</label>
+					<input type="password" id="password" v-model="password" required />
+				</div>
+				<p>{{ message }}</p>
+				<button type="submit">注册</button>
+			</form>
+		</div>
+	</div>
+</template>
+
+
+<style scoped>
+@import "src/assets/base.css";
+@import "src/assets/main.css";
+
+.dashboard {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	flex-direction: row;
+	text-align: center;
+}
+
+h1, p, h2, ul, li, h3 {
+	color: var(--text);
+}
+
+h1 {
+	font-size: 5rem;
+	font-weight: 200;
+}
+
+h2 {
+	font-size: 2rem;
+	font-weight: 200;
+}
+
+h3 {
+	font-weight: 100;
+}
+.redirect {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	cursor: pointer;
+	margin-top: 20px;
+}
+
+.redirect:hover .arrow {
+	margin-right: 20px;
+}
+
+.arrow {
+	margin-right: 8px;
+}
+
+.form {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	margin-top: 20px;
+	width: 100%;
+}
+
+.input-group {
+	margin-bottom: 15px;
+	width: 100%;
+}
+
+label {
+	font-weight: 300;
+	font-size: 1.2rem;
+	margin-bottom: 5px;
+	color: var(--text);
+}
+
+input[type="text"],
+input[type="password"] {
+	width: 100%;
+	margin: 6px;
+	padding:15px;
+	background-color: inherit;
+	border-radius: 5px;
+	color: var(--text);
+	border: #2c3e50 2px solid;
+	font-size: 1rem;
+	:focus {
+		border-bottom: #5f87b4 2px solid;
+		background-color: #2c3d4d;
+	}
+}
+
+
+button[type="submit"] {
+	margin-top: 20px;
+	padding: 10px 20px;
+	border: none;
+	border-radius: 5px;
+	background-color: #354d69;
+	color: #fff;
+	font-size: 1.2rem;
+	cursor: pointer;
+	transition: background-color 0.3s;
+}
+
+button[type="submit"]:hover {
+	background-color: #435e77;
+}
+
+form {
+	max-width: 40vw;
+	margin: 0 auto;
+}
+
+.dialog-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background: rgba(0, 0, 0, 0.5);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.dialog {
+	background-color: #4d515e;
+	padding: 20px;
+	border-radius: 8px;
+	width: 300px;
+	text-align: center;
+	box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dialog h2 {
+	margin-bottom: 10px;
+	font-size: 1.5rem;
+}
+
+.dialog p {
+	margin-bottom: 20px;
+	color: #91b2cb;
+}
+
+.dialog button {
+	padding: 10px 20px;
+	border: none;
+	border-radius: 5px;
+	background-color: #354d69;
+	color: #fff;
+	font-size: 1rem;
+	cursor: pointer;
+}
+
+.dialog button:hover {
+	background-color: #435e77;
+}
+
+</style>

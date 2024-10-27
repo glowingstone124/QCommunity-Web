@@ -59,10 +59,10 @@ onBeforeUnmount(() => {
 			<p class="display">{{ mspt }}</p>
 		</div>
 		<div style="margin-left: 7vw; flex: 5">
-			<h2>玩家列表</h2>
+			<h2>{{ onlinecount !== 0 ? "玩家列表" : "暂无玩家" }}</h2>
 			<ul>
 				<div class="player-cards">
-					<PlayerCard v-for="player in players" :key="player.name" :player="player" />
+					<PlayerCard v-for="player in players" :key="player.name" :player="player"/>
 				</div>
 			</ul>
 		</div>

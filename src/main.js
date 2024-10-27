@@ -8,7 +8,7 @@ import QueryView from "./views/QueryView.vue";
 import MessageView from "./views/MessageView.vue";
 import NotFoundView from './views/NotFoundView.vue';
 import DashboardView from "./views/DashBoardView.vue";
-
+import RegisterView from "./views/RegisterView.vue";
 const routes = [
     {
         path: '/',
@@ -34,6 +34,11 @@ const routes = [
         path: '/dashboard',
         name: 'dashboard',
         component: DashboardView,
+    },
+    {
+        path: '/register',
+        name: 'register',
+        component: RegisterView,
     },
     {
         path: '/:catchAll(.*)',

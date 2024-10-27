@@ -16,8 +16,8 @@ function redirect() {
 </template>
 
 <style scoped>
-@import "src/assets/base.css";
-@import "src/assets/main.css";
+@import "/src/assets/base.css";
+@import "/src/assets/main.css";
 
 .not-found {
 	display: flex;

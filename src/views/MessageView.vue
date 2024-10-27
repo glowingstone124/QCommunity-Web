@@ -25,8 +25,11 @@ async function getMsgList() {
 
 		const container = document.querySelector(".message-container");
 		if (container) {
+			const atBottom = container.scrollHeight - container.scrollTop === container.clientHeight;
 			await nextTick();
-			container.scrollTop = container.scrollHeight;
+			if (atBottom) {
+				container.scrollTop = container.scrollHeight;
+			}
 		}
 	} catch (error) {
 		console.error("Error fetching messages:", error);

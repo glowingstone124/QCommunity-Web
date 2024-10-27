@@ -55,6 +55,11 @@ function greeting() {
 				<p>查看服务器状态。</p>
 				<span class="icon-messages"></span>
 			</router-link>
+			<router-link to="/register" class="tile">
+				<h2>注册账号</h2>
+				<p>注册账号并且开始游玩</p>
+				<span class="icon-messages"></span>
+			</router-link>
 		</div>
 	</div>
 </template>
@@ -64,7 +69,7 @@ function greeting() {
 @import '/src/assets/main.css';
 
 .main {
-	padding-top: 9rem;
+	padding-top: 6rem;
 	padding-left: 9rem;
 	max-width: 100vw;
 	height: 100vh;
@@ -89,10 +94,13 @@ h3.greeting {
 .tiles-container {
 	display: flex;
 	justify-content: left;
-	margin:auto;
 	flex-wrap: wrap;
 	max-width: 80vw;
+	margin: auto auto 3vh;
+	overflow-y: auto;
+	max-height: 65vh;
 }
+
 
 .tile {
 	background-color: #332f2f;
@@ -101,7 +109,7 @@ h3.greeting {
 	max-width: 35vw;
 	min-height: 18vh;
 	margin: 30px;
-	border-radius: 20px;
+	border-radius: 30px;
 	text-align: left;
 	cursor: pointer;
 	transition: all .3s ease-in-out;
