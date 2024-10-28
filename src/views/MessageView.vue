@@ -79,7 +79,7 @@ onBeforeUnmount(() => {
 	display: flex;
 	flex-direction: row;
 	background-color: #111010;
-	padding: 9rem;
+	padding: 9rem 1rem;
 	max-height: 80vh;
 	overflow: hidden;
 }
@@ -107,7 +107,8 @@ h1 {
 
 .message-container {
 	margin-left: 7vw;
-	min-width: 60vw;
+	min-width: 45vw;
+	max-width: 50vw;
 	overflow-y: auto;
 	padding: 2rem;
 }
