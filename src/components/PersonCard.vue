@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { get } from "@/utils/request.js";
 
-const username = ref(localStorage.getItem('username') || null);
+const username = ref(localStorage.getItem('username') || "");
 const password = ref('');
 const autologin = ref(false);
 const playtime = ref(0);
@@ -19,14 +19,17 @@ onMounted(() => {
 	}
 });
 
+function logout() {
+	loginstat.value = false; localStorage.removeItem('username');
+}
+
 function login() {
 	const url = `https://rock.glowingstone.cn/qo/game/login?username=${username.value}&password=${password.value}`;
 
 	get(url).then(result => {
 		if (result.result === true) {
-			if (autologin.value) {
-				localStorage.setItem("username", username);
-			}
+			localStorage.setItem("username", username.value);
+
 			loginstat.value = true;
 		} else {
 			alert("登录失败，请检查用户名和密码！");
@@ -46,7 +49,7 @@ function login() {
 		</p>
 		<span v-if="loginstat" style="display: flex; flex-direction: column;">
             <a class="link">更改密码</a>
-            <a class="link" @click="() => { loginstat = false; localStorage.removeItem('username'); }">退出登录</a>
+            <a class="link" @click="logout">退出登录</a>
         </span>
 		<span v-else style="display: flex; flex-direction: column;">
 			<form @submit.prevent="login" autocomplete="off" class="login-container">
