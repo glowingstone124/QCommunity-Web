@@ -4,15 +4,14 @@ import { get } from "@/utils/request.js";
 
 const username = ref(localStorage.getItem('username') || "");
 const password = ref('');
-const autologin = ref(false);
-const playtime = ref(0);
 const loginstat = ref(false);
-
+const playtime = ref(0);
 onMounted(() => {
 	if (username) {
 		const url = `https://rock.glowingstone.cn/qo/download/registry?name=${username.value}`;
 		get(url).then(result => {
 			if (result.code === 0) {
+				playtime.value = result.playtime;
 				loginstat.value = true;
 			}
 		});
@@ -20,16 +19,15 @@ onMounted(() => {
 });
 
 function logout() {
-	loginstat.value = false; localStorage.removeItem('username');
+	loginstat.value = false;
+	localStorage.removeItem('username');
 }
 
 function login() {
 	const url = `https://rock.glowingstone.cn/qo/game/login?username=${username.value}&password=${password.value}`;
-
 	get(url).then(result => {
 		if (result.result === true) {
 			localStorage.setItem("username", username.value);
-
 			loginstat.value = true;
 		} else {
 			alert("登录失败，请检查用户名和密码！");
@@ -52,12 +50,12 @@ function login() {
             <a class="link" @click="logout">退出登录</a>
         </span>
 		<span v-else style="display: flex; flex-direction: column;">
-			<form @submit.prevent="login" autocomplete="off" class="login-container">
-				<input type="text" v-model="username" placeholder="用户名" required />
-				<input type="password" v-model="password" placeholder="密码" required />
-				<button type="submit">登录</button>
-			</form>
-		</span>
+            <form @submit.prevent="login" autocomplete="off" class="login-container">
+                <input type="text" v-model="username" placeholder="用户名" required/>
+                <input type="password" v-model="password" placeholder="密码" required/>
+                <button type="submit">登录</button>
+            </form>
+        </span>
 	</div>
 </template>
 
@@ -72,9 +70,11 @@ function login() {
 	font-weight: 300;
 	font-family: 'Bahnschrift', sans-serif;
 }
+
 h1, p {
 	color: var(--text);
 }
+
 .link {
 	text-decoration: none;
 	background: #5f6970;
@@ -84,10 +84,12 @@ h1, p {
 	border-radius: 30px;
 	color: var(--text);
 }
+
 .link:hover {
 	background-color: #354d69 !important;
 	cursor: pointer;
 }
+
 .personal {
 	background: #413b3b;
 	width: 100%;
@@ -95,31 +97,37 @@ h1, p {
 	padding: 40px 50px;
 	border-radius: 40px;
 	font-family: 'Bahnschrift', sans-serif;
-	* {transition: all 0.3s ease-in-out;}
 }
+
 .login-container {
 	width: 300px;
 	margin: auto;
 	padding: 20px;
 	border-radius: 8px;
 }
+
 input[type="text"],
 input[type="password"] {
 	display: block;
 	width: 100%;
-	background: inherit;
 	border: none;
 	color: var(--text);
-	border-bottom: 2px solid #e4e9ef;
-	padding: 10px;
+	border-bottom: 3px solid #467ec9;
+	padding: 2vh;
+	font-size: 16px;
 	margin-bottom: 10px;
-	border-radius: 4px;
 	box-sizing: border-box;
+	background-color: #5a6268 !important;
+	transition: border-bottom 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
-.remember-me-checkbox label {
-	font-size: 14px;
-	display: inline-block;
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+	outline: none;
+	border-bottom: 4px solid #5fa3e8;
+	box-shadow: 0 2px 5px rgba(47, 91, 136, 0.2);
 }
+
 button {
 	width: 100%;
 	padding: 10px;
@@ -129,5 +137,11 @@ button {
 	border-radius: 4px;
 	cursor: pointer;
 	font-size: 16px;
+	transition: background-color 0.3s ease-in-out;
 }
+
+button:hover {
+	background-color: #245a7d;
+}
+
 </style>
