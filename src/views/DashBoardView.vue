@@ -20,7 +20,7 @@ function fetchData() {
 		onlinecount.value = result.onlinecount;
 		players.value = result.players;
 		totalcount.value = result.totalcount;
-		mspt.value = result.mspt;
+		mspt.value = result.mspt.toFixed(2);
 	});
 }
 
@@ -51,12 +51,18 @@ onBeforeUnmount(() => {
 			</span>
 		</div>
 		<div style="margin-left: 10vw; flex: 2">
-			<h2>在线人数</h2>
-			<p class="display">{{ onlinecount }}</p>
-			<h2>总帐号数</h2>
-			<p class="display">{{ totalcount }}</p>
-			<h2>MSPT(realtime)</h2>
-			<p class="display">{{ mspt }}</p>
+			<div class="panel">
+				<h2>在线人数</h2>
+				<p class="display">{{ onlinecount }}</p>
+			</div>
+			<div class="panel">
+				<h2>总帐号数</h2>
+				<p class="display">{{ totalcount }}</p>
+			</div>
+			<div class="panel">
+				<h2>MSPT(realtime)</h2>
+				<p class="display">{{ mspt }}</p>
+			</div>
 		</div>
 		<div style="margin-left: 7vw; flex: 5">
 			<h2>{{ onlinecount !== 0 ? "玩家列表" : "暂无玩家" }}</h2>
@@ -92,7 +98,7 @@ h1 {
 }
 
 h2 {
-	font-size: 2rem;
+	font-size: 1.1rem;
 	font-weight: 200;
 }
 
@@ -114,12 +120,27 @@ h2 {
 
 .display {
 	font-family: 'Bahnschrift';
-	font-size: 1.4rem;
+	font-size: 2.3rem;
 }
 
 .player-cards {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
+}
+
+.panel {
+	border-radius: 20px;
+	background-color: #525fc0 !important;
+	margin: 40px 0;
+	padding: 15px 0;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	p, h2 {
+		padding: 15px 15px;
+		color: #85c7f6;
+	}
 }
 </style>
