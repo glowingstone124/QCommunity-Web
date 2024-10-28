@@ -39,6 +39,8 @@ export default {
 #app {
 	height: 100vh;
 	background-color: #111010;
+	padding-left: 2vw;
+	padding-right: 2vw;
 	overflow-y: hidden;
 	overflow-x: hidden;
 }

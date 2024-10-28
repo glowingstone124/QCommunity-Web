@@ -112,7 +112,7 @@ h2 {
 }
 
 .content {
-	margin-left: 10vw;
+	margin-left: 5vw;
 	min-width: 1000px;
 	h2 {
 		font-weight: 200;
