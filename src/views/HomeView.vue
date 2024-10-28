@@ -1,5 +1,7 @@
 <script setup>
-import { useRouter } from 'vue-router';
+import {useRouter} from 'vue-router';
+
+import PersonCard from "@/components/PersonCard.vue";
 
 const router = useRouter();
 
@@ -33,7 +35,10 @@ function greeting() {
 			<p>beta</p>
 		</span>
 		<h3 class="greeting">{{ greeting() }}</h3>
-
+		<span style="display: flex;">
+		<div class="message-container">
+			<PersonCard />
+		</div>
 		<div class="tiles-container">
 			<router-link to="/query" class="tile">
 				<h2>查询</h2>
@@ -61,6 +66,7 @@ function greeting() {
 				<span class="icon-messages"></span>
 			</router-link>
 		</div>
+		</span>
 	</div>
 </template>
 
@@ -95,25 +101,31 @@ h3.greeting {
 	display: flex;
 	justify-content: left;
 	flex-wrap: wrap;
-	max-width: 80vw;
-	margin: auto auto 3vh;
+	max-width: 57vw;
+	margin: auto auto;
 	overflow-y: auto;
 	max-height: 65vh;
+	flex:7;
 }
 
+.message-container {
+	flex: 3;
+	display: flex;
+}
 
 .tile {
-	background-color: #332f2f;
+	background-color: #413b3b;
 	padding: 2rem;
 	min-width: 300px;
 	max-width: 35vw;
 	min-height: 18vh;
-	margin: 30px;
+	margin: 10px;
 	border-radius: 30px;
 	text-align: left;
 	cursor: pointer;
 	transition: all .3s ease-in-out;
 	width: calc(20% - 1rem);
+
 	h2 {
 		font-size: 2.5rem;
 		font-weight: 300;
@@ -122,7 +134,7 @@ h3.greeting {
 
 .tile:hover {
 	background-color: #354d69;
-	box-shadow: 0 4px 6px rgba(0,0,0,.1);
+	box-shadow: 0 4px 6px rgba(0, 0, 0, .1);
 }
 
 .icon-query,
@@ -131,12 +143,15 @@ h3.greeting {
 	display: inline-block;
 	margin-top: .5rem;
 }
+
 a {
 	text-decoration: none;
 	color: var(--text);
 }
+
 .title {
 	display: flex;
+
 	p {
 		color: var(--text);
 	}
