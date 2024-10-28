@@ -97,6 +97,9 @@ h1, p {
 	padding: 40px 50px;
 	border-radius: 40px;
 	font-family: 'Bahnschrift', sans-serif;
+	* {
+		transition: 0.3s all ease-in-out;
+	}
 }
 
 .login-container {
