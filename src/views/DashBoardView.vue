@@ -15,12 +15,19 @@ function redirect() {
 	route.push('/');
 }
 
+let isFetching = false;
+
 function fetchData() {
+	if (isFetching) return;
+	isFetching = true;
+
 	get("https://api.glowingstone.cn/qo/download/status").then(result => {
 		onlinecount.value = result.onlinecount;
 		players.value = result.players;
 		totalcount.value = result.totalcount;
 		mspt.value = result.mspt.toFixed(2);
+	}).finally(() => {
+		isFetching = false;
 	});
 }
 
@@ -40,6 +47,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
 	stopPolling();
 });
+
 </script>
 
 <template>
