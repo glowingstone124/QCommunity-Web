@@ -78,7 +78,6 @@ onBeforeUnmount(() => {
 	height: 100vh;
 	display: flex;
 	flex-direction: row;
-	background-color: #111010;
 	padding: 9rem 1rem;
 	max-height: 80vh;
 	overflow: hidden;
@@ -97,12 +96,12 @@ h1 {
 	color: var(--text);
 	border-radius: 20px;
 	padding: 0 30px;
-	background-color: #435e77;
+	background-color: #437763;
 	transition: background-color 0.3s;
 }
 
 .back:hover {
-	background-color: #6b6666;
+	background-color: #666b6a;
 }
 
 .message-container {
@@ -116,9 +115,9 @@ h1 {
 .msgdiv {
 	max-width: 80vw;
 	border-radius: 10px;
-	background-color: #332f2f;
+	background-color: rgba(90, 171, 189, 0.5);
 	padding: 6px 4px 10px 30px;
 	margin-bottom: 1rem;
-	color: var(--text);
+	color: rgb(144, 210, 243);
 }
 </style>

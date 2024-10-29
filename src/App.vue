@@ -24,7 +24,7 @@ export default {
 }
 
 ::-webkit-scrollbar-track {
-	background-color: var(--background);
+	background-color: #5a626800;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -38,7 +38,7 @@ export default {
 }
 #app {
 	height: 100vh;
-	background-color: #111010;
+	background-color: #2c6673;
 	padding-left: 2vw;
 	padding-right: 2vw;
 	overflow-y: hidden;

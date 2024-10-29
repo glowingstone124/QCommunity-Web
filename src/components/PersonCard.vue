@@ -72,30 +72,30 @@ function login() {
 }
 
 h1, p {
-	color: var(--text);
+	color: #89fff5;;
 }
 
 .link {
 	text-decoration: none;
-	background: #5f6970;
+	background: #56b79f70;
 	margin-top: 20px;
 	box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
 	padding: 30px 30px;
 	border-radius: 30px;
-	color: var(--text);
+	color: #89fff5;
 }
 
 .link:hover {
-	background-color: #354d69 !important;
+	background-color: rgba(97, 177, 229, 0.51) !important;
 	cursor: pointer;
 }
 
 .personal {
-	background: #413b3b;
+	background-color: rgba(121, 178, 180, 0.5);
 	width: 100%;
 	margin: 0 80px;
 	padding: 40px 50px;
-	border-radius: 40px;
+	border-radius: 30px;
 	font-family: 'Bahnschrift', sans-serif;
 	* {
 		transition: 0.3s all ease-in-out;

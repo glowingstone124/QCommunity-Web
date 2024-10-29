@@ -73,12 +73,11 @@ watch(queryId, (newValue) => {
 
 <style scoped>
 @import "/src/assets/base.css";
-
+@import "/src/assets/main.css";
 .main {
 	max-width: 100vw;
 	height: 100vh;
 	display: flex;
-	background-color: #111010;
 	padding: 9rem;
 }
 
@@ -100,7 +99,7 @@ h2 {
 	color: var(--text);
 	border-radius: 20px;
 	padding: 0 30px;
-	background-color: #435e77;
+	background-color: #378eaf;
 
 	h2 {
 		font-weight: 100;
@@ -120,7 +119,7 @@ h2 {
 }
 
 .playerCard {
-	background-color: #435e77;
+	background-color: #7fa5cc80;
 	border-radius: 10px;
 	padding: 1rem;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -129,7 +128,7 @@ h2 {
 }
 
 input {
-	background: #435e77;
+	background-color: #7fa5cc80;
 	border: none;
 	outline: none;
 	padding: 1.5rem;

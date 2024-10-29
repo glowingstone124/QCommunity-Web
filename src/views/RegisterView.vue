@@ -83,7 +83,7 @@ function validateQQ() {
 				<p>{{ message }}</p>
 				<button type="submit" :disabled="isLoading">
 					<span v-if="isLoading" class="loading-spinner"></span>
-					<span v-else>注册</span>
+					<span>{{ isLoading ? "正在请求..." : "注册"}}</span>
 				</button>
 			</form>
 		</div>
@@ -163,10 +163,12 @@ input[type="password"] {
 	width: 100%;
 	margin: 6px;
 	padding:15px;
-	background-color: inherit;
-	border-radius: 5px;
+	background-color: rgba(112, 192, 252, 0.42);
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
 	color: var(--text);
-	border: #2c3e50 2px solid;
+	border: none;
+	border-bottom: #2c3e50 4px solid;
 	font-size: 1rem;
 	:focus {
 		border-bottom: #5f87b4 2px solid;
@@ -177,6 +179,9 @@ input[type="password"] {
 
 button[type="submit"] {
 	margin-top: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	padding: 10px 20px;
 	border: none;
 	border-radius: 5px;
