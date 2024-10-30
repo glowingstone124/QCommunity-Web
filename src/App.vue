@@ -39,9 +39,12 @@ export default {
 #app {
 	height: 100vh;
 	background-color: #2c6673;
-	padding-left: 2vw;
-	padding-right: 2vw;
+	//padding-left: 2vw;
+	//padding-right: 2vw;
 	overflow-y: hidden;
 	overflow-x: hidden;
+}
+* {
+	transition: all 0.3s ease-in-out;
 }
 </style>

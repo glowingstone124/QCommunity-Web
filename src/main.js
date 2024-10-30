@@ -9,6 +9,7 @@ import MessageView from "./views/MessageView.vue";
 import NotFoundView from './views/NotFoundView.vue';
 import DashboardView from "./views/DashBoardView.vue";
 import RegisterView from "./views/RegisterView.vue";
+import NewsView from "@/views/NewsView.vue";
 const routes = [
     {
         path: '/',
@@ -34,6 +35,11 @@ const routes = [
         path: '/dashboard',
         name: 'dashboard',
         component: DashboardView,
+    },
+    {
+        path: '/news',
+        name: 'news',
+        component: NewsView,
     },
     {
         path: '/register',
