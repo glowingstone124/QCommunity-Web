@@ -1,17 +1,38 @@
 <template>
-	<div id="app">
-		<router-view />
+	<div id="app" :style="{ backgroundImage: gradientStyle }">
+		<router-view/>
 	</div>
 </template>
 
-<script>
-export default {
-	name: 'App'
-}
+<script setup>
+import {ref, computed, onMounted, onBeforeUnmount} from 'vue';
+
+const angle = ref(120);
+const animating = ref(true);
+
+const gradientStyle = computed(() => {
+	return `linear-gradient(${angle.value}deg, #A5CC82 0%, #00467F 100%)`;
+});
+
+const changeGradientAngle = () => {
+	if (animating.value) {
+		angle.value = (angle.value + 0.1) % 360;
+		requestAnimationFrame(changeGradientAngle);
+	}
+};
+
+onMounted(() => {
+	changeGradientAngle();
+});
+
+onBeforeUnmount(() => {
+	animating.value = false
+});
 </script>
 
 <style>
 @import "/src/assets/main.css";
+
 .scroll-container {
 	width: 300px;
 	height: 200px;
@@ -36,14 +57,13 @@ export default {
 ::-webkit-scrollbar-thumb:hover {
 	background-color: #5a6268;
 }
+
 #app {
 	height: 100vh;
-	background-color: #2c6673;
-	//padding-left: 2vw;
-	//padding-right: 2vw;
 	overflow-y: hidden;
 	overflow-x: hidden;
 }
+
 * {
 	transition: all 0.3s ease-in-out;
 }

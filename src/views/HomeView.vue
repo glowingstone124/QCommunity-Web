@@ -83,12 +83,16 @@ function greeting() {
 }
 
 h1 {
-	color: var(--text);
+	background-image: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);
 	font-size: 5.6rem;
 	margin-top: 0;
 	margin-bottom: 0;
 	font-weight: 300;
+	background-clip: text;
+	-webkit-background-clip: text;
+	color: transparent;
 }
+
 
 h3.greeting {
 	color: var(--text);

@@ -115,7 +115,7 @@ input[type="password"] {
 	width: 100%;
 	border: none;
 	color: var(--text);
-	border-bottom: 3px solid #467ec9;
+	border-bottom: 3px solid #46c9b5;
 	padding: 2vh;
 	font-size: 16px;
 	margin-bottom: 10px;
@@ -127,18 +127,18 @@ input[type="password"] {
 input[type="text"]:focus,
 input[type="password"]:focus {
 	outline: none;
-	border-bottom: 4px solid #5fa3e8;
+	border-bottom: 4px solid #99f6ee;
 	box-shadow: 0 2px 5px rgba(47, 91, 136, 0.2);
 }
 input[type="text"]::placeholder,
 input[type="password"]::placeholder {
-	color: #a6d2a2;
+	color: #a2d2c9;
 	opacity: 1;
 }
 button {
 	width: 100%;
 	padding: 10px;
-	background-color: #2f5b88;
+	background-color: #5dbabd;
 	color: white;
 	border: none;
 	border-radius: 4px;
@@ -148,7 +148,7 @@ button {
 }
 
 button:hover {
-	background-color: #245a7d;
+	background-color: #247d7a;
 }
 
 </style>
