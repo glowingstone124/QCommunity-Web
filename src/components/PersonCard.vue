@@ -41,7 +41,7 @@ function login() {
 
 <template>
 	<div class="personal">
-		<h1 class="username">{{ loginstat ? username : "请先登录" }}</h1>
+		<h1 class="username">{{ loginstat ? username : "登录" }}</h1>
 		<p v-if="loginstat">
 			您已经游玩了<span style="font-size: 2rem">{{ playtime }}</span>分钟
 		</p>
@@ -64,10 +64,10 @@ function login() {
 
 .username {
 	color: var(--text);
-	font-size: 2rem;
+	font-size: 3.5rem;
 	margin-top: 0;
 	margin-bottom: 0;
-	font-weight: 300;
+	font-weight: 100;
 	font-family: 'Bahnschrift', sans-serif;
 }
 
@@ -95,7 +95,7 @@ h1, p {
 	width: 100%;
 	margin: 0 80px;
 	padding: 40px 50px;
-	border-radius: 30px;
+	border-radius: 20px;
 	font-family: 'Bahnschrift', sans-serif;
 	* {
 		transition: 0.3s all ease-in-out;
@@ -120,7 +120,7 @@ input[type="password"] {
 	font-size: 16px;
 	margin-bottom: 10px;
 	box-sizing: border-box;
-	background-color: #5a6268 !important;
+	background-color: #5a626850 !important;
 	transition: border-bottom 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
@@ -130,7 +130,11 @@ input[type="password"]:focus {
 	border-bottom: 4px solid #5fa3e8;
 	box-shadow: 0 2px 5px rgba(47, 91, 136, 0.2);
 }
-
+input[type="text"]::placeholder,
+input[type="password"]::placeholder {
+	color: #a6d2a2;
+	opacity: 1;
+}
 button {
 	width: 100%;
 	padding: 10px;
