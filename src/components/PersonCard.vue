@@ -45,11 +45,11 @@ function login() {
 		<p v-if="loginstat">
 			您已经游玩了<span style="font-size: 2rem">{{ playtime }}</span>分钟
 		</p>
-		<span v-if="loginstat" style="display: flex; flex-direction: column;">
+		<span v-if="loginstat" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
             <a class="link">更改密码</a>
             <a class="link" @click="logout">退出登录</a>
         </span>
-		<span v-else style="display: flex; flex-direction: column;">
+		<span v-else style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
             <form @submit.prevent="login" autocomplete="off" class="login-container">
                 <input type="text" v-model="username" placeholder="用户名" required/>
                 <input type="password" v-model="password" placeholder="密码" required/>
@@ -92,8 +92,6 @@ h1, p {
 
 .personal {
 	background-color: rgba(121, 178, 180, 0.5);
-	width: 100%;
-	margin: 0 80px;
 	padding: 40px 50px;
 	border-radius: 20px;
 	font-family: 'Bahnschrift', sans-serif;
@@ -137,11 +135,11 @@ input[type="password"]::placeholder {
 }
 button {
 	width: 100%;
-	padding: 10px;
+	padding: 20px;
 	background-color: #5dbabd;
 	color: white;
 	border: none;
-	border-radius: 4px;
+	border-radius: 40px;
 	cursor: pointer;
 	font-size: 16px;
 	transition: background-color 0.3s ease-in-out;
@@ -150,5 +148,29 @@ button {
 button:hover {
 	background-color: #247d7a;
 }
-
+@media (max-width: 480px) {
+	.personal {
+		padding: 20px 40px;
+		max-width: 90%;
+		margin: auto;
+	}
+	.username {
+		font-size: 1.4rem;
+	}
+	.link {
+		padding: 20px 20px;
+	}
+	input {
+		max-width: 100%;
+		margin-top: 20px;
+	}
+	.login-container {
+		margin:0;
+		padding:0;
+		max-width: 100%
+	}
+	button {
+		max-width: 100%;
+	}
+}
 </style>

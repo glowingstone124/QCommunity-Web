@@ -1,54 +1,3 @@
-<script setup >
-import { useRouter } from "vue-router";
-import { ref } from "vue";
-import { get } from "/src/utils/request";
-
-const router = useRouter();
-const username = ref("");
-const qq = ref("");
-const password = ref("");
-const isDialogVisible = ref(false);
-const message = ref("");
-const isLoading = ref(false);
-
-function closeDialog() {
-	isDialogVisible.value = false;
-}
-
-function submitForm() {
-	isLoading.value = true;
-	const url =
-		"https://api.glowingstone.cn" +
-		"/qo/upload/registry?name=" +
-		username.value +
-		"&password=" +
-		password.value +
-		"&uid=" +
-		qq.value;
-	get(url).then((result) => {
-		if (result.result === true) {
-			isDialogVisible.value = true;
-		} else {
-			message.value = "注册失败了！请检查qq或者用户名是否有重复。";
-		}
-		setTimeout(() => {}, 1000)
-		isLoading.value = false;
-	}).catch(() => {
-		message.value = "请求失败，请稍后再试。";
-		isLoading.value = false;
-	});
-}
-
-function redirect() {
-	router.push("/");
-}
-
-function validateQQ() {
-	qq.value = qq.value.replace(/\D/g, "");
-}
-
-</script>
-
 <template>
 	<div class="dashboard">
 		<div v-if="isDialogVisible" class="dialog-overlay">
@@ -64,7 +13,7 @@ function validateQQ() {
 				<p class="arrow"><</p> <p>回到首页</p>
 			</span>
 		</div>
-		<div style="margin-left: 7vw; flex: 7">
+		<div style="flex: 7">
 			<h2>让我们开始吧</h2>
 			<h3>您需要一个QQ和一个minecraft用户名来注册QOriginal账户。密码会被SHA加密并且存储在我们的数据库中。</h3>
 			<form class="form" @submit.prevent="submitForm">
@@ -83,14 +32,12 @@ function validateQQ() {
 				<p>{{ message }}</p>
 				<button type="submit" :disabled="isLoading">
 					<span v-if="isLoading" class="loading-spinner"></span>
-					<span>{{ isLoading ? "正在请求..." : "注册"}}</span>
+					<span>{{ isLoading ? "正在请求..." : "注册" }}</span>
 				</button>
 			</form>
 		</div>
 	</div>
 </template>
-
-
 
 <style scoped>
 @import "src/assets/base.css";
@@ -103,6 +50,55 @@ function validateQQ() {
 	height: 100vh;
 	flex-direction: row;
 	text-align: center;
+	padding: 20px;
+}
+
+@media (max-width: 600px) {
+	.dashboard {
+		flex-direction: column;
+		padding-bottom: 60px;
+	}
+
+	h1 {
+		font-size: 3rem;
+	}
+
+	h2 {
+		font-size: 1.5rem;
+	}
+
+	h3 {
+		font-size: 1rem;
+	}
+
+	.form {
+		min-width: 100%;
+		padding-bottom: 80px;
+	}
+
+	form {
+		width:100%;
+	}
+	.input-group label {
+		font-size: 1rem;
+		width: auto;
+		margin-right: 10px;
+	}
+
+	button[type="submit"] {
+		width: 100%;
+		padding: 15px;
+		font-size: 1rem;
+	}
+
+	.dialog {
+		width: 80%;
+		padding: 15px;
+	}
+
+	h1 {
+		margin: 10px;
+	}
 }
 
 h1, p, h2, ul, li, h3 {
@@ -122,6 +118,7 @@ h2 {
 h3 {
 	font-weight: 100;
 }
+
 .redirect {
 	display: flex;
 	align-items: center;
@@ -143,26 +140,29 @@ h3 {
 	flex-direction: column;
 	align-items: flex-start;
 	margin-top: 20px;
-	width: 100%;
+	width: 60%;
 }
 
 .input-group {
+	display: flex;
+	align-items: center;
 	margin-bottom: 15px;
 	width: 100%;
 }
 
-label {
-	font-weight: 300;
+.input-group label {
+	font-weight: 600;
 	font-size: 1.2rem;
-	margin-bottom: 5px;
+	margin-right: 10px;
 	color: var(--text);
+	width: 150px;
 }
 
 input[type="text"],
 input[type="password"] {
-	width: 100%;
-	margin: 6px;
-	padding:15px;
+	flex: 1;
+	margin: 10px 0;
+	padding: 25px;
 	background-color: rgba(112, 192, 252, 0.42);
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
@@ -170,21 +170,30 @@ input[type="password"] {
 	border: none;
 	border-bottom: #2c3e50 4px solid;
 	font-size: 1rem;
-	:focus {
-		border-bottom: #5f87b4 2px solid;
-		background-color: #2c3d4d;
-	}
 }
 
+input[type="text"]:focus,
+input[type="password"]:focus{
+	border-bottom: #5f87b4 2px solid;
+	background-color: #2c3d4d;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+	background-color: #2c3d4d !important;
+	-webkit-box-shadow: 0 0 0px 1000px rgba(112, 192, 252, 0.42) inset;
+	color: var(--text) !important;
+}
 
 button[type="submit"] {
 	margin-top: 20px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 10px 20px;
+	padding: 20px 80px;
 	border: none;
-	border-radius: 5px;
+	border-radius: 30px;
 	background-color: #354d69;
 	color: #fff;
 	font-size: 1.2rem;
@@ -194,11 +203,6 @@ button[type="submit"] {
 
 button[type="submit"]:hover {
 	background-color: #435e77;
-}
-
-form {
-	max-width: 40vw;
-	margin: 0 auto;
 }
 
 .dialog-overlay {
@@ -265,6 +269,55 @@ form {
 		transform: rotate(360deg);
 	}
 }
-
-
 </style>
+
+<script setup >
+import { useRouter } from "vue-router";
+import { ref } from "vue";
+import { get } from "/src/utils/request";
+
+const router = useRouter();
+const username = ref("");
+const qq = ref("");
+const password = ref("");
+const isDialogVisible = ref(false);
+const message = ref("");
+const isLoading = ref(false);
+
+function closeDialog() {
+	isDialogVisible.value = false;
+}
+
+function submitForm() {
+	isLoading.value = true;
+	const url =
+		"https://api.glowingstone.cn" +
+		"/qo/upload/registry?name=" +
+		username.value +
+		"&password=" +
+		password.value +
+		"&uid=" +
+		qq.value;
+	get(url).then((result) => {
+		if (result.result === true) {
+			isDialogVisible.value = true;
+		} else {
+			message.value = "注册失败了！请检查qq或者用户名是否有重复。";
+		}
+		setTimeout(() => {}, 1000)
+		isLoading.value = false;
+	}).catch(() => {
+		message.value = "请求失败，请稍后再试。";
+		isLoading.value = false;
+	});
+}
+
+function redirect() {
+	router.push("/");
+}
+
+function validateQQ() {
+	qq.value = qq.value.replace(/\D/g, "");
+}
+
+</script>

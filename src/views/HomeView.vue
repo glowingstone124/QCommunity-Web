@@ -35,10 +35,8 @@ function greeting() {
 			<p>beta</p>
 		</span>
 		<h3 class="greeting">{{ greeting() }}</h3>
-		<span style="display: flex;">
-		<div class="message-container">
+		<span style="display: flex;" class="content-span">
 			<PersonCard />
-		</div>
 		<div class="tiles-container">
 			<router-link to="/query" class="tile">
 				<h2>查询</h2>
@@ -114,6 +112,9 @@ h3.greeting {
 .message-container {
 	flex: 3;
 	display: flex;
+	align-items: center;
+	flex-direction: column;
+	justify-content: center;
 }
 
 .tile {
@@ -154,9 +155,44 @@ a {
 
 .title {
 	display: flex;
-
+	margin-left: 10px;
 	p {
 		color: var(--text);
+	}
+}
+@media (max-width: 480px) {
+	.main {
+		display: flex;
+		flex-direction: column;
+		overflow-y: auto;
+		padding-left: 0rem;
+	}
+
+	.greeting {
+		margin-left: 10px;
+	}
+
+	.content-span {
+		flex-direction: column;
+		max-width: 75vw;
+		margin: auto auto;
+	}
+	h1 {
+		font-size: 3rem;
+	}
+	.tiles-container {
+		max-height: none;
+		overflow-y: visible;
+		justify-content: center;
+		max-width: 60vw;
+	}
+	.tile {
+		width:100%;
+		padding: 30px;
+		h2 {
+			margin: 0;
+		}
+		min-height: unset;
 	}
 }
 </style>
