@@ -40,9 +40,6 @@
 </template>
 
 <style scoped>
-@import "src/assets/base.css";
-@import "src/assets/main.css";
-
 .dashboard {
 	display: flex;
 	justify-content: center;
@@ -56,44 +53,31 @@
 @media (max-width: 600px) {
 	.dashboard {
 		flex-direction: column;
-		padding-bottom: 60px;
+		padding-bottom: 80px;
 	}
 
 	h1 {
-		font-size: 3rem;
+		font-size: 2.5rem;
 	}
 
 	h2 {
-		font-size: 1.5rem;
+		font-size: 1.25rem;
 	}
 
 	h3 {
 		font-size: 1rem;
 	}
 
-	.form {
-		min-width: 100%;
-		padding-bottom: 80px;
-	}
-
-	form {
-		width:100%;
-	}
-	.input-group label {
-		font-size: 1rem;
-		width: auto;
-		margin-right: 10px;
+	.form, form, .dialog {
+		width: 90%;
+		padding: 15px;
 	}
 
 	button[type="submit"] {
 		width: 100%;
 		padding: 15px;
+		margin-bottom: 20px;
 		font-size: 1rem;
-	}
-
-	.dialog {
-		width: 80%;
-		padding: 15px;
 	}
 
 	h1 {
@@ -106,12 +90,12 @@ h1, p, h2, ul, li, h3 {
 }
 
 h1 {
-	font-size: 5rem;
+	font-size: 4rem;
 	font-weight: 200;
 }
 
 h2 {
-	font-size: 2rem;
+	font-size: 1.75rem;
 	font-weight: 200;
 }
 
@@ -122,17 +106,17 @@ h3 {
 .redirect {
 	display: flex;
 	align-items: center;
-	flex-direction: row;
 	cursor: pointer;
 	margin-top: 20px;
 }
 
-.redirect:hover .arrow {
-	margin-right: 20px;
-}
-
 .arrow {
 	margin-right: 8px;
+	transition: margin-right 0.2s;
+}
+
+.redirect:hover .arrow {
+	margin-right: 12px;
 }
 
 .form {
@@ -140,7 +124,7 @@ h3 {
 	flex-direction: column;
 	align-items: flex-start;
 	margin-top: 20px;
-	width: 60%;
+	width: 100%;
 }
 
 .input-group {
@@ -152,10 +136,10 @@ h3 {
 
 .input-group label {
 	font-weight: 600;
-	font-size: 1.2rem;
+	font-size: 1rem;
 	margin-right: 10px;
 	color: var(--text);
-	width: 150px;
+	width: 130px;
 }
 
 input[type="text"],
@@ -164,26 +148,15 @@ input[type="password"] {
 	margin: 10px 0;
 	padding: 25px;
 	background-color: rgba(112, 192, 252, 0.42);
-	border-top-left-radius: 5px;
-	border-top-right-radius: 5px;
 	color: var(--text);
 	border: none;
-	border-bottom: #2c3e50 4px solid;
+	border-bottom: #2c3e50 5px solid;
 	font-size: 1rem;
 }
 
-input[type="text"]:focus,
-input[type="password"]:focus{
-	border-bottom: #5f87b4 2px solid;
+input:focus {
+	border-bottom-color: #5f87b4;
 	background-color: #2c3d4d;
-}
-
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus {
-	background-color: #2c3d4d !important;
-	-webkit-box-shadow: 0 0 0px 1000px rgba(112, 192, 252, 0.42) inset;
-	color: var(--text) !important;
 }
 
 button[type="submit"] {
@@ -191,14 +164,14 @@ button[type="submit"] {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 20px 80px;
+	padding: 15px 60px;
 	border: none;
-	border-radius: 30px;
+	border-radius: 20px;
 	background-color: #354d69;
 	color: #fff;
-	font-size: 1.2rem;
+	font-size: 1.1rem;
 	cursor: pointer;
-	transition: background-color 0.3s;
+	transition: background-color 0.3s ease;
 }
 
 button[type="submit"]:hover {
@@ -209,8 +182,8 @@ button[type="submit"]:hover {
 	position: fixed;
 	top: 0;
 	left: 0;
-	width: 100vw;
-	height: 100vh;
+	width: 100%;
+	height: 100%;
 	background: rgba(0, 0, 0, 0.5);
 	display: flex;
 	justify-content: center;
@@ -221,9 +194,10 @@ button[type="submit"]:hover {
 	background-color: #4d515e;
 	padding: 20px;
 	border-radius: 8px;
-	width: 300px;
+	width: 90%;
+	max-width: 400px;
 	text-align: center;
-	box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .dialog h2 {
@@ -244,6 +218,7 @@ button[type="submit"]:hover {
 	color: #fff;
 	font-size: 1rem;
 	cursor: pointer;
+	transition: background-color 0.3s ease;
 }
 
 .dialog button:hover {
@@ -269,6 +244,7 @@ button[type="submit"]:hover {
 		transform: rotate(360deg);
 	}
 }
+
 </style>
 
 <script setup >
