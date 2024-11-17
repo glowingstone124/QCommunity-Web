@@ -36,8 +36,13 @@ function greeting() {
 		</span>
 		<h3 class="greeting">{{ greeting() }}</h3>
 		<span style="display: flex;" class="content-span">
-			<PersonCard />
+			<PersonCard/>
 		<div class="tiles-container">
+						<router-link to="/register" class="tile">
+				<h2>注册账号</h2>
+				<p>注册账号并且开始游玩</p>
+				<span class="icon-messages"></span>
+			</router-link>
 			<router-link to="/query" class="tile">
 				<h2>查询</h2>
 				<p>查询一个用户当前的状态，或是在群里与他互动。</p>
@@ -56,11 +61,6 @@ function greeting() {
 			<router-link to="/dashboard" class="tile">
 				<h2>仪表板</h2>
 				<p>查看服务器状态。</p>
-				<span class="icon-messages"></span>
-			</router-link>
-			<router-link to="/register" class="tile">
-				<h2>注册账号</h2>
-				<p>注册账号并且开始游玩</p>
 				<span class="icon-messages"></span>
 			</router-link>
 		</div>
@@ -106,7 +106,7 @@ h3.greeting {
 	margin: auto auto;
 	overflow-y: auto;
 	max-height: 65vh;
-	flex:7;
+	flex: 7;
 }
 
 .message-container {
@@ -150,16 +150,18 @@ h3.greeting {
 
 a {
 	text-decoration: none;
-	color:  #89fff5;
+	color: #89fff5;
 }
 
 .title {
 	display: flex;
 	margin-left: 10px;
+
 	p {
 		color: var(--text);
 	}
 }
+
 @media (max-width: 480px) {
 	.main {
 		display: flex;
@@ -177,21 +179,26 @@ a {
 		max-width: 75vw;
 		margin: auto auto;
 	}
+
 	h1 {
 		font-size: 3rem;
 	}
+
 	.tiles-container {
 		max-height: none;
 		overflow-y: visible;
 		justify-content: center;
 		max-width: 60vw;
 	}
+
 	.tile {
-		width:100%;
+		width: 100%;
 		padding: 30px;
+
 		h2 {
 			margin: 0;
 		}
+
 		min-height: unset;
 	}
 }

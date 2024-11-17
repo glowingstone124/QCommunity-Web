@@ -78,26 +78,32 @@ onBeforeUnmount(() => {
 	height: 100vh;
 	display: flex;
 	flex-direction: row;
-	padding: 9rem 1rem;
+	padding: 5rem 1rem;
 	max-height: 80vh;
 	overflow: hidden;
 }
 
 h1 {
 	color: var(--text);
-	font-size: 5.6rem;
+	font-size: 3rem;
 	margin: 0;
-	font-weight: 300;
+	font-weight: 100;
 }
 
 .back {
 	display: inline-block;
 	text-decoration: none;
 	color: var(--text);
-	border-radius: 20px;
-	padding: 0 30px;
+	border-radius: 50px;
+	padding: 20px;
 	background-color: #437763;
 	transition: background-color 0.3s;
+	font-size: 1.5rem;
+	h2 {
+		font-weight: 100;
+		margin: 0;
+		font-size: 1.5rem;
+	}
 }
 
 .back:hover {
@@ -105,19 +111,47 @@ h1 {
 }
 
 .message-container {
-	margin-left: 7vw;
-	min-width: 45vw;
-	max-width: 50vw;
+	margin-left: 2vw;
+	width: 70%;
+	max-width: 100%;
 	overflow-y: auto;
-	padding: 2rem;
+	padding: 1rem;
 }
 
 .msgdiv {
-	max-width: 80vw;
+	max-width: 100%;
 	border-radius: 10px;
 	background-color: rgba(90, 171, 189, 0.5);
 	padding: 6px 4px 10px 30px;
 	margin-bottom: 1rem;
 	color: rgb(144, 210, 243);
+	word-wrap: break-word;
+}
+
+@media screen and (max-width: 768px) {
+	.main {
+		flex-direction: column;
+		height: 100vh;
+	}
+
+	h1 {
+		font-size: 3rem;
+	}
+
+	.back {
+		font-size: 0.6rem;
+		border-radius: 30px;
+		padding: 0.3rem 1rem;
+		margin-bottom: 1rem;
+		h2 {
+			font-weight: 100;
+		}
+	}
+
+	.message-container {
+		margin-left: 0;
+		width: 100%;
+		padding: 0;
+	}
 }
 </style>

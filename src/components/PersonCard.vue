@@ -53,6 +53,7 @@ function login() {
             <form @submit.prevent="login" autocomplete="off" class="login-container">
                 <input type="text" v-model="username" placeholder="用户名" required/>
                 <input type="password" v-model="password" placeholder="密码" required/>
+				<a href="/register">还没有账号？注册一个!</a>
                 <button type="submit">登录</button>
             </form>
         </span>
@@ -71,6 +72,13 @@ function login() {
 	font-family: 'Bahnschrift', sans-serif;
 }
 
+a {
+	color: var(--text);
+	border: 1px solid var(--text);
+	text-decoration: none;
+	border-radius: 15px;
+	padding: 10px 15px;
+}
 h1, p {
 	color: #89fff5;;
 }
@@ -136,6 +144,7 @@ input[type="password"]::placeholder {
 button {
 	width: 100%;
 	padding: 20px;
+	margin-top: 20px;
 	background-color: #5dbabd;
 	color: white;
 	border: none;
