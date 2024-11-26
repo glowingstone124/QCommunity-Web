@@ -75,12 +75,11 @@ onBeforeUnmount(() => {
 
 .main {
 	max-width: 100vw;
-	height: 100vh;
+	max-height: 100vh;
 	display: flex;
 	flex-direction: row;
 	padding: 5rem 1rem;
-	max-height: 80vh;
-	overflow: hidden;
+	overflow: auto;
 }
 
 h1 {
@@ -113,7 +112,8 @@ h1 {
 .message-container {
 	margin-left: 2vw;
 	width: 70%;
-	max-width: 100%;
+	max-width: 80%;
+	max-height: 90vh;
 	overflow-y: auto;
 	padding: 1rem;
 }
@@ -152,6 +152,7 @@ h1 {
 		margin-left: 0;
 		width: 100%;
 		padding: 0;
+		height: 80vh;
 	}
 }
 </style>

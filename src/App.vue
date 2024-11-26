@@ -32,7 +32,9 @@ onBeforeUnmount(() => {
 
 <style>
 @import "/src/assets/main.css";
-
+.app {
+	max-height: 100vh;
+}
 .scroll-container {
 	width: 300px;
 	height: 200px;

@@ -13,7 +13,7 @@
 				<p class="arrow"><</p> <p>回到首页</p>
 			</span>
 		</div>
-		<div style="flex: 7">
+		<div style="flex: 6" class="fathercontainer">
 			<h2>让我们开始吧</h2>
 			<h3>您需要一个QQ和一个minecraft用户名来注册QOriginal账户。密码会被SHA加密并且存储在我们的数据库中。</h3>
 			<form class="form" @submit.prevent="submitForm">
@@ -95,12 +95,12 @@ h1 {
 }
 
 h2 {
-	font-size: 1.75rem;
-	font-weight: 200;
+	font-size: 3.5rem;
+	font-weight: 600;
 }
 
 h3 {
-	font-weight: 100;
+	font-weight: 500;
 }
 
 .redirect {
@@ -122,10 +122,30 @@ h3 {
 .form {
 	display: flex;
 	flex-direction: column;
-	align-items: flex-start;
+	align-items: center; /* 居中表单中的内容 */
 	margin-top: 20px;
 	width: 100%;
 }
+
+button[type="submit"] {
+	margin-top: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 15px 60px;
+	border: none;
+	border-radius: 20px;
+	background-color: #354d69;
+	color: #fff;
+	font-size: 1.1rem;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+	background-color: #435e77;
+}
+
 
 .input-group {
 	display: flex;
@@ -243,6 +263,13 @@ button[type="submit"]:hover {
 	100% {
 		transform: rotate(360deg);
 	}
+}
+
+.fathercontainer {
+	background: #4c8fb7;
+	padding: 20px 60px;
+	border-radius: 10px;
+	text-align: left;
 }
 
 </style>

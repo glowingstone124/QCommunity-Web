@@ -102,10 +102,10 @@ h3.greeting {
 	display: flex;
 	justify-content: left;
 	flex-wrap: wrap;
-	max-width: 57vw;
-	margin: auto auto;
-	overflow-y: auto;
+	max-width: 80vw;
 	max-height: 65vh;
+	margin: auto auto;
+	overflow-y: scroll;
 	flex: 7;
 }
 
@@ -188,7 +188,7 @@ a {
 		max-height: none;
 		overflow-y: visible;
 		justify-content: center;
-		max-width: 60vw;
+		margin-bottom: 3vh;
 	}
 
 	.tile {
