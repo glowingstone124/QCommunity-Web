@@ -6,7 +6,7 @@
 
 <script setup>
 import {ref, computed, onMounted, onBeforeUnmount} from 'vue';
-
+/*
 const angle = ref(120);
 const animating = ref(true);
 
@@ -28,6 +28,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
 	animating.value = false
 });
+ */
 </script>
 
 <style>
@@ -62,6 +63,7 @@ onBeforeUnmount(() => {
 
 #app {
 	height: 100vh;
+	background: #2c342f;
 	overflow-y: hidden;
 	overflow-x: hidden;
 }

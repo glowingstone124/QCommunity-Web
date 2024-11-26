@@ -100,7 +100,7 @@ h3.greeting {
 
 .tiles-container {
 	display: flex;
-	justify-content: left;
+	justify-content: center;
 	flex-wrap: wrap;
 	max-width: 80vw;
 	max-height: 65vh;

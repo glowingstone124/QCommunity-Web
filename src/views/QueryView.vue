@@ -33,7 +33,7 @@ const getPlayer = debounce(async () => {
 
 async function getAvatar(name) {
 	try {
-		const response = await fetch(`https://rock.glowingstone.cn/qo/download/avatar?name=${name}`);
+		const response = await fetch(`https://api.glowingstone.cn/qo/download/avatar?name=${name}`);
 		const data = await response.json();
 		avatarUrl.value = data.url || '';
 	} catch (error) {

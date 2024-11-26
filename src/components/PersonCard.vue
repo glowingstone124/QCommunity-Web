@@ -100,8 +100,8 @@ h1, p {
 
 .personal {
 	background-color: rgba(121, 178, 180, 0.5);
-	padding: 40px 50px;
-	border-radius: 20px;
+	padding: 30px 50px;
+	border-radius: 30px;
 	font-family: 'Bahnschrift', sans-serif;
 	* {
 		transition: 0.3s all ease-in-out;
