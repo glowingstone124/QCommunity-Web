@@ -49,8 +49,8 @@ function greeting() {
 				<span class="icon-query"></span>
 			</router-link>
 			<router-link to="/news" class="tile">
-				<h2>新闻</h2>
-				<p>浏览服务器的最新进展。</p>
+				<h2>IP查询</h2>
+				<p>了解当前可用ip</p>
 				<span class="icon-news"></span>
 			</router-link>
 			<router-link to="/messages" class="tile">
@@ -118,7 +118,7 @@ h3.greeting {
 }
 
 .tile {
-	background-color: rgba(121, 178, 180, 0.5);
+	background-color: rgb(39, 64, 65);
 	padding: 2rem;
 	min-width: 300px;
 	max-width: 35vw;

@@ -6,7 +6,7 @@ let pollingInterval = null;
 
 async function getMsgList() {
 	try {
-		const response = await fetch("https://rock.glowingstone.cn/qo/msglist/download");
+		const response = await fetch("https://api.glowingstone.cn/qo/msglist/download");
 		const data = await response.json();
 
 		messageList.value = data.messages.map((message) => {

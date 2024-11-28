@@ -85,7 +85,7 @@ h1, p {
 
 .link {
 	text-decoration: none;
-	background: #56b79f70;
+	background: rgb(39, 64, 65);
 	margin-top: 20px;
 	box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
 	padding: 30px 30px;
@@ -99,7 +99,7 @@ h1, p {
 }
 
 .personal {
-	background-color: rgba(121, 178, 180, 0.5);
+	background-color: rgb(39, 64, 65);
 	padding: 30px 50px;
 	border-radius: 30px;
 	font-family: 'Bahnschrift', sans-serif;

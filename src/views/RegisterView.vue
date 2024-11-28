@@ -170,12 +170,12 @@ input[type="password"] {
 	background-color: rgba(112, 192, 252, 0.42);
 	color: var(--text);
 	border: none;
-	border-bottom: #2c3e50 5px solid;
+	border-bottom: #648fb9 5px solid;
 	font-size: 1rem;
 }
 
 input:focus {
-	border-bottom-color: #5f87b4;
+	border-bottom-color: #5fb493;
 	background-color: #2c3d4d;
 }
 
@@ -266,7 +266,7 @@ button[type="submit"]:hover {
 }
 
 .fathercontainer {
-	background: #4c8fb7;
+	background: #2c4438;
 	padding: 20px 60px;
 	border-radius: 10px;
 	text-align: left;
