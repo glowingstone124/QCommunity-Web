@@ -34,16 +34,17 @@ const copyToClipboard = (text) => {
 </template>
 
 <style scoped>
-
-h1, h2,p {
+h1, h2, p {
 	color: #d4e7a9;
 }
+
 .container {
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 	height: 100vh;
-	max-width: 50vw;
+	width: 90%;
 	margin: 0 auto;
 	padding: 20px;
 	background-color: #587958;
@@ -52,18 +53,19 @@ h1, h2,p {
 }
 
 .column {
-	flex: 1;
-	padding: 0 10px;
+	width: 100%;
+	padding: 10px 0;
 }
 
 .domain-item {
-	padding: 20px 24px;
+	padding: 16px;
 	margin: 8px 0;
 	background-color: #183d23;
 	border-radius: 30px;
-	font-size: 16px;
-	color: #333;
+	font-size: 18px;
+	color: #d4e7a9;
 	cursor: pointer;
+	text-align: center;
 	transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -72,4 +74,15 @@ h1, h2,p {
 	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
+@media (min-width: 768px) {
+	.container {
+		flex-direction: row;
+		width: 70vw;
+	}
+
+	.column {
+		flex: 1;
+		padding: 0 10px;
+	}
+}
 </style>

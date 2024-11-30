@@ -8,7 +8,7 @@ const loginstat = ref(false);
 const playtime = ref(0);
 onMounted(() => {
 	if (username) {
-		const url = `https://rock.glowingstone.cn/qo/download/registry?name=${username.value}`;
+		const url = `https://api.glowingstone.cn/qo/download/registry?name=${username.value}`;
 		get(url).then(result => {
 			if (result.code === 0) {
 				playtime.value = result.playtime;
@@ -24,7 +24,7 @@ function logout() {
 }
 
 function login() {
-	const url = `https://rock.glowingstone.cn/qo/game/login?username=${username.value}&password=${password.value}`;
+	const url = `https://api.glowingstone.cn/qo/game/login?username=${username.value}&password=${password.value}`;
 	get(url).then(result => {
 		if (result.result === true) {
 			localStorage.setItem("username", username.value);

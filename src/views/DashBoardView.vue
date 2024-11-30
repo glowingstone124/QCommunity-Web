@@ -58,7 +58,7 @@ onBeforeUnmount(() => {
 				<p class="arrow"><</p> <p>回到首页</p>
 			</span>
 		</div>
-		<div style="margin-left: 10vw; flex: 2">
+		<div style="flex: 2">
 			<div class="panel">
 				<h2>在线人数</h2>
 				<p class="display">{{ onlinecount }}</p>
@@ -72,7 +72,7 @@ onBeforeUnmount(() => {
 				<p class="display">{{ mspt }}</p>
 			</div>
 		</div>
-		<div style="margin-left: 7vw; flex: 5">
+		<div style=" flex: 5">
 			<h2>{{ onlinecount !== 0 ? "玩家列表" : "暂无玩家" }}</h2>
 			<ul>
 				<div class="player-cards">
@@ -94,6 +94,19 @@ onBeforeUnmount(() => {
 	height: 100vh;
 	flex-direction: row;
 	text-align: center;
+}
+@media(max-width: 600px)
+{
+	.dashboard {
+		flex-direction: column;
+		overflow-y: auto;
+	}
+	.panel {
+		p, h2 {
+			padding: 0;
+			color: #85c7f6;
+		}
+	}
 }
 
 h1, p, h2, ul, li {
@@ -147,7 +160,7 @@ h2 {
 	justify-content: center;
 	align-items: center;
 	p, h2 {
-		padding: 15px 15px;
+		padding: 0px 15px;
 		color: #85c7f6;
 	}
 }
