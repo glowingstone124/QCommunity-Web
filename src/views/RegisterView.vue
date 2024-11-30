@@ -268,6 +268,7 @@ button[type="submit"]:hover {
 .fathercontainer {
 	background: #2c4438;
 	padding: 20px 60px;
+	margin-right: 10vw;
 	border-radius: 10px;
 	text-align: left;
 }

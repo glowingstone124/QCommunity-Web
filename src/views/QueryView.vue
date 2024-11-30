@@ -13,7 +13,7 @@ const find = ref(false);
 
 const getPlayer = debounce(async () => {
 	try {
-		const response = await fetch(`https://rock.glowingstone.cn/qo/download/registry?name=${queryId.value}`);
+		const response = await fetch(`https://api.glowingstone.cn/qo/download/registry?name=${queryId.value}`);
 		const data = await response.json();
 		if (data.code === 1) {
 			find.value = false;
