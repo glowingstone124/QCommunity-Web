@@ -35,7 +35,7 @@ function greeting() {
 			<p>beta</p>
 		</span>
 		<h3 class="greeting">{{ greeting() }}</h3>
-		<span style="display: flex;" class="content-span">
+		<span style="display: flex; flex: 2" class="content-span">
 			<PersonCard/>
 		<div class="tiles-container">
 						<router-link to="/register" class="tile">
@@ -81,7 +81,7 @@ function greeting() {
 }
 
 h1 {
-	background-image: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);
+	background: #fefffe;
 	font-size: 5.6rem;
 	margin-top: 0;
 	margin-bottom: 0;
@@ -106,7 +106,7 @@ h3.greeting {
 	max-height: 65vh;
 	margin: auto auto;
 	overflow-y: scroll;
-	flex: 7;
+	flex: 8;
 }
 
 .message-container {

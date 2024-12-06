@@ -22,12 +22,16 @@ function logout() {
 	loginstat.value = false;
 	localStorage.removeItem('username');
 }
+function accountcenter() {
+	document.location.href = loginstat.value ? "/account" : "/login";
+}
 
 function login() {
 	const url = `https://api.glowingstone.cn/qo/game/login?username=${username.value}&password=${password.value}`;
 	get(url).then(result => {
 		if (result.result === true) {
 			localStorage.setItem("username", username.value);
+			localStorage.setItem("token", result.token);
 			loginstat.value = true;
 		} else {
 			alert("登录失败，请检查用户名和密码！");
@@ -46,7 +50,7 @@ function login() {
 			您已经游玩了<span style="font-size: 2rem">{{ playtime }}</span>分钟
 		</p>
 		<span v-if="loginstat" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-            <a class="link">更改密码</a>
+            <a class="link" @click="accountcenter">账户中心</a>
             <a class="link" @click="logout">退出登录</a>
         </span>
 		<span v-else style="display: flex; flex-direction: column; align-items: center; justify-content: center;">

@@ -1,13 +1,20 @@
 <template>
 	<div class="redirect" @click="handleRedirect">
-		<p class="arrow">&lt;</p>
-		<p>{{ label }}</p>
+		<p class="arrow" :style="{ color: textColor }">&lt;</p>
+		<p :style="{ color: textColor }">{{ label }}</p>
 	</div>
 </template>
 
 <script setup>
 import { useRouter } from "vue-router";
-import { ref } from "vue";
+import { ref, toRefs, defineProps } from "vue";
+
+defineProps({
+	textColor: {
+		type: String,
+		default: "#000"
+	}
+});
 
 const label = ref("回到首页");
 

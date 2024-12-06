@@ -10,6 +10,8 @@ import NotFoundView from './views/NotFoundView.vue';
 import DashboardView from "./views/DashBoardView.vue";
 import RegisterView from "./views/RegisterView.vue";
 import NewsView from "@/views/NewsView.vue";
+import AccountCenterView from "@/views/AccountCenterView.vue";
+
 const routes = [
     {
         path: '/',
@@ -47,10 +49,15 @@ const routes = [
         component: RegisterView,
     },
     {
+        path: '/account',
+        name: 'account',
+        component: AccountCenterView,
+    },
+    {
         path: '/:catchAll(.*)',
         name: 'not-found',
         component: NotFoundView
-    }
+    },
 ];
 
 const router = createRouter({
