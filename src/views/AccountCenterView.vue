@@ -115,6 +115,7 @@ watch(currentSetting, (newValue) => {
 	border-radius: 20px;
 	background-color: rgb(61, 100, 101);
 	padding: 10px 20px;
+	margin-bottom: 20px;
 }
 .brief-info {
 	h2 {
