@@ -7,9 +7,11 @@ const username = ref("");
 const uid = ref(0);
 const playtime = ref(0);
 const logins = ref([])
+
 function displayCurrentSetting(label) {
 	currentSetting.value = label;
 }
+
 function formatDate(timestamp) {
 	const date = new Date(timestamp);
 	return date.toLocaleString();
@@ -29,6 +31,7 @@ function queryAccountData() {
 			logins.value = data.logins;
 		});
 }
+
 onMounted(() => {
 	queryAccountData();
 })
@@ -71,12 +74,14 @@ watch(currentSetting, (newValue) => {
 					<div class="panel">
 						<div class="username">
 							<h2>欢迎，{{ username }}</h2>
-							<h3>您已经游玩了<span class="time">{{playtime}}</span>分钟</h3>
+							<h3>您已经游玩了<span class="time">{{ playtime }}</span>分钟</h3>
 						</div>
 						<h3 class="subtitle">登录历史</h3>
-						<div v-for="(login, index) in logins" :key="index" class="login-record">
-							<p>登录时间：{{ formatDate(login.date) }}</p>
-							<p>登录结果：{{ login.success ? '成功' : '失败' }}</p>
+						<div class="func">
+							<div v-for="(login, index) in logins" :key="index" class="login-record">
+								<p>登录时间：{{ formatDate(login.date) }}</p>
+								<p>登录结果：{{ login.success ? '成功' : '失败' }}</p>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -105,23 +110,26 @@ watch(currentSetting, (newValue) => {
 <style scoped>
 @import "/src/assets/base.css";
 @import "/src/assets/main.css";
+
 .panel-wrapper {
 	display: flex;
 	flex-direction: row;
 	width: 100%;
 	height: 100%;
 }
+
 .login-record {
 	border-radius: 20px;
 	background-color: rgb(61, 100, 101);
 	padding: 10px 20px;
 	margin-bottom: 20px;
 }
+
 .brief-info {
 	h2 {
-		color: #54ab54;
+		color: #86c986;
 		font-weight: 400;
-		font-size: 3.2rem;
+		font-size: 2.5rem;
 	}
 
 	align-items: center;
@@ -133,6 +141,7 @@ watch(currentSetting, (newValue) => {
 
 .panel {
 	flex: 7;
+	overflow: auto;
 }
 
 p, h2, ul, li {
@@ -151,6 +160,7 @@ h1 {
 	display: flex;
 	flex-direction: row
 }
+
 .subtitle {
 	font-size: 2rem;
 	color: #c9fac9;
@@ -160,12 +170,15 @@ h1 {
 	h2 {
 		font-size: 2.1rem;
 	}
-	h2, h3{
+
+	h2, h3 {
 		font-family: Bahnschrift;
 	}
+
 	.time {
 		font-size: 2rem;
 	}
+
 	h3 {
 		color: #76d0ef;
 	}
@@ -201,11 +214,10 @@ h1 {
 }
 
 .left {
-
 	background: rgb(39, 64, 65);
 	flex: 7;
 	margin: 2vw;
-	padding: 50px 80px;
+	padding: 40px 80px;
 	border-radius: 40px;
 }
 
@@ -244,5 +256,8 @@ h1 {
 
 .slide-in-leave-active {
 	display: none;
+}
+.func {
+	max-height: 60%;
 }
 </style>
