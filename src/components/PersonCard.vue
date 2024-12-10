@@ -1,20 +1,28 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { get } from "@/utils/request.js";
+import {ref, onMounted} from 'vue';
+import {get} from "@/utils/request.js";
 
 const username = ref(localStorage.getItem('username') || "");
+const token = ref(localStorage.getItem('token') || "");
 const password = ref('');
 const loginstat = ref(false);
 const playtime = ref(0);
 onMounted(() => {
 	if (username) {
-		const url = `https://api.glowingstone.cn/qo/download/registry?name=${username.value}`;
-		get(url).then(result => {
-			if (result.code === 0) {
-				playtime.value = result.playtime;
-				loginstat.value = true;
+		fetch("https://api.qoriginal.vip/qo/authorization/account", {
+			headers: {
+				"token": token.value
 			}
-		});
+		}).then(res => res.json())
+			.then(data => {
+				if (data.error === 3 && data.error === 1) {
+					loginstat.value = false
+					return
+				}
+				loginstat.value = true
+				username.value = data.username;
+				playtime.value = data.playtime;
+			});
 	}
 });
 
@@ -22,6 +30,7 @@ function logout() {
 	loginstat.value = false;
 	localStorage.removeItem('username');
 }
+
 function accountcenter() {
 	document.location.href = loginstat.value ? "/account" : "/login";
 }
@@ -49,7 +58,8 @@ function login() {
 		<p v-if="loginstat">
 			您已经游玩了<span style="font-size: 2rem">{{ playtime }}</span>分钟
 		</p>
-		<span v-if="loginstat" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+		<span v-if="loginstat"
+			  style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
             <a class="link" @click="accountcenter">账户中心</a>
             <a class="link" @click="logout">退出登录</a>
         </span>
@@ -83,6 +93,7 @@ a {
 	border-radius: 15px;
 	padding: 10px 15px;
 }
+
 h1, p {
 	color: #89fff5;;
 }
@@ -107,6 +118,7 @@ h1, p {
 	padding: 30px 50px;
 	border-radius: 30px;
 	font-family: 'Bahnschrift', sans-serif;
+
 	* {
 		transition: 0.3s all ease-in-out;
 	}
@@ -140,11 +152,13 @@ input[type="password"]:focus {
 	border-bottom: 4px solid #99f6ee;
 	box-shadow: 0 2px 5px rgba(47, 91, 136, 0.2);
 }
+
 input[type="text"]::placeholder,
 input[type="password"]::placeholder {
 	color: #a2d2c9;
 	opacity: 1;
 }
+
 button {
 	width: 100%;
 	padding: 20px;
@@ -161,27 +175,33 @@ button {
 button:hover {
 	background-color: #247d7a;
 }
+
 @media (max-width: 480px) {
 	.personal {
 		padding: 20px 40px;
 		max-width: 90%;
 		margin: auto;
 	}
+
 	.username {
 		font-size: 1.4rem;
 	}
+
 	.link {
 		padding: 20px 20px;
 	}
+
 	input {
 		max-width: 100%;
 		margin-top: 20px;
 	}
+
 	.login-container {
-		margin:0;
-		padding:0;
+		margin: 0;
+		padding: 0;
 		max-width: 100%
 	}
+
 	button {
 		max-width: 100%;
 	}
