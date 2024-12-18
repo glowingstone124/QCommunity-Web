@@ -289,7 +289,7 @@ const router = useRouter();
 const username = ref("");
 const qq = ref("");
 const password = ref("");
-const isDialogVisible = ref(true);
+const isDialogVisible = ref(false);
 const message = ref("");
 const isLoading = ref(false);
 
