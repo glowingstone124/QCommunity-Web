@@ -204,37 +204,41 @@ button[type="submit"]:hover {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background: rgba(0, 0, 0, 0.5);
+	background: rgba(0, 0, 0, 0.6);
 	display: flex;
 	justify-content: center;
 	align-items: center;
 }
 
 .dialog {
-	background-color: #4d515e;
-	padding: 20px;
-	border-radius: 8px;
+	background-color: #3e4b77;
+	padding: 20px 30px;
+	border-radius: 30px;
 	width: 90%;
-	max-width: 400px;
-	text-align: center;
+	max-width: 500px;
+	text-align: left;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
 }
 
 .dialog h2 {
-	margin-bottom: 10px;
-	font-size: 1.5rem;
+	margin-bottom: 30px;
+	font-size: 1.8rem;
 }
 
 .dialog p {
-	margin-bottom: 20px;
-	color: #91b2cb;
+	margin-bottom: 50px;
+	color: #aacde3;
 }
 
 .dialog button {
-	padding: 10px 20px;
+	align-self: flex-end;
+	padding: 10px 30px;
 	border: none;
-	border-radius: 5px;
-	background-color: #354d69;
+	border-radius: 30px;
+	background-color: #6491c5;
 	color: #fff;
 	font-size: 1rem;
 	cursor: pointer;
@@ -242,8 +246,9 @@ button[type="submit"]:hover {
 }
 
 .dialog button:hover {
-	background-color: #435e77;
+	background-color: #8fc3f1;
 }
+
 
 .loading-spinner {
 	border: 3px solid #fff;
@@ -269,7 +274,7 @@ button[type="submit"]:hover {
 	background: #2c4438;
 	padding: 20px 60px;
 	margin-right: 10vw;
-	border-radius: 40px;
+	border-radius: 20px;
 	text-align: left;
 }
 
@@ -284,7 +289,7 @@ const router = useRouter();
 const username = ref("");
 const qq = ref("");
 const password = ref("");
-const isDialogVisible = ref(false);
+const isDialogVisible = ref(true);
 const message = ref("");
 const isLoading = ref(false);
 

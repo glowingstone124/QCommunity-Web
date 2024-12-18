@@ -15,7 +15,7 @@ onMounted(() => {
 			}
 		}).then(res => res.json())
 			.then(data => {
-				if (data.error === 3 && data.error === 1) {
+				if (data.error === 3 || data.error === 1) {
 					loginstat.value = false
 					return
 				}
