@@ -49,7 +49,7 @@ async function getMsgList() {
 			let senderName = message.sender;
 			let senderTooltip = senderName;
 
-			if (message.from === 0 || message.from === 1) {
+			if (message.from === 0) {
 				senderName = await getUsername(message.sender);
 				senderTooltip = message.sender;
 			}
