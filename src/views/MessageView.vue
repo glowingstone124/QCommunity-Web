@@ -1,27 +1,66 @@
 <script setup>
-import {onBeforeUnmount, onMounted, ref, nextTick} from "vue";
+import { onBeforeUnmount, onMounted, ref, nextTick } from "vue";
 
 const messageList = ref([]);
 let pollingInterval = null;
+const usernameCache = new Map();
+
+async function getUsername(sender) {
+	if (usernameCache.has(sender)) {
+		return usernameCache.get(sender);
+	}
+
+	try {
+		const response = await fetch(`https://api.qoriginal.vip/qo/download/name?qq=${sender}`);
+		const data = await response.json();
+		const username = data.username || "未注册";
+		usernameCache.set(sender, username);
+		return username;
+	} catch (error) {
+		console.error("Error fetching username:", error);
+		return "未注册";
+	}
+}
 
 async function getMsgList() {
 	try {
 		const response = await fetch("https://api.glowingstone.cn/qo/msglist/download");
 		const data = await response.json();
 
-		messageList.value = data.messages.map((message) => {
+		messageList.value = await Promise.all(data.messages.map(async (messageStr) => {
+			const message = JSON.parse(messageStr);
+			let msgContent = message.message;
+
+			msgContent = msgContent.replace(/\n/g, "<br>");
+
 			const imageRegex = /\[CQ:image,file=.*?\]/g;
 			const replRegex = /\[CQ:reply.*?\]/g;
 			const videoRegex = /\[CQ:video.*?\]/g;
 			const atRegex = /\[CQ:at.*?\]/g;
 			const mdRegex = /\[CQ:markdown.*?\]/g;
-			return message
+
+			let formattedMessage = msgContent
 				.replace(imageRegex, "[图片]")
 				.replace(replRegex, "[回复]")
 				.replace(videoRegex, "[视频]")
 				.replace(atRegex, "[@]")
 				.replace(mdRegex, "[MD消息]");
-		});
+
+			let senderName = message.sender;
+			let senderTooltip = senderName;
+
+			if (message.from === 0 || message.from === 1) {
+				senderName = await getUsername(message.sender);
+				senderTooltip = message.sender;
+			}
+
+			return {
+				sender: senderName,
+				senderTooltip,
+				content: formattedMessage,
+				time: new Date(message.time).toLocaleString(),
+			};
+		}));
 
 		const container = document.querySelector(".message-container");
 		if (container) {
@@ -54,21 +93,25 @@ onBeforeUnmount(() => {
 });
 </script>
 
+
 <template>
 	<div class="main">
-		<span>
-			<h1>消息列表</h1>
-			<router-link to="/" class="back">
-				<h2>回到主页</h2>
-			</router-link>
-		</span>
+    <span>
+      <h1>消息列表</h1>
+      <router-link to="/" class="back">
+        <h2>回到主页</h2>
+      </router-link>
+    </span>
 		<span class="message-container">
-			<div class="msgdiv" v-for="(message, index) in messageList" :key="index">
-				<p>{{ message }}</p>
-			</div>
-		</span>
+      <div class="msgdiv" v-for="(message, index) in messageList" :key="index">
+        <p><strong :title="message.senderTooltip">{{ message.sender }}</strong> <em>{{ message.time }}</em></p>
+        <p v-html="message.content"></p>
+      </div>
+    </span>
 	</div>
 </template>
+
+
 
 <style scoped>
 @import "/src/assets/base.css";
@@ -128,6 +171,7 @@ h1 {
 	word-wrap: break-word;
 }
 
+
 @media screen and (max-width: 768px) {
 	.main {
 		flex-direction: column;
@@ -156,3 +200,5 @@ h1 {
 	}
 }
 </style>
+
+
