@@ -82,13 +82,13 @@ function login() {
 	font-size: 3.5rem;
 	margin-top: 0;
 	margin-bottom: 0;
-	font-weight: 100;
-	font-family: 'Bahnschrift', sans-serif;
+	font-weight: 800;
+	font-family: 'Inter', sans-serif;
 }
 
 a {
 	color: var(--text);
-	border: 1px solid var(--text);
+	background-color: #54806c;
 	text-decoration: none;
 	border-radius: 15px;
 	padding: 10px 15px;
@@ -100,10 +100,10 @@ h1, p {
 
 .link {
 	text-decoration: none;
-	background: rgb(39, 64, 65);
+	background: rgb(77, 124, 126);
 	margin-top: 20px;
 	box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
-	padding: 30px 30px;
+	padding: 30px 80px;
 	border-radius: 30px;
 	color: #89fff5;
 }
@@ -115,7 +115,7 @@ h1, p {
 
 .personal {
 	background-color: rgb(39, 64, 65);
-	padding: 30px 50px;
+	padding: 50px 50px;
 	border-radius: 30px;
 	font-family: 'Bahnschrift', sans-serif;
 
