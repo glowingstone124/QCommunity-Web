@@ -1,6 +1,7 @@
 <script setup>
-import { onBeforeUnmount, onMounted, ref, nextTick } from "vue";
+import {onBeforeUnmount, onMounted, ref, nextTick} from "vue";
 import Redirect from "../components/RedirectButton.vue";
+
 const messageList = ref([]);
 let pollingInterval = null;
 const usernameCache = new Map();
@@ -101,19 +102,19 @@ onBeforeUnmount(() => {
 
 <template>
 	<div class="main">
-    <span>
+    <span class="navigator">
       <h1>消息列表</h1>
-		<Redirect to="/message" text-color="white" />
+		<Redirect to="/message" text-color="white"/>
     </span>
+
 		<span class="message-container">
-      <div class="msgdiv" v-for="(message, index) in messageList" :key="index">
-        <p><strong :title="message.senderTooltip">{{ message.sender }}</strong> <em>{{ message.time }}</em></p>
-        <p v-html="message.content"></p>
-      </div>
+      	<div class="msgdiv" v-for="(message, index) in messageList" :key="index">
+        	<p><strong :title="message.senderTooltip">{{ message.sender }}</strong> <em>{{ message.time }}</em></p>
+        	<p v-html="message.content"></p>
+        </div>
     </span>
 	</div>
 </template>
-
 
 
 <style scoped>
@@ -135,30 +136,11 @@ h1 {
 	font-weight: 100;
 }
 
-.back {
-	display: inline-block;
-	text-decoration: none;
-	color: var(--text);
-	border-radius: 50px;
-	padding: 20px;
-	background-color: #437763;
-	transition: background-color 0.3s;
-	font-size: 1.5rem;
-	h2 {
-		font-weight: 100;
-		margin: 0;
-		font-size: 1.5rem;
-	}
-}
-
-.back:hover {
-	background-color: #666b6a;
-}
 
 .message-container {
-	margin-left: 2vw;
-	width: 70%;
-	max-width: 80%;
+	margin: 10px;
+	width: 60%;
+	max-width: 100%;
 	max-height: 90vh;
 	overflow-y: auto;
 	padding: 1rem;
@@ -179,6 +161,7 @@ h1 {
 	.main {
 		flex-direction: column;
 		height: 100vh;
+		padding: 0rem 0rem;
 	}
 
 	h1 {
@@ -190,14 +173,20 @@ h1 {
 		border-radius: 30px;
 		padding: 0.3rem 1rem;
 		margin-bottom: 1rem;
+
 		h2 {
 			font-weight: 100;
 		}
 	}
+	.navigator {
+		padding: 10px 30px;
+		background-color: #437763;
+		margin-bottom: 10px;
+	}
 
 	.message-container {
-		margin-left: 0;
-		width: 100%;
+		margin: auto;
+		width: 90%;
 		padding: 0;
 		height: 80vh;
 	}
