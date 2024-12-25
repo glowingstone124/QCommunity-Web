@@ -120,6 +120,9 @@ onBeforeUnmount(() => {
 <style scoped>
 @import "/src/assets/base.css";
 
+.navigator {
+	margin-left: 8vw;
+}
 .main {
 	max-width: 100vw;
 	max-height: 100vh;
@@ -182,12 +185,14 @@ h1 {
 		padding: 10px 30px;
 		background-color: #437763;
 		margin-bottom: 10px;
+		margin-left: 0;
 	}
 
 	.message-container {
 		margin: auto;
 		width: 90%;
 		padding: 0;
+
 		height: 80vh;
 	}
 }
