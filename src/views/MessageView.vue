@@ -1,6 +1,6 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref, nextTick } from "vue";
-
+import Redirect from "../components/RedirectButton.vue";
 const messageList = ref([]);
 let pollingInterval = null;
 const usernameCache = new Map();
@@ -13,7 +13,12 @@ async function getUsername(sender) {
 	try {
 		const response = await fetch(`https://api.qoriginal.vip/qo/download/name?qq=${sender}`);
 		const data = await response.json();
-		const username = data.username || "未注册";
+		let username = data.username || "未注册";
+		if (data.code === 1) {
+			username = "未注册"
+		} else {
+			username = data.username;
+		}
 		usernameCache.set(sender, username);
 		return username;
 	} catch (error) {
@@ -98,9 +103,7 @@ onBeforeUnmount(() => {
 	<div class="main">
     <span>
       <h1>消息列表</h1>
-      <router-link to="/" class="back">
-        <h2>回到主页</h2>
-      </router-link>
+		<Redirect to="/message" text-color="white" />
     </span>
 		<span class="message-container">
       <div class="msgdiv" v-for="(message, index) in messageList" :key="index">
