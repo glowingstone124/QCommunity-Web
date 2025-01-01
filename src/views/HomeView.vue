@@ -78,6 +78,7 @@ function greeting() {
 	max-width: 100vw;
 	height: 100vh;
 	overflow-y: hidden;
+	background-color: #587958;
 }
 
 h1 {
@@ -118,7 +119,7 @@ h3.greeting {
 }
 
 .tile {
-	background-color: rgb(39, 64, 65);
+	background-color: #183d23;
 	padding: 2rem;
 	min-width: 300px;
 	max-width: 35vw;
@@ -137,7 +138,7 @@ h3.greeting {
 }
 
 .tile:hover {
-	background-color: rgba(44, 161, 196, 0.43);
+	background-color: #617c5d;
 	box-shadow: 0 4px 6px rgba(0, 0, 0, .1);
 }
 
@@ -150,7 +151,7 @@ h3.greeting {
 
 a {
 	text-decoration: none;
-	color: #89fff5;
+	color: #d4e7a9;
 }
 
 .title {

@@ -49,7 +49,6 @@ h1, h2, p {
 	padding: 20px;
 	background-color: #587958;
 	border-radius: 8px;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .column {

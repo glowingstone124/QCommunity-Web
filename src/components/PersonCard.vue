@@ -114,7 +114,7 @@ h1, p {
 }
 
 .personal {
-	background-color: rgb(39, 64, 65);
+	background-color: #183d23;
 	padding: 50px 50px;
 	border-radius: 30px;
 	font-family: 'Bahnschrift', sans-serif;
