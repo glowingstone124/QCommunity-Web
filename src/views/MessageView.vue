@@ -152,11 +152,14 @@ h1 {
 .msgdiv {
 	max-width: 100%;
 	border-radius: 10px;
-	background-color: rgba(90, 171, 189, 0.5);
+	background-color: rgb(40, 174, 95);
 	padding: 6px 4px 10px 30px;
 	margin-bottom: 1rem;
-	color: rgb(144, 210, 243);
+	color: rgb(250, 250, 250);
 	word-wrap: break-word;
+}
+p {
+	font-size: 1.3rem;
 }
 
 

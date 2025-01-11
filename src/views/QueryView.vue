@@ -2,6 +2,7 @@
 import { ref, watch } from 'vue';
 import debounce from 'lodash/debounce';
 import PlayerInfoCard from "@/components/PlayerCard.vue";
+import Redirect from "@/components/RedirectButton.vue";
 
 const message = ref('');
 const queryId = ref('');
@@ -50,9 +51,7 @@ watch(queryId, (newValue) => {
 	<div class="main">
 		<span>
 			<h1>查询</h1>
-			<router-link to="/" class="back">
-				<h2>回到主页</h2>
-			</router-link>
+			<Redirect />
 		</span>
 		<span class="content">
 			<h2>在这里查询</h2>

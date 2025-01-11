@@ -47,7 +47,7 @@ h1, h2, p {
 	width: 90%;
 	margin: 0 auto;
 	padding: 20px;
-	background-color: #587958;
+	background-color: #2a3a2a;
 	border-radius: 8px;
 }
 
@@ -59,7 +59,7 @@ h1, h2, p {
 .domain-item {
 	padding: 16px;
 	margin: 8px 0;
-	background-color: #183d23;
+	background-color: #394f39;
 	border-radius: 30px;
 	font-size: 18px;
 	color: #d4e7a9;
