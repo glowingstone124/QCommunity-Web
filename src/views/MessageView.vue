@@ -3,6 +3,7 @@ import {onBeforeUnmount, onMounted, ref, nextTick} from "vue";
 import Redirect from "../components/RedirectButton.vue";
 
 const messageList = ref([]);
+const messageInput = ref("");
 let pollingInterval = null;
 const usernameCache = new Map();
 
@@ -27,6 +28,29 @@ async function getUsername(sender) {
 		return "未注册";
 	}
 }
+
+async function sendMessage() {
+	try {
+		const response = await fetch("https://api.qoriginal.vip/qo/authorization/message/upload", {
+			headers: {
+				"Content-Type": "application/json",
+				"token": localStorage.getItem("token"),
+			},
+			method: "POST",
+			body: JSON.stringify({
+				message: messageInput.value,
+				timestamp: Date.now(),
+			}),
+		});
+
+		const data = await response.json();
+		console.log(data);
+
+	} catch (error) {
+		console.error("Error sending message:", error);
+	}
+}
+
 
 async function getMsgList() {
 	try {
@@ -113,6 +137,10 @@ onBeforeUnmount(() => {
         	<p v-html="message.content"></p>
         </div>
     </span>
+		<div class="input-container">
+			<input v-model="messageInput" class="message-input" placeholder="请输入消息..."/>
+			<button @click="sendMessage" class="send-button">发送</button>
+		</div>
 	</div>
 </template>
 
@@ -161,9 +189,45 @@ h1 {
 p {
 	font-size: 1.3rem;
 }
+.input-container {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	width: 50%;
+	margin-top: 10px;
+}
 
+.message-input {
+	flex-grow: 1;
+	padding: 0.5rem;
+	font-size: 1rem;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+}
+
+.send-button {
+	padding: 1rem 1.5rem;
+	background-color: #437763;
+	color: white;
+	border: none;
+	margin-bottom: 15px;
+	border-radius: 5px;
+	cursor: pointer;
+}
 
 @media screen and (max-width: 768px) {
+	.input-container {
+		flex-direction: column;
+		width: 100%;
+		margin-top: 10px;
+	}
+
+	.message-input {
+		width: 80%;
+		margin-bottom: 10px;
+	}
+
 	.main {
 		flex-direction: column;
 		height: 100vh;
