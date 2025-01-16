@@ -308,7 +308,7 @@ function submitForm() {
 		"&uid=" +
 		qq.value;
 	get(url).then((result) => {
-		if (result.result === true) {
+		if (result.code === 0) {
 			isDialogVisible.value = true;
 		} else {
 			message.value = "注册失败了！请检查qq或者用户名是否有重复。";
