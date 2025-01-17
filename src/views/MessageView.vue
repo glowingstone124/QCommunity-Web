@@ -30,6 +30,9 @@ async function getUsername(sender) {
 }
 
 async function sendMessage() {
+	if (messageInput.value === "") {
+		return;
+	}
 	try {
 		const response = await fetch("https://api.qoriginal.vip/qo/authorization/message/upload", {
 			headers: {
@@ -130,17 +133,18 @@ onBeforeUnmount(() => {
       <h1>消息列表</h1>
 		<Redirect to="/message" text-color="white"/>
     </span>
-
+		<span style="display: flex; flex-direction: column;">
 		<span class="message-container">
       	<div class="msgdiv" v-for="(message, index) in messageList" :key="index">
         	<p><strong :title="message.senderTooltip">{{ message.sender }}</strong> <em>{{ message.time }}</em></p>
         	<p v-html="message.content"></p>
         </div>
-    </span>
+    	</span>
 		<div class="input-container">
 			<input v-model="messageInput" class="message-input" placeholder="请输入消息..."/>
 			<button @click="sendMessage" class="send-button">发送</button>
 		</div>
+		</span>
 	</div>
 </template>
 
@@ -170,9 +174,9 @@ h1 {
 
 .message-container {
 	margin: 10px;
-	width: 60%;
+	width: 80%;
 	max-width: 100%;
-	max-height: 90vh;
+	max-height: 70vh;
 	overflow-y: auto;
 	padding: 1rem;
 }
