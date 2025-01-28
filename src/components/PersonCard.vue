@@ -86,7 +86,6 @@ function login() {
 }
 
 a {
-	color: var(--text);
 	background-color: #54806c;
 	text-decoration: none;
 	border-radius: 15px;
@@ -136,7 +135,6 @@ input[type="password"] {
 	display: block;
 	width: 100%;
 	border: none;
-	color: var(--text);
 	border-bottom: 3px solid #46c9b5;
 	padding: 2vh;
 	font-size: 16px;

@@ -1,5 +1,7 @@
 <script setup>
 import RedirectButton from "@/components/RedirectButton.vue";
+import ArtCard from "@/components/ArtCard.vue";
+
 import {onMounted, ref, watch} from "vue";
 
 const currentSetting = ref(0);
@@ -10,12 +12,14 @@ const logins = ref([])
 const iplist = ref([])
 const ipAddr = ref("")
 const isValidIp = ref(false)
+const isImmersive = ref(true)
 
 import {alert, defaultModules} from '@pnotify/core';
 import '@pnotify/core/dist/PNotify.css';
 import '@pnotify/core/dist/BrightTheme.css';
 import * as PNotifyMobile from '@pnotify/mobile';
 import '@pnotify/mobile/dist/PNotifyMobile.css';
+
 
 defaultModules.set(PNotifyMobile, {});
 
@@ -86,10 +90,14 @@ watch(currentSetting, (newValue) => {
 	switch (newValue) {
 		case 0:
 			queryAccountData();
+			isImmersive.value = true;
 			break;
 		case 1:
+			isImmersive.value = true;
 			queryIpDetails();
 			break;
+		case 2:
+			isImmersive.value = false;
 	}
 });
 </script>
@@ -115,7 +123,7 @@ watch(currentSetting, (newValue) => {
 			</span>
 		</div>
 
-		<div class="left">
+		<div class="left" v-bind:class="{hasBackground: isImmersive}">
 			<transition name="slide-in">
 				<div v-if="currentSetting === 0" key="account-info" class="panel-wrapper">
 					<div class="panel">
@@ -164,6 +172,7 @@ watch(currentSetting, (newValue) => {
 			</transition>
 			<transition name="slide-in">
 				<div v-if="currentSetting === 2" key="other-info">
+					<ArtCard />
 				</div>
 			</transition>
 		</div>
@@ -187,7 +196,6 @@ input[type="password"] {
 	margin: auto;
 	padding: 25px;
 	background-color: rgba(75, 91, 75, 0.42);
-	color: var(--text);
 	border: none;
 	border-bottom: #95c295 5px solid;
 	font-size: 1rem;
@@ -308,13 +316,14 @@ h1 {
 }
 
 .left {
-	background: rgb(39, 64, 65);
 	flex: 7;
 	margin: 2vw;
 	padding: 40px 80px;
 	border-radius: 40px;
 }
-
+.hasBackground {
+	background: rgb(39, 64, 65);
+}
 .navigate-menu {
 	display: flex;
 	flex-direction: column;
@@ -361,7 +370,6 @@ h1 {
 	border: none;
 	padding: 10px 30px;
 	background: #4b7a4f;
-	color: var(--text);;
 	border-radius: 20px;
 }
 
