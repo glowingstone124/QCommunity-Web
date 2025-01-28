@@ -1,6 +1,7 @@
 <script setup>
 import RedirectButton from "@/components/RedirectButton.vue";
 import {onMounted, ref, watch} from "vue";
+
 const currentSetting = ref(0);
 const username = ref("");
 const uid = ref(0);
@@ -10,7 +11,7 @@ const iplist = ref([])
 const ipAddr = ref("")
 const isValidIp = ref(false)
 
-import { alert, defaultModules } from '@pnotify/core';
+import {alert, defaultModules} from '@pnotify/core';
 import '@pnotify/core/dist/PNotify.css';
 import '@pnotify/core/dist/BrightTheme.css';
 import * as PNotifyMobile from '@pnotify/mobile';
@@ -48,16 +49,17 @@ function submitIp() {
 			"token": localStorage.getItem("token"),
 		}
 	})
-	.then(res => res.json())
-	.then(data => {
-		console.log(data);
-		if (data.code === 1) {
-			alert({text:'登录失效，请重新登陆'})
-		} if (data.code === 2) {
-			alert({text:'您最多只能注册五个ip'})
-		}
-		queryIpDetails()
-	})
+		.then(res => res.json())
+		.then(data => {
+			console.log(data);
+			if (data.code === 1) {
+				alert({text: '登录失效，请重新登陆'})
+			}
+			if (data.code === 2) {
+				alert({text: '您最多只能注册五个ip'})
+			}
+			queryIpDetails()
+		})
 }
 
 function queryIpDetails() {
@@ -66,11 +68,12 @@ function queryIpDetails() {
 			"token": localStorage.getItem("token"),
 		}
 	}).then(res => res.json())
-	.then(data => {
-		console.log(data);
-		iplist.value = data
-	})
+		.then(data => {
+			console.log(data);
+			iplist.value = data
+		})
 }
+
 const validateIP = () => {
 	const ipPattern = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
 	isValidIp.value = ipPattern.test(ipAddr.value);
@@ -81,8 +84,12 @@ onMounted(() => {
 
 watch(currentSetting, (newValue) => {
 	switch (newValue) {
-		case 0: queryAccountData(); break;
-		case 1: queryIpDetails(); break;
+		case 0:
+			queryAccountData();
+			break;
+		case 1:
+			queryIpDetails();
+			break;
 	}
 });
 </script>
@@ -111,14 +118,18 @@ watch(currentSetting, (newValue) => {
 		<div class="left">
 			<transition name="slide-in">
 				<div v-if="currentSetting === 0" key="account-info" class="panel-wrapper">
-					<div class="brief-info">
-						<h2>账户信息</h2>
-						<p>了解你的账户详情</p>
-					</div>
 					<div class="panel">
+						<h1 class="title">账户信息</h1>
 						<div class="username">
 							<h2>欢迎，{{ username }}</h2>
 							<h3>您已经游玩了<span class="time">{{ playtime }}</span>分钟</h3>
+						</div>
+						<div class="hint">
+							<span style="flex-direction: row; display: flex; align-items: center;">
+								<img src="@/components/icons/lock.svg" alt="">
+								<h2>账号安全</h2>
+							</span>
+							<p>您已经绑定到QQ: {{ uid }}</p>
 						</div>
 						<h3 class="subtitle">登录历史</h3>
 						<div class="func">
@@ -132,38 +143,27 @@ watch(currentSetting, (newValue) => {
 			</transition>
 			<transition name="slide-in">
 				<div v-if="currentSetting === 1" key="ip-whitelist" class="panel-wrapper">
-					<div class="brief-info">
-						<h2>IP过白</h2>
-						<p>如果您使用非中国大陆IP连接Quantum Original，您需要在这里报备。</p>
-					</div>
 					<div class="panel">
-						<div class="username">
-							<h2>欢迎，{{ username }}</h2>
-						</div>
-						<h3 class="subtitle">已经注册的IP</h3>
+						<h1 class="title">IP过白</h1>						<h3 class="subtitle">注册新的海外IP</h3>
 						<div class="func">
-							<div v-for="(ip) in iplist" class="ip-record">
-								<p>{{ip}}</p>
-							</div>
-						</div>
-						<h3 class="subtitle">注册新的海外IP</h3>
-						<div class="func">
-							<input type="text" @input="validateIP" v-model="ipAddr" placeholder="请输入内容" />
+							<input type="text" @input="validateIP" v-model="ipAddr" placeholder="请输入内容"/>
 						</div>
 						<div v-if="isValidIp">
 							<button type="submit" class="btn" @click="submitIp">
 								<span>提交</span>
 							</button>
 						</div>
+						<h3 class="subtitle">已经注册的IP</h3>
+						<div class="func">
+							<div v-for="(ip) in iplist" class="ip-record">
+								<p>{{ ip }}</p>
+							</div>
+						</div>
 					</div>
 				</div>
 			</transition>
 			<transition name="slide-in">
 				<div v-if="currentSetting === 2" key="other-info">
-					<div class="brief-info">
-						<h2>其他</h2>
-						<p>这里是其他信息展示。</p>
-					</div>
 				</div>
 			</transition>
 		</div>
@@ -192,21 +192,25 @@ input[type="password"] {
 	border-bottom: #95c295 5px solid;
 	font-size: 1rem;
 }
+
 input:focus {
 	border-bottom-color: #5fb493;
 }
+
 .login-record {
 	border-radius: 20px;
 	background-color: rgb(61, 100, 101);
 	padding: 10px 20px;
 	margin-bottom: 20px;
 }
+
 .ip-record {
 	border-radius: 20px;
 	background-color: rgb(61, 100, 101);
-	padding: 10px 20px;
-	margin-bottom: 20px;
+	padding: 5px 2px;
+	margin: 10px 20px;
 	text-align: center;
+
 	p {
 		font-size: 1.3rem;
 		font-family: monospace;
@@ -322,6 +326,7 @@ h1 {
 @media (max-width: 768px) {
 	.container {
 		flex-direction: column;
+		overflow: scroll;
 	}
 
 	.panel-wrapper {
@@ -347,18 +352,41 @@ h1 {
 .slide-in-leave-active {
 	display: none;
 }
+
 .func {
-	max-height: 60%;
 }
+
 .btn {
 	margin: 20px 0;
 	border: none;
-	padding: 15px 30px;
+	padding: 10px 30px;
 	background: #4b7a4f;
 	color: var(--text);;
 	border-radius: 20px;
 }
-.btn:hover{
+
+.btn:hover {
 	background: #59935e;
+}
+
+.hint {
+	margin: auto;
+	background-color: #4a557c;
+	border-radius: 20px;
+	padding: 5px 25px;
+	min-width: 70%;
+	display: flex;
+	flex-direction: column;
+
+	img {
+		height: 50%;
+	}
+
+	h2, p {
+		color: #ffffff;
+	}
+	h2 {
+		margin: 7px;
+	}
 }
 </style>

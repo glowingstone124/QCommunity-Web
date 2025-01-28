@@ -78,7 +78,6 @@ function login() {
 @import '/src/assets/main.css';
 
 .username {
-	color: var(--text);
 	font-size: 3.5rem;
 	margin-top: 0;
 	margin-bottom: 0;
@@ -100,11 +99,11 @@ h1, p {
 
 .link {
 	text-decoration: none;
-	background: rgb(77, 124, 126);
+	background: rgb(67, 136, 97);
 	margin-top: 20px;
 	box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
 	padding: 30px 80px;
-	border-radius: 30px;
+	border-radius: 20px;
 	color: #89fff5;
 }
 
@@ -114,11 +113,12 @@ h1, p {
 }
 
 .personal {
-	background-color: #183d23;
+	background: #193c24;
 	padding: 50px 50px;
 	border-radius: 30px;
 	font-family: 'Bahnschrift', sans-serif;
-
+	display: flex;
+	flex-direction: column;
 	* {
 		transition: 0.3s all ease-in-out;
 	}
