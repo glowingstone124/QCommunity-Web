@@ -5,7 +5,6 @@
 </template>
 
 <script setup>
-import {ref, computed, onMounted, onBeforeUnmount} from 'vue';
 /*
 const angle = ref(120);
 const animating = ref(true);

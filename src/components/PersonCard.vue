@@ -89,6 +89,7 @@ a {
 	background-color: #54806c;
 	text-decoration: none;
 	border-radius: 15px;
+	color: #89fff5;
 	padding: 10px 15px;
 }
 
@@ -132,6 +133,7 @@ h1, p {
 
 input[type="text"],
 input[type="password"] {
+	color: #89fff5;
 	display: block;
 	width: 100%;
 	border: none;

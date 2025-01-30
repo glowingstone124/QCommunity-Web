@@ -10,22 +10,6 @@ function push(id) {
 	router.push(`${functionList[id]}`);
 }
 
-function greeting() {
-	const now = new Date();
-	const hour = now.getHours();
-
-	if (hour >= 6 && hour < 11) {
-		return "早上好";
-	} else if (hour >= 11 && hour < 14) {
-		return "中午好";
-	} else if (hour >= 14 && hour < 18) {
-		return "下午好";
-	} else if (hour >= 18 || hour < 6) {
-		return "晚上好";
-	}
-
-	return "您好";
-}
 </script>
 
 <template>
@@ -34,7 +18,6 @@ function greeting() {
 			<h1>QCommunity</h1>
 			<p>beta</p>
 		</span>
-		<h3 class="greeting">{{ greeting() }}</h3>
 		<span style="display: flex; flex: 2" class="content-span">
 			<PersonCard/>
 		<div class="tiles-container">
@@ -42,6 +25,11 @@ function greeting() {
 				<h2>注册账号</h2>
 				<p>注册账号并且开始游玩</p>
 				<span class="icon-messages"></span>
+			</router-link>
+			<router-link to="/sponsors" class="tile">
+				<h2>致谢</h2>
+				<p>QuantumOriginal的发展离不开社区的支持。点击前往赞助者名单</p>
+				<span class="icon-query"></span>
 			</router-link>
 			<router-link to="/query" class="tile">
 				<h2>查询</h2>
@@ -93,9 +81,12 @@ h1 {
 }
 
 
-h3.greeting {
+.greeting {
 	color: var(--text);
 	font-size: 1.2rem;
+	margin: 20px 20px;
+	background: #2c3e50;
+	padding: 10px;
 	font-weight: 300;
 }
 
@@ -103,11 +94,11 @@ h3.greeting {
 	display: flex;
 	justify-content: center;
 	flex-wrap: wrap;
-	max-width: 80vw;
-	max-height: 65vh;
+	max-width: 100vw;
+	max-height: 70vh;
 	margin: auto auto;
 	overflow-y: scroll;
-	flex: 8;
+	flex: 6;
 }
 
 .message-container {
