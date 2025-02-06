@@ -2,17 +2,44 @@
 import {useRouter} from 'vue-router';
 
 import PersonCard from "@/components/PersonCard.vue";
+import {onMounted, ref} from "vue";
 
 const router = useRouter();
+const dialogRef = ref(null);
 
+function gotoWebsite() {
+	window.location.href = "https://qoriginal.vip"
+}
 function push(id) {
 	const functionList = ["/", "/login", "/query", "/news", "/messages"];
 	router.push(`${functionList[id]}`);
 }
+function showDialog() {
+	dialogRef.value.showModal();
+}
 
+function closeDialog() {
+	dialogRef.value.close();
+	sessionStorage.setItem('hasSeenDialog', 'true');
+}
+
+onMounted(() => {
+	if (!sessionStorage.getItem('hasSeenDialog')) {
+		showDialog();
+	}
+});
 </script>
 
 <template>
+	<dialog ref="dialogRef" class="custom-dialog">
+		<div class="dialog-content">
+			<h2>Quantum Original 2 新官网现已上线！</h2>
+			<span>
+			<button @click="gotoWebsite" class="close-btn">带我去！</button>
+			<button @click="closeDialog" class="close-btn">我知道了</button>
+				</span>
+		</div>
+	</dialog>
 	<div class="main">
 		<span class="title">
 			<h1>QCommunity</h1>
@@ -193,5 +220,53 @@ a {
 
 		min-height: unset;
 	}
+}
+.custom-dialog {
+	border: none;
+	border-radius: 15px;
+	padding: 2rem;
+	background: #2c3e50;
+	color: #fff;
+	box-shadow: 0 0 20px rgba(0,0,0,0.3);
+	width: 50%;
+}
+
+.custom-dialog::backdrop {
+	background: rgba(0, 0, 0, 0.5);
+	backdrop-filter: blur(3px);
+}
+
+.dialog-content {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	text-align: center;
+}
+
+.dialog-content h2 {
+	font-size: 2rem;
+	margin: 0;
+	color: #d4e7a9;
+}
+
+.dialog-content p {
+	font-size: 1.1rem;
+	margin: 0.5rem 0;
+}
+
+.close-btn {
+	align-self: flex-end;
+	background: #587958;
+	color: white;
+	border: none;
+	margin: 30px;
+	padding: 0.8rem 1.5rem;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: background 0.3s ease;
+}
+
+.close-btn:hover {
+	background: #6b9e6b;
 }
 </style>

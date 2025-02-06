@@ -62,7 +62,7 @@ const showDeclaration = ref(false);
 }
 
 .slide-fade-enter-to, .slide-fade-leave-from {
-	max-height: 300px;
+	max-height: 100%;
 	opacity: 1;
 }
 
@@ -107,7 +107,8 @@ span {
 	font-weight: 600;
 	padding-bottom: 0;
 	margin-bottom: 0;
-	font-size: 4rem;
+	font-size: 4.8rem;
+	font-family: 'Bahnschrift', sans-serif;
 }
 .chapter {
 	font-weight: 400;
