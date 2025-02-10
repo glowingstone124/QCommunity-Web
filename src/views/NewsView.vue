@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import Redirect from '@/components/RedirectButton.vue';
-const domains = ref(['qoriginal.vip', 'prox0.qoriginal.vip', 'prox1.qoriginal.vip']);
+const domains = ref(['qoriginal.vip', 'prox0.qoriginal.vip', 'prox1.qoriginal.vip', 'globe.qoriginal.vip']);
 
 const copyToClipboard = (text) => {
 	navigator.clipboard.writeText(text).then(() => {
