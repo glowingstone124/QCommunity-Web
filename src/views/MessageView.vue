@@ -6,7 +6,7 @@ const messageList = ref([]);
 const messageInput = ref("");
 let pollingInterval = null;
 const usernameCache = new Map();
-
+const sendButtonDisabled = ref(false);
 async function getUsername(sender) {
 	if (usernameCache.has(sender)) {
 		return usernameCache.get(sender);
@@ -33,6 +33,7 @@ async function sendMessage() {
 	if (messageInput.value === "") {
 		return;
 	}
+	sendButtonDisabled.value = true;
 	try {
 		const response = await fetch("https://api.qoriginal.vip/qo/authorization/message/upload", {
 			headers: {
@@ -48,9 +49,17 @@ async function sendMessage() {
 
 		const data = await response.json();
 		console.log(data);
+		if (data.code === 1) {
+			alert("请重新登录，登录已经过期。")
+			return;
+		}
+		sendButtonDisabled.value = false;
+		messageInput.value = "";
+		await getMsgList();
 
 	} catch (error) {
 		console.error("Error sending message:", error);
+		alert(error.message);
 	}
 }
 
@@ -131,140 +140,225 @@ onBeforeUnmount(() => {
 	<div class="main">
     <span class="navigator">
       <h1>消息列表</h1>
-		<Redirect to="/message" text-color="white"/>
+      <Redirect to="/message" text-color="white"/>
     </span>
-		<span style="display: flex; flex-direction: column;">
-		<span class="message-container">
-      	<div class="msgdiv" v-for="(message, index) in messageList" :key="index">
-        	<p><strong :title="message.senderTooltip">{{ message.sender }}</strong> <em>{{ message.time }}</em></p>
-        	<p v-html="message.content"></p>
-        </div>
-    	</span>
-		<div class="input-container">
-			<input v-model="messageInput" class="message-input" placeholder="请输入消息..."/>
-			<button @click="sendMessage" class="send-button">发送</button>
+		<div class="content-wrapper">
+			<div class="message-container">
+				<div
+					v-for="(message, index) in messageList"
+					:key="index"
+					class="message-bubble"
+				>
+					<div class="message-header">
+            <span
+				class="sender-name"
+				:title="message.senderTooltip"
+			>{{ message.sender }}</span>
+						<span class="message-time">{{ message.time }}</span>
+					</div>
+					<div
+						class="message-content"
+						v-html="message.content"
+					></div>
+				</div>
+			</div>
+			<div class="fixed-input-container">
+				<div class="input-container">
+					<input
+						v-model="messageInput"
+						class="message-input"
+						placeholder="请输入消息..."
+						@keydown.enter="sendMessage"
+					/>
+					<button
+						@click="sendMessage"
+						class="send-button"
+						:disabled="sendButtonDisabled"
+					>
+						{{ sendButtonDisabled ? '发送中...' : '发送' }}
+					</button>
+				</div>
+			</div>
 		</div>
-		</span>
 	</div>
 </template>
 
 
 <style scoped>
-@import "/src/assets/base.css";
+.main {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	padding: 1rem;
+	overflow: auto;
+	background: #f5f5f5;
+}
+
+.fixed-input-container {
+	position: fixed;
+	bottom: 0;
+	left: 20px;
+	right: 20px;
+	z-index: 1000;
+	padding: 1rem 0;
+}
 
 .navigator {
-	margin-left: 8vw;
-}
-.main {
-	max-width: 100vw;
-	max-height: 100vh;
 	display: flex;
-	flex-direction: row;
-	padding: 5rem 1rem;
-	overflow: auto;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1rem 2rem;
+	background: #437763;
+	border-radius: 12px;
+	margin-bottom: 1rem;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
-	color: var(--text);
-	font-size: 3rem;
+	color: white;
+	font-size: 2rem;
 	margin: 0;
-	font-weight: 100;
+	font-weight: 500;
 }
 
-
-.message-container {
-	margin: 10px;
-	width: 80%;
-	max-width: 100%;
-	max-height: 70vh;
-	overflow-y: auto;
+.content-wrapper {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	background: white;
+	border-radius: 12px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 	padding: 1rem;
 }
 
-.msgdiv {
-	max-width: 100%;
-	border-radius: 10px;
-	background-color: rgb(40, 174, 95);
-	padding: 6px 4px 10px 30px;
+.message-container {
+	flex: 1;
+	padding: 2rem;
+	background: #f8f9fa;
+	border-radius: 8px;
 	margin-bottom: 1rem;
-	color: rgb(250, 250, 250);
-	word-wrap: break-word;
 }
-p {
-	font-size: 1.3rem;
+
+.message-bubble {
+	background: white;
+	border-radius: 12px;
+	padding: 1rem;
+	margin-bottom: 1rem;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
-.input-container {
+
+.message-header {
 	display: flex;
-	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
-	width: 50%;
-	margin-top: 10px;
+	margin-bottom: 0.5rem;
+}
+
+.sender-name {
+	font-weight: 600;
+	color: #437763;
+	font-size: 0.95rem;
+	max-width: 200px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.message-time {
+	color: #666;
+	font-size: 0.85rem;
+}
+
+.message-content {
+	color: #333;
+	line-height: 1.5;
+	font-size: 1rem;
+}
+
+.input-container {
+	display: flex;
+	gap: 0.5rem;
+	padding: 1rem;
+	background: white;
+	border-radius: 8px;
+	box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .message-input {
-	flex-grow: 1;
-	padding: 0.5rem;
+	flex: 1;
+	padding: 0.8rem;
+	border: 2px solid #e0e0e0;
+	border-radius: 8px;
 	font-size: 1rem;
-	border: 1px solid #ccc;
-	border-radius: 5px;
+	transition: border-color 0.3s;
+}
+
+.message-input:focus {
+	border-color: #437763;
+	outline: none;
 }
 
 .send-button {
-	padding: 1rem 1.5rem;
-	background-color: #437763;
+	padding: 0.8rem 1.5rem;
+	background: #437763;
 	color: white;
 	border: none;
-	margin-bottom: 15px;
-	border-radius: 5px;
+	border-radius: 8px;
 	cursor: pointer;
+	transition: all 0.3s;
 }
 
-@media screen and (max-width: 768px) {
-	.input-container {
-		flex-direction: column;
-		width: 100%;
-		margin-top: 10px;
-	}
+.send-button:hover:not(:disabled) {
+	background: #365f4d;
+}
 
+.send-button:disabled {
+	background: #a0a0a0;
+	cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+	.navigator {
+		padding: 0.8rem;
+		margin: 0 -1rem;
+		border-radius: 0;
+	}
 	.message-input {
-		width: 80%;
-		margin-bottom: 10px;
+		max-width: 80%;
 	}
 
-	.main {
-		flex-direction: column;
-		height: 100vh;
-		padding: 0rem 0rem;
+	.fixed-input-container {
+		left: 0;
+		right: 0;
+		padding: 1rem;
 	}
 
 	h1 {
-		font-size: 3rem;
+		font-size: 1.5rem;
 	}
 
-	.back {
-		font-size: 0.6rem;
-		border-radius: 30px;
-		padding: 0.3rem 1rem;
-		margin-bottom: 1rem;
-
-		h2 {
-			font-weight: 100;
-		}
-	}
-	.navigator {
-		padding: 10px 30px;
-		background-color: #437763;
-		margin-bottom: 10px;
-		margin-left: 0;
+	.content-wrapper {
+		border-radius: 0;
+		padding: 0.5rem;
 	}
 
 	.message-container {
-		margin: auto;
-		width: 90%;
-		padding: 0;
+		padding: 0.5rem;
+	}
 
-		height: 80vh;
+	.input-container {
+		flex-direction: column;
+		padding: 2rem;
+		background: none;
+		backdrop-filter: blur(6px);
+	}
+
+	.message-input {
+		width: 100%;
+	}
+
+	.send-button {
+		width: 100%;
+		padding: 0.8rem;
 	}
 }
 </style>
