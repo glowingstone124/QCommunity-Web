@@ -6,7 +6,9 @@ const messageList = ref([]);
 const messageInput = ref("");
 let pollingInterval = null;
 const usernameCache = new Map();
+const loginstat = ref(false)
 const sendButtonDisabled = ref(false);
+const token = ref(localStorage.getItem('token') || "");
 async function getUsername(sender) {
 	if (usernameCache.has(sender)) {
 		return usernameCache.get(sender);
@@ -62,6 +64,7 @@ async function sendMessage() {
 		alert(error.message);
 	}
 }
+
 
 
 async function getMsgList() {
@@ -127,8 +130,20 @@ function stopPolling() {
 }
 
 onMounted(() => {
+	fetch("https://api.qoriginal.vip/qo/authorization/account", {
+			headers: {
+				"token": token.value
+			}
+		}).then(res => res.json())
+			.then(data => {
+				if (data.error === 3 || data.error === 1) {
+					loginstat.value = false
+				} else {
+					loginstat.value = true
+				}
+	});
 	startPolling();
-});
+})
 
 onBeforeUnmount(() => {
 	stopPolling();
@@ -143,7 +158,8 @@ onBeforeUnmount(() => {
       <Redirect to="/message" text-color="white"/>
     </span>
 		<div class="content-wrapper">
-			<div class="message-container">
+			<div class="message-container" v-if="loginstat">
+			
 				<div
 					v-for="(message, index) in messageList"
 					:key="index"
@@ -161,6 +177,9 @@ onBeforeUnmount(() => {
 						v-html="message.content"
 					></div>
 				</div>
+			</div>
+			<div class="message-container" v-else>
+				<h1 class="notification">您必须先登录或者注册才能聊天。</h1>
 			</div>
 			<div class="fixed-input-container">
 				<div class="input-container">
@@ -186,16 +205,19 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .main {
-	display: flex;
-	flex-direction: column;
-	height: 100vh;
-	padding: 1rem;
-	overflow: auto;
-	background: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;        
+    padding: 1rem;
+    overflow: hidden;      
+    background: #f5f5f5;
+    box-sizing: border-box; 
 }
-
+.notification {
+	color:black;
+	
+}
 .fixed-input-container {
-	position: fixed;
 	bottom: 0;
 	left: 20px;
 	right: 20px;
@@ -222,18 +244,19 @@ h1 {
 }
 
 .content-wrapper {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	background: white;
-	border-radius: 12px;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-	padding: 1rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;      
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .message-container {
 	flex: 1;
 	padding: 2rem;
+	overflow:auto;
 	background: #f8f9fa;
 	border-radius: 8px;
 	margin-bottom: 1rem;

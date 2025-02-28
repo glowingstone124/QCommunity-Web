@@ -1,10 +1,12 @@
 <template>
 	<div id="app" :style="{ backgroundImage: gradientStyle }">
+		<NavBar></NavBar>
 		<router-view/>
 	</div>
 </template>
 
 <script setup>
+import NavBar from './components/NavBar.vue';
 /*
 const angle = ref(120);
 const animating = ref(true);

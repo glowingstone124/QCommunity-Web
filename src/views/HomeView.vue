@@ -1,7 +1,7 @@
 <script setup>
 import {useRouter} from 'vue-router';
 
-import PersonCard from "@/components/PersonCard.vue";
+import NavBar from '@/components/NavBar.vue';
 import {onMounted, ref} from "vue";
 
 const router = useRouter();
@@ -41,12 +41,7 @@ onMounted(() => {
 		</div>
 	</dialog>
 	<div class="main">
-		<span class="title">
-			<h1>QCommunity</h1>
-			<p>beta</p>
-		</span>
 		<span style="display: flex; flex: 2" class="content-span">
-			<PersonCard/>
 		<div class="tiles-container">
 						<router-link to="/register" class="tile">
 				<h2>注册账号</h2>
@@ -89,7 +84,6 @@ onMounted(() => {
 
 .main {
 	padding-top: 6rem;
-	padding-left: 9rem;
 	max-width: 100vw;
 	height: 100vh;
 	overflow-y: hidden;
@@ -122,7 +116,6 @@ h1 {
 	justify-content: center;
 	flex-wrap: wrap;
 	max-width: 100vw;
-	max-height: 70vh;
 	margin: auto auto;
 	overflow-y: scroll;
 	flex: 6;
