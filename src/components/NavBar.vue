@@ -78,7 +78,7 @@
     router.push('/')
   }
   const toggleUserMenu = () => {
-    console.log('Toggle user menu')
+    console.log('/account')
   }
   const goToLogin = () => {
   router.push('/login');
