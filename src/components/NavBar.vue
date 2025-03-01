@@ -92,12 +92,13 @@ const goToLogin = () => {
   display: flex;
   flex-direction: row;
   align-items: center;
-  background: rgb(35, 90, 30);
+  background: rgb(239, 236, 236);
   border-radius: 40px;
-  padding: 0 10px;
-
+  padding: 1px;
+  overflow: hidden;
   p {
-    color: rgb(249, 252, 249);
+    margin:0 5px;
+    color: rgb(36, 37, 36);
   }
 }
 
@@ -117,9 +118,8 @@ const goToLogin = () => {
   justify-content: space-between;
   align-items: center;
   height: 100%;
-  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 2rem;
 }
 
 .logo-section {
@@ -158,9 +158,9 @@ const goToLogin = () => {
 .user-avatar {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
   cursor: pointer;
-  border: 2px solid #eee;
+  margin-right: 10px;
+  border-radius: 50%;
   transition: transform 0.2s;
 }
 

@@ -100,33 +100,16 @@ h1 {
 	-webkit-background-clip: text;
 	color: transparent;
 }
-
-
-.greeting {
-	color: var(--text);
-	font-size: 1.2rem;
-	margin: 20px 20px;
-	background: #2c3e50;
-	padding: 10px;
-	font-weight: 300;
-}
-
 .tiles-container {
 	display: flex;
 	justify-content: center;
 	flex-wrap: wrap;
 	max-width: 100vw;
 	margin: auto auto;
-	overflow-y: scroll;
+	overflow-y: auto;
+  max-height: calc(100vh - 60px);
 	flex: 6;
-}
-
-.message-container {
-	flex: 3;
-	display: flex;
-	align-items: center;
-	flex-direction: column;
-	justify-content: center;
+  padding-bottom: 2rem;
 }
 
 .tile {
@@ -136,7 +119,6 @@ h1 {
 	max-width: 35vw;
 	min-height: 18vh;
 	margin: 10px;
-	border-radius: 30px;
 	text-align: left;
 	cursor: pointer;
 	transition: all .3s ease-in-out;
