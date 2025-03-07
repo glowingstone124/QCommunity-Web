@@ -44,33 +44,33 @@ onMounted(() => {
 		<span style="display: flex; flex: 2" class="content-span">
 		<div class="tiles-container">
 						<router-link to="/register" class="tile">
-				<h2>注册账号</h2>
-				<p>注册账号并且开始游玩</p>
+				<h2>{{ $t("mainPage.register") }}</h2>
+				<p>{{ $t("mainPage_description.register") }}</p>
 				<span class="icon-messages"></span>
 			</router-link>
 			<router-link to="/sponsors" class="tile">
-				<h2>致谢</h2>
-				<p>QuantumOriginal的发展离不开社区的支持。点击前往赞助者名单</p>
+				<h2>{{ $t("mainPage.greetings") }}</h2>
+				<p>{{ $t("mainPage_description.greetings") }}</p>
 				<span class="icon-query"></span>
 			</router-link>
 			<router-link to="/query" class="tile">
-				<h2>查询</h2>
-				<p>查询一个用户当前的状态，或是在群里与他互动。</p>
+				<h2>{{ $t("mainPage.query") }}</h2>
+				<p>{{ $t("mainPage_description.query") }}</p>
 				<span class="icon-query"></span>
 			</router-link>
 			<router-link to="/news" class="tile">
-				<h2>IP查询</h2>
-				<p>了解当前可用ip</p>
+				<h2>{{ $t("mainPage.ip_query") }}</h2>
+				<p>{{ $t("mainPage_description.ip_query") }}</p>
 				<span class="icon-news"></span>
 			</router-link>
 			<router-link to="/messages" class="tile">
-				<h2>消息列表</h2>
-				<p>查看服务器之前的聊天记录。</p>
+				<h2>{{ $t("mainPage.message_list") }}</h2>
+				<p>{{ $t("mainPage_description.message_list") }}</p>
 				<span class="icon-messages"></span>
 			</router-link>
 			<router-link to="/dashboard" class="tile">
-				<h2>仪表板</h2>
-				<p>查看服务器状态。</p>
+				<h2>{{ $t("mainPage.dashboard") }}</h2>
+				<p>{{ $t("mainPage_description.dashboard") }}</p>
 				<span class="icon-messages"></span>
 			</router-link>
 		</div>

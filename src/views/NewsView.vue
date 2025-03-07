@@ -2,12 +2,10 @@
 import { onMounted, ref } from 'vue';
 import Redirect from '@/components/RedirectButton.vue';
 
-// 定义响应式变量
-const proxies = ref([]); // 用于存储从 API 获取的代理列表
-const isLoading = ref(true); // 加载状态
-const error = ref(null); // 错误信息
+const proxies = ref([]);
+const isLoading = ref(true);
+const error = ref(null);
 
-// 从 API 获取代理列表
 const fetchProxies = async () => {
   try {
     const response = await fetch('https://api.qoriginal.vip/qo/proxies/status');
@@ -15,7 +13,7 @@ const fetchProxies = async () => {
       throw new Error('网络响应不正常');
     }
     const data = await response.json();
-    proxies.value = data; // 直接存储所有代理信息
+    proxies.value = data;
   } catch (err) {
     error.value = '无法获取代理列表，请稍后重试。';
     console.error('API 请求失败:', err);
@@ -24,7 +22,6 @@ const fetchProxies = async () => {
   }
 };
 
-// 复制域名到剪贴板
 const copyToClipboard = (text) => {
   navigator.clipboard.writeText(text).then(() => {
     alert(`已复制: ${text}`);
@@ -33,7 +30,6 @@ const copyToClipboard = (text) => {
   });
 };
 
-// 组件挂载时调用 API
 onMounted(() => {
   fetchProxies();
 });

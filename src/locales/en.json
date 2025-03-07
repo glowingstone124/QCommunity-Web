@@ -1,0 +1,20 @@
+{
+  "mainPage": {
+    "register": "Register",
+    "greetings": "Greetings",
+    "query": "Query",
+    "ip_query": "Server IPs",
+    "message_list": "Message List",
+    "dashboard": "Dashboard",
+    "greeting_text": "You have already played {played} minutes",
+    "account_center": "Account Center"
+  },
+  "mainPage_description": {
+    "register": "Register your (maybe first?) QuantumOriginal account here",
+    "greetings": "Click to view our list of sponsors",
+    "query": "Query a specific user",
+    "ip_query": "Find available server connections",
+    "message_list": "View server chat logs",
+    "dashboard": "Check server status"
+  }
+}

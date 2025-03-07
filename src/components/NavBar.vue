@@ -12,7 +12,7 @@
         </div>
         <div class="user-info" v-if="loginstat">
           <span class="user-name">{{ username }}</span>
-          <span class="user-role">您已经游玩了{{ playtime }}分钟</span>
+          <span class="user-role">{{ $t("mainPage.greeting_text", {played: playtime}) }}</span>
         </div>
         <div class="avatar-container"   @click="toggleUserMenu">
           <img
@@ -21,8 +21,11 @@
               class="user-avatar"
               @click="toggleUserMenu"
           >
-          <p v-if="loginstat"   @click="toggleUserMenu">账户中心</p>
+          <p v-if="loginstat"   @click="toggleUserMenu">{{ $t("mainPage.account_center") }}</p>
         </div>
+        <button class="lang-btn" @click="toggleLang">
+          {{ locale === "zh" ? "EN" : "中文" }}
+        </button>
       </div>
     </div>
   </header>
@@ -31,9 +34,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import {useI18n} from "vue-i18n";
 
 const router = useRouter()
-
+const { locale } = useI18n();
 const username = ref(localStorage.getItem('username') || "")
 const token = ref(localStorage.getItem('token') || "")
 const loginstat = ref(false)
@@ -83,6 +87,10 @@ const toggleUserMenu = () => {
 const goToLogin = () => {
   router.push('/login')
 }
+const toggleLang = () => {
+  locale.value = locale.value === "zh" ? "en" : "zh";
+  localStorage.setItem("locale", locale.value);
+};
 </script>
 
 <style scoped>
@@ -246,5 +254,19 @@ const goToLogin = () => {
     width: 30px;
     height: 30px;
   }
+}
+.lang-btn {
+  background: #1b6414;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
+.lang-btn:hover {
+  background: #2d8a29;
 }
 </style>

@@ -1,6 +1,8 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 
+import i18n from './i18n.js';
+
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from './views/HomeView.vue';
 import LoginView from './views/LoginView.vue';
@@ -71,4 +73,7 @@ const router = createRouter({
     routes
 });
 
-createApp(App).use(router).mount('#app');
+createApp(App)
+    .use(router)
+    .use(i18n)
+    .mount('#app');
