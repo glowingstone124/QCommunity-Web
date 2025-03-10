@@ -43,41 +43,43 @@
 	  </div>
 	</div>
   </template>
-  
-  <script setup>
-  import { ref } from 'vue'
-  import { useRouter } from 'vue-router'
-  import { get } from '/src/utils/request.js'
-  
-  const router = useRouter()
-  const username = ref('')
-  const password = ref('')
-  const errorMessage = ref('')
-  const loading = ref(false)
-  
-  const login = async () => {
-	errorMessage.value = ''
-	loading.value = true
-  
-	try {
-	  const url = `https://api.qoriginal.vip/qo/game/login?username=${encodeURIComponent(username.value)}&password=${encodeURIComponent(password.value)}`
-	  const response = await get(url)
-	  
-	  if (response.result) {
-		localStorage.setItem('username', username.value)
-		localStorage.setItem('token', response.token)
-		router.push('/') // 登录成功后跳转到首页
-	  } else {
-		errorMessage.value = '用户名或密码错误，请重试'
-	  }
-	} catch (error) {
-	  errorMessage.value = '网络连接错误，请稍后再试'
-	  console.error('登录失败:', error)
-	} finally {
-	  loading.value = false
-	}
+
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { get } from '/src/utils/request.js'
+
+const router = useRouter()
+const username = ref('')
+const password = ref('')
+const errorMessage = ref('')
+const loading = ref(false)
+
+const login = async () => {
+  errorMessage.value = ''
+  loading.value = true
+
+  try {
+    const url = `https://api.qoriginal.vip/qo/game/login?username=${encodeURIComponent(username.value)}&password=${encodeURIComponent(password.value)}`
+    const response = await get(url)
+
+    if (response.result) {
+      localStorage.setItem('username', username.value)
+      localStorage.setItem('token', response.token)
+
+      router.push('/').then(() => window.location.reload())
+    } else {
+      errorMessage.value = '用户名或密码错误，请重试'
+    }
+  } catch (error) {
+    errorMessage.value = '网络连接错误，请稍后再试'
+    console.error('登录失败:', error)
+  } finally {
+    loading.value = false
   }
-  </script>
+}
+</script>
+
   
   <style scoped>
   .login-wrapper {
