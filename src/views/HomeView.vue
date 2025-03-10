@@ -43,7 +43,7 @@ onMounted(() => {
 	<div class="main">
 		<span style="display: flex; flex: 2" class="content-span">
 		<div class="tiles-container">
-						<router-link to="/register" class="tile">
+      <router-link to="/register" class="tile">
 				<h2>{{ $t("mainPage.register") }}</h2>
 				<p>{{ $t("mainPage_description.register") }}</p>
 				<span class="icon-messages"></span>
@@ -71,6 +71,11 @@ onMounted(() => {
 			<router-link to="/dashboard" class="tile">
 				<h2>{{ $t("mainPage.dashboard") }}</h2>
 				<p>{{ $t("mainPage_description.dashboard") }}</p>
+				<span class="icon-messages"></span>
+			</router-link>
+      <router-link to="/miscs" class="tile">
+				<h2>{{ $t("mainPage.miscs") }}</h2>
+				<p>{{ $t("mainPage_description.miscs") }}</p>
 				<span class="icon-messages"></span>
 			</router-link>
 		</div>

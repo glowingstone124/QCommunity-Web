@@ -7,7 +7,8 @@
     "message_list": "聊天记录",
     "dashboard": "仪表板",
     "greeting_text": "您已经游玩了 {played} 分钟",
-    "account_center": "账户中心"
+    "account_center": "账户中心",
+    "miscs": "小功能"
   },
   "mainPage_description":{
     "register": "在这里注册你的（也许是第一个？）QuantumOriginal账户",
@@ -15,6 +16,7 @@
     "query": "查询指定的用户",
     "ip_query": "查找可用的服务器连接",
     "message_list": "查看服务器聊天记录",
-    "dashboard": "查看服务器状态"
+    "dashboard": "查看服务器状态",
+    "miscs": "一些有趣的小玩意"
   }
 }

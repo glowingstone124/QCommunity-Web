@@ -7,7 +7,8 @@
     "message_list": "Message List",
     "dashboard": "Dashboard",
     "greeting_text": "You have already played {played} minutes",
-    "account_center": "Account Center"
+    "account_center": "Account Center",
+    "miscs": "Miscs"
   },
   "mainPage_description": {
     "register": "Register your (maybe first?) QuantumOriginal account here",
@@ -15,6 +16,7 @@
     "query": "Query a specific user",
     "ip_query": "Find available server connections",
     "message_list": "View server chat logs",
-    "dashboard": "Check server status"
+    "dashboard": "Check server status",
+    "miscs": "Some interesting toys & tools"
   }
 }
