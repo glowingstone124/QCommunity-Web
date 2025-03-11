@@ -287,21 +287,21 @@ h1 {
 }
 
 .right {
-	background: rgb(39, 64, 65);
-	flex: 3;
-	margin: 2vw;
-	padding: 50px;
-	border-radius: 40px;
+	background: #183d23;
+  padding: 2rem;
+	flex: 2;
 }
-
+.left {
+  flex: 8;
+  padding: 0 3rem;
+}
 .navigate-items {
 	background: rgb(61, 100, 101);
-	padding: 2px 40px;
-	width: 80%;
+	padding: 2px 0px;
+	width: 100%;
 	display: flex;
 	justify-content: center;
 	margin-bottom: 20px;
-	border-radius: 50px;
 
 	h2 {
 		font-size: 1.5rem;
@@ -315,14 +315,8 @@ h1 {
 	background: rgb(84, 135, 136);
 }
 
-.left {
-	flex: 7;
-	margin: 2vw;
-	padding: 20px 30px;
-	border-radius: 40px;
-}
 .hasBackground {
-	background: rgb(39, 64, 65);
+	background: #587958;
 }
 .navigate-menu {
 	display: flex;
