@@ -318,7 +318,7 @@ h1 {
 .left {
 	flex: 7;
 	margin: 2vw;
-	padding: 40px 80px;
+	padding: 20px 30px;
 	border-radius: 40px;
 }
 .hasBackground {

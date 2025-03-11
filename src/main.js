@@ -14,6 +14,7 @@ import RegisterView from "./views/RegisterView.vue";
 import NewsView from "@/views/NewsView.vue";
 import AccountCenterView from "@/views/AccountCenterView.vue";
 import SponsorsView from "@/views/SponsorsView.vue";
+import MiscView from "@/views/MiscView.vue";
 
 const routes = [
     {
@@ -60,6 +61,11 @@ const routes = [
         path: '/sponsors',
         name: 'sponsors',
         component: SponsorsView,
+    },
+    {
+      path: '/miscs',
+      name: 'miscs',
+      component: MiscView,
     },
     {
         path: '/:catchAll(.*)',

@@ -210,7 +210,7 @@ onBeforeUnmount(() => {
     height: 100vh;        
     padding: 1rem;
     overflow: hidden;      
-    background: #f5f5f5;
+    background: #1a1a1a;
     box-sizing: border-box; 
 }
 .notification {
@@ -248,7 +248,7 @@ h1 {
     display: flex;
     flex-direction: column;
     min-height: 0;      
-    background: white;
+    background: #1a1a1a;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -257,13 +257,13 @@ h1 {
 	flex: 1;
 	padding: 2rem;
 	overflow:auto;
-	background: #f8f9fa;
+	background: #1a1a1a;
 	border-radius: 8px;
 	margin-bottom: 1rem;
 }
 
 .message-bubble {
-	background: white;
+	background: #383838;
 	border-radius: 12px;
 	padding: 1rem;
 	margin-bottom: 1rem;
@@ -292,7 +292,7 @@ h1 {
 }
 
 .message-content {
-	color: #333;
+	color: #ede8e8;
 	line-height: 1.5;
 	font-size: 1rem;
 }
@@ -301,7 +301,7 @@ h1 {
 	display: flex;
 	gap: 0.5rem;
 	padding: 1rem;
-	background: white;
+	background: #1a1a1a;
 	border-radius: 8px;
 	box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
 }
