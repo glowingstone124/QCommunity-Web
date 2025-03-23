@@ -194,7 +194,7 @@ const getProgressColor = (amount) => {
 .login-button {
   display: inline-block;
   padding: 0.8rem 2rem;
-  background: #3a6df3;
+  background: #4da153;
   color: white;
   border-radius: 8px;
   text-decoration: none;
@@ -202,7 +202,7 @@ const getProgressColor = (amount) => {
 }
 
 .login-button:hover {
-  background: #2c59c7;
+  background: #3bc72c;
 }
 
 .loading {
@@ -215,7 +215,7 @@ const getProgressColor = (amount) => {
   height: 40px;
   margin: 0 auto 1rem;
   border: 4px solid rgba(255, 255, 255, 0.1);
-  border-top-color: #3a6df3;
+  border-top-color: #a9f33a;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -260,8 +260,8 @@ const getProgressColor = (amount) => {
   margin-top: 2rem;
   padding: 0.8rem 1.5rem;
   background: rgba(255, 255, 255, 0.1);
-  border: 2px solid #3a6df3;
-  color: #3a6df3;
+  border: 2px solid #93f33a;
+  color: #66b240;
   border-radius: 8px;
   cursor: pointer;
   display: inline-flex;
@@ -271,7 +271,7 @@ const getProgressColor = (amount) => {
 }
 
 .refresh-button:hover {
-  background: #3a6df3;
+  background: #516750;
   color: white;
 }
 

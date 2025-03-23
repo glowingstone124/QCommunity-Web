@@ -14,7 +14,7 @@
           <span class="user-name">{{ username }}</span>
           <span class="user-role">{{ $t("mainPage.greeting_text", {played: playtime}) }}</span>
         </div>
-        <div class="avatar-container"   @click="toggleUserMenu">
+        <div v-if="loginstat" class="avatar-container"   @click="toggleUserMenu">
           <img
               :src="avatarUrl"
               alt="User Avatar"

@@ -130,8 +130,8 @@ h1 {
 	width: calc(20% - 1rem);
 
 	h2 {
-		font-size: 2.5rem;
-		font-weight: 300;
+		font-size: 3rem;
+		font-weight: 600;
 	}
 }
 
