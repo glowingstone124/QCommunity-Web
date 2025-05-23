@@ -15,7 +15,7 @@
 		</div>
 		<div style="flex: 6" class="fathercontainer">
 			<h2>让我们开始吧</h2>
-			<h3>您需要一个QQ和一个minecraft用户名来注册QOriginal账户。密码会被SHA加密并且存储在我们的数据库中。</h3>
+			<h3>您需要一个QQ和一个Minecraft用户名来注册QOriginal账户。密码会被SHA加密并且存储在我们的数据库中。</h3>
 			<form class="form" @submit.prevent="submitForm">
 				<div class="input-group">
 					<label for="username">Minecraft 用户名</label>
@@ -38,6 +38,55 @@
 		</div>
 	</div>
 </template>
+
+<script setup>
+import { useRouter } from "vue-router";
+import { ref } from "vue";
+import { get } from "/src/utils/request";
+
+const router = useRouter();
+const username = ref("");
+const qq = ref("");
+const password = ref("");
+const isDialogVisible = ref(false);
+const message = ref("");
+const isLoading = ref(false);
+
+function closeDialog() {
+	isDialogVisible.value = false;
+}
+
+function submitForm() {
+	isLoading.value = true;
+	const url =
+		"https://api.glowingstone.cn" +
+		"/qo/upload/registry?name=" +
+		username.value +
+		"&password=" +
+		password.value +
+		"&uid=" +
+		qq.value;
+	get(url).then((result) => {
+		if (result.code === 0) {
+			isDialogVisible.value = true;
+		} else {
+			message.value = "注册失败了！请检查qq或者用户名是否有重复。";
+		}
+		isLoading.value = false;
+	}).catch(() => {
+		message.value = "请求失败，请稍后再试。";
+		isLoading.value = false;
+	});
+}
+
+function redirect() {
+	router.push("/");
+}
+
+function validateQQ() {
+	qq.value = qq.value.replace(/\D/g, "");
+}
+</script>
 
 <style scoped>
 .dashboard {
@@ -122,7 +171,7 @@ h3 {
 .form {
 	display: flex;
 	flex-direction: column;
-	align-items: center; /* 居中表单中的内容 */
+	align-items: center;
 	margin-top: 20px;
 	width: 100%;
 }
@@ -145,7 +194,6 @@ button[type="submit"] {
 button[type="submit"]:hover {
 	background-color: #435e77;
 }
-
 
 .input-group {
 	display: flex;
@@ -177,25 +225,6 @@ input[type="password"] {
 input:focus {
 	border-bottom-color: #5fb493;
 	background-color: #2c3d4d;
-}
-
-button[type="submit"] {
-	margin-top: 20px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 15px 60px;
-	border: none;
-	border-radius: 20px;
-	background-color: #354d69;
-	color: #fff;
-	font-size: 1.1rem;
-	cursor: pointer;
-	transition: background-color 0.3s ease;
-}
-
-button[type="submit"]:hover {
-	background-color: #435e77;
 }
 
 .dialog-overlay {
@@ -249,7 +278,6 @@ button[type="submit"]:hover {
 	background-color: #8fc3f1;
 }
 
-
 .loading-spinner {
 	border: 3px solid #fff;
 	border-top: 3px solid transparent;
@@ -277,56 +305,4 @@ button[type="submit"]:hover {
 	border-radius: 20px;
 	text-align: left;
 }
-
 </style>
-
-<script setup >
-import { useRouter } from "vue-router";
-import { ref } from "vue";
-import { get } from "/src/utils/request";
-
-const router = useRouter();
-const username = ref("");
-const qq = ref("");
-const password = ref("");
-const isDialogVisible = ref(false);
-const message = ref("");
-const isLoading = ref(false);
-
-function closeDialog() {
-	isDialogVisible.value = false;
-}
-
-function submitForm() {
-	isLoading.value = true;
-	const url =
-		"https://api.glowingstone.cn" +
-		"/qo/upload/registry?name=" +
-		username.value +
-		"&password=" +
-		password.value +
-		"&uid=" +
-		qq.value;
-	get(url).then((result) => {
-		if (result.code === 0) {
-			isDialogVisible.value = true;
-		} else {
-			message.value = "注册失败了！请检查qq或者用户名是否有重复。";
-		}
-		setTimeout(() => {}, 1000)
-		isLoading.value = false;
-	}).catch(() => {
-		message.value = "请求失败，请稍后再试。";
-		isLoading.value = false;
-	});
-}
-
-function redirect() {
-	router.push("/");
-}
-
-function validateQQ() {
-	qq.value = qq.value.replace(/\D/g, "");
-}
-
-</script>

@@ -1,20 +1,23 @@
 <template>
 	<div class="card" @click="toggleDetails">
-		<span style="display: flex; align-items: center; justify-content: space-between;">
-			<div style="display: flex; align-items: center;">
+		<span class="header">
+			<div class="info">
 				<img class="avatar" :src="avatar" alt="Player Avatar" />
 				<p class="name">{{ player.name }}</p>
 			</div>
 			<span :class="['arrow', { 'arrow-up': isExpanded }]"></span>
 		</span>
 
-		<div v-show="isExpanded" class="details">
-			<p>Ping: {{ player.ping }}ms</p>
-			<p>Health: {{ player.health }}</p>
-			<p>位置: ({{ player.x }}, {{ player.y }}, {{ player.z }})</p>
-		</div>
+		<transition name="details-transition">
+			<div v-show="isExpanded" class="details" ref="detailsRef">
+				<p>Ping: {{ player.ping }}ms</p>
+				<p>Health: {{ player.health }}</p>
+				<p>位置: ({{ player.x }}, {{ player.y }}, {{ player.z }})</p>
+			</div>
+		</transition>
 	</div>
 </template>
+
 
 
 
@@ -33,6 +36,8 @@ function toggleDetails() {
 }
 
 const avatar = ref('');
+
+const detailsRef = ref<HTMLElement | null>(null);
 
 async function getAvatar(name: string): Promise<string | undefined> {
 	try {
@@ -78,12 +83,11 @@ onBeforeUnmount(() => {
 	margin: auto;
 	text-align: left;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-	transition: transform 0.2s, background-color 0.3s;
+	transition: all 0.2s;
 	cursor: pointer;
 }
 
 .card:hover {
-	transform: scale(1.05);
 	background-color: rgb(75, 120, 110);
 }
 
@@ -106,8 +110,22 @@ onBeforeUnmount(() => {
 p {
 	font-family: 'Bahnschrift', 'NotoSans', serif;
 }
+.details-transition-enter-from,
+.details-transition-leave-to {
+	max-height: 0;
+	opacity: 0;
+	overflow: hidden;
+}
+.details-transition-enter-active,
+.details-transition-leave-active {
+	transition: all 0.4s ease;
+}
+.details-transition-enter-to,
+.details-transition-leave-from {
+	max-height: 500px; /* 根据实际内容设定 */
+	opacity: 1;
+}
 
-/* 箭头样式 */
 .arrow {
 	width: 0;
 	height: 0;

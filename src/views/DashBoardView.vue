@@ -84,84 +84,116 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-@import "src/assets/base.css";
-@import "src/assets/main.css";
+@import "@/assets/base.css";
+@import "@/assets/main.css";
 
 .dashboard {
-	display: flex;
-	justify-content: center;
-	align-items: center;
 	height: 100vh;
-	flex-direction: row;
-	text-align: center;
+	color: var(--text);
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	padding: 2rem 1.5rem;
+	gap: 2rem;
+	overflow: scroll;
 }
-@media(max-width: 600px)
-{
+
+@media (min-width: 1024px) {
 	.dashboard {
-		flex-direction: column;
-		overflow-y: auto;
-	}
-	.panel {
-		p, h2 {
-			padding: 0;
-			color: #85c7f6;
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: start;
+		> * {
+			flex: 1 1 300px;
 		}
 	}
 }
 
-h1, p, h2, ul, li {
-	color: var(--text);
-}
-
-h1 {
-	font-size: 5rem;
-	font-weight: 200;
-}
-
-h2 {
-	font-size: 1.1rem;
-	font-weight: 200;
+.dashboard > div:first-child {
+	order: -1;
+	flex-basis: 100%;
+	h1 {
+		font-size: clamp(2.5rem, 5vw, 4rem);
+		line-height: 1.2;
+		margin-bottom: 1.5rem;
+	}
 }
 
 .redirect {
-	display: flex;
+	display: inline-flex;
 	align-items: center;
-	flex-direction: row;
-	cursor: pointer;
-	margin-top: 20px;
+	gap: 0.5rem;
+	transition: opacity 0.3s;
+	&:hover {
+		opacity: 0.8;
+		.arrow {
+			transform: translateX(-4px);
+		}
+	}
+	.arrow {
+		transition: transform 0.3s;
+	}
 }
 
-.redirect:hover .arrow {
-	margin-right: 20px;
-}
-
-.arrow {
-	margin-right: 8px;
-}
-
-.display {
-	font-family: 'Bahnschrift';
-	font-size: 2.3rem;
-}
-
-.player-cards {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
+.panel-group {
+	display: grid;
+	gap: 1.5rem;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
 .panel {
-	border-radius: 20px;
-	background-color: #525fc0 !important;
-	margin: 40px 0;
-	padding: 15px 0;
+	background: #8aa855;
+	margin: 1.5rem;
+	border-radius: 1rem;
+	padding: 1.5rem;
 	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
-	p, h2 {
-		padding: 0px 15px;
-		color: #85c7f6;
+	flex-direction: column;
+	gap: 0.2rem;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+	h2 {
+		font-size: 1.1rem;
+		opacity: 0.9;
 	}
+
+	.display {
+		font-size: clamp(2rem, 7vw, 2.6rem);
+		font-family: Bahnschrift, 'Arial Narrow', sans-serif;
+		font-weight: 300;
+		letter-spacing: -0.05em;
+	}
+}
+.player-cards {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+	padding: 1rem 0;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.player-cards > * {
+	flex: 1 1 200px;
+}
+
+
+
+h1, h2 {
+	color: var(--text);
+	&:focus {
+		outline: 2px solid var(--text);
+	}
+}
+
+button, .redirect {
+	cursor: pointer;
+	&:focus-visible {
+		outline: 2px solid var(--text);
+		outline-offset: 2px;
+	}
+}
+
+.panel, .player-cards {
+	will-change: transform;
 }
 </style>
