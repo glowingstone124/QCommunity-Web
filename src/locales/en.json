@@ -1,4 +1,8 @@
 {
+  "global": {
+    "username": "Username",
+    "password": "Password",
+  },
   "mainPage": {
     "register": "Register",
     "greetings": "Greetings",
@@ -17,6 +21,15 @@
     "ip_query": "Find available server connections",
     "message_list": "View server chat logs",
     "dashboard": "Check server status",
-    "miscs": "Some interesting toys & tools"
+    "miscs": "Some interesting toys & tools",
+    "click_login": "Login"
+  },
+  "loginPage": {
+    "welcome_back": "Welcome Back!",
+    "login": "Please log in",
+    "now_login": "Login now",
+    "error": "Failed to login:",
+    "err_user": "Username and password don't match. Please try again.",
+    "err_network": "Network error. Please try later."
   }
 }
