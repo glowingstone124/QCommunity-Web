@@ -1,7 +1,7 @@
 {
   "global": {
     "username": "用户名",
-    "password": "密码",
+    "password": "密码"
   },
   "mainPage": {
     "register": "注册账号",
