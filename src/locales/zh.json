@@ -1,4 +1,8 @@
 {
+  "global": {
+    "username": "用户名",
+    "password": "密码"
+  },
   "mainPage": {
     "register": "注册账号",
     "greetings": "致谢",
@@ -17,6 +21,15 @@
     "ip_query": "查找可用的服务器连接",
     "message_list": "查看服务器聊天记录",
     "dashboard": "查看服务器状态",
-    "miscs": "一些有趣的小玩意"
+    "miscs": "一些有趣的小玩意",
+    "click_login": "点击此处登录"
+  },
+  "loginPage": {
+    "welcome_back": "欢迎回来",
+    "login": "请登录您的账户",
+    "now_login": "立即登录",
+    "error": "登录失败:",
+    "err_user": "用户名或密码错误，请重试",
+    "err_network": "网络连接错误，请稍后再试"
   }
 }
