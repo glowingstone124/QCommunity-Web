@@ -11,6 +11,7 @@ const qq = ref('');
 const online = ref(false);
 const banned = ref(false);
 const find = ref(false);
+const playtime = ref(0);
 
 const getPlayer = debounce(async () => {
 	try {
@@ -24,6 +25,7 @@ const getPlayer = debounce(async () => {
 			qq.value = data.qq;
 			online.value = data.online;
 			banned.value = data.frozen;
+			playtime.value = data.playtime
 			getAvatar(queryId.value);
 		}
 	} catch (error) {
@@ -53,8 +55,8 @@ watch(queryId, (newValue) => {
 			<h1>查询</h1>
 			<Redirect />
 		</span>
-		<span class="content">
-			<h2>在这里查询</h2>
+		<div class="content">
+			<h2>在这里查询指定玩家</h2>
 			<input v-model="queryId" placeholder="输入查询 ID" class="query-input" />
 			<div class="playerCard">
 				<PlayerInfoCard
@@ -64,9 +66,10 @@ watch(queryId, (newValue) => {
 					:qq="qq"
 					:found="find"
 					:avatar="avatarUrl"
+					:playtime="playtime"
 				/>
 			</div>
-		</span>
+		</div>
 	</div>
 </template>
 
@@ -75,10 +78,14 @@ watch(queryId, (newValue) => {
 @import "/src/assets/main.css";
 .main {
 	max-width: 100vw;
-	height: 100vh;
+	height: auto;
 	display: flex;
-	padding: 9rem;
+	flex-direction: row;
+	flex-wrap: wrap;
+	padding: 5rem;
+	gap: 2rem;
 }
+
 
 h1 {
 	color: var(--text);
@@ -111,30 +118,69 @@ h2 {
 
 .content {
 	margin-left: 5vw;
-	min-width: 1000px;
+	max-width: 1000px;
 	h2 {
 		font-weight: 200;
 	}
 }
 
 .playerCard {
-	background-color: #7fa5cc80;
+	background-color: rgba(127, 162, 127, 0.5);
 	border-radius: 10px;
 	padding: 1rem;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 	margin-top: 1rem;
-	width: 60%;
+	transition: all 0.3s;
+	width: 100%;
 }
 
 input {
-	background-color: #7fa5cc80;
 	border: none;
 	outline: none;
-	padding: 1.5rem;
+	padding: 1rem;
 	border-radius: 10px;
 	color: var(--text);
 	font-size: 1.7rem;
 	font-family: 'Bahnschrift', 'NotoSans', serif;
-	border-bottom: 4px solid #4c8fb7;
 }
+.query-input {
+	background-color: #a5c9a9;
+	border-bottom: 0px solid #60b74c;
+	width: 95%;
+}
+.query-input::placeholder {
+	color: rgba(37, 72, 28, 0.34);
+}
+.query-input:focus {
+	border-bottom: 4px solid #60b74c;
+}
+@media screen and (max-width: 768px) {
+	.main {
+		flex-direction: column;
+		align-items: center;
+		padding: 2rem;
+	}
+	.content {
+		margin-left: 0;
+		min-width: 100%;
+	}
+	.playerCard {
+		width: 95%;
+
+	}
+	input {
+		width: 100%;
+		font-size: 1.4rem;
+		padding: 0.1rem;
+	}
+	h1 {
+		font-size: 3rem;
+		text-align: center;
+	}
+	h2 {
+		font-size: 1.5rem;
+		text-align: center;
+	}
+}
+
 </style>

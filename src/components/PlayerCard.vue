@@ -3,7 +3,8 @@
 		<img :src="avatar" alt="avatar" />
 		<span class="info">
 			<h1 :class="{ 'online-id': online }">{{ username }}</h1>
-			<span v-if="qq"><p class="qq">{{ qq }}</p></span>
+			<span v-if="qq"><p class="qq">UID: {{ qq }}</p></span>
+			<span v-if="playtime"><p class="playtime">游玩时间: {{ playtime }} 分钟</p></span>
 			<span>
 				<p :style="{ color: banned ? 'red' : 'var(--text)' }">
 					{{ banned ? '被封禁' : (online ? '正在游玩' : '当前离线') }}
@@ -43,6 +44,11 @@ export default {
 			type: Boolean,
 			required: true,
 			default: false,
+		},
+		playtime: {
+			type: Number,
+			required: true,
+			default: 0
 		}
 	}
 };
@@ -94,6 +100,10 @@ img {
 }
 .qq {
 	font-size: 22px;
+	color: #C7CACA;
+	font-family: "Bahnschrift";
+}
+.playtime {
 	color: #C7CACA;
 	font-family: "Bahnschrift";
 }
