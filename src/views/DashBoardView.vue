@@ -10,6 +10,7 @@ const onlinecount = ref(0);
 const totalcount = ref(0);
 const mspt = ref(0.00);
 const players = ref([]);
+const currentServerId = ref(1)
 
 function redirect() {
 	route.push('/');
@@ -21,7 +22,7 @@ function fetchData() {
 	if (isFetching) return;
 	isFetching = true;
 
-	get("https://api.glowingstone.cn/qo/download/status").then(result => {
+	get("https://api.glowingstone.cn/qo/download/status?id=" + currentServerId.value).then(result => {
 		onlinecount.value = result.onlinecount;
 		players.value = result.players;
 		totalcount.value = result.totalcount;
@@ -57,6 +58,10 @@ onBeforeUnmount(() => {
 			<span class="redirect" @click="redirect">
 				<p class="arrow"><</p> <p>回到首页</p>
 			</span>
+			<div class="select">
+				<button @click="currentServerId = 1" :class="currentServerId === 1 ? 'active' : ''">生存服</button>
+				<button @click="currentServerId = 4" :class="currentServerId === 4 ? 'active' : ''">创造服</button>
+			</div>
 		</div>
 		<div style="flex: 2">
 			<div class="panel">
@@ -195,5 +200,32 @@ button, .redirect {
 
 .panel, .player-cards {
 	will-change: transform;
+}
+.select {
+	background: #8aa855;
+	display: flex;
+	flex-direction: column;
+	padding: 0.3em;
+	border-radius: 1.2rem;
+	margin: 0.8rem;
+	button {
+		border-radius: 0.9rem;
+		margin: 10px 10px;
+		border:none;
+		background: #598a2c;
+		color: var(--text);
+		padding: 1rem 5rem;
+		font-size: 1.1rem;
+		font-weight: 600;
+		text-wrap: nowrap;
+	}
+	button:hover{
+		background: #536b2c;
+		box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+	}
+}
+button.active {
+	background: #65d730 !important;
+	box-shadow: rgb(241, 240, 240) 0px 4px 6px -1px, rgba(255, 253, 253, 0.97) 0px 2px 4px -1px !important;
 }
 </style>
