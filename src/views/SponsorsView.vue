@@ -25,7 +25,7 @@ const showDeclaration = ref(false);
 		</div>
 	</transition>
 	<span><h3 class="name">glowingstone124</h3><p class="contributor api">QAPI3</p><p class="contributor plugin">QPlugin</p><p class="contributor web">Webs</p></span>
-	<span><h3 class="name">Minecreeper2086</h3><p class="contributor plugin">QPlugin</p><p class="contributor web">Webs</p></span>
+	<span><h3 class="name">MineCreeper2086</h3><p class="contributor plugin">QPlugin</p><p class="contributor web">Webs</p></span>
 	<span><h3 class="name">Adam Gu</h3><p class="contributor api">QAPI3</p><p class="contributor web">Webs</p></span>
 	<span><h3 class="name">0x0025(Code Verse)</h3><p class="contributor sponsor">Sponsor</p></span>
 	<span><h3 class="name">CHJWOS_</h3><p class="contributor sponsor">Sponsor</p></span>
