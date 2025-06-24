@@ -108,7 +108,7 @@ watch(currentSetting, (newValue) => {
 		<div class="right">
 			<span>
 				<h1>账户中心</h1>
-				<RedirectButton text-color="#89e88b"/>
+				<RedirectButton text-color="#d4e7a9"/>
 			</span>
 			<span class="navigate-menu">
 				<div class="navigate-items" @click="displayCurrentSetting(0)">
@@ -152,7 +152,8 @@ watch(currentSetting, (newValue) => {
 			<transition name="slide-in">
 				<div v-if="currentSetting === 1" key="ip-whitelist" class="panel-wrapper">
 					<div class="panel">
-						<h1 class="title">IP过白</h1>						<h3 class="subtitle">注册新的海外IP</h3>
+						<h1 class="title">IP过白</h1>
+						<h3 class="subtitle">注册新的海外IP</h3>
 						<div class="func">
 							<input type="text" @input="validateIP" v-model="ipAddr" placeholder="请输入内容"/>
 						</div>
@@ -172,7 +173,7 @@ watch(currentSetting, (newValue) => {
 			</transition>
 			<transition name="slide-in">
 				<div v-if="currentSetting === 2" key="other-info">
-					<ArtCard />
+					<ArtCard/>
 				</div>
 			</transition>
 		</div>
@@ -253,7 +254,7 @@ p, h2, ul, li {
 h1 {
 	font-size: 3rem;
 	font-weight: 500;
-	color: #89e88b;
+	color: #d4e7a9;
 }
 
 .container {
@@ -287,16 +288,18 @@ h1 {
 }
 
 .right {
-	background: #183d23;
-  padding: 2rem;
+	background: #18261c;
+	padding: 2rem;
 	flex: 2;
 }
+
 .left {
-  flex: 8;
-  padding: 0 3rem;
+	flex: 8;
+	padding: 1rem 3rem;
 }
+
 .navigate-items {
-	background: rgb(61, 100, 101);
+	background: #183d23;
 	padding: 2px 0px;
 	width: 100%;
 	display: flex;
@@ -306,7 +309,7 @@ h1 {
 	h2 {
 		font-size: 1.5rem;
 		font-weight: 300;
-		color: #aed3ae;
+		color: #d4e7a9;
 	}
 }
 
@@ -318,6 +321,7 @@ h1 {
 .hasBackground {
 	background: #587958;
 }
+
 .navigate-menu {
 	display: flex;
 	flex-direction: column;
@@ -387,6 +391,7 @@ h1 {
 	h2, p {
 		color: #ffffff;
 	}
+
 	h2 {
 		margin: 7px;
 	}
