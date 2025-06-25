@@ -19,9 +19,19 @@ const rarityMap = {
 	4: { name: "限定", color:  "#ff9800" }
 }
 
+const correspondText = {
+	"COMMON": 1,
+	"UNCOMMON": 2,
+	"RARE": 3,
+	"LIMITED": 4
+}
 onMounted(async () => {
 	axios.get("https://api.qoriginal.vip/qo/authorization/cards/all").then((response) => {
-		cards.value = response.data
+		let result = response.data
+		result.forEach((card) => {
+			card.rarity = correspondText[card.rarity]
+		})
+		cards.value = result
 	})
 })
 
