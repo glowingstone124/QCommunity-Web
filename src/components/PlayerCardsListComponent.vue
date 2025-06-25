@@ -2,10 +2,11 @@
 import { ref, computed } from "vue"
 import ArtCard from "@/components/ArtCard.vue"
 import AllCardsComponent from "@/components/AllCardsComponent.vue"
+import MyCardsComponent from "@/components/MyCardsComponent.vue";
 
 const selectedIndex = ref<0 | 1>(0)
 
-const componentsList = [AllCardsComponent]
+const componentsList = [AllCardsComponent, MyCardsComponent]
 
 const currentComponent = computed(() => componentsList[selectedIndex.value])
 </script>

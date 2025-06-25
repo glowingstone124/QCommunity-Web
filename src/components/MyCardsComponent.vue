@@ -11,20 +11,33 @@ const cards = ref([
 		file_url: "https://bucket.glowingstone.cn/cards/city_maincity_01.png"
 	}
 ])
-
 const rarityMap = {
 	1: { name: "普通话", color: "#47c9da" },
 	2: { name: "稀有", color:  "#55CE85" },
 	3: { name: "史诗", color: "#f10d0d" },
 	4: { name: "限定", color:  "#ff9800" }
 }
-
 onMounted(async () => {
-	axios.get("https://api.qoriginal.vip/qo/authorization/cards/all").then((response) => {
-		cards.value = response.data
-	})
-})
+	try {
+		const response = await axios.get("https://api.qoriginal.vip/qo/authorization/cards/all", {
+			headers: {
+				token: localStorage.getItem("token")
+			}
+		})
+		const infoPromises = response.data.map(item => {
+			return axios.get(`https://api.qoriginal.vip/qo/authorization/cards/info?id=${item.id}`, {
+				headers: {
+					token: localStorage.getItem("token") || ""
+				}
+			})
+		})
+		const infoResponses = await Promise.all(infoPromises)
 
+		cards.value = infoResponses.map(res => res.data)
+	} catch (error) {
+		console.error("获取卡片信息失败", error)
+	}
+})
 
 </script>
 
