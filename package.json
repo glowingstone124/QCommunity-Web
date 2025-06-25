@@ -12,6 +12,7 @@
     "@pnotify/bootstrap3": "^5.2.0",
     "@pnotify/core": "^5.2.0",
     "@pnotify/mobile": "^5.2.0",
+    "axios": "^1.10.0",
     "lodash": "^4.17.21",
     "vue": "^3.5.12",
     "vue-i18n": "^11.1.2",

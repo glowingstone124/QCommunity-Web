@@ -19,6 +19,7 @@ import '@pnotify/core/dist/PNotify.css';
 import '@pnotify/core/dist/BrightTheme.css';
 import * as PNotifyMobile from '@pnotify/mobile';
 import '@pnotify/mobile/dist/PNotifyMobile.css';
+import PlayerCardsListComponent from "@/components/PlayerCardsListComponent.vue";
 
 
 defaultModules.set(PNotifyMobile, {});
@@ -173,7 +174,7 @@ watch(currentSetting, (newValue) => {
 			</transition>
 			<transition name="slide-in">
 				<div v-if="currentSetting === 2" key="other-info">
-					<ArtCard/>
+					<PlayerCardsListComponent></PlayerCardsListComponent>
 				</div>
 			</transition>
 		</div>
@@ -294,6 +295,9 @@ h1 {
 }
 
 .left {
+	h1 {
+		color: #a0da1d;
+	}
 	flex: 8;
 	padding: 1rem 3rem;
 }
