@@ -19,13 +19,13 @@ const rarityMap = {
 }
 onMounted(async () => {
 	try {
-		const response = await axios.get("https://api.qoriginal.vip/qo/authorization/cards/all", {
+		const response = await axios.get("https://api.qoriginal.vip/qo/authorization/cards/obtained", {
 			headers: {
 				token: localStorage.getItem("token")
 			}
 		})
 		const infoPromises = response.data.map(item => {
-			return axios.get(`https://api.qoriginal.vip/qo/authorization/cards/info?id=${item.id}`, {
+			return axios.get(`https://api.qoriginal.vip/qo/authorization/cards/info?id=${item.cardId}`, {
 				headers: {
 					token: localStorage.getItem("token") || ""
 				}
@@ -64,8 +64,7 @@ onMounted(async () => {
 
 <style scoped>
 .gallery {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+	display: flex;
 	gap: 16px;
 	padding: 16px;
 }
