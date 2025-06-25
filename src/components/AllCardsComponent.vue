@@ -51,8 +51,7 @@ onMounted(async () => {
 
 <style scoped>
 .gallery {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+	display: flex;
 	gap: 16px;
 	padding: 16px;
 }
