@@ -9,6 +9,7 @@ const selectedIndex = ref<0 | 1>(0)
 const componentsList = [AllCardsComponent, MyCardsComponent]
 
 const currentComponent = computed(() => componentsList[selectedIndex.value])
+
 </script>
 
 <template>
