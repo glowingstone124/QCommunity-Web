@@ -39,6 +39,7 @@ onMounted(async () => {
 </script>
 
 <template>
+	<a href="https://qoriginal.vip/docs#/DisclaimerofComplianceforImagesUsed" class="link">关于所使用图片的合规性声明</a>
 	<div class="gallery">
 		<div class="card" v-for="card in cards" :key="card.id">
 			<img :src="card.file_url" :alt="card.name" />
@@ -122,6 +123,14 @@ onMounted(async () => {
 
 .card:hover .overlay {
 	opacity: 1;
+}
+
+.link{
+	text-decoration: none;
+	color: #fff;
+	background-color: #2d8a29;
+	margin: 5px 10px;
+	padding: 10px;
 }
 
 .overlay p {

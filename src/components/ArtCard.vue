@@ -142,7 +142,6 @@ onMounted(async () => {
 
 .main {
 	margin-left: 30px;
-
 	flex: 8;
 	display: flex;
 	flex-direction: column;

@@ -15,7 +15,9 @@ const currentComponent = computed(() => componentsList[selectedIndex.value])
 <template>
 	<div class="container">
 		<div class="left">
-			<h1>您的卡面</h1>
+			<span style="margin-bottom: 2rem">
+				<h1>您的卡面</h1>
+			</span>
 			<ArtCard :scale="0.6" id="1" />
 		</div>
 		<div class="right">
@@ -33,8 +35,6 @@ const currentComponent = computed(() => componentsList[selectedIndex.value])
 					我的卡片
 				</button>
 			</div>
-
-
 			<component :is="currentComponent" />
 		</div>
 	</div>
