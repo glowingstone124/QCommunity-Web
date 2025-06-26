@@ -1,5 +1,43 @@
 <template>
-	<div class="dashboard">
+	<div class="login-wrapper">
+		<div class="login-panel">
+			<h2 v-if="step === 1">输入您的 Minecraft 用户名</h2>
+			<h2 v-if="step === 2">输入您的 QQ 号</h2>
+			<h2 v-if="step === 3">设置您的密码</h2>
+
+			<form @submit.prevent="handleNext">
+				<input
+					v-if="step === 1"
+					type="text"
+					placeholder="Minecraft 用户名"
+					v-model="username"
+					required
+				/>
+				<input
+					v-if="step === 2"
+					type="text"
+					placeholder="QQ 号"
+					v-model="qq"
+					@input="validateQQ"
+					required
+				/>
+				<input
+					v-if="step === 3"
+					type="password"
+					placeholder="设置密码"
+					v-model="password"
+					required
+				/>
+
+				<p class="message">{{ message }}</p>
+
+				<button type="submit" :disabled="isLoading">
+					<span v-if="isLoading" class="spinner"></span>
+					<span>{{ step === 3 ? "注册" : "下一步" }}</span>
+				</button>
+			</form>
+		</div>
+
 		<div v-if="isDialogVisible" class="dialog-overlay">
 			<div class="dialog">
 				<h2>注册成功！</h2>
@@ -7,279 +45,137 @@
 				<button @click="closeDialog">确认</button>
 			</div>
 		</div>
-		<div style="flex: 3; display: flex; flex-direction: column; align-items: center;">
-			<h1>注册</h1>
-			<span class="redirect" @click="redirect">
-				<p class="arrow"><</p> <p>回到首页</p>
-			</span>
-		</div>
-		<div style="flex: 6" class="fathercontainer">
-			<h2>让我们开始吧</h2>
-			<h3>您需要一个QQ和一个Minecraft用户名来注册QOriginal账户。密码会被SHA加密并且存储在我们的数据库中。</h3>
-			<form class="form" @submit.prevent="submitForm">
-				<div class="input-group">
-					<label for="username">Minecraft 用户名</label>
-					<input type="text" id="username" v-model="username" required />
-				</div>
-				<div class="input-group">
-					<label for="qq">QQ号</label>
-					<input type="text" id="qq" v-model="qq" @input="validateQQ" required />
-				</div>
-				<div class="input-group">
-					<label for="password">密码</label>
-					<input type="password" id="password" v-model="password" required />
-				</div>
-				<p>{{ message }}</p>
-				<button type="submit" :disabled="isLoading">
-					<span v-if="isLoading" class="loading-spinner"></span>
-					<span>{{ isLoading ? "正在请求..." : "注册" }}</span>
-				</button>
-			</form>
-		</div>
 	</div>
 </template>
 
+
 <script setup>
-import { useRouter } from "vue-router";
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import { get } from "/src/utils/request";
 
-const router = useRouter();
-const username = ref("");
-const qq = ref("");
-const password = ref("");
-const isDialogVisible = ref(false);
-const message = ref("");
-const isLoading = ref(false);
+const step = ref(1)
+const username = ref("")
+const qq = ref("")
+const password = ref("")
+const isDialogVisible = ref(false)
+const message = ref("")
+const isLoading = ref(false)
+const router = useRouter()
 
-function closeDialog() {
-	isDialogVisible.value = false;
+function validateQQ() {
+	qq.value = qq.value.replace(/\D/g, "")
+	return /^\d{5,12}$/.test(qq.value)
+}
+
+
+function validateUsername(username) {
+	const url = `https://api.qoriginal.vip/qo/download/registry?name=${username.value}`
+	fetch(url).then(res => res.json()).then((res) => {
+		if (res.data.code !== 1) {
+			return false
+		}
+	})
+	return true
+}
+
+function handleNext() {
+	message.value = ""
+
+	if (step.value === 1) {
+		if (!validateUsername(username.value)) {
+			message.value = "用户名已被占用"
+			return
+		}
+		step.value++
+	} else if (step.value === 2) {
+		if (!validateQQ()) {
+			message.value = "请输入正确的 QQ 号"
+			return
+		}
+		step.value++
+	} else if (step.value === 3) {
+		if (password.value.length < 4) {
+			message.value = "密码长度不能少于 4 位"
+			return
+		}
+		submitForm()
+	}
 }
 
 function submitForm() {
-	isLoading.value = true;
-	const url =
-		"https://api.glowingstone.cn" +
-		"/qo/upload/registry?name=" +
-		username.value +
-		"&password=" +
-		password.value +
-		"&uid=" +
-		qq.value;
-	get(url).then((result) => {
-		if (result.code === 0) {
-			isDialogVisible.value = true;
-		} else {
-			message.value = "注册失败了！请检查qq或者用户名是否有重复。";
-		}
-		isLoading.value = false;
-	}).catch(() => {
-		message.value = "请求失败，请稍后再试。";
-		isLoading.value = false;
-	});
+	isLoading.value = true
+	const url = `https://api.glowingstone.cn/qo/upload/registry?name=${username.value}&password=${password.value}&uid=${qq.value}`
+
+	get(url)
+		.then(result => {
+			if (result.code === 0) {
+				isDialogVisible.value = true
+			} else {
+				message.value = "注册失败，请检查信息是否已被使用"
+			}
+		})
+		.catch(() => {
+			message.value = "请求失败，请稍后再试"
+		})
+		.finally(() => {
+			isLoading.value = false
+		})
 }
 
-function redirect() {
-	router.push("/");
+function closeDialog() {
+	isDialogVisible.value = false
+	router.push("/")
 }
 
-function validateQQ() {
-	qq.value = qq.value.replace(/\D/g, "");
-}
 </script>
 
 <style scoped>
-.dashboard {
-	display: flex;
-	justify-content: center;
-	align-items: center;
+.login-wrapper {
 	height: 100vh;
-	flex-direction: row;
-	text-align: center;
-	padding: 20px;
-}
-
-@media (max-width: 600px) {
-	.dashboard {
-		flex-direction: column;
-		padding-bottom: 80px;
-	}
-
-	h1 {
-		font-size: 2.5rem;
-	}
-
-	h2 {
-		font-size: 1.25rem;
-	}
-
-	h3 {
-		font-size: 1rem;
-	}
-
-	.form, form, .dialog {
-		width: 90%;
-		padding: 15px;
-	}
-
-	button[type="submit"] {
-		width: 100%;
-		padding: 15px;
-		margin-bottom: 20px;
-		font-size: 1rem;
-	}
-
-	h1 {
-		margin: 10px;
-	}
-}
-
-h1, p, h2, ul, li, h3 {
-	color: var(--text);
-}
-
-h1 {
-	font-size: 4rem;
-	font-weight: 200;
-}
-
-h2 {
-	font-size: 3.5rem;
-	font-weight: 600;
-}
-
-h3 {
-	font-weight: 500;
-}
-
-.redirect {
 	display: flex;
-	align-items: center;
-	cursor: pointer;
-	margin-top: 20px;
-}
-
-.arrow {
-	margin-right: 8px;
-	transition: margin-right 0.2s;
-}
-
-.redirect:hover .arrow {
-	margin-right: 12px;
-}
-
-.form {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	margin-top: 20px;
-	width: 100%;
-}
-
-button[type="submit"] {
-	margin-top: 20px;
-	display: flex;
-	align-items: center;
 	justify-content: center;
-	padding: 15px 60px;
-	border: none;
+	align-items: center;
+	background: linear-gradient(135deg, #64816c 0%, #437763 100%);
+}
+
+.login-panel {
+	background: white;
+	padding: 3rem;
 	border-radius: 20px;
-	background-color: #354d69;
-	color: #fff;
+	width: 100%;
+	max-width: 400px;
+	box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+	text-align: center;
+}
+
+input {
+	padding: 1rem;
+	margin: 0.3rem 0;
+	border: 2px solid #ccc;
+	border-radius: 10px;
+	font-size: 1rem;
+}
+
+button {
+	width: 100%;
+	padding: 1rem;
+	background: #64816c;
+	color: white;
+	border: none;
+	border-radius: 10px;
 	font-size: 1.1rem;
 	cursor: pointer;
-	transition: background-color 0.3s ease;
 }
 
-button[type="submit"]:hover {
-	background-color: #435e77;
+.message {
+	color: #ff4757;
+	font-size: 0.9rem;
+	min-height: 1rem;
 }
 
-.input-group {
-	display: flex;
-	align-items: center;
-	margin-bottom: 15px;
-	width: 100%;
-}
-
-.input-group label {
-	font-weight: 600;
-	font-size: 1rem;
-	margin-right: 10px;
-	color: var(--text);
-	width: 130px;
-}
-
-input[type="text"],
-input[type="password"] {
-	flex: 1;
-	margin: 10px 0;
-	padding: 25px;
-	background-color: rgba(112, 192, 252, 0.42);
-	color: var(--text);
-	border: none;
-	border-bottom: #648fb9 5px solid;
-	font-size: 1rem;
-}
-
-input:focus {
-	border-bottom-color: #5fb493;
-	background-color: #2c3d4d;
-}
-
-.dialog-overlay {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background: rgba(0, 0, 0, 0.6);
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
-.dialog {
-	background-color: #3e4b77;
-	padding: 20px 30px;
-	border-radius: 30px;
-	width: 90%;
-	max-width: 500px;
-	text-align: left;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
-}
-
-.dialog h2 {
-	margin-bottom: 30px;
-	font-size: 1.8rem;
-}
-
-.dialog p {
-	margin-bottom: 50px;
-	color: #aacde3;
-}
-
-.dialog button {
-	align-self: flex-end;
-	padding: 10px 30px;
-	border: none;
-	border-radius: 30px;
-	background-color: #6491c5;
-	color: #fff;
-	font-size: 1rem;
-	cursor: pointer;
-	transition: background-color 0.3s ease;
-}
-
-.dialog button:hover {
-	background-color: #8fc3f1;
-}
-
-.loading-spinner {
-	border: 3px solid #fff;
+.spinner {
+	border: 3px solid white;
 	border-top: 3px solid transparent;
 	border-radius: 50%;
 	width: 1rem;
@@ -290,19 +186,26 @@ input:focus {
 }
 
 @keyframes spin {
-	0% {
-		transform: rotate(0deg);
-	}
-	100% {
+	to {
 		transform: rotate(360deg);
 	}
 }
 
-.fathercontainer {
-	background: #2c4438;
-	padding: 20px 60px;
-	margin-right: 10vw;
-	border-radius: 20px;
-	text-align: left;
+.dialog-overlay {
+	position: fixed;
+	top: 0; left: 0;
+	width: 100vw; height: 100vh;
+	background: rgba(0, 0, 0, 0.5);
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
+
+.dialog {
+	background: white;
+	padding: 2rem;
+	border-radius: 20px;
+	max-width: 500px;
+}
+
 </style>
