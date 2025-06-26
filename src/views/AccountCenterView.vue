@@ -323,7 +323,7 @@ h1 {
 }
 
 .hasBackground {
-	background: #587958;
+	background: #3b4444;
 }
 
 .navigate-menu {

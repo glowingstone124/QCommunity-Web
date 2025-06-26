@@ -159,16 +159,14 @@ onBeforeUnmount(() => {
     </span>
 		<div class="content-wrapper">
 			<div class="message-container" v-if="loginstat">
-			
+
 				<div
 					v-for="(message, index) in messageList"
 					:key="index"
 					class="message-bubble"
 				>
 					<div class="message-header">
-            <span
-				class="sender-name"
-				:title="message.senderTooltip"
+            <span class="sender-name" :title="message.senderTooltip"
 			>{{ message.sender }}</span>
 						<span class="message-time">{{ message.time }}</span>
 					</div>
@@ -207,15 +205,15 @@ onBeforeUnmount(() => {
 .main {
     display: flex;
     flex-direction: column;
-    height: 100vh;        
+    height: 100vh;
     padding: 1rem;
-    overflow: hidden;      
-    background: #1a1a1a;
-    box-sizing: border-box; 
+    overflow: hidden;
+    background: #3b4444;
+    box-sizing: border-box;
 }
 .notification {
 	color:black;
-	
+
 }
 .fixed-input-container {
 	bottom: 0;
@@ -232,7 +230,6 @@ onBeforeUnmount(() => {
 	padding: 1rem 2rem;
 	background: #437763;
 	border-radius: 12px;
-	margin-bottom: 1rem;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -247,8 +244,8 @@ h1 {
     flex: 1;
     display: flex;
     flex-direction: column;
-    min-height: 0;      
-    background: #1a1a1a;
+    min-height: 0;
+    background:#3b4444;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -257,9 +254,7 @@ h1 {
 	flex: 1;
 	padding: 2rem;
 	overflow:auto;
-	background: #1a1a1a;
 	border-radius: 8px;
-	margin-bottom: 1rem;
 }
 
 .message-bubble {
@@ -301,7 +296,7 @@ h1 {
 	display: flex;
 	gap: 0.5rem;
 	padding: 1rem;
-	background: #1a1a1a;
+	background: #3b4444;
 	border-radius: 8px;
 	box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
 }

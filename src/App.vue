@@ -64,7 +64,7 @@ onBeforeUnmount(() => {
 
 #app {
 	height: 100vh;
-	background: #587958;
+	background: #3b4444;
 	overflow-y: hidden;
 	overflow-x: hidden;
 }

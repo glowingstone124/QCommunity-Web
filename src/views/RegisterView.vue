@@ -136,7 +136,6 @@ function closeDialog() {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background: linear-gradient(135deg, #64816c 0%, #437763 100%);
 }
 
 .login-panel {

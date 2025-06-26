@@ -58,11 +58,6 @@ onMounted(() => {
 				<p>{{ $t("mainPage_description.query") }}</p>
 				<span class="icon-query"></span>
 			</router-link>
-			<router-link to="/news" class="tile">
-				<h2>{{ $t("mainPage.ip_query") }}</h2>
-				<p>{{ $t("mainPage_description.ip_query") }}</p>
-				<span class="icon-news"></span>
-			</router-link>
 			<router-link to="/messages" class="tile">
 				<h2>{{ $t("mainPage.message_list") }}</h2>
 				<p>{{ $t("mainPage_description.message_list") }}</p>
