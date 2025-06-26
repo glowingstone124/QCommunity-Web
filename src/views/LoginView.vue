@@ -119,31 +119,31 @@ const login = async () => {
   }
 
   .input-group {
-	position: relative;
-	margin-bottom: 1.5rem;
+	  display: flex;
+	  align-items: center;
+	  background: #f8f9fa;
+	  border: 2px solid #e0e0e0;
+	  border-radius: 10px;
+	  padding: 0 1rem;
+	  margin-top: 2rem;
   }
 
   .input-icon {
-	position: absolute;
-	left: 1rem;
-	top: 50%;
-	transform: translateY(-50%);
-	width: 24px;
-	height: 24px;
-	fill: #64816c;
-	z-index: 1;
+	  width: 24px;
+	  height: 24px;
+	  fill: #64816c;
+	  margin-right: 0.5rem;
+	  flex-shrink: 0;
   }
 
-  input {
-	margin:auto;
-	width: 90%;
-	padding: 1rem 1rem 1rem 3rem;
-	border: 2px solid #e0e0e0;
-	border-radius: 10px;
-	font-size: 1rem;
-	transition: all 0.3s ease;
-	background: #f8f9fa;
+  .input-group input {
+	  border: none;
+	  background: transparent;
+	  flex: 1;
+	  padding: 1rem 2rem;
+	  font-size: 1rem;
   }
+
 
   input:focus {
 	border-color: #64816c;
