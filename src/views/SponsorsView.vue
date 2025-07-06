@@ -24,6 +24,7 @@ const showDeclaration = ref(false);
 				<strong>4.公平性：</strong>Quantum Original 将尽力保障所有玩家的正常游戏体验，但捐赠/贡献不会赋予任何游戏特权。</p>
 		</div>
 	</transition>
+	<span class="special" @click="window.open('https://space.bilibili.com/152309938')"><h3 class="name">苗库里</h3><p class="contributor artwork">(WIP)东方系列像素头像</p></span>
 	<span><h3 class="name">glowingstone124</h3><p class="contributor api">QAPI3</p><p class="contributor plugin">QPlugin</p><p class="contributor web">Webs</p></span>
 	<span><h3 class="name">MineCreeper2086</h3><p class="contributor plugin">QPlugin</p><p class="contributor web">Webs</p></span>
 	<span><h3 class="name">Adam Gu</h3><p class="contributor api">QAPI3</p><p class="contributor web">Webs</p></span>
@@ -90,6 +91,9 @@ span {
 .plugin {
 	background: #8eb91e;
 }
+.artwork {
+	background-image: linear-gradient(120deg, #a6c0fe 0%, #f68084 100%);
+}
 .contributor {
 	color: #e4f3ec;
 	border-radius: 18px;
@@ -126,6 +130,19 @@ h1, h2,p {
 h3 {
 	color: #adf5db;
 }
+
+.special {
+	background-color: #52655f;
+	padding: 5px 20px;
+	margin-top: 20px;
+	max-width: fit-content;
+	border-radius: 10px;
+}
+.special:hover {
+	transform: translateX(20px);
+	box-shadow: rgba(46, 240, 166, 0.4) -5px 5px, rgba(46, 240, 143, 0.3) -10px 10px, rgba(46, 240, 137, 0.2) -15px 15px, rgba(46, 240, 124, 0.1) -20px 20px, rgba(46, 246, 124, 0.05) -25px 25px;
+}
+
 .link {
 	background: #355e65;
 	color: #adf5db;
