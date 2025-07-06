@@ -9,7 +9,7 @@ const showDeclaration = ref(false);
 <div class="bg">
 	<h1 class="big-title">Quantum Original 2</h1>
 	<h2 class="chapter">参与贡献者名单</h2>
-	<p>感谢所有朋友对于Quantum Original及其他服务的贡献。</p>
+	<p>感谢所有朋友对于Quantum Original及其他服务的贡献。<br>对于艺术作品作者，点击名字前往他们的社交平台。</p>
 	<a href="https://afdian.com/a/glowingstone124" class="link">前往爱发电</a>
 	<Redirect text-color="white"/>
 	<button class="toggle-button" @click="showDeclaration = !showDeclaration">
@@ -24,7 +24,7 @@ const showDeclaration = ref(false);
 				<strong>4.公平性：</strong>Quantum Original 将尽力保障所有玩家的正常游戏体验，但捐赠/贡献不会赋予任何游戏特权。</p>
 		</div>
 	</transition>
-	<span class="special" @click="window.open('https://space.bilibili.com/152309938')"><h3 class="name">苗库里</h3><p class="contributor artwork">(WIP)东方系列像素头像</p></span>
+	<span class="special" style="cursor: pointer;"><a class="name"  href="https://space.bilibili.com/152309938">苗库里</a><p class="contributor artwork">(WIP)东方系列像素头像</p></span>
 	<span><h3 class="name">glowingstone124</h3><p class="contributor api">QAPI3</p><p class="contributor plugin">QPlugin</p><p class="contributor web">Webs</p></span>
 	<span><h3 class="name">MineCreeper2086</h3><p class="contributor plugin">QPlugin</p><p class="contributor web">Webs</p></span>
 	<span><h3 class="name">Adam Gu</h3><p class="contributor api">QAPI3</p><p class="contributor web">Webs</p></span>
@@ -123,8 +123,10 @@ span {
 	margin-right: 20px;
 	font-family: "Bahnschrift", sans-serif;
 	font-size: 1.6rem;
+	text-decoration: none;
+
 }
-h1, h2,p {
+h1, h2,p, a {
 	color: #adf5db;
 }
 h3 {
