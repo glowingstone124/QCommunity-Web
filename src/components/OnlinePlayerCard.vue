@@ -5,7 +5,6 @@
 				<img class="avatar" :src="avatar" alt="Player Avatar" />
 				<p class="name">{{ player.name }}</p>
 			</div>
-			<span :class="['arrow', { 'arrow-up': isExpanded }]"></span>
 		</span>
 
 		<transition name="details-transition">
@@ -22,32 +21,43 @@
 
 
 <script setup lang="ts">
-import {defineProps, ref, onMounted, onBeforeUnmount} from 'vue';
-let pollingInterval;
+import { defineProps, ref, onMounted, onBeforeUnmount } from 'vue';
+
+const avatarCache = new Map<string, string>();
+
+let pollingInterval: number;
 const isExpanded = ref(false);
+
 const props = defineProps({
 	player: {
 		type: Object,
 		required: true,
-	}
+	},
 });
+
 function toggleDetails() {
 	isExpanded.value = !isExpanded.value;
 }
 
 const avatar = ref('');
-
 const detailsRef = ref<HTMLElement | null>(null);
 
 async function getAvatar(name: string): Promise<string | undefined> {
+	if (avatarCache.has(name)) {
+		return avatarCache.get(name);
+	}
+
 	try {
 		const response = await fetch(`https://api.glowingstone.cn/qo/download/avatar?name=${name}`);
 		const data = await response.json();
-		return data.url;
+		if (data?.url) {
+			avatarCache.set(name, data.url);
+			return data.url;
+		}
 	} catch (error) {
-		console.error("Error fetching avatar:", error);
-		return undefined;
+		console.error('Error fetching avatar:', error);
 	}
+	return undefined;
 }
 
 async function doSomething() {
@@ -59,7 +69,7 @@ async function doSomething() {
 
 function startPolling() {
 	doSomething();
-	pollingInterval = setInterval(doSomething, 1000);
+	pollingInterval = window.setInterval(doSomething, 1000);
 }
 
 function stopPolling() {
@@ -73,6 +83,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
 	stopPolling();
 });
+
 </script>
 
 <style scoped>
@@ -90,13 +101,23 @@ onBeforeUnmount(() => {
 .card:hover {
 	background-color: rgb(75, 120, 110);
 }
-
-.avatar {
-	width: 50px;
-	height: 50px;
-	margin-bottom: 10px;
-	margin-right: 15px;
+.info {
+	display: flex;
+	align-items: center;
+	vertical-align: middle;
+	justify-content: flex-start;
 }
+.avatar {
+	width: 70px;
+	height: 70px;
+	margin: 0 10px;
+	border-radius: 50%;
+	box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+	border: 2px solid #ffffff55;
+	object-fit: cover;
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
 
 .name {
 	font-weight: bold;
@@ -124,19 +145,6 @@ p {
 .details-transition-leave-from {
 	max-height: 500px; /* 根据实际内容设定 */
 	opacity: 1;
-}
-
-.arrow {
-	width: 0;
-	height: 0;
-	border-left: 8px solid transparent;
-	border-right: 8px solid transparent;
-	border-top: 8px solid var(--text, white);
-	transition: transform 0.3s ease;
-}
-
-.arrow-up {
-	transform: rotate(180deg);
 }
 </style>
 

@@ -9,19 +9,21 @@
 import NavBar from './components/NavBar.vue';
 import {onMounted} from "vue";
 onMounted(() => {
-	document.addEventListener('contextmenu', e => e.preventDefault());
-	document.addEventListener('dragstart', e => e.preventDefault());
-	document.addEventListener('copy', e => e.preventDefault());
-	document.addEventListener('selectstart', e => e.preventDefault());
-	document.addEventListener("keydown", function (e) {
-		if (
-			e.key === "F12" ||
-			(e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") ||
-			(e.ctrlKey && e.key.toLowerCase() === "u")
-		) {
-			e.preventDefault();
-		}
-	});
+	if (import.meta.env.PROD) {
+		document.addEventListener('contextmenu', e => e.preventDefault());
+		document.addEventListener('dragstart', e => e.preventDefault());
+		document.addEventListener('copy', e => e.preventDefault());
+		document.addEventListener('selectstart', e => e.preventDefault());
+		document.addEventListener('keydown', function (e) {
+			if (
+				e.key === 'F12' ||
+				(e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') ||
+				(e.ctrlKey && e.key.toLowerCase() === 'u')
+			) {
+				e.preventDefault();
+			}
+		});
+	}
 });
 </script>
 
