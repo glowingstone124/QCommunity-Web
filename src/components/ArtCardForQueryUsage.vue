@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, computed, onMounted} from "vue"
+import {ref, computed, watch} from "vue"
 import axios from "axios"
 
 const props = defineProps({
@@ -7,26 +7,24 @@ const props = defineProps({
 		type: [Number],
 		required: true,
 		default: 1.0
+	},
+	username: {
+		type: String,
+		required: true,
 	}
 })
 
-
 const statistics = ref<{ label: string, value: string }[]>([])
-const username = ref("steve")
 const uuid = ref("")
 const avatarUrl = ref("")
 const cardId = ref(0)
+
 async function queryAccountData(): Promise<number> {
 	try {
-		const res = await fetch("https://api.qoriginal.vip/qo/authorization/account", {
-			headers: {
-				"token": localStorage.getItem("token"),
-			}
-		});
+		const res = await fetch("https://api.qoriginal.vip/qo/download/registry?name=" + props.username);
 		const data = await res.json();
-		username.value = data.username;
 		uuid.value = data.profile_id;
-		getAvatar(username.value).then((result: string) =>{
+		getAvatar(props.username).then((result: string) => {
 			avatarUrl.value = result
 		})
 		const cardRes = await axios.get("https://api.qoriginal.vip/qo/authorization/account/card?profileUuid=" + uuid.value);
@@ -40,14 +38,13 @@ async function queryAccountData(): Promise<number> {
 				value: obj[key] || "0"
 			}
 		})
-
-
 		return cardId.value;
 	} catch (err) {
 		console.error("请求失败：", err);
 		return 0;
 	}
 }
+
 async function getAvatar(name: string): Promise<string | undefined> {
 	try {
 		const response = await fetch(`https://api.glowingstone.cn/qo/download/avatar?name=${name}`);
@@ -59,6 +56,17 @@ async function getAvatar(name: string): Promise<string | undefined> {
 		console.error('Error fetching avatar:', error);
 	}
 	return undefined;
+}
+
+async function getCardBg() {
+	if (cardId.value > 0) {
+		const response = await axios.get(`https://api.qoriginal.vip/qo/authorization/cards/info?id=${cardId.value}`);
+		backgroundUrl.value = response.data.file_url;
+		level.value = response.data.rarity;
+		collection.value = response.data.special;
+	} else {
+		console.warn("cardId 无效");
+	}
 }
 
 const level = ref(0)
@@ -86,22 +94,12 @@ const textColor = computed(() => {
 	return brightness > 128 ? "#000000" : "#FFFFFF"
 })
 
-onMounted(async () => {
-	try {
-		const card = await queryAccountData();
-		if (card > 0) {
-			const response = await axios.get(`https://api.qoriginal.vip/qo/authorization/cards/info?id=${card}`);
-			backgroundUrl.value = response.data.file_url;
-			level.value = response.data.rarity;
-			collection.value = response.data.special;
-		} else {
-			console.warn("cardId 无效");
-		}
-	} catch (err) {
-		console.error("获取卡片信息失败：", err);
+watch(() => props.username, async (newName) => {
+	if (newName && newName.trim() !== '') {
+		await queryAccountData();
+		await getCardBg();
 	}
-});
-
+}, {immediate: true});
 </script>
 
 <template>
@@ -115,7 +113,7 @@ onMounted(async () => {
 		<div class="background" :style="{ backgroundImage: `url('${backgroundUrl}')` }">
 			<div class="top">
 				<div class="section-1">
-					<img :src="avatarUrl" alt="avatar" />
+					<img :src="avatarUrl" alt="avatar"/>
 				</div>
 				<div class="section-4"><h1>{{ username }}</h1></div>
 				<div class="section-1"></div>
@@ -150,10 +148,12 @@ onMounted(async () => {
 		text-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
 		font-family: "Bahnschrift", sans-serif;
 	}
+
 	h2 {
 		font-size: 1.9rem;
 	}
-	p{
+
+	p {
 		font-size: 1.4rem;
 	}
 }
@@ -195,7 +195,7 @@ onMounted(async () => {
 .cube {
 	width: 1rem;
 	rotate: 45deg;
-	margin-right:10px;
+	margin-right: 10px;
 	height: 1rem;
 }
 
@@ -224,7 +224,7 @@ onMounted(async () => {
 .top {
 	min-height: 6rem;
 	max-width: 100%;
-	backdrop-filter:  blur(20px) brightness(80%);
+	backdrop-filter: blur(20px) brightness(80%);
 	display: flex;
 }
 
@@ -235,6 +235,7 @@ onMounted(async () => {
 		background-color: #8eda0d;
 		object-fit: cover;
 	}
+
 	flex: 1;
 }
 
@@ -242,12 +243,14 @@ onMounted(async () => {
 	display: table;
 	text-align: center;
 	flex: 4;
-	h1{
+
+	h1 {
 		display: table-cell;
 		vertical-align: middle;
 		color: white;
 	}
 }
+
 .wrapper {
 	max-width: 540px;
 }
