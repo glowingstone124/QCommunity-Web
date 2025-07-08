@@ -10,6 +10,12 @@ const componentsList = [AllCardsComponent, MyCardsComponent]
 
 const currentComponent = computed(() => componentsList[selectedIndex.value])
 
+const isCollapsed = ref(false)
+
+function toggleCollapse() {
+	isCollapsed.value = !isCollapsed.value
+}
+
 </script>
 
 <template>
@@ -17,26 +23,24 @@ const currentComponent = computed(() => componentsList[selectedIndex.value])
 		<div class="left">
 			<span style="margin-bottom: 2rem">
 				<h1>您的卡面</h1>
+				<button class="toggle-btn" @click="toggleCollapse">
+				{{ isCollapsed ? '展开' : '收起' }}
+			</button>
 			</span>
 			<ArtCard :scale="0.6" id="1" />
 		</div>
-		<div class="right">
+		<div class="right" :class="{ collapsed: isCollapsed }"  v-if="!isCollapsed">
 			<div class="btn-group">
-				<button
-					:class="{ active: selectedIndex === 0 }"
-					@click="selectedIndex = 0"
-				>
+				<button :class="{ active: selectedIndex === 0 }" @click="selectedIndex = 0">
 					所有卡片
 				</button>
-				<button
-					:class="{ active: selectedIndex === 1 }"
-					@click="selectedIndex = 1"
-				>
+				<button :class="{ active: selectedIndex === 1 }" @click="selectedIndex = 1">
 					我的卡片
 				</button>
 			</div>
 			<component :is="currentComponent" />
 		</div>
+
 	</div>
 </template>
 
@@ -93,5 +97,34 @@ const currentComponent = computed(() => componentsList[selectedIndex.value])
 	z-index: 0;
 	transition: left 0.3s ease;
 }
+
+.right {
+	flex: 1;
+	position: relative;
+	transition: all 0.3s ease;
+}
+
+.right.collapsed {
+	width: 120px;
+	overflow: hidden;
+}
+
+.toggle-btn {
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+	background: #3e5d3e;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	padding: 6px 10px;
+	cursor: pointer;
+	font-size: 0.9rem;
+	transition: background 0.3s;
+}
+.toggle-btn:hover {
+	background: #4b744b;
+}
+
 
 </style>

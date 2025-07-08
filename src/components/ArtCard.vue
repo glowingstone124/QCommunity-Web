@@ -89,7 +89,6 @@ onMounted(async () => {
 
 </script>
 
-
 <template>
 	<div
 		class="wrapper"
@@ -98,6 +97,11 @@ onMounted(async () => {
 			transformOrigin: 'top left',
 		}"
 	>
+		<div class="top">
+			<div class="section-1"></div>
+			<div class="section-4"><h1>{{ username }}</h1></div>
+			<div class="section-1"></div>
+		</div>
 		<div class="background" :style="{ backgroundImage: `url('${backgroundUrl}')` }">
 			<div class="main">
 				<div class="statistics" v-for="(stat, index) in statistics" :key="index" :style="{ color: textColor }">
@@ -195,5 +199,28 @@ onMounted(async () => {
 	}
 }
 
+.top {
+	min-height: 6rem;
+	max-width: 100%;
+	background-color: #39bd59;
+	display: flex;
+}
+
+.section-1 {
+	flex: 1;
+}
+
+.section-4 {
+	display: table;
+	text-align: center;
+	flex: 4;
+	h1{
+		display: table-cell;
+		vertical-align: middle;
+	}
+}
+.wrapper {
+	max-width: 540px;
+}
 </style>
 
