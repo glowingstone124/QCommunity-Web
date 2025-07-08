@@ -7,33 +7,35 @@
 
 <script setup>
 import NavBar from './components/NavBar.vue';
-/*
-const angle = ref(120);
-const animating = ref(true);
-
-const gradientStyle = computed(() => {
-	return `linear-gradient(${angle.value}deg, #A5CC82 0%, #00467F 100%)`;
-});
-
-const changeGradientAngle = () => {
-	if (animating.value) {
-		angle.value = (angle.value + 0.1) % 360;
-		requestAnimationFrame(changeGradientAngle);
-	}
-};
-
+import {onMounted} from "vue";
 onMounted(() => {
-	changeGradientAngle();
+	document.addEventListener('contextmenu', e => e.preventDefault());
+	document.addEventListener('dragstart', e => e.preventDefault());
+	document.addEventListener('copy', e => e.preventDefault());
+	document.addEventListener('selectstart', e => e.preventDefault());
+	document.addEventListener("keydown", function (e) {
+		if (
+			e.key === "F12" ||
+			(e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") ||
+			(e.ctrlKey && e.key.toLowerCase() === "u")
+		) {
+			e.preventDefault();
+		}
+	});
 });
-
-onBeforeUnmount(() => {
-	animating.value = false
-});
- */
 </script>
 
 <style>
 @import "/src/assets/main.css";
+* {
+	user-select: none;
+	transition: all 0.3s ease-in-out;
+}
+
+input, textarea {
+	user-select: text;
+}
+
 .app {
 	max-height: 100vh;
 }
