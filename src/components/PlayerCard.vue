@@ -39,7 +39,7 @@ function extractColor() {
 			const colorThief = new ColorThief()
 			const color = colorThief.getPalette(avatarImg.value, 5)
 			const [c1, c2, c3] = color
-			textColor.value = getContrastColor(c2)
+			textColor.value = getContrastColor(c3)
 			gradient.value = `linear-gradient(135deg, rgb(${c2.join(',')}), rgb(${c3.join(',')}))`
 		} catch (e) {
 			console.error('颜色提取失败', e)
