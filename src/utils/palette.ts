@@ -1,4 +1,5 @@
 import { Vibrant } from "node-vibrant/browser";
+import axios from "axios";
 
 type InputType = string | HTMLImageElement | ImageData;
 
@@ -50,3 +51,13 @@ export function getImageDataFromImage(
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     return ctx.getImageData(0, 0, canvas.width, canvas.height);
 }
+export async function isSpecialAvatar(name: string): Promise<boolean> {
+    try {
+        const res = await axios.get(`https://api.qoriginal.vip/qo/download/avatar?name=${name}`)
+        return res.data.special === true
+    } catch (e) {
+        console.error('获取特殊头像信息失败', e)
+        return false
+    }
+}
+

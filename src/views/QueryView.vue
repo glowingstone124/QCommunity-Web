@@ -50,9 +50,6 @@ const handleSearch = debounce(async () => {
 	}
 }, 300);
 
-function onImgLoad() {
-	extractColor()
-}
 </script>
 
 <template>

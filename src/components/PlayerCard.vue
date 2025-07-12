@@ -16,8 +16,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import {ref, onMounted, watch} from "vue";
 import ColorThief from "colorthief";
+import {isSpecialAvatar} from "@/utils/palette";
 
 const props = defineProps<{
 	username: string
@@ -30,10 +31,10 @@ const props = defineProps<{
 }>()
 
 const avatarImg = ref<HTMLImageElement | null>(null)
-const gradient = ref<string>("rgba(0,255,0,1)")
+const gradient = ref<string>("linear-gradient(45deg,#64816c 0%, #64816c 100%)")
 
 function extractColor() {
-	if (avatarImg.value && avatarImg.value.complete) {
+	if (avatarImg.value) {
 		try {
 			const colorThief = new ColorThief()
 			const color = colorThief.getPalette(avatarImg.value, 5)
@@ -46,8 +47,14 @@ function extractColor() {
 	}
 }
 
-function onImgLoad() {
-	extractColor()
+async function onImgLoad() {
+	const result = await isSpecialAvatar(props.username)
+	console.log(result)
+	if (result) {
+		extractColor()
+	} else {
+		gradient.value = "linear-gradient(45deg,#64816c 0%, #64816c 100%)"
+	}
 }
 const textColor = ref<string>('var(--text)')
 
@@ -55,6 +62,11 @@ function getContrastColor([r, g, b]: [number, number, number]): string {
 	const yiq = (r * 299 + g * 587 + b * 114) / 1000
 	return yiq >= 128 ? ' #21420e' : 'white'
 }
+watch(() => props.username, async (newName) => {
+	if (newName && newName.trim() !== '') {
+		onImgLoad()
+	}
+}, {immediate: true});
 </script>
 
 
@@ -62,7 +74,7 @@ function getContrastColor([r, g, b]: [number, number, number]): string {
 @import "/src/assets/main.css";
 .player-info {
 	max-width: 100%;
-	padding: 0.4vw;
+	padding: 2rem;
 	display: flex;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 	flex-direction: row;
