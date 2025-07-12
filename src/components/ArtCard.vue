@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {ref, computed, onMounted} from "vue"
 import axios from "axios"
-import {extractPalette} from "@/utils/palette";
 const props = defineProps({
 	scale: {
 		type: [Number],
@@ -9,8 +8,9 @@ const props = defineProps({
 		default: 1.0
 	}
 })
-const avatar_bg_gradient = ref("")
-
+import ColorThief from 'colorthief'
+const gradient = ref("")
+const avatarImg = ref<HTMLImageElement | null>(null)
 const statistics = ref<{ label: string, value: string }[]>([])
 const username = ref("steve")
 const uuid = ref("")
@@ -51,9 +51,6 @@ async function getAvatar(name: string): Promise<string | undefined> {
 		const response = await fetch(`https://api.glowingstone.cn/qo/download/avatar?name=${name}`);
 		const data = await response.json();
 		if (data?.url) {
-			const result = await extractPalette(data.url, 2)
-			const hexColors = result.map(swatch => swatch.getHex())
-			avatar_bg_gradient.value = `linear-gradient(to right, ${hexColors[0]}, ${hexColors[1]})`
 			return data.url;
 		}
 	} catch (error) {
@@ -102,7 +99,24 @@ onMounted(async () => {
 		console.error("获取卡片信息失败：", err);
 	}
 });
+function extractColor() {
+	if (avatarImg.value) {
+		const colorThief = new ColorThief()
+		if (avatarImg.value.complete) {
+			try {
+				const color = colorThief.getPalette(avatarImg.value, 5)
+				const [c1, c2, c3, c4, c5] = color
+				gradient.value = `linear-gradient(135deg, rgb(${c2.join(',')}), rgb(${c3.join(',')}))`
+			} catch (e) {
+				console.error(e)
+			}
+		}
+	}
+}
 
+function onImgLoad() {
+	extractColor()
+}
 </script>
 
 <template>
@@ -115,8 +129,9 @@ onMounted(async () => {
 	>
 		<div class="background" :style="{ backgroundImage: `url('${backgroundUrl}')` }">
 			<div class="top">
-				<div class="section-1" :style="{backgroundImage: avatar_bg_gradient}">
-					<img :src="avatarUrl" alt="avatar" />
+				<div class="section-1" :style="{backgroundImage: gradient}">
+					<img :src="avatarUrl" alt="avatar" ref="avatarImg" crossorigin="anonymous"
+					@load="onImgLoad" />
 				</div>
 				<div class="section-4"><h1>{{ username }}</h1></div>
 				<div class="section-1"></div>
@@ -233,7 +248,6 @@ onMounted(async () => {
 	img {
 		max-width: 100%;
 		max-height: 100%;
-		background-color: #8eda0d;
 		object-fit: cover;
 	}
 	flex: 1;

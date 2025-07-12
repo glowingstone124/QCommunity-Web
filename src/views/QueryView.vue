@@ -50,6 +50,9 @@ const handleSearch = debounce(async () => {
 	}
 }, 300);
 
+function onImgLoad() {
+	extractColor()
+}
 </script>
 
 <template>
@@ -168,10 +171,8 @@ h2 {
 }
 
 .playerCard {
-	background-color: rgba(127, 162, 127, 0.5);
 	border-radius: 10px;
 	padding: 1rem;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 	margin-top: 1rem;
 	transition: all 0.3s;
 	width: 100%;

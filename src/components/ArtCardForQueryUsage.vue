@@ -19,6 +19,27 @@ const uuid = ref("")
 const avatarUrl = ref("")
 const cardId = ref(0)
 
+import ColorThief from 'colorthief'
+const gradient = ref("")
+const avatarImg = ref<HTMLImageElement | null>(null)
+function extractColor() {
+	if (avatarImg.value) {
+		const colorThief = new ColorThief()
+		if (avatarImg.value.complete) {
+			try {
+				const color = colorThief.getPalette(avatarImg.value, 5)
+				const [c1, c2, c3, c4, c5] = color
+				gradient.value = `linear-gradient(135deg, rgb(${c2.join(',')}), rgb(${c3.join(',')}))`
+			} catch (e) {
+				console.error(e)
+			}
+		}
+	}
+}
+
+function onImgLoad() {
+	extractColor()
+}
 async function queryAccountData(): Promise<number> {
 	try {
 		const res = await fetch("https://api.qoriginal.vip/qo/download/registry?name=" + props.username);
@@ -112,8 +133,9 @@ watch(() => props.username, async (newName) => {
 	>
 		<div class="background" :style="{ backgroundImage: `url('${backgroundUrl}')` }">
 			<div class="top">
-				<div class="section-1">
-					<img :src="avatarUrl" alt="avatar"/>
+				<div class="section-1" :style="{backgroundImage: gradient}">
+					<img :src="avatarUrl" alt="avatar" ref="avatarImg" crossorigin="anonymous"
+						 @load="onImgLoad" />
 				</div>
 				<div class="section-4"><h1>{{ username }}</h1></div>
 				<div class="section-1"></div>
@@ -232,7 +254,6 @@ watch(() => props.username, async (newName) => {
 	img {
 		max-width: 100%;
 		max-height: 100%;
-		background-color: #8eda0d;
 		object-fit: cover;
 	}
 

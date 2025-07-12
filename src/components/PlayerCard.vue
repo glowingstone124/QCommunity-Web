@@ -1,6 +1,7 @@
 <template>
-	<div class="player-info">
-		<img :src="avatar" alt="avatar" />
+	<div class="player-info" :style="{backgroundImage:gradient, color: textColor}">
+		<img :src="avatar" alt="avatar"  ref="avatarImg" crossorigin="anonymous"
+			 @load="onImgLoad" />
 		<span class="info">
 			<h1 :class="{ 'online-id': online }">{{ username }}</h1>
 			<span v-if="qq"><p class="qq">UID: {{ qq }}</p></span>
@@ -14,45 +15,48 @@
 	</div>
 </template>
 
-<script>
-export default {
-	name: "PlayerInfoCard",
-	props: {
-		username: {
-			type: String,
-			required: true
-		},
-		avatar: {
-			type: String,
-			required: false,
-			default: "https://crafthead.net/avatar/8667ba71b85a4004af54457a9734eed7"
-		},
-		banned: {
-			type: Boolean,
-			required: true
-		},
-		online: {
-			type: Boolean,
-			required: true
-		},
-		qq: {
-			type: String,
-			required: true,
-			default: ""
-		},
-		found: {
-			type: Boolean,
-			required: true,
-			default: false,
-		},
-		playtime: {
-			type: Number,
-			required: true,
-			default: 0
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+import ColorThief from "colorthief";
+
+const props = defineProps<{
+	username: string
+	avatar?: string
+	banned: boolean
+	online: boolean
+	qq: string
+	found: boolean
+	playtime: number
+}>()
+
+const avatarImg = ref<HTMLImageElement | null>(null)
+const gradient = ref<string>("rgba(0,255,0,1)")
+
+function extractColor() {
+	if (avatarImg.value && avatarImg.value.complete) {
+		try {
+			const colorThief = new ColorThief()
+			const color = colorThief.getPalette(avatarImg.value, 5)
+			const [c1, c2, c3] = color
+			textColor.value = getContrastColor(c2)
+			gradient.value = `linear-gradient(135deg, rgb(${c2.join(',')}), rgb(${c3.join(',')}))`
+		} catch (e) {
+			console.error('颜色提取失败', e)
 		}
 	}
-};
+}
+
+function onImgLoad() {
+	extractColor()
+}
+const textColor = ref<string>('var(--text)')
+
+function getContrastColor([r, g, b]: [number, number, number]): string {
+	const yiq = (r * 299 + g * 587 + b * 114) / 1000
+	return yiq >= 128 ? ' #21420e' : 'white'
+}
 </script>
+
 
 <style scoped>
 @import "/src/assets/main.css";
@@ -60,6 +64,7 @@ export default {
 	max-width: 100%;
 	padding: 0.4vw;
 	display: flex;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 	flex-direction: row;
 	align-items: center;
 	transition: all 0.5s ease;
@@ -80,7 +85,6 @@ export default {
 }
 
 h1 {
-	color: var(--text);
 	font-size: 3rem;
 	font-family: "Bahnschrift";
 	margin: 0;
@@ -100,18 +104,10 @@ img {
 }
 .qq {
 	font-size: 22px;
-	color: #C7CACA;
 	font-family: "Bahnschrift";
 }
 .playtime {
-	color: #C7CACA;
 	font-family: "Bahnschrift";
-}
-.online-id {
-	background: linear-gradient(90deg, rgba(0,255,0,1) 0%, rgba(84, 150, 84) 100%);
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
-	animation: gradientAnimation 0.5s ease infinite;
 }
 @keyframes gradientAnimation {
 	0% {
