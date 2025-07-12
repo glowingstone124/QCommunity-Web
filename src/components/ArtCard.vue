@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref, computed, onMounted} from "vue"
 import axios from "axios"
-
+import {extractPalette} from "@/utils/palette";
 const props = defineProps({
 	scale: {
 		type: [Number],
@@ -9,7 +9,7 @@ const props = defineProps({
 		default: 1.0
 	}
 })
-
+const avatar_bg_gradient = ref("")
 
 const statistics = ref<{ label: string, value: string }[]>([])
 const username = ref("steve")
@@ -40,8 +40,6 @@ async function queryAccountData(): Promise<number> {
 				value: obj[key] || "0"
 			}
 		})
-
-
 		return cardId.value;
 	} catch (err) {
 		console.error("请求失败：", err);
@@ -53,6 +51,9 @@ async function getAvatar(name: string): Promise<string | undefined> {
 		const response = await fetch(`https://api.glowingstone.cn/qo/download/avatar?name=${name}`);
 		const data = await response.json();
 		if (data?.url) {
+			const result = await extractPalette(data.url, 2)
+			const hexColors = result.map(swatch => swatch.getHex())
+			avatar_bg_gradient.value = `linear-gradient(to right, ${hexColors[0]}, ${hexColors[1]})`
 			return data.url;
 		}
 	} catch (error) {
@@ -114,7 +115,7 @@ onMounted(async () => {
 	>
 		<div class="background" :style="{ backgroundImage: `url('${backgroundUrl}')` }">
 			<div class="top">
-				<div class="section-1">
+				<div class="section-1" :style="{backgroundImage: avatar_bg_gradient}">
 					<img :src="avatarUrl" alt="avatar" />
 				</div>
 				<div class="section-4"><h1>{{ username }}</h1></div>
