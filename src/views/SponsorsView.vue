@@ -30,6 +30,7 @@ const showDeclaration = ref(false);
 	<span><h3 class="name">Adam Gu</h3><p class="contributor api">QAPI3</p><p class="contributor web">Webs</p></span>
 	<span><h3 class="name">0x0025(Code Verse)</h3><p class="contributor sponsor">Sponsor</p></span>
 	<span><h3 class="name">CHJWOS_</h3><p class="contributor sponsor">Sponsor</p></span>
+	<span><h3 class="name">mcjiangshi56</h3><p class="contributor sponsor">Sponsor</p></span>
 	<span><h3 class="name">QiuZhi__</h3><p class="contributor sponsor">Sponsor</p></span>
 </div>
 </template>
