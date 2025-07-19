@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, ref} from 'vue'
+import {computed, onMounted, ref} from 'vue'
 import axios from "axios";
 
 function apply(cardId: number) {
@@ -50,28 +50,49 @@ onMounted(async () => {
 		console.error("获取卡片信息失败", error)
 	}
 })
+const groupedCards = computed(() => {
+  const groups = {}
+  for (const card of cards.value) {
+    if (!groups[card.special]) {
+      groups[card.special] = []
+    }
+    groups[card.special].push(card)
+  }
+  return groups
+})
 
 </script>
 
 <template>
-	<div class="gallery">
-		<div class="card" v-for="card in cards" :key="card.id">
-			<img :src="card.file_url" :alt="card.name"/>
-			<div class="name-bar">
-				<h3>{{ card.name }}</h3>
-			</div>
-			<div class="overlay">
-				<p>{{ card.special }}</p>
-				<span
-					class="rarity"
-					:style="{ backgroundColor: rarityMap[card.rarity]?.color }"
-				>
-					{{ rarityMap[card.rarity]?.name || "未知" }}
-				</span>
-				<button class="apply" @click="apply(card.id)">应用</button>
-			</div>
-		</div>
-	</div>
+  <div class="gallery">
+    <div
+        v-for="(group, special) in groupedCards"
+        :key="special"
+        class="card-group"
+    >
+      <span>
+      <h2 class="group-title">{{ special }}</h2>
+      </span>
+      <span style="display: flex;flex-direction: row;gap: 16px;flex-wrap: wrap">
+      <div class="card" v-for="card in group" :key="card.id">
+        <img :src="card.file_url" :alt="card.name" />
+        <div class="name-bar">
+          <h3>{{ card.name }}</h3>
+        </div>
+        <div class="overlay">
+          <p>{{ card.special }}</p>
+          <span
+              class="rarity"
+              :style="{ backgroundColor: rarityMap[card.rarity]?.color }"
+          >
+						{{ rarityMap[card.rarity]?.name || "未知" }}
+          </span>
+          <button class="apply" @click="apply(card.id)">应用</button>
+        </div>
+      </div>
+         </span>
+    </div>
+  </div>
 </template>
 
 
