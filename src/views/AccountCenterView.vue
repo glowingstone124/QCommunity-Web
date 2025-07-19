@@ -173,7 +173,7 @@ watch(currentSetting, (newValue) => {
 				</div>
 			</transition>
 			<transition name="slide-in">
-				<div v-if="currentSetting === 2" key="other-info">
+				<div v-if="currentSetting === 2" key="other-info" style="height: 100%;">
 					<PlayerCardsListComponent></PlayerCardsListComponent>
 				</div>
 			</transition>
@@ -189,8 +189,8 @@ watch(currentSetting, (newValue) => {
 .panel-wrapper {
 	display: flex;
 	flex-direction: row;
-	width: 100%;
 	height: 100%;
+  margin: 1rem 3rem;
 }
 
 input[type="text"],
@@ -260,7 +260,7 @@ h1 {
 
 .container {
 	height: 100%;
-	width: 100%;
+	max-width: 100vw;
 	display: flex;
 	flex-direction: row
 }
@@ -299,7 +299,6 @@ h1 {
 		color: #a0da1d;
 	}
 	flex: 8;
-	padding: 1rem 3rem;
 }
 
 .navigate-items {
@@ -380,7 +379,7 @@ h1 {
 }
 
 .hint {
-	margin: auto;
+	margin: 1px auto;
 	background-color: #4a557c;
 	border-radius: 20px;
 	padding: 5px 25px;

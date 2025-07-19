@@ -21,12 +21,7 @@ function toggleCollapse() {
 <template>
 	<div class="container">
 		<div class="left">
-			<span style="margin-bottom: 2rem">
 				<h1>您的卡面</h1>
-				<button class="toggle-btn" @click="toggleCollapse">
-				{{ isCollapsed ? '展开' : '收起' }}
-			</button>
-			</span>
 			<ArtCard :scale="0.6" id="1" />
 		</div>
 		<div class="right" :class="{ collapsed: isCollapsed }"  v-if="!isCollapsed">
@@ -47,18 +42,20 @@ function toggleCollapse() {
 <style scoped>
 .container {
 	display: flex;
-	gap: 20px;
 	height: 100%;
+  margin-left: 4rem;
 }
 .left {
-	flex: 1;
+	flex: 0;
 	h1 {
+    display: inline-block;
 		font-size: 3rem;
 		color:#d4e7a9;
 	}
 }
 .right {
-	flex: 1;
+  background: #545e54;
+	flex: 6;
 }
 .btn-group {
 	position: relative;
