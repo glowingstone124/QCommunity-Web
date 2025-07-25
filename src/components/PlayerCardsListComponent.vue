@@ -3,8 +3,11 @@ import { ref, computed } from "vue"
 import ArtCard from "@/components/ArtCard.vue"
 import AllCardsComponent from "@/components/AllCardsComponent.vue"
 import MyCardsComponent from "@/components/MyCardsComponent.vue";
+import ChangeAvatarComponent from "@/components/ChangeAvatarComponent.vue";
 
 const selectedIndex = ref<0 | 1>(0)
+
+const selectModule = ref(0)
 
 const componentsList = [AllCardsComponent, MyCardsComponent]
 
@@ -25,25 +28,62 @@ function toggleCollapse() {
 			<ArtCard :scale="0.6" id="1" />
 		</div>
 		<div class="right" :class="{ collapsed: isCollapsed }"  v-if="!isCollapsed">
-			<div class="btn-group">
-				<button :class="{ active: selectedIndex === 0 }" @click="selectedIndex = 0">
-					所有卡片
-				</button>
-				<button :class="{ active: selectedIndex === 1 }" @click="selectedIndex = 1">
-					我的卡片
-				</button>
+			<div class="customizationSelect">
+				<div class="customizationBtn" @click="selectModule = 0"><p>卡面</p></div>
+				<div class="customizationBtn" @click="selectModule = 1"><p>头像</p></div>
 			</div>
-			<component :is="currentComponent" />
+			<div v-show="selectModule === 0" class="customizationFatherContainer">
+				<div class="btn-group">
+					<button :class="{ active: selectedIndex === 0 }" @click="selectedIndex = 0">
+						所有卡片
+					</button>
+					<button :class="{ active: selectedIndex === 1 }" @click="selectedIndex = 1">
+						我的卡片
+					</button>
+				</div>
+				<component :is="currentComponent"/>
+			</div>
+			<div v-show="selectModule === 1">
+				<div class="avatar-edit">
+					<ChangeAvatarComponent />
+				</div>
+			</div>
 		</div>
 
 	</div>
 </template>
 
 <style scoped>
+.customizationFatherContainer{
+	max-height: calc(100vh - 100px);
+	overflow: auto;
+}
+.customizationSelect{
+	background-color: #6f7c6f;
+	box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+	display: flex;
+	justify-content: center;
+	border:none;
+}
+.customizationBtn{
+	background-color: #7b887b;
+	margin: 5px;
+	width:100%;
+	align-content: center;
+	padding: 14px;
+}
+.customizationBtn:hover{
+	background-color: #535d53;
+}
 .container {
 	display: flex;
 	height: 100%;
-  margin-left: 4rem;
+    margin-left: 4rem;
+	p {
+		color: #cad7ca;
+		margin: auto;
+		text-align: center;
+	}
 }
 .left {
 	flex: 0;
@@ -54,11 +94,10 @@ function toggleCollapse() {
 	}
 }
 .right {
-  background: #545e54;
+	background: #545e54;
 	flex: 6;
 }
 .btn-group {
-	position: relative;
 	display: flex;
 	width: fit-content;
 	border-radius: 4px;
