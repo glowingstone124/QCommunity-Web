@@ -119,7 +119,7 @@ watch(currentSetting, (newValue) => {
 					<h2>IP过白</h2>
 				</div>
 				<div class="navigate-items" @click="displayCurrentSetting(2)">
-					<h2>其他</h2>
+					<h2>个性化</h2>
 				</div>
 			</span>
 		</div>
