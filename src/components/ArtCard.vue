@@ -61,14 +61,13 @@ async function getAvatar(name: string): Promise<string | undefined> {
 
 const level = ref(0)
 
-const collection = ref("")
-
-const levelColors = {
-	1: "#47c9da",
-	2: "#55CE85",
-	3: "#f10d0d",
-	4: "#ff9800",
+const levelDic = {
+	1: "common",
+	2: "uncommon",
+	3: "rare",
+	4: "limited",
 }
+const collection = ref("")
 
 const levelDesc = {
 	1: "Common",
@@ -147,9 +146,9 @@ function onImgLoad() {
 				<div class="from">
 					<p>{{ collection }}</p>
 				</div>
-				<div class="level">
-					<div class="cube" :style="{ background: levelColors[level] }"></div>
-					<h2 :style="{ color: levelColors[level] }">{{ levelDesc[level] }}</h2>
+				<div class="level" :class="levelDic[level]">
+					<div class="cube"></div>
+					<h2>{{ levelDesc[level] }}</h2>
 				</div>
 			</div>
 		</div>

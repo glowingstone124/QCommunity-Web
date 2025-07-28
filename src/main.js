@@ -16,6 +16,8 @@ import AccountCenterView from "@/views/AccountCenterView.vue";
 import SponsorsView from "@/views/SponsorsView.vue";
 import MiscView from "@/views/MiscView.vue";
 
+import "@/assets/colors.css"
+
 const routes = [
     {
         path: '/',

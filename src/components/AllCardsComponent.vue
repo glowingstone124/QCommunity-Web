@@ -5,10 +5,10 @@ import axios from "axios"
 const cards = ref([])
 
 const rarityMap = {
-  1: { name: "普通话", color: "#47c9da" },
-  2: { name: "稀有", color: "#55CE85" },
-  3: { name: "史诗", color: "#f10d0d" },
-  4: { name: "限定", color: "#ff9800" }
+  1: { name: "普通", style: "common" },
+  2: { name: "稀有", style: "uncommon" },
+  3: { name: "史诗", style: "rare" },
+  4: { name: "限定", style: "limited" }
 }
 
 const correspondText = {
@@ -60,9 +60,9 @@ const groupedCards = computed(() => {
           <p>{{ card.special }}</p>
           <span
               class="rarity"
-              :style="{ backgroundColor: rarityMap[card.rarity]?.color }"
+              :class="rarityMap[card.rarity]?.style"
           >
-						{{ rarityMap[card.rarity]?.name || "未知" }}
+						<p>{{ rarityMap[card.rarity]?.name || "未知" }}</p>
           </span>
         </div>
       </div>

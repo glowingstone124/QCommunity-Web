@@ -86,11 +86,13 @@
 
 .rarity {
     display: inline-block;
-    padding: 2px 8px;
+    padding: 4px 12px;
     border-radius: 6px;
+}
+.rarity p {
+    font-weight: 800;
     font-size: 0.8rem;
-    color: black;
-    font-weight: bold;
+    margin: 0;
 }
 .card-group {
     margin-bottom: 2rem;
@@ -104,4 +106,20 @@
     font-size: 1.5rem;
     color: #d4e7a9;
     margin: 1rem 0;
+}
+
+.common {
+    background-color: var(--common);
+}
+
+.uncommon {
+    background-color: var(--uncommon);
+}
+
+.rare {
+    background-color: var(--rare);
+}
+
+.limited {
+    background-color: var(--limited);
 }

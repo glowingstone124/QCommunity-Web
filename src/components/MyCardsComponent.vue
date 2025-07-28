@@ -14,20 +14,12 @@ function apply(cardId: number) {
 	)
 }
 
-const cards = ref([
-	{
-		name: "城市风光-主城1",
-		id: 1,
-		special: "City Collection",
-		rarity: 2,
-		file_url: "https://bucket.glowingstone.cn/cards/city_maincity_01.png"
-	}
-])
+const cards = ref([])
 const rarityMap = {
-	1: {name: "普通话", color: "#47c9da"},
-	2: {name: "稀有", color: "#55CE85"},
-	3: {name: "史诗", color: "#f10d0d"},
-	4: {name: "限定", color: "#ff9800"}
+	1: { name: "普通", style: "common" },
+	2: { name: "稀有", style: "uncommon" },
+	3: { name: "史诗", style: "rare" },
+	4: { name: "限定", style: "limited" }
 }
 onMounted(async () => {
 	try {
@@ -83,9 +75,9 @@ const groupedCards = computed(() => {
           <p>{{ card.special }}</p>
           <span
               class="rarity"
-              :style="{ backgroundColor: rarityMap[card.rarity]?.color }"
+              :class="rarityMap[card.rarity]?.style"
           >
-						{{ rarityMap[card.rarity]?.name || "未知" }}
+						<p>{{ rarityMap[card.rarity]?.name || "未知" }}</p>
           </span>
           <button class="apply" @click="apply(card.id)">应用</button>
         </div>

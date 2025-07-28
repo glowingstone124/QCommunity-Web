@@ -1,4 +1,5 @@
 @import "src/assets/main.css";
+@import "src/assets/colors.css";
 
 .statistics {
     h2, p {
@@ -106,4 +107,32 @@
 }
 .wrapper {
     max-width: 540px;
+}
+
+.common {
+    .cube {
+        background: var(--common);
+    }
+    color:  var(--common);
+}
+
+.uncommon {
+    .cube {
+        background:var(--uncommon);
+    }
+    color: var(--uncommon);
+}
+
+.rare {
+    .cube {
+        background: var(--rare);
+    }
+    color: var(--rare);
+}
+
+.limited {
+    .cube {
+        background: var(--limited);
+    }
+    color:  var(--limited);
 }
