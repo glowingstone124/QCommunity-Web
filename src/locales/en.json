@@ -10,6 +10,7 @@
     "ip_query": "Server IPs",
     "message_list": "Message List",
     "dashboard": "Dashboard",
+    "transport": "Transport (not implemented)",
     "greeting_text": "You have already played {played} minutes",
     "account_center": "Account Center",
     "miscs": "Miscs"
@@ -21,6 +22,7 @@
     "ip_query": "Find available server connections",
     "message_list": "View server chat logs",
     "dashboard": "Check server status",
+    "transport": "Get possible routes to anywhere",
     "miscs": "Some interesting toys & tools",
     "click_login": "Login"
   },

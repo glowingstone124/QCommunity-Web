@@ -68,6 +68,11 @@ onMounted(() => {
 				<p>{{ $t("mainPage_description.dashboard") }}</p>
 				<span class="icon-messages"></span>
 			</router-link>
+      <router-link to="/transport" class="tile">
+				<h2>{{ $t("mainPage.transport") }}</h2>
+				<p>{{ $t("mainPage_description.transport") }}</p>
+				<span class="icon-messages"></span>
+			</router-link>
       <router-link to="/miscs" class="tile">
 				<h2>{{ $t("mainPage.miscs") }}</h2>
 				<p>{{ $t("mainPage_description.miscs") }}</p>
