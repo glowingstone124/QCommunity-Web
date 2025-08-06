@@ -2,8 +2,8 @@
 	<div class="login-wrapper">
 	  <div class="login-container">
 		<div class="header">
-		  <h1>欢迎回来</h1>
-		  <p>请登录您的账户</p>
+		  <h1>{{ $t("loginPage.welcome_back") }}</h1>
+		  <p>{{ $t("loginPage.login") }}</p>
 		</div>
 
 		<form @submit.prevent="login">
@@ -32,7 +32,7 @@
 		  </div>
 
 		  <button type="submit" :disabled="loading">
-			<span v-if="!loading">立即登录</span>
+			<span v-if="!loading">{{ $t("loginPage.now_login") }}</span>
 			<div v-else class="spinner"></div>
 		  </button>
 
