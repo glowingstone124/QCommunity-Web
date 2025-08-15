@@ -2,7 +2,7 @@
   <header class="app-header">
     <div class="header-content">
       <div class="logo-section">
-        <h1 class="logo-text" @click="goHome">QCommunity</h1>
+        <h1 class="logo-text" @click="goHome">{{ pageStore.currentPage }}</h1>
       </div>
 
       <div class="user-section">
@@ -35,6 +35,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import {useI18n} from "vue-i18n";
+import {usePageStore} from "@/utils/store.ts";
 
 const router = useRouter()
 const { locale } = useI18n();
@@ -43,6 +44,7 @@ const token = ref(localStorage.getItem('token') || "")
 const loginstat = ref(false)
 const playtime = ref(0)
 const avatarUrl = ref('https://example.com/avatar.jpg')
+const pageStore = usePageStore()
 
 onMounted(() => {
   if (username.value) {

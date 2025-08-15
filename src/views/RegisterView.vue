@@ -50,9 +50,10 @@
 
 
 <script setup>
-import { ref } from "vue";
+import {onBeforeUnmount, onMounted, ref} from "vue";
 import { useRouter } from "vue-router";
 import { get } from "/src/utils/request";
+import {usePageStore} from "@/utils/store.ts";
 
 const step = ref(1)
 const username = ref("")
@@ -62,6 +63,7 @@ const isDialogVisible = ref(false)
 const message = ref("")
 const isLoading = ref(false)
 const router = useRouter()
+const pageStore = usePageStore()
 
 function validateQQ() {
 	qq.value = qq.value.replace(/\D/g, "")
