@@ -1,6 +1,7 @@
 <template>
 	<div class="login-wrapper">
 		<div class="login-panel">
+      <h3>第 {{step}} / 3 步</h3>
 			<h2 v-if="step === 1">输入您的 Minecraft 用户名</h2>
 			<h2 v-if="step === 2">输入您的 QQ 号</h2>
 			<h2 v-if="step === 3">设置您的密码</h2>
@@ -41,7 +42,7 @@
 		<div v-if="isDialogVisible" class="dialog-overlay">
 			<div class="dialog">
 				<h2>注册成功！</h2>
-				<p>欢迎加入 QOriginal！请在QQ群中发送确认信息来激活您的账户。</p>
+				<p>欢迎加入 QOriginal！请在QQ群中发送确认信息（/approve-register <>）来激活您的账户。</p>
 				<button @click="closeDialog">确认</button>
 			</div>
 		</div>
