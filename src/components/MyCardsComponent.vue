@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {computed, onMounted, ref} from 'vue'
 import axios from "axios";
-
+import {getSpecialImage} from '/src/utils/cards.ts'
 function apply(cardId: number) {
 	console.log("应用卡片", cardId)
 	axios.post(`https://api.qoriginal.vip/qo/authorization/account/card/custom`,
@@ -63,7 +63,12 @@ const groupedCards = computed(() => {
         class="card-group"
     >
       <span>
-      <h2 class="group-title">{{ special }}</h2>
+       <img
+		   v-if="getSpecialImage(special)"
+		   :src="getSpecialImage(special)"
+		   :alt="special"
+		   style="height: 80px; vertical-align: middle;"
+	   /><h2 class="group-title" v-else>{{ special }}</h2>
       </span>
       <span style="display: flex;flex-direction: row;gap: 16px;flex-wrap: wrap">
       <div class="card" v-for="card in group" :key="card.id">
