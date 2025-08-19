@@ -16,8 +16,10 @@
 }
 
 .background {
-    background: #000000 center no-repeat;
-    width: 650px;
+    background: #000000;
+    background-size: cover;
+    background-position: center;
+    width: 700px;
     display: flex;
     flex-direction: column;
     height: 1000px;
