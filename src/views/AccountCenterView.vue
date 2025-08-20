@@ -84,10 +84,12 @@ const validateIP = () => {
 	isValidIp.value = ipPattern.test(ipAddr.value);
 };
 onMounted(() => {
+	currentSetting.value = parseInt(localStorage.getItem('currentSetting'))
 	queryAccountData();
 })
 
 watch(currentSetting, (newValue) => {
+	localStorage.setItem('currentSetting', newValue)
 	switch (newValue) {
 		case 0:
 			queryAccountData();
@@ -108,17 +110,16 @@ watch(currentSetting, (newValue) => {
 	<div class="container">
 		<div class="right">
 			<span>
-				<h1>账户中心</h1>
-				<RedirectButton text-color="#d4e7a9"/>
+				<h1 style="margin-left: 2rem;">账户中心</h1>
 			</span>
 			<span class="navigate-menu">
-				<div class="navigate-items" @click="displayCurrentSetting(0)">
+				<div class="navigate-items" @click="displayCurrentSetting(0)" :class="[currentSetting === 0 ? 'active' : '']">
 					<h2>账户信息</h2>
 				</div>
-				<div class="navigate-items" @click="displayCurrentSetting(1)">
+				<div class="navigate-items" @click="displayCurrentSetting(1)" :class="[currentSetting === 1 ? 'active' : '']">
 					<h2>IP过白</h2>
 				</div>
-				<div class="navigate-items" @click="displayCurrentSetting(2)">
+				<div class="navigate-items" @click="displayCurrentSetting(2)" :class="[currentSetting === 2 ? 'active' : '']">
 					<h2>个性化</h2>
 				</div>
 			</span>
@@ -287,33 +288,36 @@ h1 {
 		color: #76d0ef;
 	}
 }
-
+.title {
+	color:#d4e7a9;
+}
 .right {
-	background: #18261c;
 	padding: 2rem;
+	padding-left: 0;
 	flex: 2;
 }
 
 .left {
-	h1 {
-		color: #a0da1d;
-	}
 	flex: 8;
 }
 
 .navigate-items {
-	background: #183d23;
-	padding: 2px 0px;
 	width: 100%;
 	display: flex;
-	justify-content: center;
-	margin-bottom: 20px;
-
+	justify-content: left;
+	padding-left: 3rem;
+	border-bottom-right-radius: 20px;
+	border-top-right-radius: 20px;
 	h2 {
-		font-size: 1.5rem;
+		font-size: 1.2rem;
 		font-weight: 300;
 		color: #d4e7a9;
+		margin-top: 10px;
 	}
+}
+
+.navigate-items.active {
+	background: rgb(84, 135, 136);
 }
 
 .navigate-items:hover {

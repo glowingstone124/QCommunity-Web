@@ -66,6 +66,7 @@ onMounted(async () => {
 
 <style scoped>
 h1 {
+	margin-left: 10px;
 	font-size: 1.2rem;
 	color:#d4e7a9;
 }

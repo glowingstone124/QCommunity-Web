@@ -11,7 +11,7 @@ function apply(cardId: number) {
 				"token": localStorage.getItem("token")
 			}
 		},
-	)
+	).then(()=>{window.location.reload()})
 }
 
 const cards = ref([])

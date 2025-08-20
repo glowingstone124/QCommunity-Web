@@ -99,6 +99,7 @@ function toggleCollapse() {
 }
 .btn-group {
 	display: flex;
+	margin-left: 5px;
 	width: fit-content;
 	border-radius: 4px;
 	background: #1c4923;
