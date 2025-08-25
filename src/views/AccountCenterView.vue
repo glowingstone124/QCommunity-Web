@@ -20,6 +20,7 @@ import '@pnotify/core/dist/BrightTheme.css';
 import * as PNotifyMobile from '@pnotify/mobile';
 import '@pnotify/mobile/dist/PNotifyMobile.css';
 import PlayerCardsListComponent from "@/components/PlayerCardsListComponent.vue";
+import AffiliatedAccountComponent from "@/components/AffiliatedAccountComponent.vue";
 
 
 defaultModules.set(PNotifyMobile, {});
@@ -122,6 +123,9 @@ watch(currentSetting, (newValue) => {
 				<div class="navigate-items" @click="displayCurrentSetting(2)" :class="[currentSetting === 2 ? 'active' : '']">
 					<h2>个性化</h2>
 				</div>
+				<div class="navigate-items" @click="displayCurrentSetting(3)" :class="[currentSetting === 3 ? 'active' : '']">
+					<h2>附属账户</h2>
+				</div>
 			</span>
 		</div>
 
@@ -176,6 +180,12 @@ watch(currentSetting, (newValue) => {
 			<transition name="slide-in">
 				<div v-if="currentSetting === 2" key="other-info" style="height: 100%;">
 					<PlayerCardsListComponent></PlayerCardsListComponent>
+				</div>
+			</transition>
+
+			<transition name="slide-in">
+				<div v-if="currentSetting === 3" key="other-info" style="height: 100%;">
+					<AffiliatedAccountComponent/>
 				</div>
 			</transition>
 		</div>
