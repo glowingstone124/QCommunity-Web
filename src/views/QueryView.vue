@@ -13,13 +13,17 @@ const online = ref(false);
 const banned = ref(false);
 const find = ref(false);
 const playtime = ref(0);
-
+const affiliated = ref(false);
+const host = ref("")
 async function getPlayer(id) {
 	try {
 		const response = await fetch(`https://api.glowingstone.cn/qo/download/registry?name=${id}`);
 		const data = await response.json();
 		if (data.code === 1) {
 			find.value = false;
+		} else if(data.affiliated === true) {
+			affiliated.value = true;
+			host.value = data.host;
 		} else {
 			find.value = true;
 			qq.value = data.qq;
@@ -69,10 +73,16 @@ const handleSearch = debounce(async () => {
 					:found="find"
 					:avatar="avatarUrl"
 					:playtime="playtime"
+					v-if="!affiliated"
 				/>
+				<div v-if="affiliated" class="affiliated">
+					<h1>{{queryId}}</h1>
+					<p class="tag">附属账号</p>
+					<p>该账号附属于{{ host }}</p>
+				</div>
 			</div>
 		</div>
-		<div class="right">
+		<div class="right" v-if="!affiliated">
 			<div class="artcard">
 				<ArtCardForQueryUsage :username="queryId" scale="0.6"/>
 			</div>
@@ -85,7 +95,25 @@ const handleSearch = debounce(async () => {
 @import "/src/assets/base.css";
 @import "/src/assets/main.css";
 
-
+.affiliated {
+	display: flex;
+	flex-direction: column;
+	color: white;
+	background-color: #378eaf;
+	padding: 1rem;
+	border-radius: 10px;
+	height: 100%;
+	width: 100%;
+}
+.tag {
+	background-color: #3ab7cb;
+	width: fit-content;
+	padding: 0.2rem 0.5rem;
+	border-radius: 10px;
+	margin-bottom: 0;
+	font-size: 1.2rem;
+	font-weight: 200
+}
 .content{
 	display: flex;
 }

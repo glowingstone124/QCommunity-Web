@@ -82,6 +82,7 @@ onMounted(fetchAccounts);
 		<input v-model="newAccountName" type="text" placeholder="用户名" />
 		<input v-model="newAccountPassword" type="password" placeholder="密码" />
 		<button @click="createAccount">创建账户</button>
+		<p>使用该功能则证明您阅读并且认可<a href="https://qoriginal.vip/docs#/affiliatedaccount">使用须知</a></p>
 		<p class="hint" v-if="currentHint !== ''">{{ currentHint }}</p>
 	</div>
 </template>
@@ -89,8 +90,12 @@ onMounted(fetchAccounts);
 <style scoped>
 .new-account-form {
 	display: flex;
+	color: white;
 	flex-direction: column;
 	width: fit-content;
+	a {
+		color: white;
+	}
 }
 .title {
 	color: #d4e7a9;
