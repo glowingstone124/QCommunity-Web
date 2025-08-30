@@ -13,7 +13,8 @@
     "transport": "交通（暂未实装）",
     "greeting_text": "您已经游玩了 {played} 分钟",
     "account_center": "账户中心",
-    "miscs": "小功能"
+    "miscs": "小功能",
+    "advancements": "成就"
   },
   "mainPage_description":{
     "register": "在这里注册你的（也许是第一个？）QuantumOriginal账户",
@@ -24,7 +25,8 @@
     "dashboard": "查看服务器状态",
     "transport": "获取交通路线",
     "miscs": "一些有趣的小玩意",
-    "click_login": "点击此处登录"
+    "click_login": "点击此处登录",
+    "advancements": "查看QO成就完成情况"
   },
   "loginPage": {
     "welcome_back": "欢迎回来",

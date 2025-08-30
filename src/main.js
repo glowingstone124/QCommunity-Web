@@ -16,7 +16,7 @@ import NewsView from "@/views/NewsView.vue";
 import AccountCenterView from "@/views/AccountCenterView.vue";
 import SponsorsView from "@/views/SponsorsView.vue";
 import MiscView from "@/views/MiscView.vue";
-
+import AdvancementView from "@/views/AdvancementView.vue";
 import "@/assets/colors.css"
 import {usePageStore} from "@/utils/store.ts";
 
@@ -80,6 +80,12 @@ const routes = [
         name: 'miscs',
         component: MiscView,
         meta: { pageTitle: '小功能' }
+    },
+    {
+        path: '/advancements',
+        name: 'advancements',
+        component: AdvancementView,
+        meta: { pageTitle: '成就' }
     },
     {
         path: '/:catchAll(.*)',

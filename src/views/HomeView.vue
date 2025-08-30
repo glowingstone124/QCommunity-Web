@@ -10,10 +10,12 @@ const dialogRef = ref(null);
 function gotoWebsite() {
 	window.location.href = "https://qoriginal.vip"
 }
+
 function push(id) {
 	const functionList = ["/", "/login", "/query", "/news", "/messages"];
 	router.push(`${functionList[id]}`);
 }
+
 function showDialog() {
 	dialogRef.value.showModal();
 }
@@ -78,6 +80,11 @@ onMounted(() => {
 				<p>{{ $t("mainPage_description.miscs") }}</p>
 				<span class="icon-messages"></span>
 			</router-link>
+			<router-link to="/advancements" class="tile">
+			<h2>{{ $t("mainPage.advancements") }}</h2>
+				<p>{{ $t("mainPage_description.advancements") }}</p>
+				<span class="icon-messages"></span>
+			</router-link>
 		</div>
 		</span>
 	</div>
@@ -105,6 +112,7 @@ h1 {
 	-webkit-background-clip: text;
 	color: transparent;
 }
+
 .tiles-container {
 	display: flex;
 	justify-content: center;
@@ -112,9 +120,9 @@ h1 {
 	max-width: 100vw;
 	margin: auto auto;
 	overflow-y: auto;
-  max-height: calc(100vh - 60px);
+	max-height: calc(100vh - 60px);
 	flex: 6;
-  padding-bottom: 2rem;
+	padding-bottom: 2rem;
 }
 
 .tile {
@@ -201,13 +209,14 @@ a {
 		min-height: unset;
 	}
 }
+
 .custom-dialog {
 	border: none;
 	border-radius: 15px;
 	padding: 2rem;
 	background: #2c3e50;
 	color: #fff;
-	box-shadow: 0 0 20px rgba(0,0,0,0.3);
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 	width: 50%;
 }
 
