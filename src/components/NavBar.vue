@@ -1,44 +1,44 @@
 <template>
-  <header class="app-header">
-    <div class="header-content">
-      <div class="logo-section">
-        <h1 class="logo-text" @click="goHome">{{ pageStore.currentPage }}</h1>
-      </div>
+	<header class="app-header">
+		<div class="header-content">
+			<div class="logo-section">
+				<h1 class="logo-text" @click="goHome">{{ pageStore.currentPage }}</h1>
+			</div>
 
-      <div class="user-section">
-        <div v-if="!loginstat" class="login-alert" @click="goToLogin">
-          <span class="alert-icon">⚠️</span>
-          <span class="alert-text">点击此处登录</span>
-        </div>
-        <div class="user-info" v-if="loginstat">
-          <span class="user-name">{{ username }}</span>
-          <span class="user-role">{{ $t("mainPage.greeting_text", {played: playtime}) }}</span>
-        </div>
-        <div v-if="loginstat" class="avatar-container"   @click="toggleUserMenu">
-          <img
-              :src="avatarUrl"
-              alt="User Avatar"
-              class="user-avatar"
-              @click="toggleUserMenu"
-          >
-          <p v-if="loginstat"   @click="toggleUserMenu">{{ $t("mainPage.account_center") }}</p>
-        </div>
-        <button class="lang-btn" @click="toggleLang">
-          {{ locale === "zh" ? "EN" : "中文" }}
-        </button>
-      </div>
-    </div>
-  </header>
+			<div class="user-section">
+				<div v-if="!loginstat" class="login-alert" @click="goToLogin">
+					<span class="alert-icon">⚠️</span>
+					<span class="alert-text">点击此处登录</span>
+				</div>
+				<div class="user-info" v-if="loginstat">
+					<span class="user-name">{{ username }}</span>
+					<span class="user-role">{{ $t("mainPage.greeting_text", {played: playtime}) }}</span>
+				</div>
+				<div v-if="loginstat" class="avatar-container" @click="toggleUserMenu">
+					<img
+						:src="avatarUrl"
+						alt="User Avatar"
+						class="user-avatar"
+						@click="toggleUserMenu"
+					>
+					<p v-if="loginstat" @click="toggleUserMenu">{{ $t("mainPage.account_center") }}</p>
+				</div>
+				<button class="lang-btn" @click="toggleLang">
+					{{ locale === "zh" ? "EN" : "中文" }}
+				</button>
+			</div>
+		</div>
+	</header>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import {ref, onMounted} from 'vue'
+import {useRouter} from 'vue-router'
 import {useI18n} from "vue-i18n";
 import {usePageStore} from "@/utils/store.ts";
 
 const router = useRouter()
-const { locale } = useI18n();
+const {locale} = useI18n();
 const username = ref(localStorage.getItem('username') || "")
 const token = ref(localStorage.getItem('token') || "")
 const loginstat = ref(false)
@@ -47,227 +47,227 @@ const avatarUrl = ref('https://example.com/avatar.jpg')
 const pageStore = usePageStore()
 
 onMounted(() => {
-  if (username.value) {
-    fetch("https://api.qoriginal.vip/qo/authorization/account", {
-      headers: {
-        "token": token.value
-      }
-    }).then(res => res.json())
-        .then(data => {
-          if (data.error === 3 || data.error === 1) {
-            getAvatar("steve")
-            loginstat.value = false
-            username.value = "未登录"
-            return
-          }
-          loginstat.value = true
-          username.value = data.username
-          playtime.value = data.playtime
-          getAvatar(data.username)
-        })
-  } else {
-    username.value = "未登录"
-    getAvatar("steve")
-  }
+	if (username.value) {
+		fetch("https://api.qoriginal.vip/qo/authorization/account", {
+			headers: {
+				"token": token.value
+			}
+		}).then(res => res.json())
+			.then(data => {
+				if (data.error === 3 || data.error === 1) {
+					getAvatar("steve")
+					loginstat.value = false
+					username.value = "未登录"
+					return
+				}
+				loginstat.value = true
+				username.value = data.username
+				playtime.value = data.playtime
+				getAvatar(data.username)
+			})
+	} else {
+		username.value = "未登录"
+		getAvatar("steve")
+	}
 })
 
 function getAvatar(name) {
-  fetch("https://api.qoriginal.vip/qo/download/avatar?name=" + name).then(res => res.json())
-      .then(data => {
-        avatarUrl.value = data.url
-      })
+	fetch("https://api.qoriginal.vip/qo/download/avatar?name=" + name).then(res => res.json())
+		.then(data => {
+			avatarUrl.value = data.url
+		})
 }
 
 const goHome = () => {
-  router.push('/')
+	router.push('/')
 }
 
 const toggleUserMenu = () => {
-  router.push('/account')
+	router.push('/account')
 }
 
 const goToLogin = () => {
-  router.push('/login')
+	router.push('/login')
 }
 const toggleLang = () => {
-  locale.value = locale.value === "zh" ? "en" : "zh";
-  localStorage.setItem("locale", locale.value);
+	locale.value = locale.value === "zh" ? "en" : "zh";
+	localStorage.setItem("locale", locale.value);
 };
 </script>
 
 <style scoped>
 .app-header {
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 60px;
-  background-color: #64816c;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 60px;
+	background-color: #3b5e8c;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	z-index: 1000;
 }
 
 .header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 100%;
-  margin: 0 auto;
-  padding: 0 1rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 100%;
+	margin: 0 auto;
+	padding: 0 1rem;
 }
 
 .logo-section {
-  cursor: pointer;
+	cursor: pointer;
 }
 
 .logo-text {
-  font-size: 24px;
-  font-weight: bold;
-  color: #d1d7dd;
-  margin: 0;
+	font-size: 24px;
+	font-weight: bold;
+	color: #d1d7dd;
+	margin: 0;
 }
 
 .user-section {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
 }
 
 .user-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
 }
 
 .user-name {
-  font-weight: 500;
-  color: #f5f2f2;
+	font-weight: 500;
+	color: #f5f2f2;
 }
 
 .user-role {
-  font-size: 0.8em;
-  color: #e7e3e3;
+	font-size: 0.8em;
+	color: #e7e3e3;
 }
 
 .user-avatar {
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
-  border-radius: 50%;
-  transition: transform 0.2s;
+	width: 40px;
+	height: 40px;
+	cursor: pointer;
+	border-radius: 50%;
+	transition: transform 0.2s;
 }
 
 .user-avatar:hover {
-  transform: scale(1.05);
+	transform: scale(1.05);
 }
 
 .avatar-container {
-  display: flex;
-  align-items: center;
-  background: #1b6414;
-  padding-right: 20px;
-  border-radius: 30px;
-  gap: 5px;
+	display: flex;
+	align-items: center;
+	border: 2px solid #f5f2f2;
+	padding-right: 20px;
+	border-radius: 30px;
+	gap: 5px;
 }
 
 .avatar-container p {
-  margin: 0;
-  color: rgb(253, 253, 253);
-  font-size: 0.9em;
+	margin: 0;
+	color: rgb(253, 253, 253);
+	font-size: 0.9em;
 }
 
 .login-alert {
-  background: #ff4757;
-  color: white;
-  padding: 8px 15px;
-  border-radius: 20px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.3s;
-  animation: pulse 2s infinite;
+	background: #ff4757;
+	color: white;
+	padding: 8px 15px;
+	border-radius: 20px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	transition: all 0.3s;
 }
 
 .login-alert:hover {
-  background: #ff6b81;
+	background: #ff6b81;
 }
 
 .alert-icon {
-  font-size: 16px;
+	font-size: 16px;
 }
 
 .alert-text {
-  font-weight: 500;
-  font-size: 0.95rem;
+	font-weight: 500;
+	font-size: 0.95rem;
 }
 
 @keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.05);
+	}
+	100% {
+		transform: scale(1);
+	}
 }
 
 @media (max-width: 768px) {
-  .logo-text {
-    font-size: 20px;
-  }
+	.logo-text {
+		font-size: 20px;
+	}
 
-  .user-info {
-    display: none;
-  }
+	.user-info {
+		display: none;
+	}
 
-  .avatar-container p {
-    display: none;
-  }
+	.avatar-container p {
+		display: none;
+	}
 
-  .login-alert {
-    padding: 6px 12px;
-    font-size: 0.9em;
-  }
+	.login-alert {
+		padding: 6px 12px;
+		font-size: 0.9em;
+	}
 
-  .user-avatar {
-    width: 35px;
-    height: 35px;
-  }
+	.user-avatar {
+		width: 35px;
+		height: 35px;
+	}
 }
 
 @media (max-width: 480px) {
-  .header-content {
-    padding: 0 0.5rem;
-  }
+	.header-content {
+		padding: 0 0.5rem;
+	}
 
-  .logo-text {
-    font-size: 18px;
-  }
+	.logo-text {
+		font-size: 18px;
+	}
 
-  .login-alert {
-    padding: 5px 10px;
-    font-size: 0.8em;
-  }
+	.login-alert {
+		padding: 5px 10px;
+		font-size: 0.8em;
+	}
 
-  .user-avatar {
-    width: 30px;
-    height: 30px;
-  }
+	.user-avatar {
+		width: 30px;
+		height: 30px;
+	}
 }
+
 .lang-btn {
-  background: #1b6414;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  font-size: 14px;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: background 0.3s;
+	background: #134075;
+	color: white;
+	border: none;
+	padding: 8px 12px;
+	font-size: 14px;
+	cursor: pointer;
+	border-radius: 15px;
+	transition: background 0.3s;
 }
 
 .lang-btn:hover {
-  background: #2d8a29;
+	background: #235b9d;
 }
 </style>

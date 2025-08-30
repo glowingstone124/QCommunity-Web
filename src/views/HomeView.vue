@@ -99,7 +99,7 @@ onMounted(() => {
 	max-width: 100vw;
 	height: 100vh;
 	overflow-y: hidden;
-	background-color: #587958;
+	background-color: #151a1f;
 }
 
 h1 {
@@ -126,12 +126,13 @@ h1 {
 }
 
 .tile {
-	background-color: #183d23;
+	background-color: #090a0c;
 	padding: 2rem;
+	border-radius: 30px;
 	min-width: 300px;
 	max-width: 35vw;
 	min-height: 18vh;
-	margin: 10px;
+	margin: 6px;
 	text-align: left;
 	cursor: pointer;
 	transition: all .3s ease-in-out;
@@ -144,7 +145,7 @@ h1 {
 }
 
 .tile:hover {
-	background-color: #617c5d;
+	background-color: #242d44;
 	box-shadow: 0 4px 6px rgba(0, 0, 0, .1);
 }
 
@@ -155,6 +156,12 @@ h1 {
 	margin-top: .5rem;
 }
 
+h2{
+	color: #91b3e3;
+}
+p {
+	color: #d2c9c9;
+}
 a {
 	text-decoration: none;
 	color: #d4e7a9;

@@ -1,5 +1,5 @@
 <template>
-	<div id="app" :style="{ backgroundImage: gradientStyle }">
+	<div id="app">
 		<NavBar></NavBar>
 		<router-view/>
 	</div>
@@ -68,7 +68,7 @@ input, textarea {
 
 #app {
 	height: 100vh;
-	background: #3b4444;
+	background-color: #151a1f;
 	overflow-y: hidden;
 	overflow-x: hidden;
 }

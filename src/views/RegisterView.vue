@@ -1,7 +1,7 @@
 <template>
 	<div class="login-wrapper">
 		<div class="login-panel">
-      <h3>第 {{step}} / 3 步</h3>
+			<h3>第 {{ step }} / 3 步</h3>
 			<h2 v-if="step === 1">输入您的 Minecraft 用户名</h2>
 			<h2 v-if="step === 2">输入您的 QQ 号</h2>
 			<h2 v-if="step === 3">设置您的密码</h2>
@@ -52,8 +52,8 @@
 
 <script setup>
 import {onBeforeUnmount, onMounted, ref} from "vue";
-import { useRouter } from "vue-router";
-import { get } from "/src/utils/request";
+import {useRouter} from "vue-router";
+import {get} from "/src/utils/request";
 import {usePageStore} from "@/utils/store.ts";
 
 const step = ref(1)
@@ -142,27 +142,39 @@ function closeDialog() {
 }
 
 .login-panel {
-	background: white;
-	padding: 3rem;
+	padding: 8rem;
 	border-radius: 20px;
 	width: 100%;
-	max-width: 400px;
-	box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-	text-align: center;
+	max-width: 500px;
+	text-align: left;
+
+	h2, h3 {
+		color: white;
+	}
+
+	h2 {
+		font-size: 1.8rem;
+	}
+
+	h3 {
+		font-size: 1.6rem;
+	}
 }
 
 input {
-	padding: 1rem;
+	padding: 1rem 1.4rem;
 	margin: 0.3rem 0;
 	border: 2px solid #ccc;
-	border-radius: 10px;
+	border-radius: 35px;
+	background: none;
 	font-size: 1rem;
+	color: white;
 }
 
 button {
 	width: 100%;
 	padding: 1rem;
-	background: #64816c;
+	background: #2063a9;
 	color: white;
 	border: none;
 	border-radius: 10px;
@@ -195,8 +207,10 @@ button {
 
 .dialog-overlay {
 	position: fixed;
-	top: 0; left: 0;
-	width: 100vw; height: 100vh;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
 	background: rgba(0, 0, 0, 0.5);
 	display: flex;
 	justify-content: center;
