@@ -15,13 +15,14 @@ const find = ref(false);
 const playtime = ref(0);
 const affiliated = ref(false);
 const host = ref("")
+
 async function getPlayer(id) {
 	try {
 		const response = await fetch(`https://api.glowingstone.cn/qo/download/registry?name=${id}`);
 		const data = await response.json();
 		if (data.code === 1) {
 			find.value = false;
-		} else if(data.affiliated === true) {
+		} else if (data.affiliated === true) {
 			affiliated.value = true;
 			host.value = data.host;
 		} else {
@@ -64,7 +65,9 @@ const handleSearch = debounce(async () => {
 				<input v-model="inputId" placeholder="输入查询 ID" class="query-input"/>
 				<button class="search-btn" @click="handleSearch">查询</button>
 			</div>
-			<div class="playerCard">
+		</div>
+		<div class="right">
+			<div class="right_wrapper">
 				<PlayerInfoCard
 					:username="queryId"
 					:banned="banned"
@@ -75,16 +78,6 @@ const handleSearch = debounce(async () => {
 					:playtime="playtime"
 					v-if="!affiliated"
 				/>
-				<div v-if="affiliated" class="affiliated">
-					<h1>{{queryId}}</h1>
-					<p class="tag">附属账号</p>
-					<p>该账号附属于{{ host }}</p>
-				</div>
-			</div>
-		</div>
-		<div class="right" v-if="!affiliated">
-			<div class="artcard">
-				<ArtCardForQueryUsage :username="queryId" scale="0.6"/>
 			</div>
 		</div>
 	</div>
@@ -105,6 +98,12 @@ const handleSearch = debounce(async () => {
 	height: 100%;
 	width: 100%;
 }
+
+.right_wrapper {
+	display: flex;
+	flex-direction: row;
+	justify-content: left;
+}
 .tag {
 	background-color: #3ab7cb;
 	width: fit-content;
@@ -114,21 +113,26 @@ const handleSearch = debounce(async () => {
 	font-size: 1.2rem;
 	font-weight: 200
 }
-.content{
+
+.content {
 	display: flex;
 }
 
 .left {
+	margin: 10px 30px;
 	flex: 4;
 }
-.right{
+
+.right {
 	flex: 6;
 }
 
+
 .artcard {
-	align-self: center;
 	margin-left: 7rem;
 	max-height: 900px;
+	display: flex;
+	flex-direction: row;
 }
 
 .main {
@@ -187,9 +191,10 @@ h2 {
 }
 
 .content {
-	margin-left: 5vw;
 	max-width: 1000px;
-	margin-top: 3rem;
+	flex-direction: column;
+	display: flex;
+
 	h2 {
 		font-weight: 200;
 	}

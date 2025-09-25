@@ -141,7 +141,7 @@ watch([avatarUrl, backgroundUrl, statistics], () => {
 		class="wrapper"
 		:style="{
 			transform: `scale(${props.scale})`,
-			transformOrigin: 'top left',
+			transformOrigin: 'left top',
 		}"
 	>
 		<div class="background" :style="{ backgroundImage: `url('${backgroundUrl}')` }">

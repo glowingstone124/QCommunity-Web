@@ -30,5 +30,22 @@ function generateImage() {
 	html2canvas(el, {  useCORS: true, backgroundColor: null }).then(canvas => {
 		cardImage.value = canvas.toDataURL('image/png');
 	});
+	setTimeout(async function () {
+		await downloadCard();
+	}, 0);
 }
+
+async function downloadCard() {
+	const el = document.querySelector('.wrapper') as HTMLElement;
+	if (!el) return;
+
+	const canvas = await html2canvas(el, { useCORS: true, backgroundColor: null });
+	const dataUrl = canvas.toDataURL('image/png');
+
+	const a = document.createElement('a');
+	a.href = dataUrl;
+	a.download = `card.png`;
+	a.click();
+}
+
 </script>

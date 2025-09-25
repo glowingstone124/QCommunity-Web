@@ -3,6 +3,11 @@ import App from './App.vue';
 import { createPinia } from 'pinia'
 
 import i18n from './i18n.js';
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faClock } from '@fortawesome/free-regular-svg-icons'
+
+library.add(faClock)
 
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from './views/HomeView.vue';
@@ -114,8 +119,9 @@ router.beforeEach((to, from, next) => {
     pageStore.setPage(to.meta.pageTitle || '')
     next()
 })
-createApp(App)
+const app = createApp(App)
     .use(router)
     .use(i18n)
     .use(createPinia())
+    .component('font-awesome-icon', FontAwesomeIcon)
     .mount('#app');

@@ -9,6 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^7.0.1",
+    "@fortawesome/free-regular-svg-icons": "^7.0.1",
+    "@fortawesome/vue-fontawesome": "^3.1.2",
     "@pnotify/bootstrap3": "^5.2.0",
     "@pnotify/core": "^5.2.0",
     "@pnotify/mobile": "^5.2.0",
