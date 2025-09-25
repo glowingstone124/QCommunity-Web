@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import {ref, computed, watch} from "vue"
+import {ref, computed, watch, nextTick} from "vue"
 import axios from "axios"
+import ColorThief from 'colorthief'
 
+const emits = defineEmits<{ ready: []; }>();
 const props = defineProps({
 	scale: {
 		type: [Number],
@@ -19,7 +21,6 @@ const uuid = ref("")
 const avatarUrl = ref("")
 const cardId = ref(0)
 
-import ColorThief from 'colorthief'
 const gradient = ref("")
 const avatarImg = ref<HTMLImageElement | null>(null)
 function extractColor() {
@@ -38,7 +39,8 @@ function extractColor() {
 }
 
 function onImgLoad() {
-	extractColor()
+	extractColor();
+	checkReady();
 }
 async function queryAccountData(): Promise<number> {
 	try {
@@ -121,6 +123,17 @@ watch(() => props.username, async (newName) => {
 		await getCardBg();
 	}
 }, {immediate: true});
+
+async function checkReady() {
+	if (avatarUrl.value && backgroundUrl.value && statistics.value.length > 0) {
+		await nextTick();
+		emits("ready");
+	}
+}
+
+watch([avatarUrl, backgroundUrl, statistics], () => {
+	checkReady();
+})
 </script>
 
 <template>

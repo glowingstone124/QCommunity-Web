@@ -1,13 +1,18 @@
 <template>
-	<div id="app">
-		<NavBar></NavBar>
-		<router-view/>
+	<div v-if="showNavBar" class="app">
+		<NavBar />
+		<router-view />
 	</div>
+	<router-view v-else />
 </template>
+
 
 <script setup>
 import NavBar from './components/NavBar.vue';
-import {onMounted} from "vue";
+import {computed, onMounted} from "vue";
+import {useRoute, useRouter} from "vue-router";
+const route = useRoute();
+const showNavBar = computed(() => route.meta.showNavBar !== false);
 onMounted(() => {
 	if (import.meta.env.PROD) {
 		document.addEventListener('contextmenu', e => e.preventDefault());
@@ -66,7 +71,7 @@ input, textarea {
 	background-color: #5a6268;
 }
 
-#app {
+.app {
 	height: 100vh;
 	background-color: #151a1f;
 	overflow-y: hidden;
