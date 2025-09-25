@@ -153,10 +153,6 @@ onBeforeUnmount(() => {
 
 <template>
 	<div class="main">
-    <span class="navigator">
-      <h1>消息列表</h1>
-      <Redirect to="/message" text-color="white"/>
-    </span>
 		<div class="content-wrapper">
 			<div class="message-container" v-if="loginstat">
 
@@ -166,8 +162,7 @@ onBeforeUnmount(() => {
 					class="message-bubble"
 				>
 					<div class="message-header">
-            <span class="sender-name" :title="message.senderTooltip"
-			>{{ message.sender }}</span>
+						<span class="sender-name" :title="message.senderTooltip">{{ message.sender }}</span>
 						<span class="message-time">{{ message.time }}</span>
 					</div>
 					<div
@@ -205,10 +200,9 @@ onBeforeUnmount(() => {
 .main {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 94vh;
     padding: 1rem;
     overflow: hidden;
-    background: #3b4444;
     box-sizing: border-box;
 }
 .notification {
@@ -223,15 +217,7 @@ onBeforeUnmount(() => {
 	padding: 1rem 0;
 }
 
-.navigator {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 1rem 2rem;
-	background: #437763;
-	border-radius: 12px;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
+
 
 h1 {
 	color: white;
@@ -245,7 +231,6 @@ h1 {
     display: flex;
     flex-direction: column;
     min-height: 0;
-    background:#3b4444;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -258,24 +243,23 @@ h1 {
 }
 
 .message-bubble {
-	background: #383838;
+	background: #1c3341;
 	border-radius: 12px;
-	padding: 1rem;
+	padding: 1.3rem 1rem;
 	margin-bottom: 1rem;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .message-header {
 	display: flex;
-	justify-content: space-between;
-	align-items: center;
+	justify-content: left;
+	flex-direction: column;
 	margin-bottom: 0.5rem;
 }
 
 .sender-name {
 	font-weight: 600;
-	color: #437763;
-	font-size: 0.95rem;
+	color: #3e7ead;
+	font-size: 1.2rem;
 	max-width: 200px;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -283,13 +267,14 @@ h1 {
 
 .message-time {
 	color: #666;
-	font-size: 0.85rem;
+	font-size: 0.8rem;
+	margin-bottom: 10px;
 }
 
 .message-content {
 	color: #ede8e8;
-	line-height: 1.5;
-	font-size: 1rem;
+	line-height: 1.2;
+	font-size: 1.3rem;
 }
 
 .input-container {
@@ -311,13 +296,13 @@ h1 {
 }
 
 .message-input:focus {
-	border-color: #437763;
+	border-color: #436177;
 	outline: none;
 }
 
 .send-button {
 	padding: 0.8rem 1.5rem;
-	background: #437763;
+	background: #396273;
 	color: white;
 	border: none;
 	border-radius: 8px;
@@ -326,7 +311,7 @@ h1 {
 }
 
 .send-button:hover:not(:disabled) {
-	background: #365f4d;
+	background: #38787e;
 }
 
 .send-button:disabled {

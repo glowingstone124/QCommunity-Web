@@ -108,13 +108,13 @@ const login = async () => {
 }
 
 .header h1 {
-	color: #2c3e50;
+	color: #abcef1;
 	font-size: 2rem;
 	margin-bottom: 0.5rem;
 }
 
 .header p {
-	color: #666;
+	color: #9fd0e1;
 	font-size: 0.95rem;
 }
 
@@ -130,7 +130,7 @@ const login = async () => {
 .input-icon {
 	width: 24px;
 	height: 24px;
-	fill: #64816c;
+	fill: #4995d2;
 	margin-right: 0.5rem;
 	flex-shrink: 0;
 }
@@ -154,10 +154,10 @@ input:focus {
 button {
 	width: 100%;
 	padding: 1rem;
-	background: #64816c;
+	background: #205364;
 	color: white;
 	border: none;
-	border-radius: 10px;
+	border-radius: 23px;
 	font-size: 1.1rem;
 	font-weight: 500;
 	cursor: pointer;
@@ -166,8 +166,7 @@ button {
 }
 
 button:hover:not(:disabled) {
-	background: #437763;
-	transform: translateY(-1px);
+	background: #22587e;
 	box-shadow: 0 5px 15px rgba(100, 129, 108, 0.3);
 }
 

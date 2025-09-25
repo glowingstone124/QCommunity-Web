@@ -5,7 +5,7 @@ import NavBar from '@/components/NavBar.vue';
 import {onMounted, ref} from "vue";
 
 const router = useRouter();
-const dialogRef = ref(null);
+const dialogRef = ref();
 
 function gotoWebsite() {
 	window.location.href = "https://qoriginal.vip"
@@ -26,9 +26,9 @@ function closeDialog() {
 }
 
 onMounted(() => {
-	if (!sessionStorage.getItem('hasSeenDialog')) {
-		showDialog();
-	}
+	//if (!sessionStorage.getItem('hasSeenDialog')) {
+	//	showDialog();
+	//}
 });
 </script>
 
