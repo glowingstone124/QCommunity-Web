@@ -7,5 +7,6 @@ export function getSpecialImage(special) {
     return null
 }
 const specialImageMap = {
-    "PixelFantasia": "https://bucket.glowingstone.cn/pixel_fantasia.png"
+    "PixelFantasia": "https://bucket.glowingstone.cn/pixel_fantasia.png",
+    "Shinra-Bansho": "https://shinrabansho-music.com/sekaiseifuku/logo2.webp"
 }
