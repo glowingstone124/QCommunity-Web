@@ -37,6 +37,7 @@
 					<span>{{ step === 3 ? "注册" : "下一步" }}</span>
 				</button>
 			</form>
+			<p>注册QO账号即代表您已经阅读并且同意<a href="https://qoriginal.vip/docs#/things_to_know">用户须知</a>。</p>
 		</div>
 
 		<div v-if="isDialogVisible" class="dialog-overlay">
@@ -223,5 +224,10 @@ button {
 	border-radius: 20px;
 	max-width: 500px;
 }
-
+p {
+	color: white;
+}
+a{
+	color: white;
+}
 </style>
