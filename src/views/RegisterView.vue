@@ -49,7 +49,9 @@
             <br/>&emsp;&emsp;不过，我们依然需要肯定，正如Anonymous提到的那样，机场的开通提供了一种稳定且快速的运输实体的方式，这是任何一种已有的交通方式都难以实现的短板。（丁）交通的进步不仅带来各产业区域加强资源调配与合作的可能，更打破了各大玩家聚集区之间的地理隔阂，为打造一个货物互联、资源互补、经济互助、民心相通的Quantum Original铸造了更多机遇。
           </div>
         </div>
-
+        <div v-if="step === 4 && quiz_seq >= 1">
+          <p>{{questions[quiz_seq-1]}}</p>
+        </div>
 				<button type="submit" :disabled="isLoading" v-if="quiz_seq === -1">
 					<span v-if="isLoading" class="spinner"></span>
 					<span v-if="step <= 3">下一步</span>
@@ -57,6 +59,8 @@
 				</button>
 			</form>
       <button v-if="step === 4 && quiz_seq === -1" @click="submitForm" :disabled="isLoading"><span v-if="isLoading" class="spinner"></span><span>我拒绝参加测试并直接注册，会向管理员提交证明材料</span></button>
+      <button v-if="step === 4 && quiz_seq !== -1" @click="switchPage"><span>跳过等待</span></button>
+      <p v-if="quiz_seq >= 0">本页阅读时间剩余 <span>{{countdown}}</span> 秒</p>
 			<p>注册QO账号即代表您已经阅读并且同意<a href="https://qoriginal.vip/docs#/things_to_know">用户须知</a>。</p>
 		</div>
 
@@ -85,8 +89,61 @@ const password = ref("")
 const isDialogVisible = ref(false)
 const message = ref("")
 const isLoading = ref(false)
+const countdown = ref(80)
 const router = useRouter()
 const pageStore = usePageStore()
+const pageTime = [80, 20, 20, 20, 20, 30, 30, 30, 50]
+const answer = [-1, 1, 2, 0, 3, 0, 3, 2, 3]
+const questions = [
+  "1.\t建造主城北机场采用了下列哪个工艺？",
+  "2.\t以下哪一个人对机场的设立采取了批判态度？",
+  "3.\t以下哪一个地点不能通过不乘坐飞机的方式从主城北直接到达？",
+  "4.\t主城北枢纽可用的交通方式不包括下列哪个？",
+  "5.\t以下哪个区域最不可能是玩家聚集区？",
+  "6.\t描写飞机俯瞰阿弥诺斯大陆的意图不包括下列哪个？",
+  "7.\t下列说法正确的是？",
+  "8.\t如果要插入以下内容，最适合插入在哪一个位置？"
+]
+const optionA = [
+  "A. 填海造陆",
+  "A. Wsiogn",
+  "A. 芙岛",
+  "A. 铁路",
+  "A. 出生点",
+  "A. 展示大陆的美丽夜景",
+  "A. 飞机是服务器中长途运输实体的唯一方式",
+  "A. (甲)"
+]
+const optionB = [
+  "B. 夷山平地",
+  "B. Anonymous",
+  "B. 末地门",
+  "B. 飞机",
+  "B. 主城",
+  "B. 暗示主城的新建机场",
+  "B. 芙岛已经成为主城重要的\"卫星城\"之一",
+  "B. (乙)"
+]
+const optionC = [
+  "C. 珍珠炮炸山",
+  "C. MineCreeper",
+  "C. 全物品分类机",
+  "C. 蓝冰船",
+  "C. 芙岛",
+  "C. 引出主城北站的介绍",
+  "C. 珍珠炮是目前实现玩家长途旅行的最优解",
+  "C. (丙)"
+]
+const optionD = [
+  "D. 铁路建设",
+  "D. Quantum Original",
+  "D. 锡城",
+  "D. 珍珠炮",
+  "D. 锡城",
+  "D. 描摹大陆星空的壮美",
+  "D. 6号线的开通将使得主城北能够联通芙岛",
+  "D. (丁)"
+]
 
 function validateQQ() {
 	qq.value = qq.value.replace(/\D/g, "")
@@ -126,8 +183,19 @@ function handleNext() {
 		}
     step.value++
 	} else if (step.value === 4) {
-    quiz_seq.value++
+    switchPage()
   }
+}
+
+function count() {
+  countdown.value--
+  if(countdown.value <= 0) switchPage()
+}
+
+function switchPage() {
+  quiz_seq.value++
+  if (quiz_seq.value === 0) setInterval(count, 1000)
+  countdown.value = pageTime[quiz_seq.value]
 }
 
 function submitForm() {
@@ -244,7 +312,7 @@ button {
 
 .quiz-window {
   overflow-y: auto;
-  height: 45vh;
+  height: 36vh;
   border-radius: 5px;
   padding: 10px;
   border: 1px solid white;
