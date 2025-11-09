@@ -1,11 +1,11 @@
 <template>
 	<div class="login-wrapper">
 		<div class="login-panel">
-			<h3 v-if="quiz_seq === -1 || quiz_seq === 9">第 {{ step }} / 4 步</h3>
+			<h3 v-if="quiz_seq === -1 || quiz_seq >= 9">第 {{ step }} / 4 步</h3>
 			<h2 v-if="step === 1">输入您的 Minecraft 用户名</h2>
 			<h2 v-if="step === 2">输入您的 QQ 号</h2>
 			<h2 v-if="step === 3">设置您的密码</h2>
-      <h2 v-if="step === 4 && (quiz_seq === -1 || quiz_seq === 9)">完成年龄认证 - 初中文化水平自助核验测试</h2>
+      <h2 v-if="step === 4 && (quiz_seq === -1 || quiz_seq >= 9)">完成年龄认证 - 初中文化水平自助核验测试</h2>
 
 			<form @submit.prevent="handleNext">
 				<input
@@ -34,6 +34,7 @@
 				<p class="message" v-if="step <= 3">{{ message }}</p>
         <p class="message" v-if="quiz_seq === 9 && score < 6">您的得分为 {{score}} / 8 分，不合格，请联系管理员并附上证明材料。</p>
         <p class="quiz-success" v-if="quiz_seq === 9 && score >= 6">您的得分为 {{score}} / 8 分，合格，{{countdown}} 秒后自动为您注册。</p>
+        <p v-if="quiz_seq === 10"><span v-if="isLoading" class="spinner"></span>正在注册</p>
 
         <div v-if="step === 4 && quiz_seq <= 8" class="quiz-window">
           <div v-if="quiz_seq === -1">
