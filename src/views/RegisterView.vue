@@ -1,11 +1,11 @@
 <template>
 	<div class="login-wrapper">
 		<div class="login-panel">
-			<h3>第 {{ step }} / 4 步</h3>
+			<h3 v-if="quiz_seq === -1 || quiz_seq === 9">第 {{ step }} / 4 步</h3>
 			<h2 v-if="step === 1">输入您的 Minecraft 用户名</h2>
 			<h2 v-if="step === 2">输入您的 QQ 号</h2>
 			<h2 v-if="step === 3">设置您的密码</h2>
-      <h2 v-if="step >= 4">完成年龄认证 - 初中文化水平自助核验测试</h2>
+      <h2 v-if="step === 4 && (quiz_seq === -1 || quiz_seq === 9)">完成年龄认证 - 初中文化水平自助核验测试</h2>
 
 			<form @submit.prevent="handleNext">
 				<input
@@ -32,8 +32,10 @@
 				/>
 
 				<p class="message" v-if="step <= 3">{{ message }}</p>
+        <p class="message" v-if="quiz_seq === 9 && score < 6">您的得分为 {{score}} / 8 分，不合格，请联系管理员并附上证明材料。</p>
+        <p class="quiz-success" v-if="quiz_seq === 9 && score >= 6">您的得分为 {{score}} / 8 分，合格，{{countdown}} 秒后自动为您注册。</p>
 
-        <div v-if="step === 4" class="quiz-window">
+        <div v-if="step === 4 && quiz_seq <= 8" class="quiz-window">
           <div v-if="quiz_seq === -1">
             <p>1. 为保证服务器的正常秩序，Quantum Original只接受初中（含在读）及以上学历的玩家或处于初中学段以下但具有一定文化素养和文字理解能力的玩家。玩家可通过参加该测试或向服主或管理员提供相关证明材料进行满足上述条件的证明。</p>
             <p>2. 本套题目共1个简体中文语篇，8道选择题。其中语篇阅读时间80秒，第1-4题限时20秒完成，第5-7题限时30秒完成，第8题限时50秒完成，总时长5分钟，答对6题方为通过。</p>
@@ -52,6 +54,7 @@
         <div v-if="step === 4 && quiz_seq >= 1">
           <p>{{questions[quiz_seq-1]}}</p>
         </div>
+        <p v-if="quiz_seq === 8">事实上，机场只是服务器大力推进交通建设的一个缩影。服务器自研的矿车高速化和闭塞区段插件极大地解决了原版服务器中矿车速度过慢的“鸡肋”问题，弥补了骑马与蓝冰船之间的旅速空白。就是这些微小的努力累加起来，才能使得Quantum Original成为交通强服。</p>
 				<button type="submit" :disabled="isLoading" v-if="quiz_seq === -1">
 					<span v-if="isLoading" class="spinner"></span>
 					<span v-if="step <= 3">下一步</span>
@@ -59,8 +62,14 @@
 				</button>
 			</form>
       <button v-if="step === 4 && quiz_seq === -1" @click="submitForm" :disabled="isLoading"><span v-if="isLoading" class="spinner"></span><span>我拒绝参加测试并直接注册，会向管理员提交证明材料</span></button>
-      <button v-if="step === 4 && quiz_seq !== -1" @click="switchPage"><span>跳过等待</span></button>
-      <p v-if="quiz_seq >= 0">本页阅读时间剩余 <span>{{countdown}}</span> 秒</p>
+      <button v-if="step === 4 && quiz_seq === 0" @click="switchPage"><span>跳过等待</span></button>
+      <div class="options" v-if="quiz_seq >= 1 && quiz_seq <= 8">
+        <button @click="()=>{selectAnswer(0)}">{{optionA[quiz_seq-1]}}</button>
+        <button @click="()=>{selectAnswer(1)}">{{optionB[quiz_seq-1]}}</button>
+        <button @click="()=>{selectAnswer(2)}">{{optionC[quiz_seq-1]}}</button>
+        <button @click="()=>{selectAnswer(3)}">{{optionD[quiz_seq-1]}}</button>
+      </div>
+      <p v-if="quiz_seq >= 0 && quiz_seq <= 8">本页阅读时间剩余 <span>{{countdown}}</span> 秒</p>
 			<p>注册QO账号即代表您已经阅读并且同意<a href="https://qoriginal.vip/docs#/things_to_know">用户须知</a>。</p>
 		</div>
 
@@ -144,6 +153,7 @@ const optionD = [
   "D. 6号线的开通将使得主城北能够联通芙岛",
   "D. (丁)"
 ]
+const score = ref(0)
 
 function validateQQ() {
 	qq.value = qq.value.replace(/\D/g, "")
@@ -189,13 +199,25 @@ function handleNext() {
 
 function count() {
   countdown.value--
-  if(countdown.value <= 0) switchPage()
+  if(countdown.value === 0) switchPage()
 }
 
 function switchPage() {
   quiz_seq.value++
   if (quiz_seq.value === 0) setInterval(count, 1000)
-  countdown.value = pageTime[quiz_seq.value]
+  if (quiz_seq.value <= 8) {
+    countdown.value = pageTime[quiz_seq.value]
+  } else if (quiz_seq.value === 9){
+    countdown.value = 5
+  } else {
+    submitForm()
+  }
+}
+
+function selectAnswer(idx) {
+  let seq = quiz_seq.value
+  if(idx === answer[seq]) score.value ++
+  switchPage()
 }
 
 function submitForm() {
@@ -237,7 +259,7 @@ function closeDialog() {
 	padding: 8rem;
 	border-radius: 20px;
 	width: 100%;
-	max-width: 600px;
+	max-width: 700px;
 	text-align: left;
 
 	h2, h3 {
@@ -275,10 +297,26 @@ button {
   margin-bottom: 1em;
 }
 
+.options button {
+  flex: 0 0 48%;
+}
+
+.options {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
 .message {
 	color: #ff4757;
 	font-size: 0.9rem;
 	min-height: 1rem;
+}
+
+.quiz-success {
+  color: #7bff47;
+  font-size: 0.9rem;
+  min-height: 1rem;
 }
 
 .spinner {
@@ -312,7 +350,7 @@ button {
 
 .quiz-window {
   overflow-y: auto;
-  height: 36vh;
+  height: 40vh;
   border-radius: 5px;
   padding: 10px;
   border: 1px solid white;
