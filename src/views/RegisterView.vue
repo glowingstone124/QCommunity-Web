@@ -162,21 +162,16 @@ function validateQQ() {
 }
 
 
-function validateUsername(username) {
+async function validateUsername() {
 	const url = `https://api.qoriginal.vip/qo/download/registry?name=${username.value}`
-	fetch(url).then(res => res.json()).then((res) => {
-		if (res.data.code !== 1) {
-			return false
-		}
-	})
-	return true
+	const res = await fetch(url).then(r => r.json()).catch(() => null)
+	return res && res.data?.code === 1
 }
-
-function handleNext() {
+async function handleNext() {
 	message.value = ""
 
 	if (step.value === 1) {
-		if (!validateUsername(username.value)) {
+		if (!await validateUsername(username.value)) {
 			message.value = "用户名已被占用"
 			return
 		}
@@ -192,10 +187,10 @@ function handleNext() {
 			message.value = "密码长度不能少于 4 位"
 			return
 		}
-    step.value++
+		step.value++
 	} else if (step.value === 4) {
-    switchPage()
-  }
+		switchPage()
+	}
 }
 
 function count() {
@@ -223,7 +218,7 @@ function selectAnswer(idx) {
 
 function submitForm() {
 	isLoading.value = true
-	const url = `https://api.glowingstone.cn/qo/upload/registry?name=${username.value}&password=${password.value}&uid=${qq.value}`
+	const url = `https://api.glowingstone.cn/qo/upload/registry?name=${username.value}&password=${password.value}&uid=${qq.value}&score=${score.value}`
 
 	get(url)
 		.then(result => {
