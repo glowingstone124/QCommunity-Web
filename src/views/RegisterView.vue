@@ -171,7 +171,7 @@ async function handleNext() {
 	message.value = ""
 
 	if (step.value === 1) {
-		if (!await validateUsername(username.value)) {
+		if (await validateUsername(username.value)) {
 			message.value = "用户名已被占用"
 			return
 		}
