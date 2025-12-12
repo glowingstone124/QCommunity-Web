@@ -143,14 +143,20 @@ watch(currentSetting, (newValue) => {
 								<img src="@/components/icons/lock.svg" alt="">
 								<h2>账号安全</h2>
 							</span>
-							<p>您已经绑定到QQ: {{ uid }}</p>
+							<p>当前绑定QQ:{{ uid }}</p>
 						</div>
 						<h3 class="subtitle">登录历史</h3>
 						<div class="func">
-							<div v-for="(login, index) in logins" :key="index" class="login-record">
-								<p>登录时间：{{ formatDate(login.date) }}</p>
-								<p>登录结果：{{ login.success ? '成功' : '失败' }}</p>
+							<div
+								v-for="(login, index) in logins"
+								:key="index"
+								class="login-record"
+								:class="{ success: login.success, fail: !login.success }"
+							>
+								<h2>{{ login.success ? '成功' : '失败' }}</h2>
+								<p>{{ formatDate(login.date) }}</p>
 							</div>
+
 						</div>
 					</div>
 				</div>
@@ -196,12 +202,12 @@ watch(currentSetting, (newValue) => {
 <style scoped>
 @import "/src/assets/base.css";
 @import "/src/assets/main.css";
-
+@import "/src/assets/colors.css";
 .panel-wrapper {
 	display: flex;
 	flex-direction: row;
-	height: 100%;
-  margin: 1rem 3rem;
+	max-height: 90vh;
+ 	 margin: 1rem 3rem;
 }
 
 input[type="text"],
@@ -210,24 +216,39 @@ input[type="password"] {
 	padding: 25px;
 	background-color: rgba(75, 91, 75, 0.42);
 	border: none;
-	border-bottom: #95c295 5px solid;
+	border-bottom: #95aec2 5px solid;
 	font-size: 1rem;
 }
 
 input:focus {
-	border-bottom-color: #5fb493;
+	border-bottom-color: #5f87b4;
+}
+.login-record {
+	border-radius: 16px;
+	background-color: var(--color-surface);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	padding: 24px;
+	margin-bottom: 20px;
+}
+.login-record h2 {
+	font-weight: 600;
+	font-size: 2.5rem;
+	color: var(--color-on-surface);
+	margin-bottom: 8px;
 }
 
-.login-record {
-	border-radius: 20px;
-	background-color: rgb(61, 100, 101);
-	padding: 10px 20px;
-	margin-bottom: 20px;
+.login-record p {
+	font-family: 'Bahnschrift', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	color: var(--color-on-surface);
+	line-height: 1.5;
+	margin-top: 0;
+	font-size: 1rem;
 }
 
 .ip-record {
 	border-radius: 20px;
-	background-color: rgb(61, 100, 101);
+	color: var(--color-on-surface);
+	background-color: var(--color-surface);
 	padding: 5px 2px;
 	margin: 10px 20px;
 	text-align: center;
@@ -240,7 +261,7 @@ input:focus {
 
 .brief-info {
 	h2 {
-		color: #86c986;
+		color: var(--color-primary);
 		font-weight: 400;
 		font-size: 2.5rem;
 	}
@@ -266,7 +287,7 @@ p, h2, ul, li {
 h1 {
 	font-size: 3rem;
 	font-weight: 500;
-	color: #d4e7a9;
+	color: var(--color-primary);
 }
 
 .container {
@@ -278,7 +299,7 @@ h1 {
 
 .subtitle {
 	font-size: 2rem;
-	color: #c9fac9;
+	color: var(--color-primary);
 }
 
 .username {
@@ -295,11 +316,11 @@ h1 {
 	}
 
 	h3 {
-		color: #76d0ef;
+		color: var(--color-primary);
 	}
 }
 .title {
-	color:#d4e7a9;
+	color:var(--color-primary);
 }
 .right {
 	padding: 2rem;
@@ -321,22 +342,21 @@ h1 {
 	h2 {
 		font-size: 1.2rem;
 		font-weight: 300;
-		color: #d4e7a9;
+		color: #a9bbe7;
 		margin-top: 10px;
 	}
 }
 
 .navigate-items.active {
-	background: rgb(84, 135, 136);
+	background: var(--color-surface-container-high);
 }
 
 .navigate-items:hover {
 	cursor: pointer;
-	background: rgb(84, 135, 136);
+	background: var(--color-surface);
 }
 
 .hasBackground {
-	background: #3b4444;
 }
 
 .navigate-menu {
@@ -384,19 +404,20 @@ h1 {
 	margin: 20px 0;
 	border: none;
 	padding: 10px 30px;
-	background: #4b7a4f;
+	background: #4b6d7a;
 	border-radius: 20px;
 }
 
 .btn:hover {
-	background: #59935e;
+	background: var(--color-surface-container-high);
 }
 
 .hint {
-	margin: 1px auto;
-	background-color: #4a557c;
+	margin: 1px;
+	max-width: 40%;
+	background-color:var(--color-surface);
 	border-radius: 20px;
-	padding: 5px 25px;
+	padding: 30px 25px;
 	min-width: 70%;
 	display: flex;
 	flex-direction: column;
@@ -410,6 +431,7 @@ h1 {
 	}
 
 	h2 {
+		font-size: 2rem;
 		margin: 7px;
 	}
 }

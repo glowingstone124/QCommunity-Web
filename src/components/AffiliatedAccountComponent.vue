@@ -70,69 +70,167 @@ onMounted(fetchAccounts);
 </script>
 
 <template>
-	<h1 class="title">附属账户</h1>
-	<h2 class="title">已经注册的：</h2>
-	<div class="account-container">
-		<div v-for="account in accounts" :key="account.name" class="account">
-			<h1>{{ account.name }}</h1>
-		</div>
-	</div>
-	<h2 class="title">注册新的附属账户：</h2>
-	<div class="new-account-form">
-		<input v-model="newAccountName" type="text" placeholder="用户名" />
-		<input v-model="newAccountPassword" type="password" placeholder="密码" />
-		<button @click="createAccount">创建账户</button>
-		<p>使用该功能则证明您阅读并且认可<a href="https://qoriginal.vip/docs#/affiliatedaccount">使用须知</a></p>
-		<p class="hint" v-if="currentHint !== ''">{{ currentHint }}</p>
+	<div class="page-container">
+		<h1 class="headline-large">附属账户</h1>
+
+		<section class="section-container">
+			<h2 class="title-large">已注册的账户 ({{ accounts.length }})</h2>
+
+			<div class="account-container">
+				<div v-for="account in accounts" :key="account.name" class="account-card">
+					<h3 class="account-name">{{ account.name }}</h3>
+				</div>
+				<p v-if="accounts.length === 0" class="on-surface-variant">暂无附属账户。</p>
+			</div>
+		</section>
+
+		<section class="section-container">
+			<h2 class="title-large">注册新的附属账户</h2>
+
+			<div class="new-account-form">
+				<input v-model="newAccountName" type="text" placeholder="用户名" class="text-input" />
+				<input v-model="newAccountPassword" type="password" placeholder="密码" class="text-input" />
+
+				<button @click="createAccount" class="filled-button">
+					创建账户
+				</button>
+
+				<p class="supporting-text">
+					使用该功能则证明您阅读并且认可
+					<a href="https://qoriginal.vip/docs#/affiliatedaccount" class="link-text">使用须知</a>
+				</p>
+
+				<p v-if="currentHint !== ''" :class="['supporting-text', 'hint']">
+					{{ currentHint }}
+				</p>
+			</div>
+		</section>
 	</div>
 </template>
 
 <style scoped>
-.new-account-form {
-	display: flex;
-	color: white;
-	flex-direction: column;
-	width: fit-content;
-	a {
-		color: white;
-	}
+@import "@/assets/colors.css";
+.page-container {
+	max-width: 800px;
+	margin: 20px;
+	padding: 24px;
+	color: var(--color-on-surface);
 }
-.title {
-	color: #d4e7a9;
+.headline-large {
+	font-size: 3rem;
+	font-weight: 400;
+	color: var(--color-primary);
+	margin-bottom: 24px;
 }
+
+.title-large {
+	font-size: 1.5rem;
+	font-weight: 500;
+	color: var(--color-primary);
+	margin-top: 24px;
+	margin-bottom: 16px;
+}
+
+.supporting-text {
+	font-size: 0.875rem;
+	color: var(--color-on-surface-variant);
+	line-height: 1.5;
+}
+
+.on-surface-variant {
+	color: var(--color-on-surface-variant);
+}
+.section-container {
+	padding-top: 10px;
+}
+
 .account-container {
 	display: flex;
 	flex-wrap: wrap;
+	gap: 12px;
+	margin-bottom: 20px;
 }
-.account {
-	margin: 8px;
+
+.account-card {
+	border-radius: 12px;
+	background: var(--color-surface-container-high);
+	padding: 1rem 1.5rem;
 	width: fit-content;
-	padding: 1rem 0.7rem;
-	border-radius: 20px;
-	background: rgba(44, 129, 74, 0.47);
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+	transition: transform 0.2s;
 }
+
+.account-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.account-name {
+	font-size: 1.125rem;
+	font-weight: 600;
+	color: var(--color-primary);
+	margin: 0;
+}
+
 .new-account-form {
-	margin-top: 1rem;
 	display: flex;
-	gap: 0.5rem;
+	flex-direction: column;
+	gap: 16pxl;
+	width: 100%;
+	max-width: 350px;
 }
 
-.new-account-form input {
-	padding: 0.5rem;
-	border-radius: 6px;
-	border: 1px solid #ccc;
+.text-input {
+	padding: 14px 16px;
+	margin-bottom: 16px;
+	border-radius: 8px;
+	border: 1px solid var(--color-primary);
+	background-color: var(--color-surface);
+	color: var(--color-on-surface);
+	transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-.new-account-form button {
-	padding: 0.5rem 1rem;
-	border-radius: 6px;
-	background-color: #2c814a;
-	color: #fff;
+.text-input::placeholder {
+	color: var(--color-on-surface-variant);
+}
+
+.text-input:focus {
+	outline: none;
+	border-color: var(--color-primary);
+}
+
+.filled-button {
+	padding: 12px 24px;
+	border-radius: 20px;
+	background-color: var(--color-primary);
+	color: var(--color-on-primary);
+	font-weight: 500;
 	border: none;
 	cursor: pointer;
+	transition: background-color 0.3s, box-shadow 0.3s;
+	text-transform: uppercase;
+}
+.filled-button:hover {
+	background-color: #5586bf;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
-.new-account-form button:hover {
-	background-color: #217039;
+.filled-button:active {
+	background-color: #3c799f;
+}
+.link-text {
+	color: var(--color-link);
+	text-decoration: none;
+	transition: color 0.2s;
+}
+
+.link-text:hover {
+	color: #C3E5F5;
+	text-decoration: underline;
+}
+
+.hint {
+	color: #FFB4AB;
+	font-weight: 600;
 }
 </style>

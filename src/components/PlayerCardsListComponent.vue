@@ -59,21 +59,21 @@ function toggleCollapse() {
 	overflow: auto;
 }
 .customizationSelect{
-	background-color: #6f7c6f;
+	background-color: #6f747c;
 	box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 	display: flex;
 	justify-content: center;
 	border:none;
 }
 .customizationBtn{
-	background-color: #7b887b;
+	background-color: #7b8388;
 	margin: 5px;
 	width:100%;
 	align-content: center;
 	padding: 14px;
 }
 .customizationBtn:hover{
-	background-color: #535d53;
+	background-color: #535a5d;
 }
 .container {
 	display: flex;
@@ -90,11 +90,11 @@ function toggleCollapse() {
 	h1 {
     display: inline-block;
 		font-size: 3rem;
-		color:#d4e7a9;
+		color: #a9d4e7;
 	}
 }
 .right {
-	background: #545e54;
+	background: #343f49;
 	flex: 6;
 }
 .btn-group {
@@ -102,7 +102,7 @@ function toggleCollapse() {
 	margin-left: 5px;
 	width: fit-content;
 	border-radius: 4px;
-	background: #1c4923;
+	background: #223c5b;
 	padding: 4px;
 	overflow: hidden;
 }
@@ -112,7 +112,7 @@ function toggleCollapse() {
 	z-index: 1;
 	padding: 8px 16px;
 	background: transparent;
-	color: #c7ce9f;
+	color: #9faece;
 	font-weight: bold;
 	border: none;
 	cursor: pointer;
@@ -122,14 +122,14 @@ function toggleCollapse() {
 }
 
 .btn-group button.active {
-	background: #67914f;
+	background: #4f7391;
 }
 
 .highlight-bar {
 	position: absolute;
 	width: 100px;
 	height: 32px;
-	background-color: #5d9f46;
+	background-color: #46779f;
 	border-radius: 4px;
 	z-index: 0;
 	transition: left 0.3s ease;

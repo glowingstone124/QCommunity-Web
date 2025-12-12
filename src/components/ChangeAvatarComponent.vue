@@ -68,12 +68,12 @@ onMounted(async () => {
 h1 {
 	margin-left: 10px;
 	font-size: 1.2rem;
-	color:#d4e7a9;
+	color: #a9bbe7;
 }
 .avatar-item {
 	width: 100px;
 	text-align: center;
-	background-color: #6f7c6f;
+	background-color: #6f707c;
 	padding: 8px;
 	border-radius: 6px;
 	cursor: pointer;
@@ -81,11 +81,11 @@ h1 {
 	border: 2px solid transparent;
 }
 .avatar-item:hover {
-	background-color: #5f6d5f;
+	background-color: #5f646d;
 }
 .avatar-item.selected {
-	border-color: #a3e57a;
-	background-color: #4a614a;
+	border-color: #7abce5;
+	background-color: #4a5761;
 }
 .avatar-image {
 	width: 80px;
@@ -101,6 +101,8 @@ h1 {
 	border-radius: 4px;
 }
 .avatar-list {
+	max-height: 50vh;
+	overflow-y: auto;
 	display: flex;
 	flex-wrap: wrap;
 	gap: 10px;
@@ -109,7 +111,7 @@ h1 {
 .save-avatar-btn {
 	margin: 16px;
 	padding: 10px 20px;
-	background-color: #4f754f;
+	background-color: #4f6b75;
 	color: white;
 	border: none;
 	border-radius: 6px;
@@ -117,6 +119,6 @@ h1 {
 	transition: background-color 0.3s;
 }
 .save-avatar-btn:hover {
-	background-color: #5e8c5e;
+	background-color: #5e738c;
 }
 </style>
