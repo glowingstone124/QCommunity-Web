@@ -249,6 +249,7 @@ function closeDialog() {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	background: var(--background);
 }
 
 .login-panel {
@@ -257,9 +258,10 @@ function closeDialog() {
 	width: 100%;
 	max-width: 700px;
 	text-align: left;
+	background: var(--card-background);
 
 	h2, h3 {
-		color: white;
+		color: var(--title-color);
 	}
 
 	h2 {
@@ -274,18 +276,18 @@ function closeDialog() {
 input {
 	padding: 1rem 1.4rem;
 	margin: 0.3rem 0;
-	border: 2px solid #ccc;
+	border: 2px solid var(--split);
 	border-radius: 35px;
-	background: none;
+	background: var(--background);
 	font-size: 1rem;
-	color: white;
+	color: var(--text-main);
 }
 
 button {
 	width: 100%;
 	padding: 1rem;
-	background: #2063a9;
-	color: white;
+	background: var(--button-primary-bg);
+	color: var(--button-primary-text);
 	border: none;
 	border-radius: 10px;
 	font-size: 1.1rem;
@@ -304,19 +306,19 @@ button {
 }
 
 .message {
-	color: #ff4757;
+	color: var(--error);
 	font-size: 0.9rem;
 	min-height: 1rem;
 }
 
 .quiz-success {
-  color: #7bff47;
+  color: var(--success);
   font-size: 0.9rem;
   min-height: 1rem;
 }
 
 .spinner {
-	border: 3px solid white;
+	border: 3px solid var(--button-primary-text);
 	border-top: 3px solid transparent;
 	border-radius: 50%;
 	width: 1rem;
@@ -338,7 +340,7 @@ button {
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	background: rgba(0, 0, 0, 0.5);
+	background: rgba(15, 23, 42, 0.5);
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -349,21 +351,23 @@ button {
   height: 40vh;
   border-radius: 5px;
   padding: 10px;
-  border: 1px solid white;
+  border: 1px solid var(--split);
   margin-bottom: 2em;
-  color: white;
+  color: var(--text-main);
+  background: var(--background-secondary);
 }
 
 .dialog {
-	background: white;
+	background: var(--background);
 	padding: 2rem;
 	border-radius: 20px;
 	max-width: 500px;
+	color: var(--text-main);
 }
 p {
-	color: white;
+	color: var(--text-main);
 }
 a{
-	color: white;
+	color: var(--primary);
 }
 </style>

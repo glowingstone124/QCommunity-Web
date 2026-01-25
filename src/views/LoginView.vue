@@ -90,9 +90,11 @@ const login = async () => {
 	align-items: center;
 	justify-content: center;
 	padding: 2rem;
+	background: var(--background);
 }
 
 .login-container {
+	background: var(--card-background);
 	border-radius: 20px;
 	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 	padding: 2.5rem;
@@ -108,20 +110,20 @@ const login = async () => {
 }
 
 .header h1 {
-	color: #abcef1;
+	color: var(--title-color);
 	font-size: 2rem;
 	margin-bottom: 0.5rem;
 }
 
 .header p {
-	color: #9fd0e1;
+	color: var(--text-secondary);
 	font-size: 0.95rem;
 }
 
 .input-group {
 	display: flex;
 	align-items: center;
-	border: 2px solid #e0e0e0;
+	border: 2px solid var(--split);
 	border-radius: 10px;
 	padding: 0 1rem;
 	margin-top: 2rem;
@@ -130,7 +132,7 @@ const login = async () => {
 .input-icon {
 	width: 24px;
 	height: 24px;
-	fill: #4995d2;
+	fill: var(--primary);
 	margin-right: 0.5rem;
 	flex-shrink: 0;
 }
@@ -145,17 +147,17 @@ const login = async () => {
 
 
 input:focus {
-	border-color: #64816c;
-	box-shadow: 0 0 0 3px rgba(100, 129, 108, 0.2);
+	border-color: var(--primary);
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 	outline: none;
-	background: white;
+	background: var(--background);
 }
 
 button {
 	width: 100%;
 	padding: 1rem;
-	background: #205364;
-	color: white;
+	background: var(--button-primary-bg);
+	color: var(--button-primary-text);
 	border: none;
 	border-radius: 23px;
 	font-size: 1.1rem;
@@ -166,8 +168,8 @@ button {
 }
 
 button:hover:not(:disabled) {
-	background: #22587e;
-	box-shadow: 0 5px 15px rgba(100, 129, 108, 0.3);
+	background: var(--button-primary-hover);
+	box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
 }
 
 button:disabled {
@@ -176,7 +178,7 @@ button:disabled {
 }
 
 .error-message {
-	color: #ff4757;
+	color: var(--error);
 	font-size: 0.9rem;
 	margin-top: 1rem;
 	text-align: center;
@@ -187,8 +189,8 @@ button:disabled {
 	width: 24px;
 	height: 24px;
 	margin: 0 auto;
-	border: 3px solid rgba(255, 255, 255, 0.3);
-	border-top-color: white;
+	border: 3px solid rgba(37, 99, 235, 0.3);
+	border-top-color: var(--button-primary-text);
 	border-radius: 50%;
 	animation: spin 1s linear infinite;
 }

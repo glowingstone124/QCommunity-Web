@@ -26,6 +26,9 @@ import "@/assets/colors.css"
 import {usePageStore} from "@/utils/store.ts";
 import CardSingletonView from "@/views/CardSingletonView.vue";
 
+const savedTheme = localStorage.getItem("theme") || "light";
+document.documentElement.dataset.theme = savedTheme === "dark" ? "dark" : "light";
+
 const routes = [
     {
         path: '/',

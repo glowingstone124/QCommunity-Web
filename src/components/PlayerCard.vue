@@ -62,7 +62,7 @@ interface Props {
 const props = defineProps<Props>()
 const avatarImg = ref<HTMLImageElement | null>(null)
 const gradient = ref<string>(
-	'linear-gradient(45deg,#64816c 0%, #64816c 100%)'
+	'linear-gradient(45deg, var(--primary) 0%, var(--primary) 100%)'
 )
 
 function onCardReady() {
@@ -107,7 +107,7 @@ async function onImgLoad() {
 	if (special) {
 		extractColor()
 	} else {
-		gradient.value = 'linear-gradient(45deg,#64816c 0%, #64816c 100%)'
+		gradient.value = 'linear-gradient(45deg, var(--primary) 0%, var(--primary) 100%)'
 	}
 }
 
@@ -137,7 +137,7 @@ watch(
 @import "/src/assets/main.css";
 
 .status-online {
-	background: rgba(67, 252, 17, 0.58) !important;
+	background: var(--success) !important;
 }
 
 .status-offline {
@@ -145,11 +145,11 @@ watch(
 }
 
 .status-banned {
-	background: rgba(252, 17, 44, 0.58) !important;
+	background: var(--error) !important;
 }
 
 .informations {
-	color: white;
+	color: var(--text-main);
 	display: flex;
 	flex-direction: column;
 	padding-left: 1.8rem;
@@ -166,12 +166,12 @@ watch(
 }
 
 .status-text {
-	background: rgba(231, 227, 227, 0.58);
+	background: var(--background-secondary);
 	backdrop-filter: blur(20px);
 	text-shadow: none !important;
 	padding: 11px 13px;
 	font-weight: 750;
-	color: #f6f1f1 !important;
+	color: var(--text-main) !important;
 	border-radius: 13px;
 }
 

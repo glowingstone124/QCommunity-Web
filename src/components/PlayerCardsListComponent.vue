@@ -59,28 +59,30 @@ function toggleCollapse() {
 	overflow: auto;
 }
 .customizationSelect{
-	background-color: #6f747c;
+	background-color: var(--background-secondary);
 	box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 	display: flex;
 	justify-content: center;
 	border:none;
+	border-radius: 12px;
 }
 .customizationBtn{
-	background-color: #7b8388;
+	background-color: var(--card-background);
 	margin: 5px;
 	width:100%;
 	align-content: center;
 	padding: 14px;
+	border-radius: 10px;
 }
 .customizationBtn:hover{
-	background-color: #535a5d;
+	background-color: var(--button-secondary-hover);
 }
 .container {
 	display: flex;
 	height: 100%;
     margin-left: 4rem;
 	p {
-		color: #cad7ca;
+		color: var(--text-main);
 		margin: auto;
 		text-align: center;
 	}
@@ -90,11 +92,11 @@ function toggleCollapse() {
 	h1 {
     display: inline-block;
 		font-size: 3rem;
-		color: #a9d4e7;
+		color: var(--title-color);
 	}
 }
 .right {
-	background: #343f49;
+	background: var(--background-secondary);
 	flex: 6;
 }
 .btn-group {
@@ -102,7 +104,7 @@ function toggleCollapse() {
 	margin-left: 5px;
 	width: fit-content;
 	border-radius: 4px;
-	background: #223c5b;
+	background: var(--card-background);
 	padding: 4px;
 	overflow: hidden;
 }
@@ -112,7 +114,7 @@ function toggleCollapse() {
 	z-index: 1;
 	padding: 8px 16px;
 	background: transparent;
-	color: #9faece;
+	color: var(--text-secondary);
 	font-weight: bold;
 	border: none;
 	cursor: pointer;
@@ -122,14 +124,15 @@ function toggleCollapse() {
 }
 
 .btn-group button.active {
-	background: #4f7391;
+	background: var(--primary-light);
+	color: var(--title-color);
 }
 
 .highlight-bar {
 	position: absolute;
 	width: 100px;
 	height: 32px;
-	background-color: #46779f;
+	background-color: var(--primary);
 	border-radius: 4px;
 	z-index: 0;
 	transition: left 0.3s ease;
@@ -150,8 +153,8 @@ function toggleCollapse() {
 	position: absolute;
 	bottom: 10px;
 	right: 10px;
-	background: #3e5d3e;
-	color: white;
+	background: var(--button-primary-bg);
+	color: var(--button-primary-text);
 	border: none;
 	border-radius: 4px;
 	padding: 6px 10px;
@@ -160,8 +163,42 @@ function toggleCollapse() {
 	transition: background 0.3s;
 }
 .toggle-btn:hover {
-	background: #4b744b;
+	background: var(--button-primary-hover);
 }
 
+@media (max-width: 900px) {
+	.container {
+		flex-direction: column;
+		margin-left: 0;
+		gap: 1rem;
+	}
+
+	.left {
+		display: flex;
+		justify-content: center;
+	}
+
+	.left h1 {
+		font-size: 2rem;
+	}
+
+	.right {
+		width: 100%;
+	}
+
+	.customizationSelect {
+		flex-direction: row;
+	}
+
+	.btn-group {
+		width: 100%;
+		justify-content: center;
+	}
+
+	.btn-group button {
+		width: auto;
+		min-width: 110px;
+	}
+}
 
 </style>

@@ -220,7 +220,7 @@ onBeforeUnmount(() => {
 
 
 h1 {
-	color: white;
+	color: var(--title-color);
 	font-size: 2rem;
 	margin: 0;
 	font-weight: 500;
@@ -243,7 +243,7 @@ h1 {
 }
 
 .message-bubble {
-	background: #1c3341;
+	background: var(--card-background);
 	border-radius: 12px;
 	padding: 1.3rem 1rem;
 	margin-bottom: 1rem;
@@ -258,7 +258,7 @@ h1 {
 
 .sender-name {
 	font-weight: 600;
-	color: #3e7ead;
+	color: var(--primary);
 	font-size: 1.2rem;
 	max-width: 200px;
 	overflow: hidden;
@@ -266,13 +266,13 @@ h1 {
 }
 
 .message-time {
-	color: #666;
+	color: var(--text-secondary);
 	font-size: 0.8rem;
 	margin-bottom: 10px;
 }
 
 .message-content {
-	color: #ede8e8;
+	color: var(--text-main);
 	line-height: 1.2;
 	font-size: 1.3rem;
 }
@@ -281,7 +281,7 @@ h1 {
 	display: flex;
 	gap: 0.5rem;
 	padding: 1rem;
-	background: #3b4444;
+	background: var(--background-secondary);
 	border-radius: 8px;
 	box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
 }
@@ -289,21 +289,21 @@ h1 {
 .message-input {
 	flex: 1;
 	padding: 0.8rem;
-	border: 2px solid #e0e0e0;
+	border: 2px solid var(--split);
 	border-radius: 8px;
 	font-size: 1rem;
 	transition: border-color 0.3s;
 }
 
 .message-input:focus {
-	border-color: #436177;
+	border-color: var(--primary);
 	outline: none;
 }
 
 .send-button {
 	padding: 0.8rem 1.5rem;
-	background: #396273;
-	color: white;
+	background: var(--button-primary-bg);
+	color: var(--button-primary-text);
 	border: none;
 	border-radius: 8px;
 	cursor: pointer;
@@ -311,11 +311,11 @@ h1 {
 }
 
 .send-button:hover:not(:disabled) {
-	background: #38787e;
+	background: var(--button-primary-hover);
 }
 
 .send-button:disabled {
-	background: #a0a0a0;
+	background: var(--split);
 	cursor: not-allowed;
 }
 
@@ -365,5 +365,4 @@ h1 {
 	}
 }
 </style>
-
 

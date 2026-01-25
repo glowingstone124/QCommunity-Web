@@ -175,7 +175,7 @@ onMounted(fetchAccounts);
 .new-account-form {
 	display: flex;
 	flex-direction: column;
-	gap: 16pxl;
+	gap: 16px;
 	width: 100%;
 	max-width: 350px;
 }
@@ -211,12 +211,12 @@ onMounted(fetchAccounts);
 	text-transform: uppercase;
 }
 .filled-button:hover {
-	background-color: #5586bf;
+	background-color: var(--button-primary-hover);
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .filled-button:active {
-	background-color: #3c799f;
+	background-color: var(--primary-dark);
 }
 .link-text {
 	color: var(--color-link);
@@ -225,12 +225,31 @@ onMounted(fetchAccounts);
 }
 
 .link-text:hover {
-	color: #C3E5F5;
+	color: var(--primary-light);
 	text-decoration: underline;
 }
 
 .hint {
-	color: #FFB4AB;
+	color: var(--error);
 	font-weight: 600;
+}
+
+@media (max-width: 768px) {
+	.page-container {
+		margin: 0;
+		padding: 16px;
+	}
+
+	.account-container {
+		justify-content: center;
+	}
+
+	.account-card {
+		width: 100%;
+	}
+
+	.new-account-form {
+		max-width: 100%;
+	}
 }
 </style>

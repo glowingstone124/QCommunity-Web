@@ -60,9 +60,9 @@ async function fetchFortune() {
 }
 
 const getProgressColor = (amount) => {
-  if (amount >= 80) return '#2ed573';
-  if (amount >= 50) return '#ffa502';
-  return '#ff4757';
+  if (amount >= 80) return 'var(--success)';
+  if (amount >= 50) return 'var(--warning)';
+  return 'var(--error)';
 };
 </script>
 
@@ -160,14 +160,14 @@ const getProgressColor = (amount) => {
 }
 
 .fortune-card {
-  background: #2d2d2d;
+  background: var(--card-background);
   border-radius: 16px;
   padding: 2rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .title {
-  color: #89e88b;
+  color: var(--title-color);
   text-align: center;
   margin-bottom: 2rem;
   font-size: 2.5rem;
@@ -176,7 +176,7 @@ const getProgressColor = (amount) => {
 .login-prompt {
   text-align: center;
   padding: 2rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--background-secondary);
   border-radius: 12px;
 }
 
@@ -186,7 +186,7 @@ const getProgressColor = (amount) => {
 }
 
 .prompt-text {
-  color: #e0e0e0;
+  color: var(--text-secondary);
   font-size: 1.2rem;
   margin-bottom: 1.5rem;
 }
@@ -194,15 +194,15 @@ const getProgressColor = (amount) => {
 .login-button {
   display: inline-block;
   padding: 0.8rem 2rem;
-  background: #4da153;
-  color: white;
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
   border-radius: 8px;
   text-decoration: none;
   transition: background 0.3s;
 }
 
 .login-button:hover {
-  background: #3bc72c;
+  background: var(--button-primary-hover);
 }
 
 .loading {
@@ -214,8 +214,8 @@ const getProgressColor = (amount) => {
   width: 40px;
   height: 40px;
   margin: 0 auto 1rem;
-  border: 4px solid rgba(255, 255, 255, 0.1);
-  border-top-color: #a9f33a;
+  border: 4px solid rgba(37, 99, 235, 0.2);
+  border-top-color: var(--primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -248,20 +248,20 @@ const getProgressColor = (amount) => {
 .fortune-message {
   white-space: pre-wrap;
   text-align: left;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--background-secondary);
   padding: 1.5rem;
   border-radius: 8px;
   font-family: inherit;
   line-height: 1.6;
-  color: #e0e0e0;
+  color: var(--text-main);
 }
 
 .refresh-button {
   margin-top: 2rem;
   padding: 0.8rem 1.5rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid #93f33a;
-  color: #66b240;
+  background: var(--button-secondary-bg);
+  border: 2px solid var(--button-secondary-border);
+  color: var(--button-secondary-text);
   border-radius: 8px;
   cursor: pointer;
   display: inline-flex;
@@ -271,8 +271,8 @@ const getProgressColor = (amount) => {
 }
 
 .refresh-button:hover {
-  background: #516750;
-  color: white;
+  background: var(--button-secondary-hover);
+  color: var(--button-secondary-text);
 }
 
 .refresh-icon {
@@ -300,7 +300,7 @@ const getProgressColor = (amount) => {
 }
 .date {
   text-align: center;
-  color: #89e88b;
+  color: var(--title-color);
   margin-bottom: 2rem;
   font-size: 1.2rem;
 }
@@ -312,7 +312,7 @@ const getProgressColor = (amount) => {
 }
 
 .category-card {
-  background: #3d3d3d;
+  background: var(--card-background);
   padding: 1.5rem;
   border-radius: 12px;
   transition: transform 0.3s;
@@ -335,7 +335,7 @@ const getProgressColor = (amount) => {
 
 .progress-bar {
   height: 24px;
-  background: #2d2d2d;
+  background: var(--split);
   border-radius: 12px;
   overflow: hidden;
   position: relative;
@@ -352,17 +352,17 @@ const getProgressColor = (amount) => {
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: white;
+  color: var(--text-main);
   font-weight: bold;
-  mix-blend-mode: difference;
+  mix-blend-mode: normal;
 }
 
 .comment {
-  color: #e0e0e0;
+  color: var(--text-main);
   line-height: 1.6;
   margin: 0;
   padding: 0.5rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--background-secondary);
   border-radius: 6px;
 }
 </style>

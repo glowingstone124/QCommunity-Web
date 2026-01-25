@@ -23,6 +23,9 @@
 					>
 					<p v-if="loginstat" @click="toggleUserMenu">{{ $t("mainPage.account_center") }}</p>
 				</div>
+				<button class="theme-btn" @click="toggleTheme" :title="theme === 'dark' ? '切换到浅色模式' : '切换到深色模式'">
+					{{ theme === "dark" ? "🌙" : "☀️" }}
+				</button>
 				<button class="lang-btn" @click="toggleLang">
 					{{ locale === "zh" ? "EN" : "中文" }}
 				</button>
@@ -45,8 +48,10 @@ const loginstat = ref(false)
 const playtime = ref(0)
 const avatarUrl = ref('https://example.com/avatar.jpg')
 const pageStore = usePageStore()
+const theme = ref("light")
 
 onMounted(() => {
+	theme.value = document.documentElement.dataset.theme || "light"
 	if (username.value) {
 		fetch("https://api.qoriginal.vip/qo/authorization/account", {
 			headers: {
@@ -93,6 +98,12 @@ const toggleLang = () => {
 	locale.value = locale.value === "zh" ? "en" : "zh";
 	localStorage.setItem("locale", locale.value);
 };
+
+const toggleTheme = () => {
+	theme.value = theme.value === "dark" ? "light" : "dark";
+	document.documentElement.dataset.theme = theme.value;
+	localStorage.setItem("theme", theme.value);
+};
 </script>
 
 <style scoped>
@@ -101,7 +112,7 @@ const toggleLang = () => {
 	left: 0;
 	width: 100%;
 	height: 60px;
-	background-color: #3b5e8c;
+	background-color: var(--primary);
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	z-index: 1000;
 }
@@ -122,7 +133,7 @@ const toggleLang = () => {
 .logo-text {
 	font-size: 24px;
 	font-weight: bold;
-	color: #d1d7dd;
+	color: var(--button-primary-text);
 	margin: 0;
 }
 
@@ -140,12 +151,12 @@ const toggleLang = () => {
 
 .user-name {
 	font-weight: 500;
-	color: #f5f2f2;
+	color: var(--button-primary-text);
 }
 
 .user-role {
 	font-size: 0.8em;
-	color: #e7e3e3;
+	color: var(--primary-light);
 }
 
 .user-avatar {
@@ -163,7 +174,7 @@ const toggleLang = () => {
 .avatar-container {
 	display: flex;
 	align-items: center;
-	border: 2px solid #f5f2f2;
+	border: 2px solid var(--button-primary-text);
 	padding-right: 20px;
 	border-radius: 30px;
 	gap: 5px;
@@ -171,12 +182,12 @@ const toggleLang = () => {
 
 .avatar-container p {
 	margin: 0;
-	color: rgb(253, 253, 253);
+	color: var(--button-primary-text);
 	font-size: 0.9em;
 }
 
 .login-alert {
-	background: #ff4757;
+	background: var(--error);
 	color: white;
 	padding: 8px 15px;
 	border-radius: 20px;
@@ -188,7 +199,7 @@ const toggleLang = () => {
 }
 
 .login-alert:hover {
-	background: #ff6b81;
+	background: var(--error);
 }
 
 .alert-icon {
@@ -257,8 +268,8 @@ const toggleLang = () => {
 }
 
 .lang-btn {
-	background: #134075;
-	color: white;
+	background: var(--primary-dark);
+	color: var(--button-primary-text);
 	border: none;
 	padding: 8px 12px;
 	font-size: 14px;
@@ -268,6 +279,21 @@ const toggleLang = () => {
 }
 
 .lang-btn:hover {
-	background: #235b9d;
+	background: var(--primary);
+}
+
+.theme-btn {
+	background: var(--button-secondary-bg);
+	color: var(--button-secondary-text);
+	border: 1px solid var(--button-secondary-border);
+	padding: 8px 10px;
+	font-size: 14px;
+	cursor: pointer;
+	border-radius: 12px;
+	transition: background 0.3s;
+}
+
+.theme-btn:hover {
+	background: var(--button-secondary-hover);
 }
 </style>

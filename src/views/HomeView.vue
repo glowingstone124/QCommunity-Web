@@ -99,11 +99,11 @@ onMounted(() => {
 	max-width: 100vw;
 	height: 100vh;
 	overflow-y: hidden;
-	background-color: #151a1f;
+	background-color: var(--background);
 }
 
 h1 {
-	background: #fefffe;
+	background: var(--primary);
 	font-size: 5.6rem;
 	margin-top: 0;
 	margin-bottom: 0;
@@ -126,7 +126,7 @@ h1 {
 }
 
 .tile {
-	background-color: #090a0c;
+	background-color: var(--card-background);
 	padding: 2rem;
 	border-radius: 30px;
 	min-width: 300px;
@@ -145,7 +145,8 @@ h1 {
 }
 
 .tile:hover {
-	background-color: #242d44;
+	background-color: var(--background-secondary);
+	border: 1px solid var(--split);
 	box-shadow: 0 4px 6px rgba(0, 0, 0, .1);
 }
 
@@ -157,14 +158,14 @@ h1 {
 }
 
 h2{
-	color: #91b3e3;
+	color: var(--title-color);
 }
 p {
-	color: #d2c9c9;
+	color: var(--text-secondary);
 }
 a {
 	text-decoration: none;
-	color: #d4e7a9;
+	color: var(--primary);
 }
 
 .title {
@@ -221,8 +222,8 @@ a {
 	border: none;
 	border-radius: 15px;
 	padding: 2rem;
-	background: #2c3e50;
-	color: #fff;
+	background: var(--card-background);
+	color: var(--text-main);
 	box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 	width: 50%;
 }
@@ -242,7 +243,7 @@ a {
 .dialog-content h2 {
 	font-size: 2rem;
 	margin: 0;
-	color: #d4e7a9;
+	color: var(--title-color);
 }
 
 .dialog-content p {
@@ -252,8 +253,8 @@ a {
 
 .close-btn {
 	align-self: flex-end;
-	background: #587958;
-	color: white;
+	background: var(--button-primary-bg);
+	color: var(--button-primary-text);
 	border: none;
 	margin: 30px;
 	padding: 0.8rem 1.5rem;
@@ -263,6 +264,6 @@ a {
 }
 
 .close-btn:hover {
-	background: #6b9e6b;
+	background: var(--button-primary-hover);
 }
 </style>

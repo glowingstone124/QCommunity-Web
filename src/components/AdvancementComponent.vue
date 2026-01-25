@@ -30,10 +30,10 @@ p {
 
 .pending {
 	h2{
-		color: #ccc;
+		color: var(--text-secondary);
 	}
 	p{
-		color: #ccc;
+		color: var(--text-secondary);
 	}
 }
 .card {
@@ -46,10 +46,10 @@ p {
 	box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 .card.completed {
-	background: #a1c6f6;
+	background: var(--primary-light);
 }
 .card.pending {
-	border: 2px solid #ccc;
-	background: #f9f9f900;
+	border: 2px solid var(--split);
+	background: transparent;
 }
 </style>

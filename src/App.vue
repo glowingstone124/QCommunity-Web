@@ -54,26 +54,26 @@ input, textarea {
 
 ::-webkit-scrollbar {
 	width: 12px;
-	background-color: rgba(0, 0, 0, 0.1);
+	background-color: var(--split);
 }
 
 ::-webkit-scrollbar-track {
-	background-color: #5a626800;
+	background-color: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-	background-color: #6c757d;
+	background-color: var(--text-secondary);
 	border-radius: 6px;
 	border: 3px solid transparent;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-	background-color: #5a6268;
+	background-color: var(--text-main);
 }
 
 .app {
 	height: 100vh;
-	background-color: #151a1f;
+	background-color: var(--background);
 	overflow-y: hidden;
 	overflow-x: hidden;
 }

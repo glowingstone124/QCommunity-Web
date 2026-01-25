@@ -68,12 +68,12 @@ onMounted(async () => {
 h1 {
 	margin-left: 10px;
 	font-size: 1.2rem;
-	color: #a9bbe7;
+	color: var(--title-color);
 }
 .avatar-item {
 	width: 100px;
 	text-align: center;
-	background-color: #6f707c;
+	background-color: var(--card-background);
 	padding: 8px;
 	border-radius: 6px;
 	cursor: pointer;
@@ -81,11 +81,11 @@ h1 {
 	border: 2px solid transparent;
 }
 .avatar-item:hover {
-	background-color: #5f646d;
+	background-color: var(--background-secondary);
 }
 .avatar-item.selected {
-	border-color: #7abce5;
-	background-color: #4a5761;
+	border-color: var(--primary);
+	background-color: var(--background-secondary);
 }
 .avatar-image {
 	width: 80px;
@@ -107,18 +107,30 @@ h1 {
 	flex-wrap: wrap;
 	gap: 10px;
 	padding: 10px;
+	justify-content: flex-start;
 }
 .save-avatar-btn {
 	margin: 16px;
 	padding: 10px 20px;
-	background-color: #4f6b75;
-	color: white;
+	background-color: var(--button-primary-bg);
+	color: var(--button-primary-text);
 	border: none;
 	border-radius: 6px;
 	cursor: pointer;
 	transition: background-color 0.3s;
 }
 .save-avatar-btn:hover {
-	background-color: #5e738c;
+	background-color: var(--button-primary-hover);
+}
+
+@media (max-width: 768px) {
+	.avatar-list {
+		justify-content: center;
+		max-height: 40vh;
+	}
+
+	.avatar-item {
+		width: 90px;
+	}
 }
 </style>

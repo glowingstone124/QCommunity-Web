@@ -12,7 +12,7 @@ import { ref, toRefs, defineProps } from "vue";
 defineProps({
 	textColor: {
 		type: String,
-		default: "#000"
+		default: "var(--text-main)"
 	}
 });
 

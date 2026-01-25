@@ -3,7 +3,7 @@
 
 .statistics {
     h2, p {
-        color: #ffffff;
+        color: var(--dark-text-primary);
         font-family: "Bahnschrift", sans-serif;
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
     }
@@ -16,7 +16,7 @@
 }
 
 .background {
-    background: #000000;
+    background: var(--dark-bg);
     background-size: cover;
     background-position: center;
     width: 700px;
@@ -46,10 +46,10 @@
 
     h1 {
         font-family: "Bahnschrift", sans-serif;
-        color: white;
+        color: var(--dark-text-primary);
     }
 
-    background-color: rgba(0, 0, 0, 0.73);
+    background-color: rgba(15, 23, 42, 0.8);
 }
 
 .cube {
@@ -72,8 +72,8 @@
 .from {
     p {
         display: inline-block;
-        background-color: #39bd59;
-        color: black;
+        background-color: var(--success);
+        color: var(--button-primary-text);
         font-family: "Bahnschrift", sans-serif;
         padding: 0.25em 0.5em;
         margin-bottom: 0.5rem;
@@ -104,7 +104,7 @@
     h1{
         display: table-cell;
         vertical-align: middle;
-        color: white;
+        color: var(--dark-text-primary);
     }
 }
 .wrapper {

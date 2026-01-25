@@ -147,7 +147,7 @@ onBeforeUnmount(() => {
 }
 
 .panel {
-	background: #2961a6;
+	background: var(--card-background);
 	margin: 1.5rem;
 	border-radius: 1rem;
 	padding: 1.5rem;
@@ -202,7 +202,7 @@ button, .redirect {
 	will-change: transform;
 }
 .select {
-	background: #5572a8;
+	background: var(--background-secondary);
 	display: flex;
 	flex-direction: column;
 	padding: 0.3em;
@@ -212,7 +212,7 @@ button, .redirect {
 		border-radius: 0.9rem;
 		margin: 10px 10px;
 		border:none;
-		background: #15557c;
+		background: var(--button-primary-bg);
 		color: var(--text);
 		padding: 1rem 5rem;
 		font-size: 1.1rem;
@@ -220,12 +220,12 @@ button, .redirect {
 		text-wrap: nowrap;
 	}
 	button:hover{
-		background: #2c2d6b;
+		background: var(--button-primary-hover);
 		box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
 	}
 }
 button.active {
-	background: #309dd7 !important;
-	box-shadow: rgb(241, 240, 240) 0px 4px 6px -1px, rgba(255, 253, 253, 0.97) 0px 2px 4px -1px !important;
+	background: var(--primary) !important;
+	box-shadow: rgba(15, 23, 42, 0.2) 0px 4px 6px -1px, rgba(15, 23, 42, 0.12) 0px 2px 4px -1px !important;
 }
 </style>

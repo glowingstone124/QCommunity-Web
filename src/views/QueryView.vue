@@ -91,8 +91,8 @@ const handleSearch = debounce(async () => {
 .affiliated {
 	display: flex;
 	flex-direction: column;
-	color: white;
-	background-color: #378eaf;
+	color: var(--text-main);
+	background-color: var(--card-background);
 	padding: 1rem;
 	border-radius: 10px;
 	height: 100%;
@@ -105,7 +105,7 @@ const handleSearch = debounce(async () => {
 	justify-content: left;
 }
 .tag {
-	background-color: #3ab7cb;
+	background-color: var(--primary-light);
 	width: fit-content;
 	padding: 0.2rem 0.5rem;
 	border-radius: 10px;
@@ -149,8 +149,8 @@ const handleSearch = debounce(async () => {
 	padding: 1rem 2rem;
 	border: none;
 	border-radius: 8px;
-	background-color: #5da36e;
-	color: white;
+	background-color: var(--button-primary-bg);
+	color: var(--button-primary-text);
 	font-weight: bold;
 	cursor: pointer;
 	font-family: 'Bahnschrift', 'NotoSans', serif;
@@ -158,7 +158,7 @@ const handleSearch = debounce(async () => {
 }
 
 .search-btn:hover {
-	background-color: #3c7c4e;
+	background-color: var(--button-primary-hover);
 }
 
 h1 {
@@ -179,7 +179,8 @@ h2 {
 	color: var(--text);
 	border-radius: 20px;
 	padding: 0 30px;
-	background-color: #378eaf;
+	background-color: var(--button-secondary-bg);
+	border: 1px solid var(--button-secondary-border);
 
 	h2 {
 		font-weight: 100;
@@ -187,7 +188,7 @@ h2 {
 }
 
 .back:hover {
-	background-color: #6b6666;
+	background-color: var(--button-secondary-hover);
 }
 
 .content {
@@ -213,23 +214,23 @@ input {
 	outline: none;
 	padding: 1rem;
 	border-radius: 10px;
-	color: var(--text);
+	color: var(--text-main);
 	font-size: 1.7rem;
 	font-family: 'Bahnschrift', 'NotoSans', serif;
 }
 
 .query-input {
-	background-color: #a5c9a9;
-	border-bottom: 0px solid #60b74c;
+	background-color: var(--background-secondary);
+	border-bottom: 0px solid var(--primary);
 	width: 95%;
 }
 
 .query-input::placeholder {
-	color: rgba(37, 72, 28, 0.34);
+	color: var(--text-secondary);
 }
 
 .query-input:focus {
-	border-bottom: 4px solid #60b74c;
+	border-bottom: 4px solid var(--primary);
 }
 
 @media screen and (max-width: 768px) {

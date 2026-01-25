@@ -3,11 +3,11 @@
     --uncommon: #47C9DA;
     --rare: #A753DA;
     --limited: #FF9800;
-    --color-primary: #8AB4F8;
-    --color-on-primary: #002D62;
-    --color-surface-container-high: #2D3A4B;
-    --color-surface: #1E2530;
-    --color-on-surface: #E8EDF9;
-    --color-on-surface-variant: #C3C7CF;
-    --color-link: #8AB4F8;
+    --color-primary: var(--primary);
+    --color-on-primary: var(--button-primary-text);
+    --color-surface-container-high: var(--card-background);
+    --color-surface: var(--background-secondary);
+    --color-on-surface: var(--text-main);
+    --color-on-surface-variant: var(--text-secondary);
+    --color-link: var(--primary);
 }

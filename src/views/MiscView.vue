@@ -113,27 +113,27 @@ const switchComponent = (component) => {
 .container {
   display: flex;
   height: 100vh;
-  background-color: #252424;
-  color: #e0e0e0;
+  background-color: var(--background);
+  color: var(--text-main);
 }
 
 .sidebar {
-  background-color: #5c625c;
+  background-color: var(--card-background);
   overflow: hidden;
 }
 
 .menu-toggle {
   width: 100%;
   padding: 16px;
-  background-color: #3bb20b;
-  color: #e0e0e0;
+  background-color: var(--button-primary-bg);
+  color: var(--button-primary-text);
   border: none;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .menu-toggle:hover {
-  background-color: #51a132;
+  background-color: var(--button-primary-hover);
 }
 
 .menu-list {
@@ -147,7 +147,7 @@ const switchComponent = (component) => {
 .content {
   flex: 1;
   padding: 24px;
-  background-color: #454945;
+  background-color: var(--background-secondary);
   overflow-y: auto;
 }
 
@@ -161,7 +161,7 @@ const switchComponent = (component) => {
     position: absolute;
     height: 100%;
     z-index: 100;
-    background-color: #2d2d2d;
+    background-color: var(--background-secondary);
   }
 
   .menu-toggle {

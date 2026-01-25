@@ -102,11 +102,12 @@ const groupedCards = computed(() => {
 	border-radius: 6px;
 	border: none;
 	padding: 6px 10px;
-	background-color: #3ca241;
+	background-color: var(--success);
+	color: var(--button-primary-text);
 }
 
 .apply:hover {
-	background-color: #4cb751;
+	background-color: var(--success);
 	cursor: pointer;
 }
 

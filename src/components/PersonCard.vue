@@ -86,34 +86,35 @@ function login() {
 }
 
 a {
-	background-color: #54806c;
+	background-color: var(--button-secondary-bg);
 	text-decoration: none;
 	border-radius: 15px;
-	color: #89fff5;
+	color: var(--button-secondary-text);
+	border: 1px solid var(--button-secondary-border);
 	padding: 10px 15px;
 }
 
 h1, p {
-	color: #89fff5;;
+	color: var(--text-main);
 }
 
 .link {
 	text-decoration: none;
-	background: rgb(67, 136, 97);
+	background: var(--button-primary-bg);
 	margin-top: 20px;
 	box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
 	padding: 30px 80px;
 	border-radius: 20px;
-	color: #89fff5;
+	color: var(--button-primary-text);
 }
 
 .link:hover {
-	background-color: rgba(97, 177, 229, 0.51) !important;
+	background-color: var(--button-primary-hover) !important;
 	cursor: pointer;
 }
 
 .personal {
-	background: #193c24;
+	background: var(--card-background);
 	padding: 50px 50px;
 	border-radius: 30px;
 	font-family: 'Bahnschrift', sans-serif;
@@ -133,29 +134,29 @@ h1, p {
 
 input[type="text"],
 input[type="password"] {
-	color: #89fff5;
+	color: var(--text-main);
 	display: block;
 	width: 100%;
 	border: none;
-	border-bottom: 3px solid #46c9b5;
+	border-bottom: 3px solid var(--primary);
 	padding: 2vh;
 	font-size: 16px;
 	margin-bottom: 10px;
 	box-sizing: border-box;
-	background-color: #5a626850 !important;
+	background-color: var(--background-secondary) !important;
 	transition: border-bottom 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
 input[type="text"]:focus,
 input[type="password"]:focus {
 	outline: none;
-	border-bottom: 4px solid #99f6ee;
-	box-shadow: 0 2px 5px rgba(47, 91, 136, 0.2);
+	border-bottom: 4px solid var(--primary);
+	box-shadow: 0 2px 5px rgba(37, 99, 235, 0.2);
 }
 
 input[type="text"]::placeholder,
 input[type="password"]::placeholder {
-	color: #a2d2c9;
+	color: var(--text-secondary);
 	opacity: 1;
 }
 
@@ -163,8 +164,8 @@ button {
 	width: 100%;
 	padding: 20px;
 	margin-top: 20px;
-	background-color: #5dbabd;
-	color: white;
+	background-color: var(--button-primary-bg);
+	color: var(--button-primary-text);
 	border: none;
 	border-radius: 40px;
 	cursor: pointer;
@@ -173,7 +174,7 @@ button {
 }
 
 button:hover {
-	background-color: #247d7a;
+	background-color: var(--button-primary-hover);
 }
 
 @media (max-width: 480px) {

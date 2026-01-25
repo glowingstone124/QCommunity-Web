@@ -88,7 +88,7 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .card {
-	background-color: rgb(69, 114, 105);
+	background-color: var(--card-background);
 	border-radius: 10px;
 	padding: 20px;
 	margin: auto;
@@ -99,7 +99,7 @@ onBeforeUnmount(() => {
 }
 
 .card:hover {
-	background-color: rgb(75, 120, 110);
+	background-color: var(--background-secondary);
 }
 .info {
 	display: flex;
@@ -113,7 +113,7 @@ onBeforeUnmount(() => {
 	margin: 0 10px;
 	border-radius: 50%;
 	box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
-	border: 2px solid #ffffff55;
+	border: 2px solid var(--split);
 	object-fit: cover;
 	transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -147,4 +147,3 @@ p {
 	opacity: 1;
 }
 </style>
-

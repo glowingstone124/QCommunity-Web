@@ -207,21 +207,24 @@ watch(currentSetting, (newValue) => {
 	display: flex;
 	flex-direction: row;
 	max-height: 90vh;
- 	 margin: 1rem 3rem;
+ 	margin: 1rem 3rem;
+	width: 100%;
+	box-sizing: border-box;
 }
 
 input[type="text"],
 input[type="password"] {
 	margin: auto;
 	padding: 25px;
-	background-color: rgba(75, 91, 75, 0.42);
+	background-color: var(--background-secondary);
 	border: none;
-	border-bottom: #95aec2 5px solid;
+	border-bottom: var(--split) 5px solid;
 	font-size: 1rem;
+	color: var(--text-main);
 }
 
 input:focus {
-	border-bottom-color: #5f87b4;
+	border-bottom-color: var(--primary);
 }
 .login-record {
 	border-radius: 16px;
@@ -278,6 +281,7 @@ input:focus {
 	overflow: auto;
 	display: flex;
 	flex-direction: column;
+	gap: 1rem;
 }
 
 p, h2, ul, li {
@@ -294,7 +298,8 @@ h1 {
 	height: 100%;
 	max-width: 100vw;
 	display: flex;
-	flex-direction: row
+	flex-direction: row;
+	gap: 1.5rem;
 }
 
 .subtitle {
@@ -326,10 +331,12 @@ h1 {
 	padding: 2rem;
 	padding-left: 0;
 	flex: 2;
+	min-width: 220px;
 }
 
 .left {
 	flex: 8;
+	min-width: 0;
 }
 
 .navigate-items {
@@ -342,7 +349,7 @@ h1 {
 	h2 {
 		font-size: 1.2rem;
 		font-weight: 300;
-		color: #a9bbe7;
+		color: var(--text-secondary);
 		margin-top: 10px;
 	}
 }
@@ -370,12 +377,69 @@ h1 {
 @media (max-width: 768px) {
 	.container {
 		flex-direction: column;
-		overflow: scroll;
+		overflow: auto;
 	}
 
 	.panel-wrapper {
 		flex-direction: column;
+		max-height: none;
+		margin: 1rem;
+	}
 
+	.right {
+		padding: 1rem;
+		min-width: 0;
+	}
+
+	.left {
+		padding: 0 0 1.5rem 0;
+	}
+
+	.navigate-menu {
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: flex-start;
+		gap: 8px;
+	}
+
+	.navigate-items {
+		width: auto;
+		padding: 0 1rem;
+		border-radius: 999px;
+	}
+
+	.navigate-items h2 {
+		font-size: 1rem;
+		margin: 8px 0;
+	}
+
+	.login-record h2 {
+		font-size: 1.6rem;
+	}
+
+	.subtitle {
+		font-size: 1.4rem;
+	}
+
+	.hint {
+		max-width: 100%;
+		min-width: 0;
+		padding: 20px;
+	}
+
+	.func {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	input[type="text"],
+	input[type="password"] {
+		padding: 16px;
+	}
+
+	.ip-record {
+		margin: 6px 0;
 	}
 }
 
@@ -404,12 +468,13 @@ h1 {
 	margin: 20px 0;
 	border: none;
 	padding: 10px 30px;
-	background: #4b6d7a;
+	background: var(--button-primary-bg);
+	color: var(--button-primary-text);
 	border-radius: 20px;
 }
 
 .btn:hover {
-	background: var(--color-surface-container-high);
+	background: var(--button-primary-hover);
 }
 
 .hint {
@@ -427,7 +492,7 @@ h1 {
 	}
 
 	h2, p {
-		color: #ffffff;
+		color: var(--text-main);
 	}
 
 	h2 {

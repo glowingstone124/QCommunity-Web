@@ -40,9 +40,9 @@ const showDeclaration = ref(false);
 @import url("@/assets/main.css");
 .toggle-button {
 	margin-top: 10px;
-	background: #355e65;
-	color: #adf5db;
-	border: none;
+	background: var(--button-secondary-bg);
+	color: var(--button-secondary-text);
+	border: 1px solid var(--button-secondary-border);
 	border-radius: 18px;
 	padding: 0.6rem 1.5rem;
 	cursor: pointer;
@@ -51,7 +51,7 @@ const showDeclaration = ref(false);
 }
 
 .toggle-button:hover {
-	background: #2a4c50;
+	background: var(--button-secondary-hover);
 }
 
 .slide-fade-enter-active, .slide-fade-leave-active {
@@ -70,10 +70,10 @@ const showDeclaration = ref(false);
 }
 
 .declaration-content {
-	background: rgba(255, 255, 255, 0.1);
+	background: var(--card-background);
 	padding: 15px;
 	border-radius: 8px;
-	color: #e4f3ec;
+	color: var(--text-main);
 	max-width: 40em;
 	margin-top: 10px;
 }
@@ -82,22 +82,22 @@ span {
 	align-items: center;
 }
 .sponsor {
-	background: #a42525;
+	background: var(--primary);
 }
 .web{
-	background: #7e548f;
+	background: var(--primary-light);
 }
 .api {
-	background: #1b8fa2;
+	background: var(--primary-dark);
 }
 .plugin {
-	background: #8eb91e;
+	background: var(--success);
 }
 .artwork {
-	background-image: linear-gradient(120deg, #a6c0fe 0%, #f68084 100%);
+	background-image: linear-gradient(120deg, var(--primary-light) 0%, var(--warning) 100%);
 }
 .contributor {
-	color: #e4f3ec;
+	color: var(--button-primary-text);
 	border-radius: 18px;
 	margin: 7px;
 	padding: 10px 15px;
@@ -106,7 +106,7 @@ span {
 	width: 130px;
 }
 .bg {
-	background-color: #3b4444;
+	background-color: var(--background-secondary);
 	height:90vh;
 	padding: 3rem;
 	overflow: scroll;
@@ -132,14 +132,14 @@ span {
 
 }
 h1, h2,p, a {
-	color: #adf5db;
+	color: var(--text-main);
 }
 h3 {
-	color: #adf5db;
+	color: var(--text-main);
 }
 
 .special {
-	background-color: #52655f;
+	background-color: var(--card-background);
 	padding: 5px 20px;
 	margin-top: 20px;
 	max-width: fit-content;
@@ -147,12 +147,13 @@ h3 {
 }
 .special:hover {
 	transform: translateX(20px);
-	box-shadow: rgba(46, 240, 166, 0.4) -5px 5px, rgba(46, 240, 143, 0.3) -10px 10px, rgba(46, 240, 137, 0.2) -15px 15px, rgba(46, 240, 124, 0.1) -20px 20px, rgba(46, 246, 124, 0.05) -25px 25px;
+	box-shadow: rgba(37, 99, 235, 0.4) -5px 5px, rgba(37, 99, 235, 0.3) -10px 10px, rgba(37, 99, 235, 0.2) -15px 15px, rgba(37, 99, 235, 0.1) -20px 20px, rgba(37, 99, 235, 0.05) -25px 25px;
 }
 
 .link {
-	background: #355e65;
-	color: #adf5db;
+	background: var(--button-secondary-bg);
+	color: var(--button-secondary-text);
+	border: 1px solid var(--button-secondary-border);
 	border-radius: 18px;
 	padding: 0.6rem 1.5rem;
 }

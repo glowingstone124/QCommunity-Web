@@ -69,7 +69,7 @@ onMounted(() => {
 
 <style scoped>
 h1, h2, p {
-  color: #d4e7a9;
+  color: var(--text-main);
 }
 
 .container {
@@ -81,7 +81,7 @@ h1, h2, p {
   width: 90%;
   margin: 0 auto;
   padding: 20px;
-  background-color: #2a3a2a;
+  background-color: var(--background-secondary);
   border-radius: 8px;
 }
 
@@ -93,10 +93,10 @@ h1, h2, p {
 .domain-item {
   padding: 16px;
   margin: 8px 0;
-  background-color: #394f39;
+  background-color: var(--card-background);
   border-radius: 30px;
   font-size: 18px;
-  color: #d4e7a9;
+  color: var(--text-main);
   cursor: pointer;
   text-align: center;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
@@ -106,17 +106,17 @@ h1, h2, p {
 }
 
 .domain-item:hover {
-  background-color: #388d51;
+  background-color: var(--button-secondary-hover);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .domain-item.dead {
-  background-color: #5a3a3a;
+  background-color: var(--error);
   cursor: not-allowed;
 }
 
 .domain-item.dead:hover {
-  background-color: #7a4a4a;
+  background-color: var(--error);
 }
 
 .status {
@@ -125,25 +125,26 @@ h1, h2, p {
 }
 
 .status.alive {
-  color: #4caf50;
+  color: var(--success);
 }
 
 .status.dead {
-  color: #ff4757;
+  color: var(--error);
 }
 
 .loading, .error {
   padding: 16px;
   margin: 8px 0;
-  background-color: #394f39;
+  background-color: var(--card-background);
   border-radius: 30px;
   font-size: 18px;
-  color: #d4e7a9;
+  color: var(--text-main);
   text-align: center;
 }
 
 .error {
-  background-color: #ff4757;
+  background-color: var(--error);
+  color: var(--button-primary-text);
 }
 
 @media (min-width: 768px) {

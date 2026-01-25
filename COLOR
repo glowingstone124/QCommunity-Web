@@ -1,0 +1,71 @@
+Primary
+#2563EB
+37 99 235
+
+Primary Dark
+#1E40AF
+
+Primary Light
+#60A5FA
+
+Background
+#FFFFFF
+
+Secound Background
+#F8FAFC
+
+Card Background
+#F1F5F9
+
+Split
+#E5E7EB
+
+Secound Text
+#64748B
+
+Main Text Color
+#1F2937
+
+Title Color
+#0F172A
+
+Success
+#16A34A
+
+Warning
+#F59E0B
+
+Error
+#DE2626
+
+Button Primary
+	Background #2563EB
+	Text #FFFFFF
+	Hover #1E40AF
+
+Button Secondary
+	Background #FFFFFF
+	Border #2563EB
+	Color #2563EB
+	Hover Bg. #EFF6FF
+
+Ghost Button
+	Backgound <Transparent>
+	Text #2563EB
+	Hover EFF6FF
+
+Dark Background
+Main BG: #0B1220
+Card BG: #111827
+Border:  #1F2937
+
+Dark Text
+Primary Text: #E5E7EB
+Secondary:    #9CA3AF
+Muted:        #6B7280
+
+Code BG: #0F172A
+Code Text: #E5E7EB
+Keyword: #60A5FA
+String: #34D399
+Comment: #64748B
