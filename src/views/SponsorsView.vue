@@ -24,8 +24,7 @@ const showDeclaration = ref(false);
 				<strong>4.公平性：</strong>Quantum Original 将尽力保障所有玩家的正常游戏体验，但捐赠/贡献不会赋予任何游戏特权。</p>
 		</div>
 	</transition>
-	<span class="special" style="cursor: pointer;"><a class="name"  href="https://space.bilibili.com/152309938">苗库里</a><p class="contributor artwork">东方系列像素头像</p></span>
-	<span class="special" style="cursor: pointer;"><a class="name"  href="https://space.bilibili.com/152309938">苗库里</a><img src="https://bucket.glowingstone.cn/pixel_fantasia.png" class="contributor artwork imgsrc"></span>
+	<span class="special" style="cursor: pointer;"><a class="name"  href="https://space.bilibili.com/152309938">苗库里</a><p class="contributor artwork">东方系列像素头像</p><img src="https://bucket.glowingstone.cn/pixel_fantasia.png" class="contributor artwork imgsrc"></span>
 	<span><h3 class="name">glowingstone124</h3><p class="contributor api">QAPI3</p><p class="contributor plugin">QPlugin</p><p class="contributor web">Webs</p></span>
 	<span><h3 class="name">MineCreeper2086</h3><p class="contributor plugin">QPlugin</p><p class="contributor web">Webs</p></span>
 	<span><h3 class="name">Adam Gu</h3><p class="contributor api">QAPI3</p><p class="contributor web">Webs</p></span>
