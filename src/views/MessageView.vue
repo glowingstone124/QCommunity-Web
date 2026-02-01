@@ -152,10 +152,18 @@ onBeforeUnmount(() => {
 
 
 <template>
-	<div class="main">
-		<div class="content-wrapper">
-			<div class="message-container" v-if="loginstat">
+	<div class="chat">
+		<header class="chat-header">
+			<div>
+				<p class="eyebrow">Community</p>
+				<h1 class="title">聊天记录</h1>
+				<p class="subtitle">公共频道消息按时间同步展示</p>
+			</div>
+			<span class="status-pill">{{ loginstat ? '已连接' : '未登录' }}</span>
+		</header>
 
+		<div class="chat-body">
+			<div class="message-container" v-if="loginstat">
 				<div
 					v-for="(message, index) in messageList"
 					:key="index"
@@ -171,25 +179,26 @@ onBeforeUnmount(() => {
 					></div>
 				</div>
 			</div>
-			<div class="message-container" v-else>
+			<div class="message-container empty" v-else>
 				<h1 class="notification">您必须先登录或者注册才能聊天。</h1>
 			</div>
-			<div class="fixed-input-container">
-				<div class="input-container">
-					<input
-						v-model="messageInput"
-						class="message-input"
-						placeholder="请输入消息..."
-						@keydown.enter="sendMessage"
-					/>
-					<button
-						@click="sendMessage"
-						class="send-button"
-						:disabled="sendButtonDisabled"
-					>
-						{{ sendButtonDisabled ? '发送中...' : '发送' }}
-					</button>
-				</div>
+		</div>
+
+		<div class="composer">
+			<div class="input-container">
+				<input
+					v-model="messageInput"
+					class="message-input"
+					placeholder="请输入消息..."
+					@keydown.enter="sendMessage"
+				/>
+				<button
+					@click="sendMessage"
+					class="send-button"
+					:disabled="sendButtonDisabled"
+				>
+					{{ sendButtonDisabled ? '发送中...' : '发送' }}
+				</button>
 			</div>
 		</div>
 	</div>
@@ -197,117 +206,182 @@ onBeforeUnmount(() => {
 
 
 <style scoped>
-.main {
-    display: flex;
-    flex-direction: column;
-    height: 94vh;
-    padding: 1rem;
-    overflow: hidden;
-    box-sizing: border-box;
-}
-.notification {
-	color:black;
-
-}
-.fixed-input-container {
-	bottom: 0;
-	left: 20px;
-	right: 20px;
-	z-index: 1000;
-	padding: 1rem 0;
+:global(:root) {
+	--chat-bg:
+		radial-gradient(circle at 10% 0%, rgba(37, 99, 235, 0.14), transparent 55%),
+		radial-gradient(circle at 85% 15%, rgba(255, 186, 106, 0.2), transparent 45%),
+		linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.96));
+	--chat-card: rgba(255, 255, 255, 0.9);
+	--chat-soft: rgba(15, 23, 42, 0.05);
+	--chat-border: rgba(15, 23, 42, 0.12);
 }
 
+:global(:root[data-theme="dark"]) {
+	--chat-bg:
+		radial-gradient(circle at 10% 0%, rgba(59, 130, 246, 0.16), transparent 55%),
+		radial-gradient(circle at 85% 15%, rgba(244, 114, 182, 0.18), transparent 45%),
+		linear-gradient(180deg, rgba(11, 18, 32, 0.98), rgba(15, 23, 42, 0.98));
+	--chat-card: rgba(17, 24, 39, 0.88);
+	--chat-soft: rgba(148, 163, 184, 0.12);
+	--chat-border: rgba(148, 163, 184, 0.22);
+}
 
+.chat {
+	min-height: 94vh;
+	height: 94vh;
+	padding: 4.5rem 3rem 2rem;
+	background: var(--chat-bg);
+	display: flex;
+	flex-direction: column;
+	gap: 1.6rem;
+	box-sizing: border-box;
+}
 
-h1 {
-	color: var(--title-color);
-	font-size: 2rem;
+.chat-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 1rem;
+}
+
+.eyebrow {
+	text-transform: uppercase;
+	letter-spacing: 0.35rem;
+	font-size: 0.75rem;
+	color: var(--text-secondary);
+	margin: 0 0 0.35rem 0;
+}
+
+.title {
 	margin: 0;
-	font-weight: 500;
+	font-size: 2.4rem;
+	color: var(--title-color);
 }
 
-.content-wrapper {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+.subtitle {
+	margin: 0.35rem 0 0 0;
+	color: var(--text-secondary);
+}
+
+.status-pill {
+	padding: 0.35rem 0.9rem;
+	border-radius: 999px;
+	background: var(--chat-soft);
+	border: 1px solid var(--chat-border);
+	color: var(--text-main);
+	font-size: 0.9rem;
+}
+
+.chat-body {
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	border-radius: 20px;
+	border: 1px solid var(--chat-border);
+	background: var(--chat-card);
+	box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+	overflow: hidden;
 }
 
 .message-container {
 	flex: 1;
-	padding: 2rem;
-	overflow:auto;
-	border-radius: 8px;
+	min-height: 0;
+	padding: 1.8rem;
+	overflow: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.message-container.empty {
+	align-items: center;
+	justify-content: center;
+}
+
+.notification {
+	color: var(--text-main);
+	font-size: 1.4rem;
+	margin: 0;
+	text-align: center;
 }
 
 .message-bubble {
-	background: var(--card-background);
-	border-radius: 12px;
-	padding: 1.3rem 1rem;
-	margin-bottom: 1rem;
+	background: var(--chat-soft);
+	border-radius: 16px;
+	padding: 1rem 1.2rem;
+	border: 1px solid var(--chat-border);
 }
 
 .message-header {
 	display: flex;
-	justify-content: left;
-	flex-direction: column;
-	margin-bottom: 0.5rem;
+	justify-content: space-between;
+	align-items: baseline;
+	margin-bottom: 0.45rem;
+	gap: 1rem;
 }
 
 .sender-name {
 	font-weight: 600;
 	color: var(--primary);
-	font-size: 1.2rem;
+	font-size: 1.05rem;
 	max-width: 200px;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .message-time {
 	color: var(--text-secondary);
 	font-size: 0.8rem;
-	margin-bottom: 10px;
 }
 
 .message-content {
 	color: var(--text-main);
-	line-height: 1.2;
-	font-size: 1.3rem;
+	line-height: 1.5;
+	font-size: 1.05rem;
+}
+
+.composer {
+	position: sticky;
+	bottom: 0;
 }
 
 .input-container {
 	display: flex;
-	gap: 0.5rem;
-	padding: 1rem;
-	background: var(--background-secondary);
-	border-radius: 8px;
-	box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+	gap: 0.75rem;
+	padding: 0.9rem 1rem;
+	background: var(--chat-card);
+	border: 1px solid var(--chat-border);
+	border-radius: 16px;
+	box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
 }
 
 .message-input {
 	flex: 1;
-	padding: 0.8rem;
-	border: 2px solid var(--split);
-	border-radius: 8px;
+	padding: 0.85rem 1rem;
+	border: 1px solid var(--chat-border);
+	border-radius: 12px;
 	font-size: 1rem;
-	transition: border-color 0.3s;
+	background: transparent;
+	color: var(--text-main);
+	transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .message-input:focus {
-	border-color: var(--primary);
+	border-color: rgba(37, 99, 235, 0.6);
 	outline: none;
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 .send-button {
-	padding: 0.8rem 1.5rem;
+	padding: 0.85rem 1.5rem;
 	background: var(--button-primary-bg);
 	color: var(--button-primary-text);
 	border: none;
-	border-radius: 8px;
+	border-radius: 12px;
 	cursor: pointer;
 	transition: all 0.3s;
+	font-weight: 600;
 }
 
 .send-button:hover:not(:disabled) {
@@ -319,50 +393,28 @@ h1 {
 	cursor: not-allowed;
 }
 
-@media (max-width: 768px) {
-	.navigator {
-		padding: 0.8rem;
-		margin: 0 -1rem;
-		border-radius: 0;
+@media (max-width: 960px) {
+	.chat {
+		padding: 4rem 1.5rem 1.5rem;
 	}
-	.message-input {
-		max-width: 80%;
+}
+
+@media (max-width: 640px) {
+	.chat {
+		padding: 3.5rem 1rem 1rem;
 	}
 
-	.fixed-input-container {
-		left: 0;
-		right: 0;
-		padding: 1rem;
-	}
-
-	h1 {
-		font-size: 1.5rem;
-	}
-
-	.content-wrapper {
-		border-radius: 0;
-		padding: 0.5rem;
-	}
-
-	.message-container {
-		padding: 0.5rem;
+	.chat-header {
+		flex-direction: column;
+		align-items: flex-start;
 	}
 
 	.input-container {
 		flex-direction: column;
-		padding: 2rem;
-		background: none;
-		backdrop-filter: blur(6px);
-	}
-
-	.message-input {
-		width: 100%;
 	}
 
 	.send-button {
 		width: 100%;
-		padding: 0.8rem;
 	}
 }
 </style>
-
