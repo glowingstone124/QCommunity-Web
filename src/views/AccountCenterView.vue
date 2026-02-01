@@ -13,6 +13,8 @@ const iplist = ref([])
 const ipAddr = ref("")
 const isValidIp = ref(false)
 const isImmersive = ref(true)
+const isFrozen = ref(null)
+const statusHint = ref("")
 
 import {alert, defaultModules} from '@pnotify/core';
 import '@pnotify/core/dist/PNotify.css';
@@ -46,6 +48,30 @@ function queryAccountData() {
 			uid.value = data.uid;
 			playtime.value = data.playtime;
 			logins.value = data.logins;
+			queryAccountStatus();
+		});
+}
+
+function queryAccountStatus() {
+	if (!username.value) {
+		return;
+	}
+	isFrozen.value = null;
+	statusHint.value = "检测中";
+	fetch(`https://api.glowingstone.cn/qo/download/registry?name=${encodeURIComponent(username.value)}`)
+		.then(res => res.json())
+		.then(data => {
+			if (data.code === 1) {
+				isFrozen.value = null;
+				statusHint.value = "未查询到账号";
+				return;
+			}
+			isFrozen.value = data.frozen === true;
+			statusHint.value = isFrozen.value ? "冻结" : "正常";
+		})
+		.catch(() => {
+			isFrozen.value = null;
+			statusHint.value = "查询失败";
 		});
 }
 
@@ -171,7 +197,9 @@ watch(currentSetting, (newValue) => {
 						</div>
 						<div class="stat-card">
 							<p class="stat-label">账号状态</p>
-							<p class="stat-value">正常</p>
+							<p class="stat-value" :class="isFrozen ? 'status-frozen' : 'status-ok'">
+								{{ statusHint || '检测中' }}
+							</p>
 						</div>
 					</div>
 					<div class="section">
@@ -465,6 +493,14 @@ watch(currentSetting, (newValue) => {
 	font-size: 1.4rem;
 	color: var(--text-main);
 	font-weight: 600;
+}
+
+.status-ok {
+	color: var(--success);
+}
+
+.status-frozen {
+	color: var(--error);
 }
 
 .stat-num {
