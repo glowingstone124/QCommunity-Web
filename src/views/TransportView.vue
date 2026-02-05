@@ -80,14 +80,12 @@ const searchRoute = async () => {
     const data = await response.json()
     routeResult.value = { message:"共 "+data.totalStops+" 站，用时约 "+data.totalTime+" 秒", data: data}
     if (data.result === "-1") {
-      alert('未找到符合条件的路线')
       routeResult.value = { message: "未找到符合条件的路线" }
     } else {
       console.log('路线查询结果:', data)
     }
   } catch (error) {
     console.error('查询路线失败:', error)
-    alert('查询失败，请稍后重试')
     routeResult.value = { error: error.message }
   } finally {
     isLoading.value = false
@@ -130,6 +128,7 @@ const closeSuggestionsOnClickOutside = (event) => {
   <div class="container">
     <div class="query">
       <div class="input-group">
+        <label for="start">线路正在登记，不全或查不出请见谅！</label>
         <label for="start">始发站：</label>
         <div class="input-with-suggestions start-input-container">
           <input
