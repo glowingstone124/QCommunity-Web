@@ -25,6 +25,7 @@ import AdvancementView from "@/views/AdvancementView.vue";
 import "@/assets/colors.css"
 import {usePageStore} from "@/utils/store.ts";
 import CardSingletonView from "@/views/CardSingletonView.vue";
+import TransportView from "@/views/TransportView.vue";
 
 const savedTheme = localStorage.getItem("theme") || "light";
 document.documentElement.dataset.theme = savedTheme === "dark" ? "dark" : "light";
@@ -95,6 +96,12 @@ const routes = [
         name: 'advancements',
         component: AdvancementView,
         meta: { pageTitle: '成就', showNavBar: true }
+    },
+    {
+        path: '/transport',
+        name: 'transport',
+        component: TransportView,
+        meta: { pageTitle: '交通', showNavBar: true },
     },
     {
         path: '/card/:username',
