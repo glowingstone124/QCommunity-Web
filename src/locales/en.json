@@ -10,7 +10,7 @@
     "ip_query": "Server IPs",
     "message_list": "Message List",
     "dashboard": "Dashboard",
-    "transport": "Transport (not implemented)",
+    "transport": "Transport (beta)",
     "greeting_text": "You have already played {played} minutes",
     "account_center": "Account Center",
     "miscs": "Miscs"
