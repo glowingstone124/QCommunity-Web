@@ -140,11 +140,18 @@ watch([avatarUrl, backgroundUrl, statistics], () => {
 	<div
 		class="wrapper"
 		:style="{
-			transform: `scale(${props.scale})`,
-			transformOrigin: 'left top',
+			width: `${700 * props.scale}px`,
+			height: `${1000 * props.scale}px`,
 		}"
 	>
-		<div class="background" :style="{ backgroundImage: `url('${backgroundUrl}')` }">
+		<div
+			class="card-inner"
+			:style="{
+				transform: `scale(${props.scale})`,
+				transformOrigin: 'left top',
+			}"
+		>
+			<div class="background" :style="{ backgroundImage: `url('${backgroundUrl}')` }">
 			<div class="top">
 				<div class="section-1" :style="{backgroundImage: gradient}">
 					<img :src="avatarUrl" alt="avatar" ref="avatarImg" crossorigin="anonymous"
@@ -169,6 +176,7 @@ watch([avatarUrl, backgroundUrl, statistics], () => {
 					<h2 :style="{ color: levelColors[level] }">{{ levelDesc[level] }}</h2>
 				</div>
 			</div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -176,5 +184,13 @@ watch([avatarUrl, backgroundUrl, statistics], () => {
 
 <style scoped>
 @import url('@/assets/artcard.css');
-</style>
 
+.wrapper {
+	overflow: hidden;
+}
+
+.card-inner {
+	width: 700px;
+	height: 1000px;
+}
+</style>

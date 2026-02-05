@@ -1,3 +1,13 @@
-* {
-    transition: 0.3s all ease-in-out;
+a,
+button,
+input,
+textarea,
+select,
+.transition {
+    transition:
+        color var(--motion-fast, 140ms) var(--motion-ease, ease),
+        background-color var(--motion-fast, 140ms) var(--motion-ease, ease),
+        border-color var(--motion-fast, 140ms) var(--motion-ease, ease),
+        box-shadow var(--motion-fast, 140ms) var(--motion-ease, ease),
+        transform var(--motion-fast, 140ms) var(--motion-ease, ease);
 }

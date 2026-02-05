@@ -2,8 +2,6 @@
 import {ref} from 'vue';
 import debounce from 'lodash/debounce';
 import PlayerInfoCard from "@/components/PlayerCard.vue";
-import Redirect from "@/components/RedirectButton.vue";
-import ArtCardForQueryUsage from "@/components/ArtCardForQueryUsage.vue";
 
 const inputId = ref('');
 const queryId = ref('');
@@ -58,28 +56,52 @@ const handleSearch = debounce(async () => {
 </script>
 
 <template>
-	<div class="content">
-		<div class="left">
-			<h2>在这里查询指定玩家</h2>
-			<div style="display: flex; gap: 1rem;">
-				<input v-model="inputId" placeholder="输入查询 ID" class="query-input"/>
-				<button class="search-btn" @click="handleSearch">查询</button>
+	<div class="query-page">
+		<header class="page-header">
+			<div>
+				<p class="eyebrow">玩家查询</p>
+				<h1>查询指定玩家信息</h1>
+				<p class="sub">输入玩家 ID 以查看状态、QQ 与在线信息。</p>
 			</div>
-		</div>
-		<div class="right">
-			<div class="right_wrapper">
-				<PlayerInfoCard
-					:username="queryId"
-					:banned="banned"
-					:online="online"
-					:qq="qq"
-					:found="find"
-					:avatar="avatarUrl"
-					:playtime="playtime"
-					v-if="!affiliated"
-				/>
+		</header>
+
+		<section class="search-panel">
+			<div class="search-box">
+				<label class="search-label" for="player-id">玩家 ID</label>
+				<div class="search-row">
+					<input id="player-id" v-model="inputId" placeholder="输入查询 ID" class="query-input"/>
+					<button class="search-btn" @click="handleSearch">查询</button>
+				</div>
 			</div>
-		</div>
+			<div class="search-tip">
+				<p class="tag">支持大小写字母与数字组合</p>
+			</div>
+		</section>
+
+		<section class="result-panel">
+			<div class="section-head">
+				<h2>查询结果</h2>
+				<span class="count">{{ queryId ? 1 : 0 }}</span>
+			</div>
+
+			<div v-if="queryId && affiliated" class="affiliated">
+				<h3>该玩家为关联账号</h3>
+				<p>主账号：{{ host }}</p>
+			</div>
+
+			<PlayerInfoCard
+				v-else-if="queryId"
+				:username="queryId"
+				:banned="banned"
+				:online="online"
+				:qq="qq"
+				:found="find"
+				:avatar="avatarUrl"
+				:playtime="playtime"
+			/>
+
+			<p v-else class="empty">请输入玩家 ID 并点击查询。</p>
+		</section>
 	</div>
 
 </template>
@@ -88,61 +110,147 @@ const handleSearch = debounce(async () => {
 @import "/src/assets/base.css";
 @import "/src/assets/main.css";
 
+.query-page {
+	min-height: calc(100vh - 60px);
+	padding: var(--page-padding);
+	max-width: var(--page-max-width);
+	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+}
+
+.page-header {
+	padding: 1.5rem 1.75rem;
+	border-radius: var(--radius-lg);
+	background: var(--background-secondary);
+	box-shadow: var(--shadow-soft);
+}
+
+.page-header h1 {
+	margin: 0.3rem 0 0.4rem;
+	font-size: clamp(2rem, 5vw, 3rem);
+	color: var(--title-color);
+	font-family: 'Bahnschrift', 'Inter', sans-serif;
+}
+
+.eyebrow {
+	margin: 0;
+	font-size: 0.75rem;
+	letter-spacing: 0.28rem;
+	text-transform: uppercase;
+	color: var(--text-secondary);
+}
+
+.sub {
+	margin: 0;
+	color: var(--text-secondary);
+}
+
+.search-panel {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	gap: 1.5rem;
+	align-items: center;
+}
+
+.search-box {
+	display: flex;
+	flex-direction: column;
+	gap: 0.8rem;
+	padding: 1.5rem;
+	border-radius: var(--radius-lg);
+	background: var(--card-background);
+	border: 1px solid var(--split);
+	box-shadow: var(--shadow-soft);
+}
+
+.search-label {
+	font-size: 0.9rem;
+	color: var(--text-secondary);
+}
+
+.search-row {
+	display: flex;
+	gap: 1rem;
+}
+
+.search-tip {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.tag {
+	background-color: var(--primary-light);
+	color: var(--button-primary-text);
+	width: fit-content;
+	padding: 0.4rem 0.8rem;
+	border-radius: 999px;
+	margin: 0;
+	font-size: 0.9rem;
+	font-weight: 600;
+}
+
+.result-panel {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.section-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.section-head h2 {
+	margin: 0;
+	font-size: 1.4rem;
+	color: var(--title-color);
+	font-family: 'Bahnschrift', 'Inter', sans-serif;
+}
+
+.count {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 44px;
+	padding: 0.2rem 0.7rem;
+	border-radius: 999px;
+	background: var(--primary-light);
+	color: var(--button-primary-text);
+	font-weight: 600;
+}
+
 .affiliated {
 	display: flex;
 	flex-direction: column;
 	color: var(--text-main);
 	background-color: var(--card-background);
-	padding: 1rem;
-	border-radius: 10px;
-	height: 100%;
-	width: 100%;
+	padding: 1.5rem;
+	border-radius: var(--radius-lg);
+	border: 1px solid var(--split);
+	box-shadow: var(--shadow-soft);
+	gap: 0.4rem;
 }
 
-.right_wrapper {
-	display: flex;
-	flex-direction: row;
-	justify-content: left;
-}
-.tag {
-	background-color: var(--primary-light);
-	width: fit-content;
-	padding: 0.2rem 0.5rem;
-	border-radius: 10px;
-	margin-bottom: 0;
-	font-size: 1.2rem;
-	font-weight: 200
+.affiliated h3 {
+	margin: 0;
+	color: var(--title-color);
 }
 
-.content {
-	display: flex;
+.affiliated p {
+	margin: 0;
+	color: var(--text-secondary);
 }
 
-.left {
-	margin: 10px 30px;
-	flex: 4;
-}
-
-.right {
-	flex: 6;
-}
-
-
-.artcard {
-	margin-left: 7rem;
-	max-height: 900px;
-	display: flex;
-	flex-direction: row;
-}
-
-.main {
-	max-width: 100vw;
-	height: auto;
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	padding: 5rem;
-	gap: 2rem;
+.empty {
+	margin: 0;
+	padding: 1rem 1.2rem;
+	border-radius: var(--radius-md);
+	background: var(--background-secondary);
+	color: var(--text-secondary);
+	border: 1px dashed var(--split);
 }
 
 .search-btn {
@@ -154,75 +262,26 @@ const handleSearch = debounce(async () => {
 	font-weight: bold;
 	cursor: pointer;
 	font-family: 'Bahnschrift', 'NotoSans', serif;
-	transition: background-color 0.2s ease;
 }
 
 .search-btn:hover {
 	background-color: var(--button-primary-hover);
 }
 
-h1 {
-	color: var(--text);
-	font-size: 5.6rem;
-	margin-top: 0;
-	margin-bottom: 0;
-	font-weight: 300;
-}
-
-h2 {
-	color: var(--text);
-}
-
-.back {
-	display: inline-block;
-	text-decoration: none;
-	color: var(--text);
-	border-radius: 20px;
-	padding: 0 30px;
-	background-color: var(--button-secondary-bg);
-	border: 1px solid var(--button-secondary-border);
-
-	h2 {
-		font-weight: 100;
-	}
-}
-
-.back:hover {
-	background-color: var(--button-secondary-hover);
-}
-
-.content {
-	max-width: 1000px;
-	flex-direction: column;
-	display: flex;
-
-	h2 {
-		font-weight: 200;
-	}
-}
-
-.playerCard {
-	border-radius: 10px;
-	padding: 1rem;
-	margin-top: 1rem;
-	transition: all 0.3s;
-	width: 100%;
-}
-
 input {
 	border: none;
 	outline: none;
 	padding: 1rem;
-	border-radius: 10px;
+	border-radius: var(--radius-md);
 	color: var(--text-main);
-	font-size: 1.7rem;
+	font-size: 1.1rem;
 	font-family: 'Bahnschrift', 'NotoSans', serif;
 }
 
 .query-input {
 	background-color: var(--background-secondary);
-	border-bottom: 0px solid var(--primary);
-	width: 95%;
+	border: 1px solid var(--split);
+	width: 100%;
 }
 
 .query-input::placeholder {
@@ -230,40 +289,21 @@ input {
 }
 
 .query-input:focus {
-	border-bottom: 4px solid var(--primary);
+	border-color: var(--primary);
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
 @media screen and (max-width: 768px) {
-	.main {
+	.search-panel {
+		grid-template-columns: 1fr;
+	}
+
+	.search-row {
 		flex-direction: column;
-		align-items: center;
-		padding: 2rem;
 	}
 
-	.content {
-		margin-left: 0;
-		min-width: 100%;
-	}
-
-	.playerCard {
-		width: 95%;
-
-	}
-
-	input {
+	.search-btn {
 		width: 100%;
-		font-size: 1.4rem;
-		padding: 0.1rem;
-	}
-
-	h1 {
-		font-size: 3rem;
-		text-align: center;
-	}
-
-	h2 {
-		font-size: 1.5rem;
-		text-align: center;
 	}
 }
 

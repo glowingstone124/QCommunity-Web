@@ -2,8 +2,8 @@
 	<div class="player-info" :style="{backgroundImage:gradient}">
 		<div
 			:style="{
-         height: cardHeight + 'px',
-         width: cardHeight * 0.7 + 'px', //0.7*0.6
+         height: (cardHeight || 600) + 'px',
+         width: (cardWidth || 420) + 'px',
          overflow: 'hidden',
 
        }"
@@ -69,8 +69,8 @@ function onCardReady() {
 	nextTick(() => {
 		const el = cardRef.value?.$el as HTMLElement
 		if (el) {
-			cardWidth.value = el.offsetWidth * 0.6
-			cardHeight.value = el.offsetHeight * 0.6
+			cardWidth.value = el.offsetWidth
+			cardHeight.value = el.offsetHeight
 		}
 	})
 }

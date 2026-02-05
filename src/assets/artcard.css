@@ -108,6 +108,7 @@
     }
 }
 .wrapper {
+    display: inline-block;
 }
 
 .common {

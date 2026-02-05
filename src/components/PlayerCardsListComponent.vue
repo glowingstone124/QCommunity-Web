@@ -13,114 +13,185 @@ const componentsList = [AllCardsComponent, MyCardsComponent]
 
 const currentComponent = computed(() => componentsList[selectedIndex.value])
 
-const isCollapsed = ref(false)
-
-function toggleCollapse() {
-	isCollapsed.value = !isCollapsed.value
-}
-
 </script>
 
 <template>
-	<div class="container">
-		<div class="left">
-				<h1>您的卡面</h1>
-			<ArtCard :scale="0.6" id="1" />
-		</div>
-		<div class="right" :class="{ collapsed: isCollapsed }"  v-if="!isCollapsed">
-			<div class="customizationSelect">
-				<div class="customizationBtn" @click="selectModule = 0"><p>卡面</p></div>
-				<div class="customizationBtn" @click="selectModule = 1"><p>头像</p></div>
+	<div class="personalization">
+		<header class="personalization-header">
+			<div>
+				<p class="eyebrow">个性化</p>
+				<h2>卡面与头像</h2>
+				<p class="sub">管理个人展示卡与头像样式。</p>
 			</div>
-			<div v-show="selectModule === 0" class="customizationFatherContainer">
-				<div class="btn-group">
-					<button :class="{ active: selectedIndex === 0 }" @click="selectedIndex = 0">
-						所有卡片
-					</button>
-					<button :class="{ active: selectedIndex === 1 }" @click="selectedIndex = 1">
-						我的卡片
-					</button>
+			<div class="tab-group">
+				<button class="tab" :class="{ active: selectModule === 0 }" @click="selectModule = 0">卡面</button>
+				<button class="tab" :class="{ active: selectModule === 1 }" @click="selectModule = 1">头像</button>
+			</div>
+		</header>
+
+		<div class="layout">
+			<aside class="preview">
+				<h3>预览</h3>
+				<div class="preview-card">
+					<ArtCard :scale="0.6" id="1" />
 				</div>
-				<component :is="currentComponent"/>
-			</div>
-			<div v-show="selectModule === 1">
-				<div class="avatar-edit">
+			</aside>
+
+			<section class="controls">
+				<div v-show="selectModule === 0" class="customizationFatherContainer">
+					<div class="btn-group">
+						<button :class="{ active: selectedIndex === 0 }" @click="selectedIndex = 0">
+							所有卡片
+						</button>
+						<button :class="{ active: selectedIndex === 1 }" @click="selectedIndex = 1">
+							我的卡片
+						</button>
+					</div>
+					<component :is="currentComponent"/>
+				</div>
+				<div v-show="selectModule === 1" class="avatar-edit">
 					<ChangeAvatarComponent />
 				</div>
-			</div>
+			</section>
 		</div>
-
 	</div>
 </template>
 
 <style scoped>
-.customizationFatherContainer{
-	max-height: calc(100vh - 100px);
-	overflow: auto;
+.personalization {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	padding: 2rem;
+	background: var(--glass-strong);
+	border-radius: 26px;
+	border: 1px solid var(--border-soft);
+	box-shadow: 0 20px 45px rgba(15, 23, 42, 0.12);
 }
-.customizationSelect{
-	background-color: var(--background-secondary);
-	box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+
+.personalization-header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1rem;
+}
+
+.personalization-header h2 {
+	margin: 0.3rem 0 0.4rem;
+	font-size: 1.8rem;
+	color: var(--title-color);
+	font-family: 'Bahnschrift', 'Inter', sans-serif;
+}
+
+.eyebrow {
+	margin: 0;
+	font-size: 0.75rem;
+	letter-spacing: 0.28rem;
+	text-transform: uppercase;
+	color: var(--text-secondary);
+}
+
+.sub {
+	margin: 0;
+	color: var(--text-secondary);
+}
+
+.tab-group {
+	display: inline-flex;
+	gap: 0.6rem;
+	background: var(--surface-soft);
+	padding: 0.3rem;
+	border-radius: 999px;
+	border: 1px solid var(--border-soft);
+}
+
+.tab {
+	border: none;
+	padding: 0.5rem 1.1rem;
+	border-radius: 999px;
+	background: transparent;
+	color: var(--text-secondary);
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.tab.active {
+	background: var(--primary);
+	color: var(--button-primary-text);
+	box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
+}
+
+.layout {
+	display: grid;
+	grid-template-columns: 1fr minmax(0, 0.9fr);
+	gap: 2rem;
+	align-items: start;
+}
+
+.preview {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	align-items: center;
+	flex: 0 0 auto;
+}
+
+.preview h3 {
+	margin: 0;
+	font-size: 1.1rem;
+	color: var(--title-color);
+}
+
+.preview-card {
+	width: 100%;
+	max-width: 520px;
+	min-width: 420px;
 	display: flex;
 	justify-content: center;
-	border:none;
-	border-radius: 12px;
-}
-.customizationBtn{
-	background-color: var(--card-background);
-	margin: 5px;
-	width:100%;
-	align-content: center;
-	padding: 14px;
-	border-radius: 10px;
-}
-.customizationBtn:hover{
-	background-color: var(--button-secondary-hover);
-}
-.container {
-	display: flex;
-	height: 100%;
-    margin-left: 4rem;
-	p {
-		color: var(--text-main);
-		margin: auto;
-		text-align: center;
-	}
-}
-.left {
-	flex: 0;
-	h1 {
-    display: inline-block;
-		font-size: 3rem;
-		color: var(--title-color);
-	}
-}
-.right {
+	padding: 0.6rem;
+	border-radius: 22px;
 	background: var(--background-secondary);
-	flex: 6;
+	border: 1px solid var(--border-soft);
+	box-shadow: var(--shadow-soft);
+	overflow: visible;
 }
-.btn-group {
+
+.controls {
+	background: var(--background-secondary);
+	border-radius: 22px;
+	padding: 1.6rem;
+	border: 1px solid var(--border-soft);
 	display: flex;
-	margin-left: 5px;
-	width: fit-content;
-	border-radius: 4px;
+	flex-direction: column;
+	gap: 1rem;
+	min-width: 0;
+	max-width: 520px;
+	justify-self: end;
+}
+
+.customizationFatherContainer {
+	max-height: calc(100vh - 220px);
+	overflow: auto;
+	padding-right: 0.4rem;
+}
+
+.btn-group {
+	display: inline-flex;
+	gap: 0.5rem;
+	border-radius: 999px;
 	background: var(--card-background);
-	padding: 4px;
-	overflow: hidden;
+	padding: 0.3rem;
+	border: 1px solid var(--split);
 }
 
 .btn-group button {
-	position: relative;
-	z-index: 1;
-	padding: 8px 16px;
+	padding: 0.45rem 1rem;
 	background: transparent;
 	color: var(--text-secondary);
-	font-weight: bold;
+	font-weight: 600;
 	border: none;
 	cursor: pointer;
-	border-radius: 4px;
-	transition: color 0.3s;
-	width: 100px;
+	border-radius: 999px;
 }
 
 .btn-group button.active {
@@ -128,76 +199,33 @@ function toggleCollapse() {
 	color: var(--title-color);
 }
 
-.highlight-bar {
-	position: absolute;
-	width: 100px;
-	height: 32px;
-	background-color: var(--primary);
-	border-radius: 4px;
-	z-index: 0;
-	transition: left 0.3s ease;
+.avatar-edit {
+	padding-top: 0.5rem;
 }
 
-.right {
-	flex: 1;
-	position: relative;
-	transition: all 0.3s ease;
-}
+@media (max-width: 960px) {
+	.personalization {
+		padding: 1.6rem;
+	}
 
-.right.collapsed {
-	width: 120px;
-	overflow: hidden;
-}
-
-.toggle-btn {
-	position: absolute;
-	bottom: 10px;
-	right: 10px;
-	background: var(--button-primary-bg);
-	color: var(--button-primary-text);
-	border: none;
-	border-radius: 4px;
-	padding: 6px 10px;
-	cursor: pointer;
-	font-size: 0.9rem;
-	transition: background 0.3s;
-}
-.toggle-btn:hover {
-	background: var(--button-primary-hover);
-}
-
-@media (max-width: 900px) {
-	.container {
+	.personalization-header {
 		flex-direction: column;
-		margin-left: 0;
-		gap: 1rem;
+		align-items: flex-start;
 	}
 
-	.left {
-		display: flex;
-		justify-content: center;
+	.layout {
+		grid-template-columns: 1fr;
 	}
 
-	.left h1 {
-		font-size: 2rem;
+	.controls {
+		padding: 1.2rem;
 	}
+}
 
-	.right {
-		width: 100%;
-	}
-
-	.customizationSelect {
-		flex-direction: row;
-	}
-
-	.btn-group {
-		width: 100%;
-		justify-content: center;
-	}
-
-	.btn-group button {
-		width: auto;
-		min-width: 110px;
+@media (max-width: 720px) {
+	.preview-card {
+		min-width: 0;
+		max-width: 100%;
 	}
 }
 
