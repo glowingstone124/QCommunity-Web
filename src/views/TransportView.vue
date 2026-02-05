@@ -196,7 +196,7 @@ const closeSuggestionsOnClickOutside = (event) => {
         <h3>查询结果：</h3>
         <p v-if="routeResult.message">{{ routeResult.message }}</p>
         <p v-if="routeResult.error" class="error">{{ routeResult.error }}</p>
-        <div v-if="routeResult.data">
+        <div v-if="routeResult.data" class="result-main">
           <div v-for="(segment, seg) in routeResult.data.segments">
             <div class="colored-segment" v-if="seg===0">
               <div class="concentric-circle-mask">&nbsp;</div>
@@ -281,7 +281,7 @@ label {
 }
 
 .station-input {
-  width: 100%;
+  width: 80%;
   padding: 0.8em 1.25em;
   border: 1px solid black;
   border-radius: 1em;
@@ -436,12 +436,17 @@ label {
   height: 1.8em;
   background-color: white;
   border-radius: 50%;
-  /* 使用mask创建圆环 */
   border: 0.4em var(--primary) solid;
   z-index: 1;
 }
 
-/* 响应式设计 */
+.result-main {
+  overflow: auto;
+  max-height: 50vh;
+  padding-bottom: 5em;
+}
+
+
 @media (max-width: 768px) {
   .container {
     grid-template-columns: 1fr;
