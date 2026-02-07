@@ -34,15 +34,6 @@
   --code-string: #34D399;
   --code-comment: #64748B;
   --text: var(--text-main);
-  --page-max-width: 1200px;
-  --page-padding: clamp(16px, 4vw, 36px);
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --shadow-soft: 0 6px 24px rgba(15, 23, 42, 0.08);
-  --motion-fast: 140ms;
-  --motion-medium: 220ms;
-  --motion-ease: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 :root[data-theme="dark"]{
@@ -60,110 +51,6 @@
   --button-ghost-text: var(--primary);
   --button-ghost-hover: var(--code-bg);
   --text: var(--text-main);
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-* {
-  transition:
-    color var(--motion-medium, 220ms) var(--motion-ease, ease),
-    background-color var(--motion-medium, 220ms) var(--motion-ease, ease),
-    border-color var(--motion-medium, 220ms) var(--motion-ease, ease),
-    box-shadow var(--motion-medium, 220ms) var(--motion-ease, ease),
-    transform var(--motion-medium, 220ms) var(--motion-ease, ease),
-    opacity var(--motion-medium, 220ms) var(--motion-ease, ease);
-}
-
-html {
-  font-size: 16px;
-  -webkit-text-size-adjust: 100%;
-}
-
-body {
-  margin: 0;
-  min-height: 100%;
-  background: var(--background);
-  color: var(--text-main);
-  font-family: 'Inter', 'NotoSans', serif;
-  line-height: 1.55;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: smooth;
-}
-
-#app {
-  min-height: 100vh;
-  background: var(--background);
-}
-
-img,
-video,
-canvas {
-  max-width: 100%;
-  height: auto;
-}
-
-button,
-input,
-textarea,
-select {
-  font: inherit;
-  color: inherit;
-}
-
-a {
-  color: var(--color-link, var(--primary));
-  text-decoration: none;
-}
-
-a:hover {
-  color: var(--primary-dark);
-}
-
-:focus-visible {
-  outline: 2px solid var(--primary-light);
-  outline-offset: 2px;
-}
-
-::-webkit-scrollbar {
-  width: 12px;
-  background-color: var(--split);
-}
-
-::-webkit-scrollbar-track {
-  background-color: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: var(--text-secondary);
-  border-radius: 6px;
-  border: 3px solid transparent;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background-color: var(--text-main);
-}
-
-@media (max-width: 640px) {
-  body {
-    font-size: 15px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
 }
 @font-face {
   font-family: 'GSans';
@@ -183,4 +70,13 @@ a:hover {
 @font-face {
   font-family: "Bahnschrift";
   src: url("/src/assets/bahnschrift.ttf");
+}
+* {
+  font-family: 'Inter', 'NotoSans', serif;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--text-main);
 }

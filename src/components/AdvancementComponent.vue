@@ -20,35 +20,36 @@ defineProps<{
 
 <style scoped>
 h2 {
-	font-size: 1.2rem;
-	margin: 0 0 0.4rem;
-	color: var(--title-color);
+	font-size: 1.8rem;
+	margin-bottom: 0;
 }
 p {
-	font-size: 0.98rem;
-	margin: 0;
-	color: var(--text-secondary);
+	font-size: 1.1rem;
+	font-weight: 200;
 }
 
+.pending {
+	h2{
+		color: var(--text-secondary);
+	}
+	p{
+		color: var(--text-secondary);
+	}
+}
 .card {
-	border-radius: var(--radius-md);
-	padding: 1rem 1.2rem;
-	border: 1px solid var(--split);
-	background: var(--card-background);
-	box-shadow: none;
-	display: flex;
-	flex-direction: column;
-	gap: 0.2rem;
+	border-radius: 25px;
+	padding: 12px 25px;
+	margin: 8px 0;
+	transition: 0.2s;
 }
 .card:hover {
-	box-shadow: var(--shadow-soft);
-	transform: translateY(-2px);
+	box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 .card.completed {
-	border-color: transparent;
-	background: linear-gradient(135deg, rgba(37, 99, 235, 0.18), rgba(96, 165, 250, 0.18));
+	background: var(--primary-light);
 }
 .card.pending {
-	background: var(--background-secondary);
+	border: 2px solid var(--split);
+	background: transparent;
 }
 </style>

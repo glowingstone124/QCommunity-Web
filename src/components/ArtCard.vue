@@ -122,18 +122,11 @@ function onImgLoad() {
 	<div
 		class="wrapper"
 		:style="{
-			width: `${700 * props.scale}px`,
-			height: `${1000 * props.scale}px`,
+			transform: `scale(${props.scale})`,
+			transformOrigin: 'top left',
 		}"
 	>
-		<div
-			class="card-inner"
-			:style="{
-				transform: `scale(${props.scale})`,
-				transformOrigin: 'top left',
-			}"
-		>
-			<div class="background" :style="{ backgroundImage: `url('${backgroundUrl}')` }">
+		<div class="background" :style="{ backgroundImage: `url('${backgroundUrl}')` }">
 			<div class="top">
 				<div class="section-1" :style="{backgroundImage: gradient}">
 					<img :src="avatarUrl" alt="avatar" ref="avatarImg" crossorigin="anonymous"
@@ -158,7 +151,6 @@ function onImgLoad() {
 					<h2>{{ levelDesc[level] }}</h2>
 				</div>
 			</div>
-			</div>
 		</div>
 	</div>
 </template>
@@ -166,13 +158,5 @@ function onImgLoad() {
 
 <style scoped>
 @import url('@/assets/artcard.css');
-
-.wrapper {
-	overflow: hidden;
-}
-
-.card-inner {
-	width: 700px;
-	height: 1000px;
-}
 </style>
+
