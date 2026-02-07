@@ -355,14 +355,6 @@ label {
   cursor: not-allowed;
 }
 
-.selected-info {
-  padding: 0.5em;
-  background: rgba(var(--primary), 0.1);
-  border-radius: 5px;
-  color: var(--text-secondary);
-  font-size: 0.9em;
-}
-
 .result {
   display: flex;
   flex-direction: column;
@@ -444,6 +436,7 @@ label {
   overflow: auto;
   max-height: 50vh;
   padding-bottom: 5em;
+  padding-top: 1px;
 }
 
 
