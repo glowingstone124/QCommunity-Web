@@ -18,7 +18,7 @@ const avatarUrl = ref("")
 const cardId = ref(0)
 async function queryAccountData(): Promise<number> {
 	try {
-		const res = await fetch("/api/qo/authorization/account", {
+		const res = await fetch("https://api.qoriginal.vip/qo/authorization/account", {
 			headers: {
 				"token": localStorage.getItem("token"),
 			}
@@ -29,7 +29,7 @@ async function queryAccountData(): Promise<number> {
 		getAvatar(username.value).then((result: string) =>{
 			avatarUrl.value = result
 		})
-		const cardRes = await axios.get("/api/qo/authorization/account/card?profileUuid=" + uuid.value);
+		const cardRes = await axios.get("https://api.qoriginal.vip/qo/authorization/account/card?profileUuid=" + uuid.value);
 		const cardData = cardRes.data;
 		cardId.value = cardData.cardId;
 		const rawStats = cardData.statistic
@@ -87,7 +87,7 @@ onMounted(async () => {
 	try {
 		const card = await queryAccountData();
 		if (card > 0) {
-			const response = await axios.get(`/api/qo/authorization/cards/info?id=${card}`);
+			const response = await axios.get(`https://api.qoriginal.vip/qo/authorization/cards/info?id=${card}`);
 			backgroundUrl.value = response.data.file_url;
 			level.value = response.data.rarity;
 			collection.value = response.data.special;

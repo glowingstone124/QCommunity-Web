@@ -12,15 +12,5 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
-  },
-  server: {
-    proxy: {
-      '/api': {
-        target: 'https://api.qoriginal.vip',
-        changeOrigin: true,
-        secure: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
-      },
-    },
-  },
+  }
 })

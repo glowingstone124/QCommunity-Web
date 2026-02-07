@@ -9,7 +9,7 @@ const loginstat = ref(false);
 const playtime = ref(0);
 onMounted(() => {
 	if (username) {
-		fetch("/api/qo/authorization/account", {
+		fetch("https://api.qoriginal.vip/qo/authorization/account", {
 			headers: {
 				"token": token.value
 			}

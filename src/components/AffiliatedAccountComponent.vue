@@ -16,7 +16,7 @@ const currentHint = ref("");
 const fetchAccounts = async () => {
 	try {
 		const response = await fetch(
-			"/api/qo/authorization/affiliated/query",
+			"https://api.qoriginal.vip/qo/authorization/affiliated/query",
 			{
 				headers: {
 					"token": token,
@@ -39,7 +39,7 @@ const createAccount = async () => {
 	}
 	try {
 		const response = await fetch(
-			"/api/qo/authorization/affiliated/add",
+			"https://api.qoriginal.vip/qo/authorization/affiliated/add",
 			{
 				method: "POST",
 				headers: {

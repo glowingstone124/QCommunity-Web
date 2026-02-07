@@ -17,14 +17,14 @@ const loginstat = ref(false);
 const fetchAdvancements = async () => {
 	try {
 		const completedResponse = await fetch(
-			`/api/qo/advancement/completed?name=${username}`
+			`https://api.qoriginal.vip/qo/advancement/completed?name=${username}`
 		);
 		if (!completedResponse.ok)
 			throw new Error(`请求 /completed 失败: ${completedResponse.status}`);
 		const completedData: Advancement[] = await completedResponse.json();
 		completedAdvancementList.value = completedData;
 
-		const allResponse = await fetch("/api/qo/advancement/all");
+		const allResponse = await fetch("https://api.qoriginal.vip/qo/advancement/all");
 		if (!allResponse.ok)
 			throw new Error(`请求 /all失败: ${allResponse.status}`);
 		const allData: Advancement[] = await allResponse.json();
@@ -42,7 +42,7 @@ const fetchAdvancements = async () => {
 onMounted(async () => {
 	const token = localStorage.getItem("token");
 	try {
-		const res = await fetch("/api/qo/authorization/account", {
+		const res = await fetch("https://api.qoriginal.vip/qo/authorization/account", {
 			headers: { token }
 		});
 		const data = await res.json();

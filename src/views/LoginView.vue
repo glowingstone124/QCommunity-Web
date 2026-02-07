@@ -62,7 +62,7 @@ const login = async () => {
 	loading.value = true
 
 	try {
-		const url = `/api/qo/game/login?username=${encodeURIComponent(username.value)}&password=${encodeURIComponent(password.value)}&web=true`
+		const url = `https://api.qoriginal.vip/qo/game/login?username=${encodeURIComponent(username.value)}&password=${encodeURIComponent(password.value)}&web=true`
 		const response = await get(url)
 
 		if (response.result) {
