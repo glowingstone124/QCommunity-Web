@@ -53,7 +53,7 @@ export function getImageDataFromImage(
 }
 export async function isSpecialAvatar(name: string): Promise<boolean> {
     try {
-        const res = await axios.get(`https://api.qoriginal.vip/qo/download/avatar?name=${name}`)
+        const res = await axios.get(`/api/qo/download/avatar?name=${name}`)
         return res.data.special === true
     } catch (e) {
         console.error('获取特殊头像信息失败', e)

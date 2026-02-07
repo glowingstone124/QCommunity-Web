@@ -4,7 +4,7 @@ import axios from "axios";
 import {getSpecialImage} from '/src/utils/cards.ts'
 function apply(cardId: number) {
 	console.log("应用卡片", cardId)
-	axios.post(`https://api.qoriginal.vip/qo/authorization/account/card/custom`,
+	axios.post(`/api/qo/authorization/account/card/custom`,
 		{cardId: cardId}
 		, {
 			headers: {
@@ -23,13 +23,13 @@ const rarityMap = {
 }
 onMounted(async () => {
 	try {
-		const response = await axios.get("https://api.qoriginal.vip/qo/authorization/cards/obtained", {
+		const response = await axios.get("/api/qo/authorization/cards/obtained", {
 			headers: {
 				token: localStorage.getItem("token")
 			}
 		})
 		const infoPromises = response.data.map(item => {
-			return axios.get(`https://api.qoriginal.vip/qo/authorization/cards/info?id=${item.cardId}`, {
+			return axios.get(`/api/qo/authorization/cards/info?id=${item.cardId}`, {
 				headers: {
 					token: localStorage.getItem("token") || ""
 				}

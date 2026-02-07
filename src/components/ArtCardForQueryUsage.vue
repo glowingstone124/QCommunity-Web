@@ -44,13 +44,13 @@ function onImgLoad() {
 }
 async function queryAccountData(): Promise<number> {
 	try {
-		const res = await fetch("https://api.qoriginal.vip/qo/download/registry?name=" + props.username);
+		const res = await fetch("/api/qo/download/registry?name=" + props.username);
 		const data = await res.json();
 		uuid.value = data.profile_id;
 		getAvatar(props.username).then((result: string) => {
 			avatarUrl.value = result
 		})
-		const cardRes = await axios.get("https://api.qoriginal.vip/qo/authorization/account/card?profileUuid=" + uuid.value);
+		const cardRes = await axios.get("/api/qo/authorization/account/card?profileUuid=" + uuid.value);
 		const cardData = cardRes.data;
 		cardId.value = cardData.cardId;
 		const rawStats = cardData.statistic
@@ -83,7 +83,7 @@ async function getAvatar(name: string): Promise<string | undefined> {
 
 async function getCardBg() {
 	if (cardId.value > 0) {
-		const response = await axios.get(`https://api.qoriginal.vip/qo/authorization/cards/info?id=${cardId.value}`);
+		const response = await axios.get(`/api/qo/authorization/cards/info?id=${cardId.value}`);
 		backgroundUrl.value = response.data.file_url;
 		level.value = response.data.rarity;
 		collection.value = response.data.special;

@@ -163,7 +163,7 @@ function validateQQ() {
 
 
 async function validateUsername() {
-	const url = `https://api.qoriginal.vip/qo/download/registry?name=${username.value}`
+	const url = `/api/qo/download/registry?name=${username.value}`
 	const res = await fetch(url).then(r => r.json()).catch(() => null)
 	return res && res.data?.code === 1
 }

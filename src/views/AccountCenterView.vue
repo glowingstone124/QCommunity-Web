@@ -37,7 +37,7 @@ function formatDate(timestamp) {
 }
 
 function queryAccountData() {
-	fetch("https://api.qoriginal.vip/qo/authorization/account", {
+	fetch("/api/qo/authorization/account", {
 		headers: {
 			"token": localStorage.getItem("token"),
 		}
@@ -76,7 +76,7 @@ function queryAccountStatus() {
 }
 
 function submitIp() {
-	fetch("https://api.qoriginal.vip/qo/authorization/ip/add?ip=" + ipAddr.value, {
+	fetch("/api/qo/authorization/ip/add?ip=" + ipAddr.value, {
 		headers: {
 			"token": localStorage.getItem("token"),
 		}
@@ -95,7 +95,7 @@ function submitIp() {
 }
 
 function queryIpDetails() {
-	fetch("https://api.qoriginal.vip/qo/authorization/ip/query", {
+	fetch("/api/qo/authorization/ip/query", {
 		headers: {
 			"token": localStorage.getItem("token"),
 		}

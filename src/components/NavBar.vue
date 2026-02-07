@@ -53,7 +53,7 @@ const theme = ref("light")
 onMounted(() => {
 	theme.value = document.documentElement.dataset.theme || "light"
 	if (username.value) {
-		fetch("https://api.qoriginal.vip/qo/authorization/account", {
+		fetch("/api/qo/authorization/account", {
 			headers: {
 				"token": token.value
 			}
@@ -77,7 +77,7 @@ onMounted(() => {
 })
 
 function getAvatar(name) {
-	fetch("https://api.qoriginal.vip/qo/download/avatar?name=" + name).then(res => res.json())
+	fetch("/api/qo/download/avatar?name=" + name).then(res => res.json())
 		.then(data => {
 			avatarUrl.value = data.url
 		})

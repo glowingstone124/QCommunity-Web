@@ -23,7 +23,7 @@ async function validateToken() {
   }
 
   try {
-    const response = await fetch("https://api.qoriginal.vip/qo/authorization/account", {
+    const response = await fetch("/api/qo/authorization/account", {
       headers: { "token": localStorage.getItem("token") }
     });
     const data = await response.json();
@@ -49,7 +49,7 @@ function showLoginPrompt() {
 async function fetchFortune() {
   isLoading.value = true;
   try {
-    fortuneData.value = await fetch("https://api.qoriginal.vip/qo/authorization/fortune", {
+    fortuneData.value = await fetch("/api/qo/authorization/fortune", {
       headers: { "token": localStorage.getItem("token") }
     }).then(response => response.json());
   } catch (error) {

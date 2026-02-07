@@ -38,7 +38,7 @@ async function saveAvatar() {
 	}
 	try {
 		await axios.post(
-			`https://api.qoriginal.vip/qo/authorization/account/card/custom`,
+			`/api/qo/authorization/account/card/custom`,
 			{ avatar: selectedAvatarId.value },
 			{
 				headers: {
@@ -56,7 +56,7 @@ async function saveAvatar() {
 
 onMounted(async () => {
 	try {
-		const response = await axios.get<Avatar[]>("https://api.qoriginal.vip/qo/authorization/avatars/all")
+		const response = await axios.get<Avatar[]>("/api/qo/authorization/avatars/all")
 		avatars.value = response.data
 	} catch (error) {
 		console.error("获取头像失败:", error)

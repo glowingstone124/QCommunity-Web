@@ -15,7 +15,7 @@ async function getUsername(sender) {
 	}
 
 	try {
-		const response = await fetch(`https://api.qoriginal.vip/qo/download/name?qq=${sender}`);
+		const response = await fetch(`/api/qo/download/name?qq=${sender}`);
 		const data = await response.json();
 		let username = data.username || "未注册";
 		if (data.code === 1) {
@@ -37,7 +37,7 @@ async function sendMessage() {
 	}
 	sendButtonDisabled.value = true;
 	try {
-		const response = await fetch("https://api.qoriginal.vip/qo/authorization/message/upload", {
+		const response = await fetch("/api/qo/authorization/message/upload", {
 			headers: {
 				"Content-Type": "application/json",
 				"token": localStorage.getItem("token"),
@@ -130,7 +130,7 @@ function stopPolling() {
 }
 
 onMounted(() => {
-	fetch("https://api.qoriginal.vip/qo/authorization/account", {
+	fetch("/api/qo/authorization/account", {
 			headers: {
 				"token": token.value
 			}

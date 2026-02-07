@@ -20,7 +20,7 @@ const correspondText = {
 }
 
 onMounted(async () => {
-  const response = await axios.get("https://api.qoriginal.vip/qo/authorization/cards/all")
+  const response = await axios.get("/api/qo/authorization/cards/all")
   let result = response.data
   result.forEach(card => {
     card.rarity = correspondText[card.rarity]

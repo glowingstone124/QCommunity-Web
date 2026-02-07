@@ -8,7 +8,7 @@ const error = ref(null);
 
 const fetchProxies = async () => {
   try {
-    const response = await fetch('https://api.qoriginal.vip/qo/proxies/status');
+    const response = await fetch('/api/qo/proxies/status');
     if (!response.ok) {
       throw new Error('网络响应不正常');
     }

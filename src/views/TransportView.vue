@@ -19,7 +19,7 @@ const routeResult = ref(null)
 
 const fetchAllStations = async () => {
   try {
-    const response = await fetch('https://api.qoriginal.vip/qo/transportation/station/all')
+    const response = await fetch('/api/qo/transportation/station/all')
     const data = await response.json()
     stations.value = data
   } catch (error) {
@@ -70,7 +70,7 @@ const searchRoute = async () => {
       banned_dims: [],
       banned_types: []
     }
-    const response = await fetch('https://api.qoriginal.vip/qo/transportation/calculate', {
+    const response = await fetch('/api/qo/transportation/calculate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
