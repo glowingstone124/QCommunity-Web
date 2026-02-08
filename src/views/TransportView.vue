@@ -100,6 +100,10 @@ const handleEndFocus = () => {
   showEndSuggestions.value = true
 }
 
+const showMap = () => {
+  window.open('https://bucket.glowingstone.cn/metro.png')
+}
+
 onMounted(() => {
   document.addEventListener('click', closeSuggestionsOnClickOutside)
 })
@@ -128,7 +132,6 @@ const closeSuggestionsOnClickOutside = (event) => {
   <div class="container">
     <div class="query">
       <div class="input-group">
-        <label for="start">线路正在登记，不全或查不出请见谅！</label>
         <label for="start">始发站：</label>
         <div class="input-with-suggestions start-input-container">
           <input
@@ -148,8 +151,10 @@ const closeSuggestionsOnClickOutside = (event) => {
                 @click="selectStartStation(station)"
                 class="suggestion-item"
             >
-              <div class="station-name">{{ station.name }}</div>
-              <div class="station-name-en">{{ station.name_en }}</div>
+              <div class="station-name" v-if="$i18n.locale === 'en'">{{ station.name_en }}</div>
+              <div class="station-name" v-else>{{ station.name }}</div>
+              <div class="station-name-en" v-if="$i18n.locale === 'en'">{{ station.name }}</div>
+              <div class="station-name-en" v-else>{{ station.name_en }}</div>
             </div>
           </div>
         </div>
@@ -189,6 +194,7 @@ const closeSuggestionsOnClickOutside = (event) => {
       >
         {{ isLoading ? '查询中...' : '查询' }}
       </button>
+      <img src="https://bucket.glowingstone.cn/metro.png" alt="单击查看大图" @click="showMap" class="transport-map"/>
     </div>
 
     <div class="result">
@@ -200,17 +206,20 @@ const closeSuggestionsOnClickOutside = (event) => {
           <div v-for="(segment, seg) in routeResult.data.segments">
             <div class="colored-segment" v-if="seg===0">
               <div class="concentric-circle-mask">&nbsp;</div>
-              <span class="node_stations">{{stations.find(station => station.id === segment.stationIds[0]).name}}</span>
+              <span class="node_stations" v-if="$i18n.locale === 'en'">{{stations.find(station => station.id === segment.stationIds[0]).name_en}}</span>
+              <span class="node_stations" v-else>{{stations.find(station => station.id === segment.stationIds[0]).name}}</span>
             </div>
-            <div class="colored-segment"><div class="color-block" :style="{backgroundColor: '#'+segment.color}">&nbsp;</div><h3 class="line_name">{{segment.lineName}}</h3></div>
+            <div class="colored-segment"><div class="color-block" :style="{backgroundColor: '#'+segment.color}">&nbsp;</div><h3 class="line_name">{{$i18n.locale === 'en' ? segment.name_en : segment.lineName}}</h3></div>
             <div v-for="(stationId, seq) in segment.stationIds" class="colored-segment">
               <div v-if="seq === segment.stationIds.length - 1" class="colored-segment">
                 <div class="concentric-circle-mask">&nbsp;</div>
-                <span class="node_stations">{{stations.find(station => station.id === stationId).name}}</span>
+                <span class="node_stations" v-if="$i18n.locale === 'en'">{{stations.find(station => station.id === stationId).name_en}}</span>
+                <span class="node_stations" v-else>{{stations.find(station => station.id === stationId).name}}</span>
               </div>
               <div v-else-if="seq !== 0" class="colored-segment">
                 <div class="color-block" :style="{backgroundColor: '#'+segment.color}">&nbsp;</div>
-                <span class="small_stations">{{stations.find(station => station.id === stationId).name}}</span>
+                <span class="small_stations" v-if="$i18n.locale === 'en'">{{stations.find(station => station.id === stationId).name_en}}</span>
+                <span class="small_stations" v-else>{{stations.find(station => station.id === stationId).name}}</span>
               </div>
             </div>
           </div>
@@ -437,6 +446,11 @@ label {
   max-height: 50vh;
   padding-bottom: 5em;
   padding-top: 1px;
+}
+
+.transport-map {
+  width: 100%;
+  cursor: pointer;
 }
 
 
