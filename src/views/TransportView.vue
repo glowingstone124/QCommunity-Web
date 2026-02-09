@@ -20,8 +20,7 @@ const routeResult = ref(null)
 const fetchAllStations = async () => {
   try {
     const response = await fetch('https://api.qoriginal.vip/qo/transportation/station/all')
-    const data = await response.json()
-    stations.value = data
+    stations.value = await response.json()
   } catch (error) {
     console.error('获取站点数据失败:', error)
   }
@@ -177,7 +176,7 @@ const closeSuggestionsOnClickOutside = (event) => {
             <div
                 v-for="station in filteredEndStations"
                 :key="station.id"
-                @click="selectEndStation(stationn, $i18n.locale)"
+                @click="selectEndStation(station, $i18n.locale)"
                 class="suggestion-item"
             >
               <div class="station-name" v-if="$i18n.locale === 'en'">{{ station.name_en }}</div>
