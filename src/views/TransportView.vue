@@ -45,14 +45,14 @@ const filteredEndStations = computed(() => {
   )
 })
 
-const selectStartStation = (station) => {
-  startInput.value = station.name
+const selectStartStation = (station, locale) => {
+  startInput.value = locale === 'en' ? station.name_en : station.name
   startStationId.value = station.id
   showStartSuggestions.value = false
 }
 
-const selectEndStation = (station) => {
-  endInput.value = station.name
+const selectEndStation = (station, locale) => {
+  endInput.value = locale === 'en' ? station.name_en : station.name
   endStationId.value = station.id
   showEndSuggestions.value = false
 }
@@ -148,7 +148,7 @@ const closeSuggestionsOnClickOutside = (event) => {
             <div
                 v-for="station in filteredStartStations"
                 :key="station.id"
-                @click="selectStartStation(station)"
+                @click="selectStartStation(station, $i18n.locale)"
                 class="suggestion-item"
             >
               <div class="station-name" v-if="$i18n.locale === 'en'">{{ station.name_en }}</div>
@@ -177,11 +177,13 @@ const closeSuggestionsOnClickOutside = (event) => {
             <div
                 v-for="station in filteredEndStations"
                 :key="station.id"
-                @click="selectEndStation(station)"
+                @click="selectEndStation(stationn, $i18n.locale)"
                 class="suggestion-item"
             >
-              <div class="station-name">{{ station.name }}</div>
-              <div class="station-name-en">{{ station.name_en }}</div>
+              <div class="station-name" v-if="$i18n.locale === 'en'">{{ station.name_en }}</div>
+              <div class="station-name" v-else>{{ station.name }}</div>
+              <div class="station-name-en" v-if="$i18n.locale === 'en'">{{ station.name }}</div>
+              <div class="station-name-en" v-else>{{ station.name_en }}</div>
             </div>
           </div>
         </div>
