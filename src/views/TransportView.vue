@@ -297,6 +297,7 @@ const closeOnOutsideClick = (event) => {
         <h3>查询结果：</h3>
         <p v-if="routeResult.message">{{ routeResult.message }}</p>
         <p v-if="routeResult.error" class="error">{{ routeResult.error }}</p>
+        <p class="error">【运营提示】2号线竞技场站因结构升级封站、主城城际线三岛-主城北站因事故暂停运营</p>
         <div v-if="routeResult.data" class="result-main">
           <div v-for="(segment, seg) in routeResult.data.segments">
             <div class="colored-segment" v-if="seg===0">
