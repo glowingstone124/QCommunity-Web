@@ -310,7 +310,8 @@ const closeOnOutsideClick = (event) => {
                     v-else>{{ stations.find(station => station.id === segment.stationIds[0]).name }}</span>
             </div>
             <div class="colored-segment">
-              <div class="color-block" :style="{background: segment.color}">&nbsp;</div>
+              <div v-if="segment.lineType === 'WALK'" class="color-block walking-block" :style="{background: segment.color}"> </div>
+              <div v-else class="color-block" :style="{background: segment.color}">&nbsp;</div>
               <h3 class="line_name">{{ $i18n.locale === 'en' ? segment.name_en : segment.lineName }}</h3></div>
             <div v-for="(stationId, seq) in segment.stationIds" class="colored-segment">
               <div v-if="seq === segment.stationIds.length - 1" class="colored-segment">
@@ -322,7 +323,8 @@ const closeOnOutsideClick = (event) => {
                 <span class="node_stations" v-else>{{ stations.find(station => station.id === stationId).name }}</span>
               </div>
               <div v-else-if="seq !== 0" class="colored-segment">
-                <div class="color-block" :style="{background: segment.color}">&nbsp;</div>
+                <div v-if="segment.lineType === 'WALK'" class="color-block walking-block" :style="{background: segment.color}"> </div>
+                <div v-else class="color-block" :style="{background: segment.color}">&nbsp;</div>
                 <span class="small_stations"
                       v-if="$i18n.locale === 'en'">{{
                     stations.find(station => station.id === stationId).name_en
@@ -629,6 +631,10 @@ label {
   display: block;
   width: 0.5em;
   margin-left: 1.05em;
+}
+
+.walking-block {
+  background-size: 100% 40% !important;
 }
 
 .line_name {
