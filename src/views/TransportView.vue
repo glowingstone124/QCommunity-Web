@@ -196,6 +196,38 @@ const getBannedDims = computed(() => {
       .map(d => d.id)
 })
 
+const searchButtonLabel = computed(() => {
+  if (isLoading.value) {
+    return '正在规划路线'
+  }
+
+  return getBannedTypes.value.length + getBannedDims.value.length === 0 ? '查询' : '高级查询'
+})
+
+const stationMap = computed(() => {
+  return new Map(stations.value.map(station => [station.id, station]))
+})
+
+const getStationName = (stationId, locale) => {
+  const station = stationMap.value.get(stationId)
+  if (!station) {
+    return stationId
+  }
+
+  return locale === 'en'
+      ? (station.name_en || station.name)
+      : (station.name || station.name_en)
+}
+
+const normalizeColor = (color) => {
+  const raw = String(color || '').trim().replace(/^#/, '').replace(/^0x/i, '')
+  if (/^([0-9a-f]{3}|[0-9a-f]{6})$/i.test(raw)) {
+    return `#${raw}`
+  }
+
+  return 'var(--primary)'
+}
+
 const closeOptions = () => {
   showOptions.value = false
 }
@@ -279,12 +311,15 @@ const closeOnOutsideClick = (event) => {
             @click="searchRoute"
             :disabled="isLoading || !startStationId || !endStationId"
             class="search-button"
+            :class="{ loading: isLoading }"
         >
-          {{ isLoading ? '查询中...' : ( getBannedTypes.length + getBannedDims.length === 0 ? '查询' : '高级查询') }}
+          <span v-if="isLoading" class="button-spinner" aria-hidden="true"></span>
+          <span>{{ searchButtonLabel }}</span>
         </button>
         <button
             @click="showOptions = true"
             class="options-button"
+            :disabled="isLoading"
         >
           高级选项
         </button>
@@ -292,41 +327,51 @@ const closeOnOutsideClick = (event) => {
       <img src="https://bucket.glowingstone.cn/metro.png" alt="单击查看大图" @click="showMap" class="transport-map"/>
     </div>
 
-    <div class="result">
-      <div v-if="routeResult">
+    <div class="result" :class="{ 'is-loading': isLoading }">
+      <div v-if="isLoading" class="loading-state" aria-live="polite" aria-busy="true">
+        <div class="loading-copy">
+          <span class="loading-spinner" aria-hidden="true"></span>
+          <p class="loading-eyebrow">ROUTE SEARCH</p>
+          <h3>正在生成换乘方案</h3>
+          <p>系统正在比对线路颜色、停靠站点和已禁用交通方式，请稍候片刻。</p>
+        </div>
+
+        <div class="loading-skeleton" aria-hidden="true">
+          <div v-for="item in 4" :key="item" class="skeleton-row">
+            <span class="skeleton-bar" :style="{ '--skeleton-width': item % 2 === 0 ? '62%' : '84%' }"></span>
+          </div>
+        </div>
+      </div>
+
+      <div v-else-if="routeResult">
         <h3>查询结果：</h3>
         <p v-if="routeResult.message">{{ routeResult.message }}</p>
         <p v-if="routeResult.error" class="error">{{ routeResult.error }}</p>
         <div v-if="routeResult.data" class="result-main">
-          <div v-for="(segment, seg) in routeResult.data.segments">
+          <div
+              v-for="(segment, seg) in routeResult.data.segments"
+              :key="`${segment.lineName}-${seg}`"
+          >
             <div class="colored-segment" v-if="seg===0">
               <div class="concentric-circle-mask">&nbsp;</div>
               <span class="node_stations"
-                    v-if="$i18n.locale === 'en'">{{
-                  stations.find(station => station.id === segment.stationIds[0]).name_en
-                }}</span>
-              <span class="node_stations"
-                    v-else>{{ stations.find(station => station.id === segment.stationIds[0]).name }}</span>
+                    >{{ getStationName(segment.stationIds[0], $i18n.locale) }}</span>
             </div>
             <div class="colored-segment">
-              <div class="color-block" :style="{backgroundColor: '#'+segment.color}">&nbsp;</div>
+              <div class="color-block" :style="{ backgroundColor: normalizeColor(segment.color) }">&nbsp;</div>
               <h3 class="line_name">{{ $i18n.locale === 'en' ? segment.name_en : segment.lineName }}</h3></div>
-            <div v-for="(stationId, seq) in segment.stationIds" class="colored-segment">
+            <div
+                v-for="(stationId, seq) in segment.stationIds"
+                :key="`${segment.lineName}-${stationId}-${seq}`"
+                class="colored-segment"
+            >
               <div v-if="seq === segment.stationIds.length - 1" class="colored-segment">
                 <div class="concentric-circle-mask">&nbsp;</div>
-                <span class="node_stations"
-                      v-if="$i18n.locale === 'en'">{{
-                    stations.find(station => station.id === stationId).name_en
-                  }}</span>
-                <span class="node_stations" v-else>{{ stations.find(station => station.id === stationId).name }}</span>
+                <span class="node_stations">{{ getStationName(stationId, $i18n.locale) }}</span>
               </div>
               <div v-else-if="seq !== 0" class="colored-segment">
-                <div class="color-block" :style="{backgroundColor: '#'+segment.color}">&nbsp;</div>
-                <span class="small_stations"
-                      v-if="$i18n.locale === 'en'">{{
-                    stations.find(station => station.id === stationId).name_en
-                  }}</span>
-                <span class="small_stations" v-else>{{ stations.find(station => station.id === stationId).name }}</span>
+                <div class="color-block" :style="{ backgroundColor: normalizeColor(segment.color) }">&nbsp;</div>
+                <span class="small_stations">{{ getStationName(stationId, $i18n.locale) }}</span>
               </div>
             </div>
           </div>
@@ -461,9 +506,13 @@ h2 {
 }
 
 .query, .result {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
+  background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 18px;
   padding: 1.5em;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(18px);
 }
 
 .query {
@@ -548,39 +597,78 @@ label {
 }
 
 .button-group button {
-  padding: 0.5em 0;
-  border-radius: 5px;
+  padding: 0.8em 0;
+  border-radius: 999px;
   font-size: 1.1em;
   font-weight: 500;
   cursor: pointer;
   border: none;
-  transition: background-color 0.2s;
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
 }
 
 .search-button {
   width: 60%;
   color: white;
   background: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65em;
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.22);
 }
 
 .options-button {
   width: 40%;
   color: var(--dark-bg);
   background: var(--primary-light);
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.08);
+}
+
+.button-group button:hover:not(:disabled) {
+  transform: translateY(-1px);
 }
 
 .search-button:hover:not(:disabled) {
   background: var(--primary-dark);
 }
 
-.search-button:disabled {
+.button-group button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.search-button.loading {
+  background: linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--primary) 75%, white));
+}
+
+.button-spinner {
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  border-top-color: white;
+  animation: spin 0.8s linear infinite;
 }
 
 .result {
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.result::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.1), transparent 45%);
+  pointer-events: none;
+}
+
+.result.is-loading {
+  justify-content: center;
 }
 
 .result h3 {
@@ -606,10 +694,76 @@ label {
   height: 100%;
   color: var(--text-secondary);
   text-align: center;
+  min-height: 24rem;
 }
 
 .placeholder p {
   margin: 0.5em 0;
+}
+
+.loading-state {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 1.75em;
+  min-height: 24rem;
+  align-content: center;
+}
+
+.loading-copy {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+
+.loading-copy h3 {
+  margin-bottom: 0.45em;
+}
+
+.loading-copy p {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.loading-spinner {
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1rem;
+  border-radius: 50%;
+  border: 4px solid rgba(37, 99, 235, 0.15);
+  border-top-color: var(--primary);
+  animation: spin 0.85s linear infinite;
+}
+
+.loading-eyebrow {
+  margin-bottom: 0.5em !important;
+  letter-spacing: 0.16em;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--primary) !important;
+}
+
+.loading-skeleton {
+  display: grid;
+  gap: 0.9em;
+  padding: 1.25em;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.38);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.skeleton-row {
+  display: flex;
+  align-items: center;
+}
+
+.skeleton-bar {
+  width: var(--skeleton-width);
+  height: 0.95rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(148, 163, 184, 0.2), rgba(255, 255, 255, 0.92), rgba(148, 163, 184, 0.2));
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
 }
 
 .error {
@@ -665,6 +819,14 @@ label {
 .transport-map {
   width: 100%;
   cursor: pointer;
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.14);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.transport-map:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.18);
 }
 
 .options-popup-overlay {
@@ -859,6 +1021,21 @@ label {
   background: var(--primary-dark);
 }
 
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
 @media (max-width: 768px) {
   .container {
     grid-template-columns: 1fr;
@@ -875,6 +1052,20 @@ label {
 
   h2 {
     font-size: large;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .search-button,
+  .options-button {
+    width: 100%;
+  }
+
+  .loading-state,
+  .placeholder {
+    min-height: 20rem;
   }
 }
 </style>
