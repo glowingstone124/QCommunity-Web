@@ -1,11 +1,11 @@
 .gallery {
-    display: flex;
+    display: grid;
     gap: 16px;
+    width: 100%;
     max-width: 100%;
-    flex-wrap: wrap;
-    overflow: auto;
-    padding: 16px;
-    max-height: 90%;
+    overflow: visible;
+    padding: 8px 0 0;
+    max-height: none;
 }
 
 .card {
@@ -98,14 +98,20 @@
     margin-bottom: 2rem;
     display: flex;
     flex-direction: column;
-    flex-wrap: wrap;
     gap: 16px;
+    min-width: 0;
 }
 
 .group-title {
     font-size: 1.5rem;
     color: var(--title-color);
     margin: 1rem 0;
+}
+
+@media (max-width: 640px) {
+    .card {
+        width: min(100%, 260px);
+    }
 }
 
 .common {
@@ -123,4 +129,3 @@
 .limited {
     background-color: var(--limited);
 }
-

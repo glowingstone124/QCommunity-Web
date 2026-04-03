@@ -1,5 +1,5 @@
-@import "src/assets/main.css";
-@import "src/assets/colors.css";
+@import "./main.css";
+@import "./colors.css";
 
 .statistics {
     h2, p {

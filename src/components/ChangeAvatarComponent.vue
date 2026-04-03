@@ -66,16 +66,16 @@ onMounted(async () => {
 
 <style scoped>
 h1 {
-	margin-left: 10px;
 	font-size: 1.2rem;
 	color: var(--title-color);
+	margin: 0;
 }
 .avatar-item {
 	width: 100px;
 	text-align: center;
 	background-color: var(--card-background);
 	padding: 8px;
-	border-radius: 6px;
+	border-radius: 10px;
 	cursor: pointer;
 	transition: all 0.2s ease;
 	border: 2px solid transparent;
@@ -101,16 +101,16 @@ h1 {
 	border-radius: 4px;
 }
 .avatar-list {
-	max-height: 50vh;
+	max-height: 52vh;
 	overflow-y: auto;
 	display: flex;
 	flex-wrap: wrap;
 	gap: 10px;
-	padding: 10px;
+	padding: 0.25rem 0;
 	justify-content: flex-start;
 }
 .save-avatar-btn {
-	margin: 16px;
+	margin: 0;
 	padding: 10px 20px;
 	background-color: var(--button-primary-bg);
 	color: var(--button-primary-text);

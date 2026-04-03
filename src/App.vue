@@ -1,7 +1,9 @@
 <template>
-	<div v-if="showNavBar" class="app">
+	<div v-if="showNavBar" class="app-shell">
 		<NavBar />
-		<router-view />
+		<main class="app-main">
+			<router-view />
+		</main>
 	</div>
 	<router-view v-else />
 </template>
@@ -36,20 +38,10 @@ onMounted(() => {
 @import "/src/assets/main.css";
 * {
 	user-select: none;
-	transition: all 0.3s ease-in-out;
 }
 
 input, textarea {
 	user-select: text;
-}
-
-.app {
-	max-height: 100vh;
-}
-.scroll-container {
-	width: 300px;
-	height: 200px;
-	overflow-y: scroll;
 }
 
 ::-webkit-scrollbar {
@@ -71,10 +63,19 @@ input, textarea {
 	background-color: var(--text-main);
 }
 
-.app {
-	height: 100vh;
+.app-shell {
+	height: 100dvh;
 	background-color: var(--background);
-	overflow-y: hidden;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.app-main {
+	width: 100%;
+	flex: 1;
+	min-height: 0;
+	overflow: auto;
 	overflow-x: hidden;
 }
 
