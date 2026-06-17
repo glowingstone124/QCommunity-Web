@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { alert, defaultModules } from '@pnotify/core'
 import '@pnotify/core/dist/PNotify.css'
 import '@pnotify/core/dist/BrightTheme.css'
@@ -14,6 +15,7 @@ import { accountTabs } from '@/data/accountCenter'
 
 defaultModules.set(PNotifyMobile, {})
 
+const router = useRouter()
 const currentSetting = ref(0)
 const username = ref('')
 const uid = ref(0)
@@ -105,6 +107,20 @@ function validateIP() {
 	isValidIp.value = ipPattern.test(ipAddr.value)
 }
 
+function logout() {
+	localStorage.removeItem('username')
+	localStorage.removeItem('token')
+	localStorage.removeItem('currentSetting')
+
+	username.value = ''
+	uid.value = 0
+	playtime.value = 0
+	logins.value = []
+	iplist.value = []
+
+	router.push('/login').then(() => window.location.reload())
+}
+
 onMounted(() => {
 	const storedSetting = Number.parseInt(localStorage.getItem('currentSetting'), 10)
 	currentSetting.value = Number.isNaN(storedSetting) ? 0 : storedSetting
@@ -134,7 +150,12 @@ watch(ipAddr, validateIP)
 
 <template>
 	<div class="account page-shell">
-		<AccountSidebar :current-setting="currentSetting" :tabs="accountTabs" @select="selectTab" />
+		<AccountSidebar
+			:current-setting="currentSetting"
+			:tabs="accountTabs"
+			@select="selectTab"
+			@logout="logout"
+		/>
 
 		<main class="content" :class="{ immersive: isImmersive, 'personalization-layout': currentSetting === 2 }">
 			<transition name="slide-in">
@@ -183,29 +204,23 @@ watch(ipAddr, validateIP)
 @import '/src/assets/colors.css';
 
 :global(:root) {
-	--account-bg:
-		radial-gradient(circle at top left, rgba(37, 99, 235, 0.16), transparent 55%),
-		radial-gradient(circle at 20% 10%, rgba(255, 186, 106, 0.25), transparent 45%),
-		linear-gradient(160deg, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.95));
-	--glass-strong: rgba(255, 255, 255, 0.75);
-	--glass-soft: rgba(255, 255, 255, 0.85);
-	--nav-bg: rgba(255, 255, 255, 0.7);
-	--surface-soft: rgba(15, 23, 42, 0.05);
-	--border-soft: rgba(15, 23, 42, 0.08);
-	--dot-color: rgba(15, 23, 42, 0.08);
+	--account-bg: var(--background-secondary);
+	--glass-strong: var(--background);
+	--glass-soft: var(--background);
+	--nav-bg: var(--background);
+	--surface-soft: color-mix(in srgb, var(--text-main) 4%, transparent);
+	--border-soft: color-mix(in srgb, var(--text-main) 14%, transparent);
+	--account-muted-border: color-mix(in srgb, var(--text-main) 9%, transparent);
 }
 
 :global(:root[data-theme='dark']) {
-	--account-bg:
-		radial-gradient(circle at 10% 10%, rgba(59, 130, 246, 0.15), transparent 55%),
-		radial-gradient(circle at 80% 0%, rgba(244, 114, 182, 0.18), transparent 45%),
-		linear-gradient(160deg, rgba(11, 18, 32, 0.98), rgba(15, 23, 42, 0.98));
-	--glass-strong: rgba(17, 24, 39, 0.78);
-	--glass-soft: rgba(17, 24, 39, 0.9);
-	--nav-bg: rgba(17, 24, 39, 0.75);
-	--surface-soft: rgba(148, 163, 184, 0.12);
-	--border-soft: rgba(148, 163, 184, 0.2);
-	--dot-color: rgba(148, 163, 184, 0.2);
+	--account-bg: var(--background);
+	--glass-strong: var(--background-secondary);
+	--glass-soft: var(--background-secondary);
+	--nav-bg: var(--background-secondary);
+	--surface-soft: color-mix(in srgb, var(--dark-text-primary) 7%, transparent);
+	--border-soft: color-mix(in srgb, var(--dark-text-primary) 18%, transparent);
+	--account-muted-border: color-mix(in srgb, var(--dark-text-primary) 10%, transparent);
 }
 
 .account {
@@ -214,23 +229,13 @@ watch(ipAddr, validateIP)
 	height: 100%;
 	min-height: 0;
 	display: grid;
-	grid-template-columns: minmax(220px, 320px) minmax(0, 1fr);
-	gap: 2rem;
+	grid-template-columns: minmax(220px, 296px) minmax(0, 1fr);
+	gap: 1rem;
 	background: var(--account-bg);
-	border-radius: 28px;
-	padding: 1.5rem;
+	border-radius: 0;
+	padding: 1rem;
 	position: relative;
 	overflow: hidden;
-}
-
-.account::after {
-	content: '';
-	position: absolute;
-	inset: 0;
-	pointer-events: none;
-	background-image: radial-gradient(var(--dot-color) 0.5px, transparent 0.5px);
-	background-size: 24px 24px;
-	opacity: 0.35;
 }
 
 .content {
@@ -239,6 +244,9 @@ watch(ipAddr, validateIP)
 	position: relative;
 	z-index: 1;
 	overflow: auto;
+	border: 1px solid var(--account-muted-border);
+	background: var(--glass-strong);
+	border-radius: 8px;
 }
 
 .content.personalization-layout {
@@ -251,12 +259,23 @@ watch(ipAddr, validateIP)
 
 .panel-full {
 	height: 100%;
-	padding: 0;
-	background: transparent;
+	padding: 1rem;
+	background: var(--glass-strong);
 	border: none;
 	box-shadow: none;
 	min-height: 0;
 	overflow: hidden;
+	max-width: 1400px;
+	width: 100%;
+	margin: 0 auto;
+	box-sizing: border-box;
+}
+
+@media (min-width: 1600px) {
+	.account {
+		grid-template-columns: 296px minmax(0, 1400px);
+		justify-content: center;
+	}
 }
 
 @media (max-width: 960px) {
@@ -267,6 +286,10 @@ watch(ipAddr, validateIP)
 		overflow: visible;
 	}
 
+	.content {
+		border-radius: 8px;
+	}
+
 	.content.personalization-layout {
 		overflow: auto;
 	}
@@ -274,16 +297,19 @@ watch(ipAddr, validateIP)
 	.panel-full {
 		height: auto;
 		overflow: visible;
+		max-width: none;
 	}
 }
 
 .slide-in-enter-active {
-	transition: all 0.4s ease;
+	transition:
+		opacity 0.22s ease,
+		transform 0.22s ease;
 }
 
 .slide-in-enter-from {
 	opacity: 0;
-	transform: translateY(20px);
+	transform: translateY(8px);
 }
 
 .slide-in-enter-to {

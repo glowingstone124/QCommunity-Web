@@ -1,18 +1,3 @@
-export const homeHeroStats = [
-	{
-		label: '快速入口',
-		valueKey: 'mainPage.dashboard',
-	},
-	{
-		label: '新消息',
-		valueKey: 'mainPage.message_list',
-	},
-	{
-		label: '资料库',
-		valueKey: 'mainPage.miscs',
-	},
-]
-
 export const homeTiles = [
 	{
 		icon: '✦',

@@ -32,8 +32,8 @@ defineProps({
 <style scoped>
 .tile {
 	background: var(--card-background);
-	border-radius: 22px;
-	padding: 1.4rem;
+	border-radius: 16px;
+	padding: 1.6rem;
 	display: flex;
 	gap: 1rem;
 	align-items: flex-start;

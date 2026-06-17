@@ -55,7 +55,7 @@ const groupedCards = computed(() => {
 		   style="height: 80px; vertical-align: middle;"
 	   /><h2 class="group-title" v-else>{{ special }}</h2>
       </span>
-      <span style="display: flex;flex-direction: row;gap: 16px;flex-wrap: wrap">
+      <span class="card-list">
       <div class="card" v-for="card in group" :key="card.id">
         <img :src="card.file_url" :alt="card.name" />
         <div class="name-bar">
@@ -79,4 +79,25 @@ const groupedCards = computed(() => {
 
 <style scoped>
 @import "@/assets/browseCards.css";
+
+.card-list {
+	display: flex;
+	flex-direction: row;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+}
+
+:deep(.card-group) {
+	border: 1px solid var(--border-soft);
+	border-radius: 8px;
+	padding: 1rem;
+	background: var(--glass-strong);
+	margin-bottom: 0.85rem;
+}
+
+:deep(.group-title) {
+	color: var(--title-color);
+	font-size: 1rem;
+	margin: 0 0 0.75rem;
+}
 </style>

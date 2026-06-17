@@ -134,13 +134,18 @@ onMounted(fetchAccounts);
 </template>
 
 <style scoped>
-@import "@/assets/colors.css";
 .affiliated {
 	display: flex;
 	flex-direction: column;
-	gap: 1.8rem;
-	color: var(--color-on-surface);
-	padding: 2rem 2.4rem;
+	gap: 1.35rem;
+	color: var(--text-main);
+	padding: 1.4rem;
+	min-height: 100%;
+	background: var(--glass-strong);
+	max-width: 1120px;
+	width: 100%;
+	margin: 0 auto;
+	box-sizing: border-box;
 }
 
 .page-header {
@@ -152,93 +157,99 @@ onMounted(fetchAccounts);
 
 .eyebrow {
 	text-transform: uppercase;
-	letter-spacing: 0.25rem;
+	letter-spacing: 0;
 	font-size: 0.75rem;
-	color: var(--color-on-surface-variant);
+	color: var(--text-secondary);
 	margin: 0 0 0.35rem 0;
+	font-weight: 700;
 }
 
 .headline {
-	font-size: 2.4rem;
+	font-size: 1.45rem;
+	line-height: 1.2;
 	margin: 0 0 0.4rem 0;
-	color: var(--color-primary);
+	color: var(--title-color);
 }
 
 .subhead {
 	margin: 0;
-	color: var(--color-on-surface-variant);
+	color: var(--text-secondary);
 }
 
 .pill {
-	padding: 0.35rem 0.9rem;
-	border-radius: 999px;
-	background: rgba(37, 99, 235, 0.12);
-	color: var(--color-on-surface);
-	font-size: 0.9rem;
+	padding: 0.35rem 0.65rem;
+	border-radius: 6px;
+	background: var(--surface-soft);
+	border: 1px solid var(--border-soft);
+	color: var(--text-main);
+	font-size: 0.86rem;
+	white-space: nowrap;
 }
 
 .grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-	gap: 1.5rem;
+	grid-template-columns: minmax(280px, 1fr) minmax(320px, 420px);
+	gap: 0.85rem;
+	align-items: start;
 }
 
 .panel {
-	background: var(--glass-strong, rgba(255, 255, 255, 0.85));
-	border-radius: 20px;
-	padding: 1.6rem;
-	border: 1px solid var(--border-soft, rgba(15, 23, 42, 0.08));
-	box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+	background: transparent;
+	border-radius: 8px;
+	padding: 1rem;
+	border: 1px solid var(--border-soft);
+	box-shadow: none;
 	display: flex;
 	flex-direction: column;
-	gap: 1.2rem;
+	gap: 1rem;
 }
 
 .section-title {
-	font-size: 1.1rem;
+	font-size: 1rem;
 	font-weight: 600;
-	color: var(--color-primary);
+	color: var(--title-color);
 }
 
 .account-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-	gap: 0.8rem;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: 0.55rem;
 }
 
 .account-card {
 	display: flex;
-	gap: 0.8rem;
+	gap: 0.75rem;
 	align-items: center;
-	padding: 0.8rem 1rem;
-	border-radius: 16px;
-	background: var(--surface-soft, rgba(15, 23, 42, 0.05));
-	border: 1px solid var(--border-soft, rgba(15, 23, 42, 0.08));
+	padding: 0.78rem 0.85rem;
+	border-radius: 6px;
+	background: var(--surface-soft);
+	border: 1px solid var(--border-soft);
 }
 
 .avatar {
-	width: 40px;
-	height: 40px;
-	border-radius: 12px;
-	background: rgba(37, 99, 235, 0.2);
+	width: 36px;
+	height: 36px;
+	border-radius: 6px;
+	background: color-mix(in srgb, var(--primary) 10%, transparent);
+	border: 1px solid color-mix(in srgb, var(--primary) 25%, transparent);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	font-weight: 600;
-	color: var(--color-primary);
+	color: var(--primary);
 }
 
 .account-name {
 	font-size: 1.05rem;
 	font-weight: 600;
 	margin: 0;
-	color: var(--color-on-surface);
+	color: var(--text-main);
 }
 
 .account-meta {
 	margin: 0.2rem 0 0 0;
 	font-size: 0.85rem;
-	color: var(--color-on-surface-variant);
+	color: var(--text-secondary);
 }
 
 .new-account-form {
@@ -255,20 +266,22 @@ onMounted(fetchAccounts);
 
 .field-label {
 	font-size: 0.9rem;
-	color: var(--color-on-surface-variant);
+	color: var(--text-secondary);
 }
 
 .text-input {
-	padding: 12px 14px;
-	border-radius: 12px;
-	border: 1px solid var(--border-soft, rgba(15, 23, 42, 0.12));
-	background-color: var(--glass-soft, rgba(255, 255, 255, 0.9));
-	color: var(--color-on-surface);
-	transition: border-color 0.3s, box-shadow 0.3s;
+	padding: 0.78rem 0.9rem;
+	border-radius: 6px;
+	border: 1px solid var(--border-soft);
+	background-color: var(--glass-soft);
+	color: var(--text-main);
+	transition:
+		border-color 0.18s ease,
+		box-shadow 0.18s ease;
 }
 
 .text-input::placeholder {
-	color: var(--color-on-surface-variant);
+	color: var(--text-secondary);
 }
 
 .text-input:focus {
@@ -278,14 +291,15 @@ onMounted(fetchAccounts);
 }
 
 .filled-button {
-	padding: 12px 24px;
-	border-radius: 16px;
-	background-color: var(--color-primary);
-	color: var(--color-on-primary);
+	padding: 0.78rem 1.25rem;
+	border-radius: 6px;
+	background-color: var(--button-primary-bg);
+	color: var(--button-primary-text);
 	font-weight: 600;
-	border: none;
+	border: 1px solid var(--primary);
 	cursor: pointer;
-	transition: background-color 0.3s, box-shadow 0.3s;
+	transition: background-color 0.18s ease;
+	width: fit-content;
 }
 
 .filled-button:disabled {
@@ -295,18 +309,17 @@ onMounted(fetchAccounts);
 
 .filled-button:hover {
 	background-color: var(--button-primary-hover);
-	box-shadow: 0 6px 12px rgba(15, 23, 42, 0.2);
 }
 
 .supporting-text {
 	font-size: 0.875rem;
-	color: var(--color-on-surface-variant);
+	color: var(--text-secondary);
 	line-height: 1.5;
 	margin: 0;
 }
 
 .link-text {
-	color: var(--color-link);
+	color: var(--primary);
 	text-decoration: none;
 	transition: color 0.2s;
 }
@@ -328,17 +341,25 @@ onMounted(fetchAccounts);
 
 .empty {
 	margin: 0;
-	color: var(--color-on-surface-variant);
+	color: var(--text-secondary);
 }
 
 @media (max-width: 768px) {
 	.affiliated {
-		padding: 1.2rem;
+		padding: 1rem;
 	}
 
 	.page-header {
 		flex-direction: column;
 		align-items: flex-start;
+	}
+
+	.grid {
+		grid-template-columns: 1fr;
+	}
+
+	.filled-button {
+		width: 100%;
 	}
 }
 </style>

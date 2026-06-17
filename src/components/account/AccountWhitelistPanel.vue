@@ -58,14 +58,18 @@ const emit = defineEmits(['submit', 'update:ipAddr'])
 <style scoped>
 .panel {
 	background: var(--glass-strong);
-	border-radius: 26px;
-	padding: 2.4rem;
-	box-shadow: 0 20px 45px rgba(15, 23, 42, 0.12);
-	border: 1px solid var(--border-soft);
+	border-radius: 8px;
+	padding: 1.4rem;
+	box-shadow: none;
+	border: none;
 	display: flex;
 	flex-direction: column;
-	gap: 2rem;
-	min-height: 65vh;
+	gap: 1.35rem;
+	min-height: 100%;
+	max-width: 1120px;
+	width: 100%;
+	margin: 0 auto;
+	box-sizing: border-box;
 }
 
 .panel-header {
@@ -76,9 +80,10 @@ const emit = defineEmits(['submit', 'update:ipAddr'])
 }
 
 .panel-title {
-	font-size: 2rem;
+	font-size: 1.45rem;
 	margin: 0;
 	color: var(--title-color);
+	line-height: 1.2;
 }
 
 .panel-sub {
@@ -87,21 +92,26 @@ const emit = defineEmits(['submit', 'update:ipAddr'])
 }
 
 .pill {
-	padding: 0.35rem 0.9rem;
-	border-radius: 999px;
-	background: rgba(37, 99, 235, 0.12);
+	padding: 0.35rem 0.65rem;
+	border-radius: 6px;
+	background: var(--surface-soft);
+	border: 1px solid var(--border-soft);
 	color: var(--text-main);
-	font-size: 0.9rem;
+	font-size: 0.86rem;
+	white-space: nowrap;
 }
 
 .section {
 	display: flex;
 	flex-direction: column;
 	gap: 1rem;
+	border: 1px solid var(--border-soft);
+	border-radius: 8px;
+	padding: 1rem;
 }
 
 .section-title {
-	font-size: 1.2rem;
+	font-size: 1rem;
 	font-weight: 600;
 	color: var(--title-color);
 }
@@ -115,10 +125,10 @@ const emit = defineEmits(['submit', 'update:ipAddr'])
 input[type='text'] {
 	flex: 1;
 	min-width: 220px;
-	padding: 16px 18px;
+	padding: 0.78rem 0.9rem;
 	background-color: var(--glass-soft);
 	border: 1px solid var(--border-soft);
-	border-radius: 14px;
+	border-radius: 6px;
 	font-size: 1rem;
 	color: var(--text-main);
 	box-shadow: inset 0 0 0 1px transparent;
@@ -130,13 +140,14 @@ input:focus {
 }
 
 .btn {
-	border: none;
-	padding: 12px 28px;
+	border: 1px solid var(--primary);
+	padding: 0.78rem 1.25rem;
 	background: var(--button-primary-bg);
 	color: var(--button-primary-text);
-	border-radius: 14px;
+	border-radius: 6px;
 	font-weight: 600;
 	height: fit-content;
+	cursor: pointer;
 }
 
 .btn:disabled {
@@ -160,7 +171,7 @@ input:focus {
 
 .chip-grid {
 	display: flex;
-	gap: 0.6rem;
+	gap: 0.5rem;
 	flex-wrap: wrap;
 }
 
@@ -168,7 +179,7 @@ input:focus {
 	background: var(--surface-soft);
 	border: 1px solid var(--border-soft);
 	padding: 0.45rem 0.9rem;
-	border-radius: 999px;
+	border-radius: 6px;
 	font-family: 'Bahnschrift', 'GSans', sans-serif;
 }
 
@@ -180,13 +191,30 @@ input:focus {
 
 @media (max-width: 960px) {
 	.panel {
-		padding: 1.6rem;
+		padding: 1rem;
 		min-height: unset;
 	}
 
 	.panel-header {
 		flex-direction: column;
 		align-items: flex-start;
+	}
+}
+
+@media (max-width: 640px) {
+	.form-row {
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	input[type='text'] {
+		min-width: 0;
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	.btn {
+		width: 100%;
 	}
 }
 </style>

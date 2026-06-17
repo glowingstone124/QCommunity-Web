@@ -63,7 +63,12 @@ onBeforeUnmount(() => {
 		</section>
 
 		<section class="right">
-			<div class="right-header">
+			<header class="workspace-header">
+				<div>
+					<p class="workspace-eyebrow">Personalization</p>
+					<h1 class="workspace-title">个性化</h1>
+					<p class="workspace-sub">管理当前卡面、已获得卡片与头像资源。</p>
+				</div>
 				<div class="customizationSelect">
 					<button type="button" class="customizationBtn" :class="{ active: selectModule === 0 }" @click="selectModule = 0">
 						<p>卡面</p>
@@ -72,9 +77,9 @@ onBeforeUnmount(() => {
 						<p>头像</p>
 					</button>
 				</div>
-			</div>
+			</header>
 
-			<div v-show="selectModule === 0" class="customizationFatherContainer">
+			<section v-show="selectModule === 0" class="workspace-section customizationFatherContainer">
 				<div class="section-topbar">
 					<div class="section-copy">
 						<h2>卡面库</h2>
@@ -92,17 +97,19 @@ onBeforeUnmount(() => {
 				<div class="section-body">
 					<component :is="currentComponent"/>
 				</div>
-			</div>
+			</section>
 
-			<div v-show="selectModule === 1" class="avatar-panel">
-				<div class="section-copy">
-					<h2>头像库</h2>
-					<p>选择一个头像并保存，预览会在下次拉取数据后更新。</p>
+			<section v-show="selectModule === 1" class="workspace-section avatar-panel">
+				<div class="section-topbar">
+					<div class="section-copy">
+						<h2>头像库</h2>
+						<p>选择一个头像并保存，预览会在下次拉取数据后更新。</p>
+					</div>
 				</div>
 				<div class="avatar-edit">
 					<ChangeAvatarComponent />
 				</div>
-			</div>
+			</section>
 		</section>
 	</div>
 </template>
@@ -112,9 +119,9 @@ onBeforeUnmount(() => {
 	--card-width: calc(700px * var(--card-scale));
 	--card-height: calc(1000px * var(--card-scale));
 	display: grid;
-	grid-template-columns: minmax(460px, 540px) minmax(0, 1fr);
+	grid-template-columns: minmax(420px, 500px) minmax(0, 1fr);
 	align-items: stretch;
-	gap: 2rem;
+	gap: 1rem;
 	height: 100%;
 	min-height: 0;
 	max-width: 100%;
@@ -129,10 +136,10 @@ onBeforeUnmount(() => {
 
 .preview-panel,
 .right {
-	background: var(--background-secondary);
-	border: 1px solid var(--split);
-	border-radius: 24px;
-	box-shadow: 0 16px 32px rgba(15, 23, 42, 0.08);
+	background: var(--glass-strong);
+	border: 1px solid var(--border-soft);
+	border-radius: 8px;
+	box-shadow: none;
 }
 
 .preview-panel {
@@ -154,15 +161,17 @@ onBeforeUnmount(() => {
 .eyebrow {
 	margin: 0;
 	font-size: 0.78rem;
-	letter-spacing: 0.18em;
+	letter-spacing: 0;
 	text-transform: uppercase;
 	color: var(--text-secondary);
+	font-weight: 700;
 }
 
 .preview-copy h1 {
 	margin: 0;
-	font-size: 2.4rem;
+	font-size: 1.45rem;
 	color: var(--title-color);
+	line-height: 1.2;
 }
 
 .preview-copy p {
@@ -213,34 +222,58 @@ onBeforeUnmount(() => {
 	overflow: hidden;
 }
 
-.right-header {
+.workspace-header {
 	display: flex;
-	justify-content: flex-start;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 1rem;
+}
+
+.workspace-eyebrow {
+	margin: 0 0 0.35rem;
+	font-size: 0.75rem;
+	color: var(--text-secondary);
+	font-weight: 700;
+	text-transform: uppercase;
+}
+
+.workspace-title {
+	margin: 0 0 0.4rem;
+	font-size: 1.45rem;
+	line-height: 1.2;
+	color: var(--title-color);
+}
+
+.workspace-sub {
+	margin: 0;
+	color: var(--text-secondary);
+	line-height: 1.5;
 }
 
 .customizationSelect{
-	background-color: var(--background-secondary);
-	border: 1px solid var(--split);
+	background-color: var(--surface-soft);
+	border: 1px solid var(--border-soft);
 	display: flex;
 	justify-content: center;
-	border-radius: 16px;
-	padding: 0.3rem;
-	gap: 0.35rem;
+	border-radius: 6px;
+	padding: 0.25rem;
+	gap: 0.25rem;
 }
 
 .customizationBtn{
 	background-color: transparent;
 	width: 100%;
 	align-content: center;
-	padding: 0.9rem 1.25rem;
-	border-radius: 12px;
+	padding: 0.65rem 1rem;
+	border-radius: 4px;
 	border: none;
 	cursor: pointer;
+	transition: background-color 0.18s ease;
 }
 
 .customizationBtn.active,
 .customizationBtn:hover{
-	background-color: var(--button-secondary-hover);
+	background-color: var(--glass-strong);
 }
 
 .customizationBtn p {
@@ -265,7 +298,7 @@ onBeforeUnmount(() => {
 
 .section-copy h2 {
 	margin: 0;
-	font-size: 1.5rem;
+	font-size: 1.1rem;
 	color: var(--title-color);
 }
 
@@ -278,8 +311,9 @@ onBeforeUnmount(() => {
 .btn-group {
 	display: inline-flex;
 	width: fit-content;
-	border-radius: 12px;
-	background: var(--card-background);
+	border-radius: 6px;
+	background: var(--surface-soft);
+	border: 1px solid var(--border-soft);
 	padding: 4px;
 	overflow: hidden;
 }
@@ -294,30 +328,36 @@ onBeforeUnmount(() => {
 	border: none;
 	cursor: pointer;
 	border-radius: 4px;
-	transition: color 0.3s;
+	transition:
+		background-color 0.18s ease,
+		color 0.18s ease;
 	min-width: 100px;
 }
 
 .btn-group button.active {
-	background: var(--primary-light);
-	color: var(--title-color);
+	background: var(--glass-strong);
+	color: var(--text-main);
 }
 
-.section-body,
-.avatar-panel {
-	background: var(--card-background);
-	border: 1px solid var(--split);
-	border-radius: 20px;
+.workspace-section {
+	background: var(--glass-strong);
+	border: 1px solid var(--border-soft);
+	border-radius: 8px;
 	padding: 1rem;
 	height: 100%;
 	min-height: 0;
 	overflow: auto;
 }
 
+.section-body {
+	min-height: 0;
+	overflow: auto;
+}
+
 .avatar-panel {
 	display: grid;
+	grid-template-rows: auto minmax(0, 1fr);
 	gap: 1rem;
-	height: 100%;
 }
 
 .avatar-edit {
@@ -370,6 +410,10 @@ onBeforeUnmount(() => {
 		overflow: visible;
 	}
 
+	.workspace-header {
+		flex-direction: column;
+	}
+
 	.customizationSelect {
 		flex-direction: row;
 		width: 100%;
@@ -402,10 +446,9 @@ onBeforeUnmount(() => {
 @media (max-width: 640px) {
 	.right,
 	.preview-panel,
-	.section-body,
-	.avatar-panel {
+	.workspace-section {
 		padding: 0.9rem;
-		border-radius: 18px;
+		border-radius: 8px;
 	}
 
 	.section-topbar {
@@ -415,6 +458,10 @@ onBeforeUnmount(() => {
 
 	.customizationSelect {
 		width: 100%;
+	}
+
+	.customizationBtn {
+		padding: 0.6rem 0.75rem;
 	}
 
 	.card-viewport {

@@ -10,7 +10,6 @@ defineProps({
 <template>
 	<section class="hero">
 		<div class="hero-copy">
-			<p class="eyebrow">Quantum Original</p>
 			<h1 class="hero-title">欢迎回来</h1>
 			<p class="hero-sub">集中管理账号、功能与服务入口。选择模块即可开始。</p>
 			<div class="hero-actions">
@@ -22,29 +21,14 @@ defineProps({
 				</router-link>
 			</div>
 		</div>
-		<div class="hero-card">
-			<div v-for="item in stats" :key="item.label" class="stat">
-				<p class="stat-label">{{ item.label }}</p>
-				<p class="stat-value">{{ $t(item.valueKey) }}</p>
-			</div>
-		</div>
 	</section>
 </template>
 
 <style scoped>
 .hero {
 	display: grid;
-	grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.85fr);
 	gap: 1.5rem;
 	align-items: stretch;
-}
-
-.hero-copy,
-.hero-card {
-	border-radius: 28px;
-	border: 1px solid var(--split);
-	background: var(--card-background);
-	box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
 }
 
 .hero-copy {

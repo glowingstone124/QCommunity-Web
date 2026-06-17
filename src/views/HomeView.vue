@@ -1,10 +1,9 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import HomeAnnouncementDialog from '@/components/home/HomeAnnouncementDialog.vue'
 import HomeFeatureTile from '@/components/home/HomeFeatureTile.vue'
 import HomeHeroSection from '@/components/home/HomeHeroSection.vue'
-import { homeHeroStats, homeTiles } from '@/data/home'
+import { homeTiles } from '@/data/home'
 
 const { t } = useI18n()
 const dialogOpen = ref(false)
@@ -17,29 +16,12 @@ const localizedTiles = computed(() =>
 	}))
 )
 
-function gotoWebsite() {
-	window.location.href = 'https://qoriginal.vip'
-}
-
-function closeDialog() {
-	dialogOpen.value = false
-	sessionStorage.setItem('hasSeenDialog', 'true')
-}
 
 onMounted(() => {
-	// if (!sessionStorage.getItem('hasSeenDialog')) {
-	// 	dialogOpen.value = true
-	// }
 })
 </script>
 
 <template>
-	<HomeAnnouncementDialog
-		:model-value="dialogOpen"
-		@visit="gotoWebsite"
-		@close="closeDialog"
-	/>
-
 	<div class="home page-shell">
 		<HomeHeroSection :stats="homeHeroStats" />
 
@@ -61,12 +43,12 @@ onMounted(() => {
 	min-height: calc(100vh - var(--app-header-height));
 	display: flex;
 	flex-direction: column;
-	gap: 1.5rem;
+	gap: 1.7rem;
 }
 
 .tiles {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
 	gap: 1rem;
 }
 </style>

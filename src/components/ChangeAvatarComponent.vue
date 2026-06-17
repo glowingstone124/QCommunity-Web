@@ -66,58 +66,56 @@ onMounted(async () => {
 
 <style scoped>
 h1 {
-	font-size: 1.2rem;
+	font-size: 1rem;
 	color: var(--title-color);
 	margin: 0;
 }
 .avatar-item {
-	width: 100px;
+	width: 104px;
 	text-align: center;
-	background-color: var(--card-background);
+	background-color: var(--glass-soft);
 	padding: 8px;
-	border-radius: 10px;
+	border-radius: 6px;
 	cursor: pointer;
-	transition: all 0.2s ease;
-	border: 2px solid transparent;
+	transition:
+		background-color 0.18s ease,
+		border-color 0.18s ease;
+	border: 1px solid var(--border-soft);
 }
 .avatar-item:hover {
-	background-color: var(--background-secondary);
+	background-color: var(--surface-soft);
 }
 .avatar-item.selected {
 	border-color: var(--primary);
-	background-color: var(--background-secondary);
-}
-.avatar-image {
-	width: 80px;
-	height: 80px;
-	object-fit: cover;
-	border-radius: 4px;
+	background-color: color-mix(in srgb, var(--primary) 10%, transparent);
 }
 
 .avatar-image {
-	width: 100px;
-	height: 100px;
+	width: 100%;
+	aspect-ratio: 1;
+	height: auto;
 	object-fit: cover;
 	border-radius: 4px;
 }
 .avatar-list {
 	max-height: 52vh;
 	overflow-y: auto;
-	display: flex;
-	flex-wrap: wrap;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
 	gap: 10px;
 	padding: 0.25rem 0;
-	justify-content: flex-start;
+	align-items: start;
 }
 .save-avatar-btn {
 	margin: 0;
-	padding: 10px 20px;
+	padding: 0.78rem 1.25rem;
 	background-color: var(--button-primary-bg);
 	color: var(--button-primary-text);
-	border: none;
+	border: 1px solid var(--primary);
 	border-radius: 6px;
 	cursor: pointer;
-	transition: background-color 0.3s;
+	transition: background-color 0.18s ease;
+	width: fit-content;
 }
 .save-avatar-btn:hover {
 	background-color: var(--button-primary-hover);
@@ -125,12 +123,12 @@ h1 {
 
 @media (max-width: 768px) {
 	.avatar-list {
-		justify-content: center;
+		grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
 		max-height: 40vh;
 	}
 
 	.avatar-item {
-		width: 90px;
+		width: auto;
 	}
 }
 </style>

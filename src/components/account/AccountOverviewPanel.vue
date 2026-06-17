@@ -80,14 +80,18 @@ function formatDate(timestamp) {
 <style scoped>
 .panel {
 	background: var(--glass-strong);
-	border-radius: 26px;
-	padding: 2.4rem;
-	box-shadow: 0 20px 45px rgba(15, 23, 42, 0.12);
-	border: 1px solid var(--border-soft);
+	border-radius: 8px;
+	padding: 1.4rem;
+	box-shadow: none;
+	border: none;
 	display: flex;
 	flex-direction: column;
-	gap: 2rem;
-	min-height: 65vh;
+	gap: 1.35rem;
+	min-height: 100%;
+	max-width: 1120px;
+	width: 100%;
+	margin: 0 auto;
+	box-sizing: border-box;
 }
 
 .panel-header {
@@ -98,9 +102,10 @@ function formatDate(timestamp) {
 }
 
 .panel-title {
-	font-size: 2rem;
+	font-size: 1.45rem;
 	margin: 0;
 	color: var(--title-color);
+	line-height: 1.2;
 }
 
 .panel-sub {
@@ -109,27 +114,36 @@ function formatDate(timestamp) {
 }
 
 .pill {
-	padding: 0.35rem 0.9rem;
-	border-radius: 999px;
-	background: rgba(37, 99, 235, 0.12);
+	padding: 0.35rem 0.65rem;
+	border-radius: 6px;
+	background: var(--surface-soft);
+	border: 1px solid var(--border-soft);
 	color: var(--text-main);
-	font-size: 0.9rem;
+	font-size: 0.86rem;
+	white-space: nowrap;
 }
 
 .stats {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-	gap: 1rem;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	border: 1px solid var(--border-soft);
+	border-radius: 8px;
+	overflow: hidden;
 }
 
 .stat-card {
-	background: var(--glass-soft);
-	border-radius: 18px;
-	padding: 1rem 1.2rem;
-	border: 1px solid var(--border-soft);
+	background: transparent;
+	border-radius: 0;
+	padding: 1rem;
+	border: none;
+	border-right: 1px solid var(--border-soft);
 	display: flex;
 	flex-direction: column;
 	gap: 0.4rem;
+}
+
+.stat-card:last-child {
+	border-right: none;
 }
 
 .stat-label {
@@ -140,9 +154,10 @@ function formatDate(timestamp) {
 
 .stat-value {
 	margin: 0;
-	font-size: 1.4rem;
+	font-size: 1.18rem;
 	color: var(--text-main);
 	font-weight: 600;
+	word-break: break-word;
 }
 
 .status-ok {
@@ -154,32 +169,35 @@ function formatDate(timestamp) {
 }
 
 .stat-num {
-	font-size: 1.6rem;
+	font-size: 1.35rem;
 }
 
 .section {
 	display: flex;
 	flex-direction: column;
 	gap: 1rem;
+	border: 1px solid var(--border-soft);
+	border-radius: 8px;
+	padding: 1rem;
 }
 
 .section-title {
-	font-size: 1.2rem;
+	font-size: 1rem;
 	font-weight: 600;
 	color: var(--title-color);
 }
 
 .record-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-	gap: 1rem;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: 0.65rem;
 }
 
 .login-record {
-	border-radius: 18px;
+	border-radius: 6px;
 	background: var(--surface-soft);
-	padding: 1rem 1.2rem;
-	border: 1px solid transparent;
+	padding: 0.82rem 0.9rem;
+	border: 1px solid var(--border-soft);
 }
 
 .login-record.success {
@@ -192,7 +210,7 @@ function formatDate(timestamp) {
 
 .login-record h2 {
 	margin: 0 0 0.35rem;
-	font-size: 1.6rem;
+	font-size: 1rem;
 	color: var(--text-main);
 }
 
@@ -205,7 +223,7 @@ function formatDate(timestamp) {
 
 @media (max-width: 960px) {
 	.panel {
-		padding: 1.6rem;
+		padding: 1rem;
 		min-height: unset;
 	}
 
@@ -213,16 +231,37 @@ function formatDate(timestamp) {
 		flex-direction: column;
 		align-items: flex-start;
 	}
+
+	.stats {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.stat-card:nth-child(2) {
+		border-right: none;
+	}
+
+	.stat-card:nth-child(-n + 2) {
+		border-bottom: 1px solid var(--border-soft);
+	}
 }
 
 @media (max-width: 640px) {
 	.panel-title {
-		font-size: 1.6rem;
+		font-size: 1.35rem;
 	}
 
 	.stats,
 	.record-grid {
 		grid-template-columns: 1fr;
+	}
+
+	.stat-card {
+		border-right: none;
+		border-bottom: 1px solid var(--border-soft);
+	}
+
+	.stat-card:last-child {
+		border-bottom: none;
 	}
 }
 </style>

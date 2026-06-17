@@ -1,138 +1,185 @@
 <script setup>
-import {onBeforeUnmount, onMounted, ref, nextTick} from "vue";
-import Redirect from "../components/RedirectButton.vue";
+import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 
-const messageList = ref([]);
-const messageInput = ref("");
-let pollingInterval = null;
-const usernameCache = new Map();
+const MESSAGE_DOWNLOAD_URL = 'https://api.glowingstone.cn/qo/msglist/download'
+const POLLING_INTERVAL = 3000
+const messageContainer = ref(null)
+const messageList = ref([])
+const messageInput = ref('')
+const loading = ref(true)
+const fetchError = ref('')
 const loginstat = ref(false)
-const sendButtonDisabled = ref(false);
-const token = ref(localStorage.getItem('token') || "");
+const sendButtonDisabled = ref(false)
+const token = ref(localStorage.getItem('token') || '')
+let pollingInterval = null
+const usernameCache = new Map()
+
 async function getUsername(sender) {
 	if (usernameCache.has(sender)) {
-		return usernameCache.get(sender);
+		return usernameCache.get(sender)
 	}
 
 	try {
-		const response = await fetch(`https://api.qoriginal.vip/qo/download/name?qq=${sender}`);
-		const data = await response.json();
-		let username = data.username || "未注册";
+		const response = await fetch(`https://api.qoriginal.vip/qo/download/name?qq=${sender}`)
+		const data = await response.json()
+		let username = data.username || '未注册'
 		if (data.code === 1) {
-			username = "未注册"
+			username = '未注册'
 		} else {
-			username = data.username;
+			username = data.username
 		}
-		usernameCache.set(sender, username);
-		return username;
+		usernameCache.set(sender, username)
+		return username
 	} catch (error) {
-		console.error("Error fetching username:", error);
-		return "未注册";
+		console.error('Error fetching username:', error)
+		return '未注册'
 	}
 }
 
 async function sendMessage() {
-	if (messageInput.value === "") {
-		return;
+	const content = messageInput.value.trim()
+	if (!content) {
+		return
 	}
-	sendButtonDisabled.value = true;
+	sendButtonDisabled.value = true
 	try {
-		const response = await fetch("https://api.qoriginal.vip/qo/authorization/message/upload", {
+		const response = await fetch('https://api.qoriginal.vip/qo/authorization/message/upload', {
 			headers: {
-				"Content-Type": "application/json",
-				"token": localStorage.getItem("token"),
+				'Content-Type': 'application/json',
+				token: localStorage.getItem('token'),
 			},
-			method: "POST",
+			method: 'POST',
 			body: JSON.stringify({
-				message: messageInput.value,
+				message: content,
 				timestamp: Date.now(),
 			}),
-		});
+		})
 
-		const data = await response.json();
-		console.log(data);
+		const data = await response.json()
 		if (data.code === 1) {
-			alert("请重新登录，登录已经过期。")
-			return;
+			alert('请重新登录，登录已经过期。')
+			return
 		}
-		sendButtonDisabled.value = false;
-		messageInput.value = "";
-		await getMsgList();
+		messageInput.value = ''
+		await getMsgList()
 
 	} catch (error) {
-		console.error("Error sending message:", error);
-		alert(error.message);
+		console.error('Error sending message:', error)
+		alert(error.message)
+	} finally {
+		sendButtonDisabled.value = false
 	}
 }
 
+function getMessageType(from) {
+	switch (Number(from)) {
+		case 1:
+			return 'game'
+		case 2:
+			return 'system'
+		default:
+			return 'community'
+	}
+}
 
+function parseRawMessage(rawMessage) {
+	if (typeof rawMessage !== 'string') {
+		return rawMessage
+	}
+
+	try {
+		return JSON.parse(rawMessage)
+	} catch (error) {
+		return {
+			message: rawMessage,
+			from: 2,
+			sender: 'System',
+			time: Date.now(),
+		}
+	}
+}
+
+function normalizePayload(payload) {
+	if (Array.isArray(payload)) {
+		return payload
+	}
+
+	if (Array.isArray(payload?.messages)) {
+		return payload.messages
+	}
+
+	return []
+}
+
+function formatMessageContent(content) {
+	return String(content ?? '')
+		.replace(/\[CQ:image,file=.*?\]/g, '[图片]')
+		.replace(/\[CQ:reply.*?\]/g, '[回复]')
+		.replace(/\[CQ:video.*?\]/g, '[视频]')
+		.replace(/\[CQ:at.*?\]/g, '[@]')
+		.replace(/\[CQ:markdown.*?\]/g, '[MD消息]')
+}
+
+async function normalizeMessage(rawMessage) {
+	const message = parseRawMessage(rawMessage) || {}
+	const messageType = getMessageType(message.from)
+	let senderName = String(message.sender || 'Unknown')
+	let senderTooltip = senderName
+
+	if (Number(message.from) === 0) {
+		senderName = await getUsername(message.sender)
+		senderTooltip = String(message.sender || '')
+	}
+
+	return {
+		content: formatMessageContent(message.message),
+		sender: senderName,
+		senderTooltip,
+		source: messageType,
+		sourceLabel: messageType === 'game' ? '游戏' : messageType === 'system' ? '系统' : '群聊',
+		time: new Date(Number(message.time) || Date.now()).toLocaleString(),
+	}
+}
 
 async function getMsgList() {
+	const container = messageContainer.value
+	const atBottom = container
+		? container.scrollHeight - container.scrollTop - container.clientHeight < 24
+		: true
+
 	try {
-		const response = await fetch("https://api.glowingstone.cn/qo/msglist/download");
-		const data = await response.json();
+		const response = await fetch(MESSAGE_DOWNLOAD_URL)
+		const data = await response.json()
+		const rawMessages = normalizePayload(data)
 
-		messageList.value = await Promise.all(data.messages.map(async (messageStr) => {
-			const message = JSON.parse(messageStr);
-			let msgContent = message.message;
+		messageList.value = await Promise.all(rawMessages.map(normalizeMessage))
+		fetchError.value = ''
+		loading.value = false
 
-			msgContent = msgContent.replace(/\n/g, "<br>");
-
-			const imageRegex = /\[CQ:image,file=.*?\]/g;
-			const replRegex = /\[CQ:reply.*?\]/g;
-			const videoRegex = /\[CQ:video.*?\]/g;
-			const atRegex = /\[CQ:at.*?\]/g;
-			const mdRegex = /\[CQ:markdown.*?\]/g;
-
-			let formattedMessage = msgContent
-				.replace(imageRegex, "[图片]")
-				.replace(replRegex, "[回复]")
-				.replace(videoRegex, "[视频]")
-				.replace(atRegex, "[@]")
-				.replace(mdRegex, "[MD消息]");
-
-			let senderName = message.sender;
-			let senderTooltip = senderName;
-
-			if (message.from === 0) {
-				senderName = await getUsername(message.sender);
-				senderTooltip = message.sender;
-			}
-
-			return {
-				sender: senderName,
-				senderTooltip,
-				content: formattedMessage,
-				time: new Date(message.time).toLocaleString(),
-			};
-		}));
-
-		const container = document.querySelector(".message-container");
-		if (container) {
-			const atBottom = container.scrollHeight - container.scrollTop === container.clientHeight;
-			await nextTick();
-			if (atBottom) {
-				container.scrollTop = container.scrollHeight;
-			}
+		await nextTick()
+		if (atBottom && messageContainer.value) {
+			messageContainer.value.scrollTop = messageContainer.value.scrollHeight
 		}
 	} catch (error) {
-		console.error("Error fetching messages:", error);
+		console.error('Error fetching messages:', error)
+		fetchError.value = '聊天记录加载失败，请稍后重试。'
+		loading.value = false
 	}
 }
 
 function startPolling() {
-	getMsgList();
-	pollingInterval = setInterval(getMsgList, 1000);
+	getMsgList()
+	pollingInterval = setInterval(getMsgList, POLLING_INTERVAL)
 }
 
 function stopPolling() {
-	clearInterval(pollingInterval);
+	clearInterval(pollingInterval)
 }
 
 onMounted(() => {
-	fetch("https://api.qoriginal.vip/qo/authorization/account", {
+	fetch('https://api.qoriginal.vip/qo/authorization/account', {
 			headers: {
-				"token": token.value
+				token: token.value,
 			}
 		}).then(res => res.json())
 			.then(data => {
@@ -141,13 +188,13 @@ onMounted(() => {
 				} else {
 					loginstat.value = true
 				}
-	});
-	startPolling();
+	})
+	startPolling()
 })
 
 onBeforeUnmount(() => {
-	stopPolling();
-});
+	stopPolling()
+})
 </script>
 
 
@@ -163,24 +210,32 @@ onBeforeUnmount(() => {
 		</header>
 
 		<div class="chat-body">
-			<div class="message-container" v-if="loginstat">
+			<div
+				v-if="loginstat"
+				ref="messageContainer"
+				class="message-container"
+			>
+				<div v-if="loading" class="state-panel">正在加载聊天记录...</div>
+				<div v-else-if="fetchError" class="state-panel error">{{ fetchError }}</div>
+				<div v-else-if="!messageList.length" class="state-panel">暂无聊天记录。</div>
 				<div
 					v-for="(message, index) in messageList"
 					:key="index"
 					class="message-bubble"
+					:class="`source-${message.source}`"
 				>
 					<div class="message-header">
-						<span class="sender-name" :title="message.senderTooltip">{{ message.sender }}</span>
-						<span class="message-time">{{ message.time }}</span>
+						<div class="sender-block">
+							<span class="sender-name" :title="message.senderTooltip">{{ message.sender }}</span>
+							<span class="source-label">{{ message.sourceLabel }}</span>
+						</div>
+						<time class="message-time">{{ message.time }}</time>
 					</div>
-					<div
-						class="message-content"
-						v-html="message.content"
-					></div>
+					<p class="message-content">{{ message.content }}</p>
 				</div>
 			</div>
 			<div class="message-container empty" v-else>
-				<h1 class="notification">您必须先登录或者注册才能聊天。</h1>
+				<p class="notification">您必须先登录或者注册才能聊天。</p>
 			</div>
 		</div>
 
@@ -207,34 +262,31 @@ onBeforeUnmount(() => {
 
 <style scoped>
 :global(:root) {
-	--chat-bg:
-		radial-gradient(circle at 10% 0%, rgba(37, 99, 235, 0.14), transparent 55%),
-		radial-gradient(circle at 85% 15%, rgba(255, 186, 106, 0.2), transparent 45%),
-		linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.96));
-	--chat-card: rgba(255, 255, 255, 0.9);
-	--chat-soft: rgba(15, 23, 42, 0.05);
-	--chat-border: rgba(15, 23, 42, 0.12);
+	--chat-bg: var(--background-secondary);
+	--chat-card: var(--background);
+	--chat-soft: color-mix(in srgb, var(--text-main) 4%, transparent);
+	--chat-border: color-mix(in srgb, var(--text-main) 14%, transparent);
 }
 
 :global(:root[data-theme="dark"]) {
-	--chat-bg:
-		radial-gradient(circle at 10% 0%, rgba(59, 130, 246, 0.16), transparent 55%),
-		radial-gradient(circle at 85% 15%, rgba(244, 114, 182, 0.18), transparent 45%),
-		linear-gradient(180deg, rgba(11, 18, 32, 0.98), rgba(15, 23, 42, 0.98));
-	--chat-card: rgba(17, 24, 39, 0.88);
-	--chat-soft: rgba(148, 163, 184, 0.12);
-	--chat-border: rgba(148, 163, 184, 0.22);
+	--chat-bg: var(--background);
+	--chat-card: var(--background-secondary);
+	--chat-soft: color-mix(in srgb, var(--dark-text-primary) 7%, transparent);
+	--chat-border: color-mix(in srgb, var(--dark-text-primary) 18%, transparent);
 }
 
 .chat {
-	min-height: 94vh;
-	height: 94vh;
-	padding: 4.5rem 3rem 2rem;
+	min-height: 100%;
+	height: 100%;
+	padding: 1rem;
 	background: var(--chat-bg);
 	display: flex;
 	flex-direction: column;
-	gap: 1.6rem;
+	gap: 1rem;
 	box-sizing: border-box;
+	max-width: 1400px;
+	margin: 0 auto;
+	width: 100%;
 }
 
 .chat-header {
@@ -246,15 +298,17 @@ onBeforeUnmount(() => {
 
 .eyebrow {
 	text-transform: uppercase;
-	letter-spacing: 0.35rem;
+	letter-spacing: 0;
 	font-size: 0.75rem;
 	color: var(--text-secondary);
 	margin: 0 0 0.35rem 0;
+	font-weight: 700;
 }
 
 .title {
 	margin: 0;
-	font-size: 2.4rem;
+	font-size: 1.45rem;
+	line-height: 1.2;
 	color: var(--title-color);
 }
 
@@ -264,8 +318,8 @@ onBeforeUnmount(() => {
 }
 
 .status-pill {
-	padding: 0.35rem 0.9rem;
-	border-radius: 999px;
+	padding: 0.35rem 0.65rem;
+	border-radius: 6px;
 	background: var(--chat-soft);
 	border: 1px solid var(--chat-border);
 	color: var(--text-main);
@@ -276,21 +330,21 @@ onBeforeUnmount(() => {
 	flex: 1;
 	min-height: 0;
 	display: flex;
-	border-radius: 20px;
+	border-radius: 8px;
 	border: 1px solid var(--chat-border);
 	background: var(--chat-card);
-	box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+	box-shadow: none;
 	overflow: hidden;
 }
 
 .message-container {
 	flex: 1;
 	min-height: 0;
-	padding: 1.8rem;
+	padding: 1rem;
 	overflow: auto;
 	display: flex;
 	flex-direction: column;
-	gap: 1rem;
+	gap: 0.65rem;
 }
 
 .message-container.empty {
@@ -300,45 +354,94 @@ onBeforeUnmount(() => {
 
 .notification {
 	color: var(--text-main);
-	font-size: 1.4rem;
+	font-size: 1rem;
 	margin: 0;
 	text-align: center;
 }
 
+.state-panel {
+	border: 1px solid var(--chat-border);
+	background: var(--chat-soft);
+	border-radius: 6px;
+	padding: 0.9rem 1rem;
+	color: var(--text-secondary);
+}
+
+.state-panel.error {
+	color: var(--error);
+	border-color: color-mix(in srgb, var(--error) 40%, transparent);
+}
+
 .message-bubble {
 	background: var(--chat-soft);
-	border-radius: 16px;
-	padding: 1rem 1.2rem;
+	border-radius: 6px;
+	padding: 0.82rem 0.9rem;
 	border: 1px solid var(--chat-border);
+	border-left-width: 3px;
+	max-width: min(920px, 100%);
+	box-sizing: border-box;
+}
+
+.message-bubble.source-game {
+	border-left-color: var(--primary);
+}
+
+.message-bubble.source-system {
+	border-left-color: var(--warning);
+}
+
+.message-bubble.source-community {
+	border-left-color: var(--success);
 }
 
 .message-header {
 	display: flex;
 	justify-content: space-between;
-	align-items: baseline;
+	align-items: flex-start;
 	margin-bottom: 0.45rem;
 	gap: 1rem;
+}
+
+.sender-block {
+	display: flex;
+	align-items: center;
+	gap: 0.45rem;
+	min-width: 0;
 }
 
 .sender-name {
 	font-weight: 600;
 	color: var(--primary);
-	font-size: 1.05rem;
+	font-size: 0.96rem;
 	max-width: 200px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
+.source-label {
+	border: 1px solid var(--chat-border);
+	border-radius: 4px;
+	color: var(--text-secondary);
+	font-size: 0.72rem;
+	padding: 0.08rem 0.35rem;
+	white-space: nowrap;
+}
+
 .message-time {
 	color: var(--text-secondary);
 	font-size: 0.8rem;
+	white-space: nowrap;
 }
 
 .message-content {
 	color: var(--text-main);
-	line-height: 1.5;
-	font-size: 1.05rem;
+	line-height: 1.55;
+	font-size: 0.98rem;
+	margin: 0;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+	word-break: break-word;
 }
 
 .composer {
@@ -352,15 +455,15 @@ onBeforeUnmount(() => {
 	padding: 0.9rem 1rem;
 	background: var(--chat-card);
 	border: 1px solid var(--chat-border);
-	border-radius: 16px;
-	box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+	border-radius: 8px;
+	box-shadow: none;
 }
 
 .message-input {
 	flex: 1;
 	padding: 0.85rem 1rem;
 	border: 1px solid var(--chat-border);
-	border-radius: 12px;
+	border-radius: 6px;
 	font-size: 1rem;
 	background: transparent;
 	color: var(--text-main);
@@ -377,8 +480,8 @@ onBeforeUnmount(() => {
 	padding: 0.85rem 1.5rem;
 	background: var(--button-primary-bg);
 	color: var(--button-primary-text);
-	border: none;
-	border-radius: 12px;
+	border: 1px solid var(--primary);
+	border-radius: 6px;
 	cursor: pointer;
 	transition: all 0.3s;
 	font-weight: 600;
@@ -395,13 +498,13 @@ onBeforeUnmount(() => {
 
 @media (max-width: 960px) {
 	.chat {
-		padding: 4rem 1.5rem 1.5rem;
+		padding: 1rem;
 	}
 }
 
 @media (max-width: 640px) {
 	.chat {
-		padding: 3.5rem 1rem 1rem;
+		padding: 0.75rem;
 	}
 
 	.chat-header {
@@ -411,6 +514,11 @@ onBeforeUnmount(() => {
 
 	.input-container {
 		flex-direction: column;
+	}
+
+	.message-header {
+		flex-direction: column;
+		gap: 0.35rem;
 	}
 
 	.send-button {
