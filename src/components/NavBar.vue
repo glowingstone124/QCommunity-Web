@@ -580,6 +580,7 @@ onBeforeUnmount(() => {
 }
 
 .user-section {
+	--header-control-height: 46px;
 	display: flex;
 	align-items: center;
 	gap: 0.75rem;
@@ -589,7 +590,12 @@ onBeforeUnmount(() => {
 .user-info {
 	display: flex;
 	flex-direction: column;
-	align-items: flex-end;
+	justify-content: center;
+	align-items: flex-start;
+	min-height: var(--header-control-height);
+	border: 1px solid var(--split);
+	padding: 0 0.85rem;
+	box-sizing: border-box;
 }
 
 .user-name {
@@ -608,7 +614,9 @@ onBeforeUnmount(() => {
 	gap: 0.55rem;
 	border: 1px solid var(--split);
 	background: transparent;
-	padding: 0.35rem 0.85rem 0.35rem 0.35rem;
+	padding: 0 0.85rem 0 0.25rem;
+	height: var(--header-control-height);
+	box-sizing: border-box;
 	cursor: pointer;
 	color: var(--text-main);
 	transition:
@@ -628,8 +636,8 @@ onBeforeUnmount(() => {
 }
 
 .user-avatar {
-	width: 40px;
-	height: 40px;
+	width: calc(var(--header-control-height) - 10px);
+	height: calc(var(--header-control-height) - 10px);
 	border-radius: 0;
 	flex-shrink: 0;
 	object-fit: cover;
@@ -639,7 +647,9 @@ onBeforeUnmount(() => {
 .login-alert {
 	background: transparent;
 	color: var(--text-main);
-	padding: 0.6rem 0.95rem;
+	padding: 0 0.95rem;
+	height: var(--header-control-height);
+	box-sizing: border-box;
 	cursor: pointer;
 	display: flex;
 	align-items: center;
@@ -664,11 +674,15 @@ onBeforeUnmount(() => {
 	display: flex;
 	align-items: center;
 	gap: 0.55rem;
+	height: var(--header-control-height);
 }
 
 .lang-btn,
 .theme-btn {
-	padding: 0.6rem 0.8rem;
+	padding: 0 0.8rem;
+	height: var(--header-control-height);
+	min-width: var(--header-control-height);
+	box-sizing: border-box;
 	font-size: 0.9rem;
 	cursor: pointer;
 	border-radius: 0;

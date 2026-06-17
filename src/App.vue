@@ -1,7 +1,7 @@
 <template>
 	<div v-if="showNavBar" class="app-shell">
 		<NavBar />
-		<main class="app-main">
+		<main class="app-main" :class="{ 'app-main--contained': route.meta.containedScroll }">
 			<router-view />
 		</main>
 	</div>
@@ -45,8 +45,9 @@ input, textarea {
 }
 
 ::-webkit-scrollbar {
-	width: 12px;
-	background-color: var(--split);
+	width: 8px;
+	height: 8px;
+	background-color: transparent;
 }
 
 ::-webkit-scrollbar-track {
@@ -54,13 +55,19 @@ input, textarea {
 }
 
 ::-webkit-scrollbar-thumb {
-	background-color: var(--text-secondary);
-	border-radius: 6px;
-	border: 3px solid transparent;
+	background-color: color-mix(in srgb, var(--text-secondary) 42%, transparent);
+	border-radius: 999px;
+	border: 2px solid transparent;
+	background-clip: content-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-	background-color: var(--text-main);
+	background-color: color-mix(in srgb, var(--text-main) 58%, transparent);
+}
+
+* {
+	scrollbar-width: thin;
+	scrollbar-color: color-mix(in srgb, var(--text-secondary) 42%, transparent) transparent;
 }
 
 .app-shell {
@@ -77,6 +84,10 @@ input, textarea {
 	min-height: 0;
 	overflow: auto;
 	overflow-x: hidden;
+}
+
+.app-main--contained {
+	overflow: hidden;
 }
 
 * {

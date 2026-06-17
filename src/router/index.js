@@ -37,7 +37,7 @@ const routes = [
 		path: '/messages',
 		name: 'messages',
 		component: MessageView,
-		meta: { pageTitle: '聊天记录', showNavBar: true },
+		meta: { pageTitle: '聊天记录', showNavBar: true, containedScroll: true },
 	},
 	{
 		path: '/dashboard',
@@ -61,7 +61,7 @@ const routes = [
 		path: '/account',
 		name: 'account',
 		component: AccountCenterView,
-		meta: { pageTitle: '账户中心', showNavBar: true },
+		meta: { pageTitle: '账户中心', showNavBar: true, containedScroll: true },
 	},
 	{
 		path: '/sponsors',

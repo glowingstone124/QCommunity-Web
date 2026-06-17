@@ -73,7 +73,6 @@ onMounted(fetchAccounts);
 	<div class="affiliated">
 		<header class="page-header">
 			<div>
-				<p class="eyebrow">Affiliated</p>
 				<h1 class="headline">附属账户</h1>
 				<p class="subhead">用于管理绑定账户与共享访问权限。</p>
 			</div>
@@ -153,15 +152,6 @@ onMounted(fetchAccounts);
 	justify-content: space-between;
 	align-items: flex-start;
 	gap: 1rem;
-}
-
-.eyebrow {
-	text-transform: uppercase;
-	letter-spacing: 0;
-	font-size: 0.75rem;
-	color: var(--text-secondary);
-	margin: 0 0 0.35rem 0;
-	font-weight: 700;
 }
 
 .headline {

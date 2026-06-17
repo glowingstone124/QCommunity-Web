@@ -287,6 +287,7 @@ onBeforeUnmount(() => {
 	max-width: 1400px;
 	margin: 0 auto;
 	width: 100%;
+	overflow: hidden;
 }
 
 .chat-header {

@@ -50,7 +50,6 @@ onBeforeUnmount(() => {
 		<section class="left">
 			<div class="preview-panel">
 				<div class="preview-copy">
-					<p class="eyebrow">Personalization</p>
 					<h1>您的卡面</h1>
 					<p>左侧始终展示当前名片效果，右侧用于切换卡面和头像资源。</p>
 				</div>
@@ -65,7 +64,6 @@ onBeforeUnmount(() => {
 		<section class="right">
 			<header class="workspace-header">
 				<div>
-					<p class="workspace-eyebrow">Personalization</p>
 					<h1 class="workspace-title">个性化</h1>
 					<p class="workspace-sub">管理当前卡面、已获得卡片与头像资源。</p>
 				</div>
@@ -158,15 +156,6 @@ onBeforeUnmount(() => {
 	gap: 0.4rem;
 }
 
-.eyebrow {
-	margin: 0;
-	font-size: 0.78rem;
-	letter-spacing: 0;
-	text-transform: uppercase;
-	color: var(--text-secondary);
-	font-weight: 700;
-}
-
 .preview-copy h1 {
 	margin: 0;
 	font-size: 1.45rem;
@@ -227,14 +216,6 @@ onBeforeUnmount(() => {
 	justify-content: space-between;
 	align-items: flex-start;
 	gap: 1rem;
-}
-
-.workspace-eyebrow {
-	margin: 0 0 0.35rem;
-	font-size: 0.75rem;
-	color: var(--text-secondary);
-	font-weight: 700;
-	text-transform: uppercase;
 }
 
 .workspace-title {

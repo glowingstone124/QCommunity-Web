@@ -282,8 +282,8 @@ watch(ipAddr, validateIP)
 	.account {
 		grid-template-columns: 1fr;
 		padding: 1rem;
-		height: auto;
-		overflow: visible;
+		height: 100%;
+		overflow: auto;
 	}
 
 	.content {
@@ -291,7 +291,7 @@ watch(ipAddr, validateIP)
 	}
 
 	.content.personalization-layout {
-		overflow: auto;
+		overflow: visible;
 	}
 
 	.panel-full {

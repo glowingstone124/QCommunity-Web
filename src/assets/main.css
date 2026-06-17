@@ -103,12 +103,11 @@ a {
 }
 
 .page-shell {
-  width: min(1600px, 100%);
   max-width: 100%;
   margin: 0 auto;
   padding: 1.5rem 0 2rem;
   box-sizing: border-box;
-  min-height: 100%;
+  height: 100%;
   overflow-x: hidden;
 }
 
