@@ -8,6 +8,7 @@ const shaderCanvas = ref(null)
 let animationFrame = 0
 let cleanupShader = () => {}
 let shaderTheme = 0
+const shaderFrameInterval = 1000 / 30
 
 const localizedTiles = computed(() =>
 	homeTiles.map((item) => ({
@@ -58,9 +59,22 @@ function createProgram(gl, vertexSource, fragmentSource) {
 
 function initShaderBackground() {
 	const canvas = shaderCanvas.value
-	const gl = canvas?.getContext('webgl', {antialias: false, alpha: true})
+	const reduceMotionQuery = window.matchMedia?.('(prefers-reduced-motion: reduce)')
 
-	if (!canvas || !gl) {
+	if (!canvas || reduceMotionQuery?.matches) {
+		return
+	}
+
+	const gl = canvas.getContext('webgl', {
+		antialias: false,
+		alpha: true,
+		depth: false,
+		stencil: false,
+		preserveDrawingBuffer: false,
+		powerPreference: 'low-power',
+	})
+
+	if (!gl) {
 		return
 	}
 
@@ -104,7 +118,7 @@ function initShaderBackground() {
 			float amplitude = 0.5;
 			mat2 rot = mat2(0.80, -0.60, 0.60, 0.80);
 
-			for (int i = 0; i < 5; i++) {
+			for (int i = 0; i < 3; i++) {
 				value += amplitude * noise(p);
 				p = rot * p * 2.04 + vec2(11.7, 4.3);
 				amplitude *= 0.5;
@@ -127,7 +141,7 @@ function initShaderBackground() {
 			float t = u_time;
 
 			vec2 q = p;
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < 2; i++) {
 				vec2 flow = flowField(q * 0.9, t);
 				q += flow * 0.05;
 				q += vec2(sin(t * 0.11 + q.y * 2.0), cos(t * 0.10 + q.x * 2.0)) * 0.025;
@@ -136,7 +150,7 @@ function initShaderBackground() {
 			vec2 drift = vec2(t * 0.035, -t * 0.022);
 			float smoke = fbm(q * 2.0 + drift);
 			smoke += 0.55 * fbm(q * 4.0 - drift.yx + 2.7);
-			smoke = smoke / 0.85;
+			smoke = smoke / 0.65;
 
 			float haze = fbm(q * 0.78 + vec2(-t * 0.018, t * 0.014));
 			float plume = smoothstep(0.24, 0.92, smoke);
@@ -174,13 +188,18 @@ function initShaderBackground() {
 	const timeLocation = gl.getUniformLocation(program, 'u_time')
 	const themeLocation = gl.getUniformLocation(program, 'u_theme')
 	const start = performance.now()
+	let isCanvasVisible = true
+	let shouldRender = true
+	let isLoopRunning = false
+	let needsResize = true
+	let lastFrameTime = 0
 
 	const syncTheme = () => {
 		shaderTheme = document.documentElement.dataset.theme === 'dark' ? 1 : 0
 	}
 
 	const resize = () => {
-		const dpr = Math.min(window.devicePixelRatio || 1, 2)
+		const dpr = Math.min(window.devicePixelRatio || 1, 1.25)
 		const width = Math.max(1, Math.floor(canvas.clientWidth * dpr))
 		const height = Math.max(1, Math.floor(canvas.clientHeight * dpr))
 
@@ -191,8 +210,16 @@ function initShaderBackground() {
 		}
 	}
 
-	const render = () => {
-		resize()
+	const requestResize = () => {
+		needsResize = true
+	}
+
+	const renderFrame = () => {
+		if (needsResize) {
+			resize()
+			needsResize = false
+		}
+
 		gl.clearColor(0, 0, 0, 0)
 		gl.clear(gl.COLOR_BUFFER_BIT)
 		gl.useProgram(program)
@@ -203,20 +230,67 @@ function initShaderBackground() {
 		gl.uniform1f(timeLocation, (performance.now() - start) / 1000)
 		gl.uniform1f(themeLocation, shaderTheme)
 		gl.drawArrays(gl.TRIANGLES, 0, 6)
+	}
+
+	const render = (now) => {
+		if (!shouldRender) {
+			isLoopRunning = false
+			return
+		}
+
+		if (now - lastFrameTime >= shaderFrameInterval) {
+			lastFrameTime = now
+			renderFrame()
+		}
+
 		animationFrame = requestAnimationFrame(render)
 	}
 
-	window.addEventListener('resize', resize)
+	const startRenderLoop = () => {
+		if (!isLoopRunning) {
+			isLoopRunning = true
+			animationFrame = requestAnimationFrame(render)
+		}
+	}
+
+	const updateRenderState = () => {
+		shouldRender = document.visibilityState === 'visible' && isCanvasVisible
+
+		if (shouldRender) {
+			startRenderLoop()
+		} else {
+			cancelAnimationFrame(animationFrame)
+			isLoopRunning = false
+		}
+	}
+
+	const syncVisibility = () => {
+		updateRenderState()
+	}
+
+	const visibilityObserver = new IntersectionObserver(([entry]) => {
+		isCanvasVisible = entry.isIntersecting
+		updateRenderState()
+	}, {
+		threshold: 0,
+	})
+
+	window.addEventListener('resize', requestResize, {passive: true})
+	document.addEventListener('visibilitychange', syncVisibility)
+	visibilityObserver.observe(canvas)
 	syncTheme()
 	const themeObserver = new MutationObserver(syncTheme)
 	themeObserver.observe(document.documentElement, {
 		attributeFilter: ['data-theme'],
 	})
-	render()
+	renderFrame()
+	startRenderLoop()
 
 	cleanupShader = () => {
 		cancelAnimationFrame(animationFrame)
-		window.removeEventListener('resize', resize)
+		window.removeEventListener('resize', requestResize)
+		document.removeEventListener('visibilitychange', syncVisibility)
+		visibilityObserver.disconnect()
 		themeObserver.disconnect()
 		gl.deleteBuffer(positionBuffer)
 		gl.deleteProgram(program)
