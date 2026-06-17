@@ -1,53 +1,6 @@
-<template>
-	<div class="player-info" :style="{backgroundImage:gradient}">
-		<div
-			:style="{
-         height: cardHeight + 'px',
-         width: cardHeight * 0.7 + 'px', //0.7*0.6
-         overflow: 'hidden',
-
-       }"
-			class="card-wrapper"
-			ref="wrapperRef"
-		>
-			<ArtCardForQueryUsage
-				ref="cardRef"
-				scale="0.6"
-				:username="username"
-				@ready="onCardReady"
-			/>
-		</div>
-		<div class="informations">
-			<span class="info">
-				<img :src="avatar" alt="avatar" ref="avatarImg" crossorigin="anonymous" class="avatar"
-					 @load="onImgLoad"/>
-				<span style="display: flex; flex-direction: column;">
-						<h1 :class="{ 'online-id': online }">{{ username }}</h1>
-						<span v-if="qq"><p class="qq">UID: {{ qq }}</p></span>
-				</span>
-			</span>
-			<div class="details">
-				<span v-if="playtime" style="display: flex; align-items: center; gap: 4px;">
-					<font-awesome-icon icon="fa-regular fa-clock"/>
-					<span class="playtime">{{ playtime }} 分钟</span>
-				</span>
-				<span>
-				<p
-					class="status-text"
-					:class="statusClass"
-				> {{ statusText }}
-			</p>
-		</span>
-			</div>
-		</div>
-	</div>
-</template>
-
 <script setup lang="ts">
-import {ref, computed, watch, nextTick} from 'vue'
-import ColorThief from 'colorthief'
-import {isSpecialAvatar} from '@/utils/palette'
-import ArtCardForQueryUsage from "@/components/ArtCardForQueryUsage.vue";
+import { computed } from 'vue'
+import ArtCardForQueryUsage from '@/components/ArtCardForQueryUsage.vue'
 
 interface Props {
 	username: string
@@ -60,204 +13,258 @@ interface Props {
 }
 
 const props = defineProps<Props>()
-const avatarImg = ref<HTMLImageElement | null>(null)
-const gradient = ref<string>(
-	'linear-gradient(45deg, var(--primary) 0%, var(--primary) 100%)'
-)
-
-function onCardReady() {
-	nextTick(() => {
-		const el = cardRef.value?.$el as HTMLElement
-		if (el) {
-			cardWidth.value = el.offsetWidth * 0.6
-			cardHeight.value = el.offsetHeight * 0.6
-		}
-	})
-}
-
-const cardRef = ref<InstanceType<typeof ArtCardForQueryUsage> | null>(null)
-const wrapperRef = ref<HTMLElement | null>(null)
-const cardWidth = ref<number | null>(null)
-const cardHeight = ref<number | null>(null)
-
-function extractColor() {
-	const img = avatarImg.value
-	if (!img) return
-
-	try {
-		const colorThief = new ColorThief()
-		const palette = colorThief.getPalette(img, 5)
-		const [, c2, c3] = palette
-
-		const darken = (rgb, factor = 0.6) => rgb.map(v => Math.floor(v * factor))
-
-		const darkC2 = darken(c2)
-		const darkC3 = darken(c3)
-
-		gradient.value = `linear-gradient(135deg, rgb(${darkC2.join(',')}), rgb(${darkC3.join(',')}))`
-	} catch (e) {
-		console.error('颜色提取失败', e)
-	}
-}
-
-
-async function onImgLoad() {
-	if (!props.avatar) return
-	const special = await isSpecialAvatar(props.username)
-	if (special) {
-		extractColor()
-	} else {
-		gradient.value = 'linear-gradient(45deg, var(--primary) 0%, var(--primary) 100%)'
-	}
-}
 
 const statusText = computed(() => {
-	if (props.banned) return '被封禁'
-	return props.online ? '当前在线' : '当前离线'
+	if (props.banned) return '已冻结'
+	return props.online ? '在线' : '离线'
 })
 
 const statusClass = computed(() => ({
 	'status-banned': props.banned,
 	'status-online': !props.banned && props.online,
-	'status-offline': !props.banned && !props.online
+	'status-offline': !props.banned && !props.online,
 }))
 
-watch(
-	() => [props.avatar, props.username],
-	() => {
-		if (avatarImg.value && props.avatar) {
-			onImgLoad()
-		}
-	},
-	{immediate: true}
-)
+const playtimeText = computed(() => {
+	const minutes = Number(props.playtime || 0)
+	if (minutes <= 0) return '暂无记录'
+	if (minutes < 60) return `${minutes} 分钟`
+	const hours = Math.floor(minutes / 60)
+	const rest = minutes % 60
+	return rest ? `${hours} 小时 ${rest} 分钟` : `${hours} 小时`
+})
+
+const infoItems = computed(() => [
+	{ label: '玩家 ID', value: props.username || '未知' },
+	{ label: 'UID', value: props.qq || '未公开' },
+	{ label: '累计游玩', value: playtimeText.value },
+	{ label: '账户状态', value: props.banned ? '已冻结' : '正常' },
+])
 </script>
 
+<template>
+	<article class="player-info">
+		<header class="profile-header">
+			<img
+				:src="avatar"
+				alt="玩家头像"
+				class="avatar"
+				crossorigin="anonymous"
+			/>
+			<div class="profile-title">
+				<span class="eyebrow">查询结果</span>
+				<h2>{{ username }}</h2>
+				<span class="status-pill" :class="statusClass">{{ statusText }}</span>
+			</div>
+		</header>
+
+		<section class="content-grid">
+			<div class="preview-panel">
+				<div class="preview-frame">
+					<ArtCardForQueryUsage :scale="0.42" :username="username" />
+				</div>
+			</div>
+
+			<div class="detail-panel">
+				<div class="section-heading">
+					<h3>玩家信息</h3>
+					<p>注册资料与服务器状态</p>
+				</div>
+
+				<div class="info-grid">
+					<div v-for="item in infoItems" :key="item.label" class="info-item">
+						<span>{{ item.label }}</span>
+						<strong>{{ item.value }}</strong>
+					</div>
+				</div>
+			</div>
+		</section>
+	</article>
+</template>
+
 <style scoped>
-@import "/src/assets/main.css";
-
-.status-online {
-	background: var(--success) !important;
-}
-
-.status-offline {
-
-}
-
-.status-banned {
-	background: var(--error) !important;
-}
-
-.informations {
+.player-info {
+	width: 100%;
+	display: grid;
+	gap: 1rem;
 	color: var(--text-main);
+	border: 1px solid var(--split);
+	border-radius: 8px;
+	background: var(--background);
+	padding: 1rem;
+	box-sizing: border-box;
+}
+
+.profile-header {
 	display: flex;
-	flex-direction: column;
-	padding-left: 1.8rem;
-	padding-right: 3.8rem;
+	align-items: center;
+	gap: 0.95rem;
+	border-bottom: 1px solid var(--split);
+	padding-bottom: 1rem;
+	min-width: 0;
 }
 
 .avatar {
-	width: 120%;
-	height: 120%;
-	transform: scale(1.3);
-	align-self: center;
-	padding: 20px;
-	margin: 0;
-}
-
-.status-text {
+	width: 64px;
+	height: 64px;
+	border-radius: 8px;
+	border: 1px solid var(--split);
 	background: var(--background-secondary);
-	backdrop-filter: blur(20px);
-	text-shadow: none !important;
-	padding: 11px 13px;
-	font-weight: 750;
-	color: var(--text-main) !important;
-	border-radius: 13px;
+	object-fit: cover;
+	flex: 0 0 auto;
 }
 
-.player-info {
-	margin-top: 1vh;
-	margin-left: 3vw;
-	display: flex;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-	flex-direction: row;
-	align-items: center;
-	justify-content: left;
-	transition: all 0.5s ease;
-	border-radius: 10px;
+.profile-title {
+	min-width: 0;
+	display: grid;
+	gap: 0.28rem;
 }
 
-@media (max-width: 800px) {
-	.player-info {
-		display: flex;
-		flex-direction: column;
-		padding: 10px;
-	}
-
-	.qq, h1, p {
-		font-size: 18px;
-	}
-
-	img {
-		width: 60px;
-	}
+.eyebrow {
+	color: var(--text-secondary);
+	font-size: 0.82rem;
+	font-weight: 700;
 }
 
-.details {
-	margin-top: 1vh;
-	margin-left: 0.6rem;
-}
-
-h1 {
-	font-size: 3rem;
-	font-family: "Bahnschrift";
+.profile-title h2 {
 	margin: 0;
+	color: var(--title-color);
+	font-size: clamp(1.4rem, 2vw, 2rem);
+	line-height: 1.15;
+	overflow-wrap: anywhere;
 }
 
-.info {
+.status-pill {
+	width: fit-content;
+	border: 1px solid var(--split);
+	border-radius: 999px;
+	padding: 0.25rem 0.58rem;
+	font-size: 0.8rem;
+	font-weight: 800;
+	line-height: 1;
+}
+
+.status-online {
+	border-color: color-mix(in srgb, var(--success) 54%, var(--split));
+	color: var(--success);
+}
+
+.status-banned {
+	border-color: color-mix(in srgb, var(--error) 58%, var(--split));
+	color: var(--error);
+}
+
+.status-offline {
+	color: var(--text-secondary);
+}
+
+.content-grid {
+	display: grid;
+	grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+	gap: 1rem;
+	align-items: stretch;
+}
+
+.preview-panel,
+.detail-panel {
+	border: 1px solid var(--split);
+	border-radius: 8px;
+	background: var(--background);
+	min-width: 0;
+}
+
+.preview-panel {
 	display: flex;
-	flex-direction: row;
-
-	h1, p {
-		color: white;
-	}
+	justify-content: center;
+	align-items: flex-start;
+	padding: 1rem;
+	overflow: hidden;
 }
 
-span {
+.preview-frame {
+	width: 294px;
+	height: 420px;
+	max-width: 100%;
+	overflow: hidden;
+	border-radius: 6px;
+	background: var(--background-secondary);
+}
+
+.detail-panel {
+	padding: 1rem;
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
+	gap: 1rem;
 }
 
-img {
-	max-width: 80px;
-	margin-right: 30px;
-	border-radius: 20px;
+.section-heading h3 {
+	margin: 0 0 0.28rem;
+	color: var(--title-color);
+	font-size: 1.05rem;
+	line-height: 1.2;
 }
 
-.qq {
-	font-size: 22px;
-	font-family: "Bahnschrift";
+.section-heading p {
+	margin: 0;
+	color: var(--text-secondary);
+	font-size: 0.9rem;
+	line-height: 1.45;
 }
 
-.playtime {
-	font-family: "Bahnschrift";
+.info-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.65rem;
 }
 
-@keyframes gradientAnimation {
-	0% {
-		background-position: 0% 0%;
+.info-item {
+	border: 1px solid var(--split);
+	border-radius: 6px;
+	padding: 0.78rem 0.85rem;
+	display: grid;
+	gap: 0.22rem;
+	min-width: 0;
+}
+
+.info-item span {
+	color: var(--text-secondary);
+	font-size: 0.8rem;
+}
+
+.info-item strong {
+	color: var(--text-main);
+	font-size: 0.98rem;
+	line-height: 1.35;
+	overflow-wrap: anywhere;
+}
+
+@media (max-width: 760px) {
+	.content-grid {
+		grid-template-columns: 1fr;
 	}
-	100% {
-		background-position: 100% 0%;
+
+	.preview-frame {
+		width: 252px;
+		height: 360px;
+	}
+
+	.preview-frame :deep(.wrapper) {
+		transform: scale(0.36) !important;
 	}
 }
 
-@font-face {
-	font-family: "Bahnschrift";
-	src: url("/src/assets/bahnschrift.ttf");
-}
+@media (max-width: 520px) {
+	.profile-header {
+		align-items: flex-start;
+	}
 
-p {
-	margin: 5px;
+	.avatar {
+		width: 56px;
+		height: 56px;
+	}
+
+	.info-grid {
+		grid-template-columns: 1fr;
+	}
 }
 </style>

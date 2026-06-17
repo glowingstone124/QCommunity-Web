@@ -1,270 +1,388 @@
 <script setup>
-import {ref} from 'vue';
-import debounce from 'lodash/debounce';
-import PlayerInfoCard from "@/components/PlayerCard.vue";
-import Redirect from "@/components/RedirectButton.vue";
-import ArtCardForQueryUsage from "@/components/ArtCardForQueryUsage.vue";
+import { computed, ref } from 'vue'
+import debounce from 'lodash/debounce'
+import PlayerInfoCard from '@/components/PlayerCard.vue'
 
-const inputId = ref('');
-const queryId = ref('');
-const avatarUrl = ref("https://crafthead.net/avatar/8667ba71b85a4004af54457a9734eed7");
-const qq = ref('');
-const online = ref(false);
-const banned = ref(false);
-const find = ref(false);
-const playtime = ref(0);
-const affiliated = ref(false);
-const host = ref("")
+const inputId = ref('')
+const queryId = ref('')
+const avatarUrl = ref('https://crafthead.net/avatar/8667ba71b85a4004af54457a9734eed7')
+const qq = ref('')
+const online = ref(false)
+const banned = ref(false)
+const found = ref(false)
+const searched = ref(false)
+const loading = ref(false)
+const errorMessage = ref('')
+const playtime = ref(0)
+const affiliated = ref(false)
+const host = ref('')
 
-async function getPlayer(id) {
-	try {
-		const response = await fetch(`https://api.glowingstone.cn/qo/download/registry?name=${id}`);
-		const data = await response.json();
-		if (data.code === 1) {
-			find.value = false;
-		} else if (data.affiliated === true) {
-			affiliated.value = true;
-			host.value = data.host;
-		} else {
-			find.value = true;
-			qq.value = data.qq;
-			online.value = data.online;
-			banned.value = data.frozen;
-			playtime.value = data.playtime;
-			await getAvatar(id);
-		}
-	} catch (error) {
-		console.error("Error fetching query:", error);
-	}
+const canSearch = computed(() => inputId.value.trim().length > 0 && !loading.value)
+
+function resetResult() {
+	avatarUrl.value = 'https://crafthead.net/avatar/8667ba71b85a4004af54457a9734eed7'
+	qq.value = ''
+	online.value = false
+	banned.value = false
+	found.value = false
+	affiliated.value = false
+	host.value = ''
+	playtime.value = 0
+	errorMessage.value = ''
 }
 
 async function getAvatar(name) {
 	try {
-		const response = await fetch(`https://api.glowingstone.cn/qo/download/avatar?name=${name}`);
-		const data = await response.json();
-		avatarUrl.value = data.url || '';
+		const response = await fetch(`https://api.glowingstone.cn/qo/download/avatar?name=${encodeURIComponent(name)}`)
+		const data = await response.json()
+		avatarUrl.value = data.url || avatarUrl.value
 	} catch (error) {
-		console.error("Error fetching avatar:", error);
+		console.error('Error fetching avatar:', error)
+	}
+}
+
+async function getPlayer(id) {
+	loading.value = true
+	searched.value = true
+	resetResult()
+
+	try {
+		const response = await fetch(`https://api.glowingstone.cn/qo/download/registry?name=${encodeURIComponent(id)}`)
+		const data = await response.json()
+
+		if (data.code === 1) {
+			found.value = false
+			return
+		}
+
+		if (data.affiliated === true) {
+			affiliated.value = true
+			found.value = true
+			host.value = data.host || ''
+			return
+		}
+
+		found.value = true
+		qq.value = data.qq || ''
+		online.value = data.online === true
+		banned.value = data.frozen === true
+		playtime.value = data.playtime || 0
+		await getAvatar(id)
+	} catch (error) {
+		console.error('Error fetching query:', error)
+		errorMessage.value = '查询失败，请稍后重试。'
+	} finally {
+		loading.value = false
 	}
 }
 
 const handleSearch = debounce(async () => {
-	queryId.value = inputId.value.trim();
-	if (queryId.value !== '') {
-		await getPlayer(queryId.value);
+	const nextQuery = inputId.value.trim()
+	if (!nextQuery) {
+		return
 	}
-}, 300);
 
+	queryId.value = nextQuery
+	await getPlayer(nextQuery)
+}, 180)
+
+function submitSearch() {
+	handleSearch.cancel()
+	handleSearch()
+}
 </script>
 
 <template>
-	<div class="content">
-		<div class="left">
-			<h2>在这里查询指定玩家</h2>
-			<div style="display: flex; gap: 1rem;">
-				<input v-model="inputId" placeholder="输入查询 ID" class="query-input"/>
-				<button class="search-btn" @click="handleSearch">查询</button>
+	<main class="query-page page-shell">
+		<section class="query-shell">
+			<div class="query-panel">
+				<div class="panel-heading">
+					<h1>玩家查询</h1>
+					<p>输入玩家 ID，查看账户状态、在线情况、累计游玩时间与卡面信息。</p>
+				</div>
+
+				<form class="search-form" @submit.prevent="submitSearch">
+					<label class="search-field">
+						<span>玩家 ID</span>
+						<input
+							v-model="inputId"
+							type="text"
+							placeholder="例如：glowingstone124"
+							autocomplete="off"
+							@input="handleSearch"
+						/>
+					</label>
+					<button type="submit" class="search-btn" :disabled="!canSearch">
+						{{ loading ? '查询中' : '查询' }}
+					</button>
+				</form>
 			</div>
-		</div>
-		<div class="right">
-			<div class="right_wrapper">
+
+			<section class="result-panel">
+				<div v-if="!searched" class="empty-state">
+					<h2>等待查询</h2>
+					<p>输入一个玩家 ID 后，结果会显示在这里。</p>
+				</div>
+
+				<div v-else-if="loading" class="empty-state">
+					<h2>正在查询</h2>
+					<p>正在拉取玩家注册信息。</p>
+				</div>
+
+				<div v-else-if="errorMessage" class="empty-state error">
+					<h2>查询失败</h2>
+					<p>{{ errorMessage }}</p>
+				</div>
+
+				<div v-else-if="!found" class="empty-state">
+					<h2>未找到玩家</h2>
+					<p>没有查询到 “{{ queryId }}” 的注册信息。</p>
+				</div>
+
+				<div v-else-if="affiliated" class="affiliated-result">
+					<div class="result-heading">
+						<span class="result-label">附属账户</span>
+						<h2>{{ queryId }}</h2>
+						<p>该账户绑定到主账户 {{ host || '未知' }}。</p>
+					</div>
+					<div class="affiliated-row">
+						<span>主账户</span>
+						<strong>{{ host || '—' }}</strong>
+					</div>
+				</div>
+
 				<PlayerInfoCard
+					v-else
 					:username="queryId"
 					:banned="banned"
 					:online="online"
 					:qq="qq"
-					:found="find"
+					:found="found"
 					:avatar="avatarUrl"
 					:playtime="playtime"
-					v-if="!affiliated"
 				/>
-			</div>
-		</div>
-	</div>
-
+			</section>
+		</section>
+	</main>
 </template>
 
 <style scoped>
-@import "/src/assets/base.css";
-@import "/src/assets/main.css";
+.query-page {
+	height: 100%;
+	min-height: 0;
+	overflow: auto;
+	background: var(--background-secondary);
+	padding: 1rem;
+}
 
-.affiliated {
+.query-shell {
+	width: min(1280px, 100%);
+	min-height: 100%;
+	margin: 0 auto;
+	display: grid;
+	grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
+	gap: 1rem;
+	align-items: stretch;
+}
+
+.query-panel,
+.result-panel {
+	background: var(--background);
+	border: 1px solid var(--split);
+	border-radius: 8px;
+	padding: 1.2rem;
+	box-sizing: border-box;
+}
+
+.query-panel {
 	display: flex;
 	flex-direction: column;
-	color: var(--text-main);
-	background-color: var(--card-background);
-	padding: 1rem;
-	border-radius: 10px;
-	height: 100%;
+	gap: 1.25rem;
+}
+
+.panel-heading h1 {
+	margin: 0 0 0.45rem;
+	color: var(--title-color);
+	font-size: 1.7rem;
+	line-height: 1.2;
+}
+
+.panel-heading p {
+	margin: 0;
+	color: var(--text-secondary);
+	line-height: 1.55;
+}
+
+.search-form {
+	display: grid;
+	gap: 0.75rem;
+}
+
+.search-field {
+	display: grid;
+	gap: 0.45rem;
+}
+
+.search-field span {
+	color: var(--text-secondary);
+	font-size: 0.9rem;
+}
+
+.search-field input {
 	width: 100%;
+	box-sizing: border-box;
+	border: 1px solid var(--split);
+	background: transparent;
+	color: var(--text-main);
+	border-radius: 6px;
+	padding: 0.85rem 0.9rem;
+	font-size: 1rem;
+	outline: none;
 }
 
-.right_wrapper {
-	display: flex;
-	flex-direction: row;
-	justify-content: left;
-}
-.tag {
-	background-color: var(--primary-light);
-	width: fit-content;
-	padding: 0.2rem 0.5rem;
-	border-radius: 10px;
-	margin-bottom: 0;
-	font-size: 1.2rem;
-	font-weight: 200
-}
-
-.content {
-	display: flex;
-}
-
-.left {
-	margin: 10px 30px;
-	flex: 4;
-}
-
-.right {
-	flex: 6;
-}
-
-
-.artcard {
-	margin-left: 7rem;
-	max-height: 900px;
-	display: flex;
-	flex-direction: row;
-}
-
-.main {
-	max-width: 100vw;
-	height: auto;
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	padding: 5rem;
-	gap: 2rem;
+.search-field input:focus {
+	border-color: var(--primary);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 14%, transparent);
 }
 
 .search-btn {
-	padding: 1rem 2rem;
-	border: none;
-	border-radius: 8px;
-	background-color: var(--button-primary-bg);
+	border: 1px solid var(--primary);
+	border-radius: 6px;
+	background: var(--button-primary-bg);
 	color: var(--button-primary-text);
-	font-weight: bold;
+	padding: 0.85rem 1rem;
+	font-weight: 700;
 	cursor: pointer;
-	font-family: 'Bahnschrift', 'NotoSans', serif;
-	transition: background-color 0.2s ease;
 }
 
-.search-btn:hover {
-	background-color: var(--button-primary-hover);
+.search-btn:hover:not(:disabled) {
+	background: var(--button-primary-hover);
 }
 
-h1 {
-	color: var(--text);
-	font-size: 5.6rem;
-	margin-top: 0;
-	margin-bottom: 0;
-	font-weight: 300;
+.search-btn:disabled {
+	cursor: not-allowed;
+	opacity: 0.56;
 }
 
-h2 {
-	color: var(--text);
+.helper-grid {
+	display: grid;
+	gap: 0.55rem;
+	margin-top: auto;
 }
 
-.back {
-	display: inline-block;
-	text-decoration: none;
-	color: var(--text);
-	border-radius: 20px;
-	padding: 0 30px;
-	background-color: var(--button-secondary-bg);
-	border: 1px solid var(--button-secondary-border);
-
-	h2 {
-		font-weight: 100;
-	}
+.helper-item {
+	border: 1px solid var(--split);
+	border-radius: 6px;
+	padding: 0.75rem 0.85rem;
+	display: grid;
+	gap: 0.2rem;
 }
 
-.back:hover {
-	background-color: var(--button-secondary-hover);
-}
-
-.content {
-	max-width: 1000px;
-	flex-direction: column;
-	display: flex;
-
-	h2 {
-		font-weight: 200;
-	}
-}
-
-.playerCard {
-	border-radius: 10px;
-	padding: 1rem;
-	margin-top: 1rem;
-	transition: all 0.3s;
-	width: 100%;
-}
-
-input {
-	border: none;
-	outline: none;
-	padding: 1rem;
-	border-radius: 10px;
+.helper-item strong {
 	color: var(--text-main);
-	font-size: 1.7rem;
-	font-family: 'Bahnschrift', 'NotoSans', serif;
+	font-size: 0.95rem;
 }
 
-.query-input {
-	background-color: var(--background-secondary);
-	border-bottom: 0px solid var(--primary);
-	width: 95%;
+.helper-item span {
+	color: var(--text-secondary);
+	font-size: 0.86rem;
+	line-height: 1.45;
 }
 
-.query-input::placeholder {
+.result-panel {
+	min-width: 0;
+	min-height: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: auto;
+}
+
+.result-panel :deep(.player-info) {
+	width: min(100%, 820px);
+	margin: 0;
+}
+
+.empty-state,
+.affiliated-result {
+	width: min(520px, 100%);
+	border: 1px solid var(--split);
+	border-radius: 8px;
+	padding: 1.25rem;
+	box-sizing: border-box;
+}
+
+.empty-state h2,
+.result-heading h2 {
+	margin: 0 0 0.45rem;
+	color: var(--title-color);
+	font-size: 1.25rem;
+}
+
+.empty-state p,
+.result-heading p {
+	margin: 0;
+	color: var(--text-secondary);
+	line-height: 1.55;
+}
+
+.empty-state.error h2 {
+	color: var(--error);
+}
+
+.affiliated-result {
+	display: grid;
+	gap: 1rem;
+}
+
+.result-label {
+	width: fit-content;
+	border: 1px solid var(--primary);
+	border-radius: 4px;
+	color: var(--primary);
+	padding: 0.18rem 0.45rem;
+	font-size: 0.78rem;
+	font-weight: 700;
+}
+
+.affiliated-row {
+	display: flex;
+	justify-content: space-between;
+	gap: 1rem;
+	border-top: 1px solid var(--split);
+	padding-top: 1rem;
 	color: var(--text-secondary);
 }
 
-.query-input:focus {
-	border-bottom: 4px solid var(--primary);
+.affiliated-row strong {
+	color: var(--text-main);
+	word-break: break-word;
 }
 
-@media screen and (max-width: 768px) {
-	.main {
-		flex-direction: column;
-		align-items: center;
-		padding: 2rem;
+@media (max-width: 900px) {
+	.query-shell {
+		grid-template-columns: 1fr;
+		min-height: auto;
 	}
 
-	.content {
-		margin-left: 0;
-		min-width: 100%;
-	}
-
-	.playerCard {
-		width: 95%;
-
-	}
-
-	input {
-		width: 100%;
-		font-size: 1.4rem;
-		padding: 0.1rem;
-	}
-
-	h1 {
-		font-size: 3rem;
-		text-align: center;
-	}
-
-	h2 {
-		font-size: 1.5rem;
-		text-align: center;
+	.result-panel {
+		min-height: 420px;
 	}
 }
 
+@media (max-width: 640px) {
+	.query-page {
+		padding: 0.75rem;
+	}
+
+	.query-panel,
+	.result-panel {
+		padding: 1rem;
+	}
+
+	.result-panel {
+		align-items: stretch;
+		min-height: 0;
+	}
+}
 </style>
