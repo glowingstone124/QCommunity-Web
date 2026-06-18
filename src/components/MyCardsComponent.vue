@@ -99,7 +99,7 @@ const groupedCards = computed(() => {
 	z-index: 9999;
 	margin-top: 5px;
 	font-size: 0.8rem;
-	border-radius: 6px;
+	border-radius: 0;
 	border: 1px solid var(--success);
 	padding: 6px 10px;
 	background-color: color-mix(in srgb, var(--success) 12%, transparent);
@@ -119,7 +119,7 @@ const groupedCards = computed(() => {
 
 :deep(.card-group) {
 	border: 1px solid var(--border-soft);
-	border-radius: 8px;
+	border-radius: 0;
 	padding: 1rem;
 	background: var(--glass-strong);
 	margin-bottom: 0.85rem;

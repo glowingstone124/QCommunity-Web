@@ -58,9 +58,8 @@ const emit = defineEmits(['submit', 'update:ipAddr'])
 <style scoped>
 .panel {
 	background: var(--glass-strong);
-	border-radius: 8px;
+	border-radius: 0;
 	padding: 1.4rem;
-	box-shadow: none;
 	border: none;
 	display: flex;
 	flex-direction: column;
@@ -93,7 +92,7 @@ const emit = defineEmits(['submit', 'update:ipAddr'])
 
 .pill {
 	padding: 0.35rem 0.65rem;
-	border-radius: 6px;
+	border-radius: 0;
 	background: var(--surface-soft);
 	border: 1px solid var(--border-soft);
 	color: var(--text-main);
@@ -106,7 +105,7 @@ const emit = defineEmits(['submit', 'update:ipAddr'])
 	flex-direction: column;
 	gap: 1rem;
 	border: 1px solid var(--border-soft);
-	border-radius: 8px;
+	border-radius: 0;
 	padding: 1rem;
 }
 
@@ -128,16 +127,14 @@ input[type='text'] {
 	padding: 0.78rem 0.9rem;
 	background-color: var(--glass-soft);
 	border: 1px solid var(--border-soft);
-	border-radius: 6px;
+	border-radius: 0;
 	font-size: 1rem;
 	color: var(--text-main);
-	box-shadow: inset 0 0 0 1px transparent;
 }
 
 input:focus {
 	outline: none;
 	border-color: var(--primary);
-	box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 70%, transparent);
 }
 
 .btn {
@@ -145,7 +142,7 @@ input:focus {
 	padding: 0.78rem 1.25rem;
 	background: var(--button-primary-bg);
 	color: var(--button-primary-text);
-	border-radius: 6px;
+	border-radius: 0;
 	font-weight: 600;
 	height: fit-content;
 	cursor: pointer;
@@ -180,8 +177,8 @@ input:focus {
 	background: var(--surface-soft);
 	border: 1px solid var(--border-soft);
 	padding: 0.45rem 0.9rem;
-	border-radius: 6px;
 	font-family: 'Bahnschrift', 'GSans', sans-serif;
+	color: var(--text-main);
 }
 
 .empty {

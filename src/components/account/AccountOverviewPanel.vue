@@ -80,9 +80,8 @@ function formatDate(timestamp) {
 <style scoped>
 .panel {
 	background: var(--glass-strong);
-	border-radius: 8px;
+	border-radius: 0;
 	padding: 1.4rem;
-	box-shadow: none;
 	border: none;
 	display: flex;
 	flex-direction: column;
@@ -115,7 +114,7 @@ function formatDate(timestamp) {
 
 .pill {
 	padding: 0.35rem 0.65rem;
-	border-radius: 6px;
+	border-radius: 0;
 	background: var(--surface-soft);
 	border: 1px solid var(--border-soft);
 	color: var(--text-main);
@@ -127,7 +126,7 @@ function formatDate(timestamp) {
 	display: grid;
 	grid-template-columns: repeat(4, minmax(0, 1fr));
 	border: 1px solid var(--border-soft);
-	border-radius: 8px;
+	border-radius: 0;
 	overflow: hidden;
 }
 
@@ -177,7 +176,7 @@ function formatDate(timestamp) {
 	flex-direction: column;
 	gap: 1rem;
 	border: 1px solid var(--border-soft);
-	border-radius: 8px;
+	border-radius: 0;
 	padding: 1rem;
 }
 
@@ -194,7 +193,7 @@ function formatDate(timestamp) {
 }
 
 .login-record {
-	border-radius: 6px;
+	border-radius: 0;
 	background: var(--surface-soft);
 	padding: 0.82rem 0.9rem;
 	border: 1px solid var(--border-soft);

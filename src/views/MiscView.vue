@@ -1,171 +1,108 @@
 <template>
-  <div class="container">
-    <div :class="['sidebar', { 'sidebar-collapsed': !isMenuOpen }]">
-      <button @click="toggleMenu" class="menu-toggle">
-        <svg class="toggle-icon" viewBox="0 0 24 24">
-          <path :d="isMenuOpen ? 'M15 18l-6-6 6-6' : 'M9 18l6-6-6-6'"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"/>
-        </svg>
-      </button>
-      <ul class="menu-list">
-        <li
-            v-for="item in menuItems"
-            :key="item.name"
-            @click="switchComponent(item.component)"
-        >
-          <span class="menu-icon" v-html="item.icon"></span>
-          <span class="menu-text">{{ item.name }}</span>
-        </li>
-      </ul>
-    </div>
+	<div class="misc-page">
+		<header class="page-header">
+			<div>
+				<h1>小功能</h1>
+				<p>轻量工具与账号相关的小组件。</p>
+			</div>
+		</header>
 
-    <div class="content">
-      <component :is="activeComponent" />
-    </div>
-  </div>
+		<AppNavigation
+			:items="menuItems"
+			:active-key="activeKey"
+			orientation="horizontal"
+			density="panel"
+			aria-label="小功能导航"
+			@select="switchComponent"
+		/>
+
+		<main class="content">
+			<component :is="activeComponent" />
+		</main>
+	</div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue'
+import BeaconColorComponent from "@/components/BeaconColorComponent.vue";
 import FortuneComponent from "@/components/FortuneComponent.vue";
+import AppNavigation from "@/components/ui/AppNavigation.vue";
 
-const isMenuOpen = ref(true);
-const activeComponent = ref(FortuneComponent);
+const activeKey = ref('fortune')
 
 const menuItems = [
-  {
-    name: '今日运势',
-    component: FortuneComponent,
-    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2a10 10 0 0110 10 10 10 0 01-10 10A10 10 0 012 12 10 10 0 0112 2z"/>
-            <path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>
-          </svg>`
-  },
-];
+	{
+		key: 'fortune',
+		label: '今日运势',
+		description: '查看账号今日指数',
+		component: FortuneComponent,
+	},
+	{
+		key: 'beacon-color',
+		label: '信标颜色',
+		description: 'Java 光束颜色序列',
+		component: BeaconColorComponent,
+	},
+]
 
-const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value;
-};
+const activeComponent = computed(() => {
+	return menuItems.find((item) => item.key === activeKey.value)?.component || FortuneComponent
+})
 
-const switchComponent = (component) => {
-  activeComponent.value = component;
-};
+const switchComponent = (item) => {
+	activeKey.value = item.key
+}
 </script>
 
 <style scoped>
-.menu-icon {
-  display: inline-block;
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0;
+.misc-page {
+	--misc-border: color-mix(in srgb, var(--text-main) 14%, transparent);
+	--border-soft: var(--misc-border);
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	height: 100%;
+	min-height: calc(100dvh - var(--app-header-height, 0px));
+	background: var(--background-secondary);
+	color: var(--text-main);
+	padding: 1rem;
+	box-sizing: border-box;
+	overflow: auto;
 }
 
-.menu-icon svg {
-  width: 100%;
-  height: 100%;
-  vertical-align: top;
+:global(:root[data-theme='dark']) .misc-page {
+	--misc-border: color-mix(in srgb, var(--dark-text-primary) 18%, transparent);
 }
 
-.menu-text {
-  margin-left: 12px;
-  opacity: 1;
-  transition: opacity 0.2s;
+.page-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 1rem;
+	padding-bottom: 1rem;
+	border-bottom: 1px solid var(--misc-border);
 }
 
-.sidebar-collapsed .menu-text {
-  opacity: 0;
-  margin-left: 0;
+.page-header h1 {
+	margin: 0;
+	color: var(--title-color);
+	font-size: clamp(1.55rem, 2.2vw, 2.15rem);
+	line-height: 1.15;
 }
 
-.menu-list li {
-  display: flex;
-  align-items: center;
-  padding: 12px 16px;
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-.sidebar-collapsed .menu-text {
-  display: none;
-}
-
-.sidebar {
-  width: 240px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.sidebar-collapsed {
-  width: 64px;
-}
-
-.sidebar-collapsed .menu-list li {
-  justify-content: center;
-  padding: 12px;
-}
-
-.toggle-icon {
-  width: 24px;
-  height: 24px;
-  transition: transform 0.2s;
-}
-.container {
-  display: flex;
-  height: 100vh;
-  background-color: var(--background);
-  color: var(--text-main);
-}
-
-.sidebar {
-  background-color: var(--card-background);
-  overflow: hidden;
-}
-
-.menu-toggle {
-  width: 100%;
-  padding: 16px;
-  background-color: var(--button-primary-bg);
-  color: var(--button-primary-text);
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.menu-toggle:hover {
-  background-color: var(--button-primary-hover);
-}
-
-.menu-list {
-  padding: 8px 0;
-}
-
-.menu-list li:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+.page-header p {
+	margin: 0.35rem 0 0;
+	color: var(--text-secondary);
+	line-height: 1.5;
 }
 
 .content {
-  flex: 1;
-  padding: 24px;
-  background-color: var(--background-secondary);
-  overflow-y: auto;
+	min-height: 0;
 }
 
-@media (max-width: 768px) {
-  .sidebar {
-    width: 64px;
-  }
-
-  .sidebar:not(.sidebar-collapsed) {
-    width: 100%;
-    position: absolute;
-    height: 100%;
-    z-index: 100;
-    background-color: var(--background-secondary);
-  }
-
-  .menu-toggle {
-    padding: 12px;
-  }
+@media (max-width: 760px) {
+	.misc-page {
+		padding: 0.85rem;
+	}
 }
 </style>

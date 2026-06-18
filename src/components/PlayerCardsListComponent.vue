@@ -136,8 +136,7 @@ onBeforeUnmount(() => {
 .right {
 	background: var(--glass-strong);
 	border: 1px solid var(--border-soft);
-	border-radius: 8px;
-	box-shadow: none;
+	border-radius: 0;
 }
 
 .preview-panel {
@@ -236,7 +235,7 @@ onBeforeUnmount(() => {
 	border: 1px solid var(--border-soft);
 	display: flex;
 	justify-content: center;
-	border-radius: 6px;
+	border-radius: 0;
 	padding: 0.25rem;
 	gap: 0.25rem;
 }
@@ -246,7 +245,7 @@ onBeforeUnmount(() => {
 	width: 100%;
 	align-content: center;
 	padding: 0.65rem 1rem;
-	border-radius: 4px;
+	border-radius: 0;
 	border: none;
 	cursor: pointer;
 	transition: background-color 0.18s ease;
@@ -292,7 +291,7 @@ onBeforeUnmount(() => {
 .btn-group {
 	display: inline-flex;
 	width: fit-content;
-	border-radius: 6px;
+	border-radius: 0;
 	background: var(--surface-soft);
 	border: 1px solid var(--border-soft);
 	padding: 4px;
@@ -308,7 +307,7 @@ onBeforeUnmount(() => {
 	font-weight: bold;
 	border: none;
 	cursor: pointer;
-	border-radius: 4px;
+	border-radius: 0;
 	transition:
 		background-color 0.18s ease,
 		color 0.18s ease;
@@ -323,7 +322,7 @@ onBeforeUnmount(() => {
 .workspace-section {
 	background: var(--glass-strong);
 	border: 1px solid var(--border-soft);
-	border-radius: 8px;
+	border-radius: 0;
 	padding: 1rem;
 	height: 100%;
 	min-height: 0;
@@ -429,7 +428,7 @@ onBeforeUnmount(() => {
 	.preview-panel,
 	.workspace-section {
 		padding: 0.9rem;
-		border-radius: 8px;
+		border-radius: 0;
 	}
 
 	.section-topbar {

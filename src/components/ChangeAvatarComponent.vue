@@ -75,7 +75,7 @@ h1 {
 	text-align: center;
 	background-color: var(--glass-soft);
 	padding: 8px;
-	border-radius: 6px;
+	border-radius: 0;
 	cursor: pointer;
 	transition:
 		background-color 0.18s ease,
@@ -95,7 +95,7 @@ h1 {
 	aspect-ratio: 1;
 	height: auto;
 	object-fit: cover;
-	border-radius: 4px;
+	border-radius: 0;
 }
 .avatar-list {
 	max-height: 52vh;
@@ -112,7 +112,7 @@ h1 {
 	background-color: var(--button-primary-bg);
 	color: var(--button-primary-text);
 	border: 1px solid var(--primary);
-	border-radius: 6px;
+	border-radius: 0;
 	cursor: pointer;
 	transition: background-color 0.18s ease;
 	width: fit-content;

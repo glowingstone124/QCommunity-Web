@@ -246,7 +246,7 @@ watch(ipAddr, validateIP)
 	overflow: auto;
 	border: 1px solid var(--account-muted-border);
 	background: var(--glass-strong);
-	border-radius: 8px;
+	border-radius: 0;
 }
 
 .content.personalization-layout {
@@ -262,7 +262,6 @@ watch(ipAddr, validateIP)
 	padding: 1rem;
 	background: var(--glass-strong);
 	border: none;
-	box-shadow: none;
 	min-height: 0;
 	overflow: hidden;
 	max-width: 1400px;
@@ -287,7 +286,7 @@ watch(ipAddr, validateIP)
 	}
 
 	.content {
-		border-radius: 8px;
+		border-radius: 0;
 	}
 
 	.content.personalization-layout {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, onMounted} from "vue";
+import {computed, ref, onMounted} from "vue";
 
 interface AffiliatedAccount {
 	name: string;
@@ -13,7 +13,24 @@ const token = localStorage.getItem("token");
 const newAccountName = ref("");
 const newAccountPassword = ref("");
 const currentHint = ref("");
+const isLoading = ref(true);
+const isSubmitting = ref(false);
+const loadError = ref("");
+
+const accountLimit = 3;
+const canSubmit = computed(() => {
+	return newAccountName.value.trim() !== "" && newAccountPassword.value.trim() !== "" && !isSubmitting.value;
+});
+
+const accountSlots = computed(() => Math.max(accountLimit - accounts.value.length, 0));
+
+function initialOf(name: string) {
+	return name.trim().slice(0, 1).toUpperCase() || "?";
+}
+
 const fetchAccounts = async () => {
+	isLoading.value = true;
+	loadError.value = "";
 	try {
 		const response = await fetch(
 			"https://api.qoriginal.vip/qo/authorization/affiliated/query",
@@ -29,14 +46,19 @@ const fetchAccounts = async () => {
 		accounts.value = data;
 	} catch (err) {
 		console.error("获取附属账户失败:", err);
+		loadError.value = "附属账户列表加载失败，请稍后重试。";
+	} finally {
+		isLoading.value = false;
 	}
 };
 
 const createAccount = async () => {
-	if (!newAccountName.value || !newAccountPassword.value) {
-		alert("请填写完整信息");
+	if (!canSubmit.value) {
+		currentHint.value = "请填写完整信息。";
 		return;
 	}
+	isSubmitting.value = true;
+	currentHint.value = "";
 	try {
 		const response = await fetch(
 			"https://api.qoriginal.vip/qo/authorization/affiliated/add",
@@ -47,7 +69,7 @@ const createAccount = async () => {
 					"Content-Type": "application/json"
 				},
 				body: JSON.stringify({
-					"name": newAccountName.value,
+					"name": newAccountName.value.trim(),
 					"password": newAccountPassword.value
 				})
 			}
@@ -55,15 +77,18 @@ const createAccount = async () => {
 		if (!response.ok) throw new Error(`HTTP ${response.status}`);
 		const result = await response.json();
 		if (result.result === true) {
-			currentHint.value = "成功！";
+			currentHint.value = "附属账户已创建。";
 		} else {
-			currentHint.value = "错误：请检查是否有重复名字，以及现有账户是否大于三个。";
+			currentHint.value = "创建失败：请检查是否重名，或是否已经达到数量上限。";
 		}
 		newAccountName.value = "";
 		newAccountPassword.value = "";
 		await fetchAccounts();
 	} catch (err) {
 		console.error("创建附属账户失败:", err);
+		currentHint.value = "创建失败：服务器暂时无法处理请求。";
+	} finally {
+		isSubmitting.value = false;
 	}
 };
 onMounted(fetchAccounts);
@@ -76,44 +101,96 @@ onMounted(fetchAccounts);
 				<h1 class="headline">附属账户</h1>
 				<p class="subhead">用于管理绑定账户与共享访问权限。</p>
 			</div>
-			<span class="pill">已注册 {{ accounts.length }} 个</span>
+			<div class="header-meter" aria-label="附属账户容量">
+				<span>{{ accounts.length }}/{{ accountLimit }}</span>
+				<div class="meter-track">
+					<div class="meter-fill" :style="{ width: `${Math.min(accounts.length / accountLimit, 1) * 100}%` }"></div>
+				</div>
+			</div>
 		</header>
+
+		<div class="summary-grid">
+			<div class="summary-item">
+				<span>已注册</span>
+				<strong>{{ accounts.length }}</strong>
+			</div>
+			<div class="summary-item">
+				<span>剩余额度</span>
+				<strong>{{ accountSlots }}</strong>
+			</div>
+			<div class="summary-item">
+				<span>访问范围</span>
+				<strong>共享权限</strong>
+			</div>
+		</div>
 
 		<div class="grid">
 			<section class="panel">
-				<div class="section-title">已注册的账户</div>
-				<div class="account-grid" v-if="accounts.length">
+				<div class="section-head">
+					<div>
+						<div class="section-title">已注册的账户</div>
+						<p class="section-sub">这些账户可使用主账号授权的访问能力。</p>
+					</div>
+					<button type="button" class="ghost-button" @click="fetchAccounts" :disabled="isLoading">
+						{{ isLoading ? "刷新中" : "刷新" }}
+					</button>
+				</div>
+
+				<div v-if="isLoading" class="state-box">正在加载附属账户...</div>
+				<p v-else-if="loadError" class="state-box error">{{ loadError }}</p>
+				<div v-else-if="accounts.length" class="account-grid">
 					<div v-for="account in accounts" :key="account.name" class="account-card">
-						<div class="avatar">{{ account.name.slice(0, 1) }}</div>
-						<div>
+						<div class="avatar">{{ initialOf(account.name) }}</div>
+						<div class="account-copy">
 							<h3 class="account-name">{{ account.name }}</h3>
-							<p class="account-meta">可用于快速切换</p>
+							<p class="account-meta">{{ account.host || "未绑定主机" }}</p>
+						</div>
+						<span class="account-status">可用</span>
+						<div class="account-foot">
+							<span>登录密码由创建时设置</span>
 						</div>
 					</div>
 				</div>
-				<p v-else class="empty">暂无附属账户。</p>
+				<div v-else class="state-box">
+					<strong>暂无附属账户</strong>
+					<span>创建后会显示在这里，用于快速识别和管理。</span>
+				</div>
 			</section>
 
 			<section class="panel">
-				<div class="section-title">注册新的附属账户</div>
+				<div class="section-head">
+					<div>
+						<div class="section-title">注册新的附属账户</div>
+					</div>
+				</div>
 				<div class="new-account-form">
 					<label class="field">
 						<span class="field-label">用户名</span>
-						<input v-model="newAccountName" type="text" placeholder="输入用户名" class="text-input" />
+						<input
+							v-model="newAccountName"
+							type="text"
+							placeholder="输入用户名"
+							class="text-input"
+							autocomplete="username"
+						/>
 					</label>
 					<label class="field">
 						<span class="field-label">密码</span>
-						<input v-model="newAccountPassword" type="password" placeholder="设置登录密码" class="text-input" />
+						<input
+							v-model="newAccountPassword"
+							type="password"
+							placeholder="设置登录密码"
+							class="text-input"
+							autocomplete="new-password"
+						/>
 					</label>
 
-					<button
-						type="button"
-						@click="createAccount"
-						class="filled-button"
-						:disabled="!newAccountName || !newAccountPassword"
-					>
-						创建账户
-					</button>
+					<div class="form-actions">
+						<button type="button" @click="createAccount" class="filled-button" :disabled="!canSubmit">
+							{{ isSubmitting ? "创建中" : "创建账户" }}
+						</button>
+						<span class="quota-text">还可创建 {{ accountSlots }} 个</span>
+					</div>
 
 					<p class="supporting-text">
 						使用该功能则证明您阅读并且认可
@@ -122,7 +199,7 @@ onMounted(fetchAccounts);
 
 					<p
 						v-if="currentHint !== ''"
-						:class="['supporting-text', currentHint.includes('成功') ? 'hint-success' : 'hint-error']"
+						:class="['inline-hint', currentHint.includes('已创建') ? 'hint-success' : 'hint-error']"
 					>
 						{{ currentHint }}
 					</p>
@@ -136,7 +213,7 @@ onMounted(fetchAccounts);
 .affiliated {
 	display: flex;
 	flex-direction: column;
-	gap: 1.35rem;
+	gap: 1rem;
 	color: var(--text-main);
 	padding: 1.4rem;
 	min-height: 100%;
@@ -152,6 +229,8 @@ onMounted(fetchAccounts);
 	justify-content: space-between;
 	align-items: flex-start;
 	gap: 1rem;
+	padding-bottom: 1rem;
+	border-bottom: 1px solid var(--border-soft);
 }
 
 .headline {
@@ -166,32 +245,86 @@ onMounted(fetchAccounts);
 	color: var(--text-secondary);
 }
 
-.pill {
-	padding: 0.35rem 0.65rem;
-	border-radius: 6px;
-	background: var(--surface-soft);
-	border: 1px solid var(--border-soft);
-	color: var(--text-main);
+.header-meter {
+	width: 150px;
+	display: grid;
+	gap: 0.45rem;
+	color: var(--text-secondary);
 	font-size: 0.86rem;
-	white-space: nowrap;
+	text-align: right;
+}
+
+.header-meter span {
+	color: var(--text-main);
+	font-weight: 700;
+}
+
+.meter-track {
+	height: 6px;
+	border: 1px solid var(--border-soft);
+	background: var(--surface-soft);
+}
+
+.meter-fill {
+	height: 100%;
+	background: var(--primary);
+	transition: width 0.2s ease;
+}
+
+.summary-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	border: 1px solid var(--border-soft);
+}
+
+.summary-item {
+	display: grid;
+	gap: 0.3rem;
+	padding: 0.85rem 1rem;
+	border-right: 1px solid var(--border-soft);
+}
+
+.summary-item:last-child {
+	border-right: none;
+}
+
+.summary-item span {
+	color: var(--text-secondary);
+	font-size: 0.86rem;
+}
+
+.summary-item strong {
+	color: var(--text-main);
+	font-size: 1.15rem;
+	line-height: 1.2;
 }
 
 .grid {
 	display: grid;
-	grid-template-columns: minmax(280px, 1fr) minmax(320px, 420px);
-	gap: 0.85rem;
-	align-items: start;
+	grid-template-columns: minmax(360px, 1fr) minmax(320px, 400px);
+	gap: 1rem;
+	align-items: stretch;
+	min-height: 0;
 }
 
 .panel {
 	background: transparent;
-	border-radius: 8px;
+	border-radius: 0;
 	padding: 1rem;
 	border: 1px solid var(--border-soft);
-	box-shadow: none;
 	display: flex;
 	flex-direction: column;
 	gap: 1rem;
+	min-width: 0;
+}
+
+.section-head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1rem;
+	padding-bottom: 0.85rem;
+	border-bottom: 1px solid var(--border-soft);
 }
 
 .section-title {
@@ -200,26 +333,35 @@ onMounted(fetchAccounts);
 	color: var(--title-color);
 }
 
+.section-sub {
+	margin: 0.28rem 0 0;
+	color: var(--text-secondary);
+	font-size: 0.88rem;
+	line-height: 1.45;
+}
+
 .account-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-	gap: 0.55rem;
+	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+	gap: 0.65rem;
 }
 
 .account-card {
-	display: flex;
+	display: grid;
+	grid-template-columns: 40px minmax(0, 1fr) auto;
 	gap: 0.75rem;
 	align-items: center;
-	padding: 0.78rem 0.85rem;
-	border-radius: 6px;
+	padding: 0.85rem;
+	border-radius: 0;
 	background: var(--surface-soft);
 	border: 1px solid var(--border-soft);
+	min-width: 0;
 }
 
 .avatar {
-	width: 36px;
-	height: 36px;
-	border-radius: 6px;
+	width: 40px;
+	height: 40px;
+	border-radius: 0;
 	background: color-mix(in srgb, var(--primary) 10%, transparent);
 	border: 1px solid color-mix(in srgb, var(--primary) 25%, transparent);
 	display: flex;
@@ -229,17 +371,40 @@ onMounted(fetchAccounts);
 	color: var(--primary);
 }
 
+.account-copy {
+	min-width: 0;
+}
+
 .account-name {
 	font-size: 1.05rem;
 	font-weight: 600;
 	margin: 0;
 	color: var(--text-main);
+	overflow-wrap: anywhere;
 }
 
 .account-meta {
 	margin: 0.2rem 0 0 0;
 	font-size: 0.85rem;
 	color: var(--text-secondary);
+	overflow-wrap: anywhere;
+}
+
+.account-status {
+	align-self: start;
+	border: 1px solid color-mix(in srgb, var(--success) 48%, var(--border-soft));
+	color: var(--success);
+	font-size: 0.78rem;
+	font-weight: 700;
+	padding: 0.18rem 0.48rem;
+}
+
+.account-foot {
+	grid-column: 1 / -1;
+	padding-top: 0.7rem;
+	border-top: 1px solid var(--border-soft);
+	color: var(--text-secondary);
+	font-size: 0.82rem;
 }
 
 .new-account-form {
@@ -261,13 +426,13 @@ onMounted(fetchAccounts);
 
 .text-input {
 	padding: 0.78rem 0.9rem;
-	border-radius: 6px;
+	border-radius: 0;
 	border: 1px solid var(--border-soft);
 	background-color: var(--glass-soft);
 	color: var(--text-main);
-	transition:
-		border-color 0.18s ease,
-		box-shadow 0.18s ease;
+	transition: border-color 0.18s ease;
+	width: 100%;
+	box-sizing: border-box;
 }
 
 .text-input::placeholder {
@@ -277,12 +442,11 @@ onMounted(fetchAccounts);
 .text-input:focus {
 	outline: none;
 	border-color: var(--primary);
-	box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 15%, transparent);
 }
 
 .filled-button {
 	padding: 0.78rem 1.25rem;
-	border-radius: 6px;
+	border-radius: 0;
 	background-color: var(--button-primary-bg);
 	color: var(--button-primary-text);
 	font-weight: 600;
@@ -292,12 +456,47 @@ onMounted(fetchAccounts);
 	width: fit-content;
 }
 
+.ghost-button {
+	border: 1px solid var(--border-soft);
+	background: transparent;
+	color: var(--text-main);
+	padding: 0.55rem 0.8rem;
+	cursor: pointer;
+	font-weight: 600;
+	transition:
+		border-color 0.18s ease,
+		background-color 0.18s ease;
+	white-space: nowrap;
+}
+
+.ghost-button:hover {
+	border-color: var(--primary);
+	background: var(--surface-soft);
+}
+
+.ghost-button:disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
+
+.form-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.85rem;
+	flex-wrap: wrap;
+}
+
+.quota-text {
+	color: var(--text-secondary);
+	font-size: 0.88rem;
+}
+
 .filled-button:disabled {
 	opacity: 0.5;
 	cursor: not-allowed;
 }
 
-.filled-button:hover {
+.filled-button:hover:not(:disabled) {
 	background-color: var(--button-primary-hover);
 }
 
@@ -319,14 +518,43 @@ onMounted(fetchAccounts);
 	text-decoration: underline;
 }
 
+.inline-hint,
+.state-box {
+	border: 1px solid var(--border-soft);
+	background: var(--surface-soft);
+	padding: 0.82rem 0.9rem;
+	color: var(--text-secondary);
+	font-size: 0.9rem;
+	line-height: 1.5;
+	margin: 0;
+}
+
+.state-box {
+	display: grid;
+	gap: 0.25rem;
+	min-height: 96px;
+	align-content: center;
+}
+
+.state-box strong {
+	color: var(--text-main);
+}
+
+.state-box.error {
+	border-color: color-mix(in srgb, var(--error) 45%, var(--border-soft));
+	color: var(--error);
+}
+
 .hint-success {
 	color: var(--success);
 	font-weight: 600;
+	border-color: color-mix(in srgb, var(--success) 45%, var(--border-soft));
 }
 
 .hint-error {
 	color: var(--error);
 	font-weight: 600;
+	border-color: color-mix(in srgb, var(--error) 45%, var(--border-soft));
 }
 
 .empty {
@@ -344,12 +572,38 @@ onMounted(fetchAccounts);
 		align-items: flex-start;
 	}
 
+	.header-meter {
+		width: 100%;
+		text-align: left;
+	}
+
+	.summary-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.summary-item {
+		border-right: none;
+		border-bottom: 1px solid var(--border-soft);
+	}
+
+	.summary-item:last-child {
+		border-bottom: none;
+	}
+
 	.grid {
 		grid-template-columns: 1fr;
 	}
 
+	.section-head {
+		flex-direction: column;
+	}
+
 	.filled-button {
 		width: 100%;
+	}
+
+	.form-actions {
+		align-items: stretch;
 	}
 }
 </style>

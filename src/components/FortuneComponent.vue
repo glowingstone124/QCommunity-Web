@@ -1,13 +1,21 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { alert } from '@pnotify/core';
-import '@pnotify/core/dist/BrightTheme.css';
+import { computed, ref, onMounted } from 'vue';
 
 const loginStat = ref(false);
 const hintMessage = ref("");
 const fortuneData = ref(null);
 const isLoading = ref(false);
+const isCheckingLogin = ref(true);
+const errorMessage = ref("");
 
+const fortuneItems = computed(() => {
+	if (!fortuneData.value) return [];
+	return [
+		{ key: 'love', label: '感情', data: fortuneData.value.love },
+		{ key: 'career', label: '事业', data: fortuneData.value.career },
+		{ key: 'wealth', label: '财富', data: fortuneData.value.wealth },
+	];
+});
 
 onMounted(async () => {
   await validateToken();
@@ -17,8 +25,11 @@ onMounted(async () => {
 });
 
 async function validateToken() {
+  isCheckingLogin.value = true;
+  errorMessage.value = "";
   if (!localStorage.getItem("token")) {
     showLoginPrompt();
+    isCheckingLogin.value = false;
     return false;
   }
 
@@ -36,8 +47,10 @@ async function validateToken() {
     loginStat.value = true;
     return true;
   } catch (error) {
-    alert({ type: 'error', text: '网络请求失败' });
+    errorMessage.value = "登录状态检查失败，请稍后重试。";
     return false;
+  } finally {
+    isCheckingLogin.value = false;
   }
 }
 
@@ -48,12 +61,13 @@ function showLoginPrompt() {
 
 async function fetchFortune() {
   isLoading.value = true;
+  errorMessage.value = "";
   try {
     fortuneData.value = await fetch("https://api.qoriginal.vip/qo/authorization/fortune", {
       headers: { "token": localStorage.getItem("token") }
     }).then(response => response.json());
   } catch (error) {
-    alert({ type: 'error', text: '获取运势失败' });
+    errorMessage.value = "今日运势获取失败，请稍后重试。";
   } finally {
     isLoading.value = false;
   }
@@ -67,302 +81,230 @@ const getProgressColor = (amount) => {
 </script>
 
 <template>
-  <div class="fortune-container">
-    <div class="fortune-card">
-      <h1 class="title">今日运势</h1>
+	<section class="fortune-panel">
+		<header class="fortune-header">
+			<div>
+				<h2>今日运势</h2>
+				<p>基于当前账号生成的每日指数。</p>
+			</div>
+			<button
+				v-if="loginStat"
+				@click="fetchFortune"
+				class="refresh-button"
+				type="button"
+				:disabled="isLoading"
+			>
+				{{ isLoading ? "刷新中" : "刷新运势" }}
+			</button>
+		</header>
 
-      <div v-if="!loginStat" class="login-prompt">
-        <div class="prompt-icon">🔒</div>
-        <p class="prompt-text">{{ hintMessage }}</p>
-        <router-link to="/login" class="login-button">
-          立即登录
-        </router-link>
-      </div>
+		<div v-if="isCheckingLogin" class="state-box">正在检查登录状态...</div>
 
-      <template v-else>
-        <div v-if="isLoading" class="loading">
-          <div class="spinner"></div>
-          <p>正在获取今日运势...</p>
-        </div>
+		<div v-else-if="!loginStat" class="login-prompt">
+			<div>
+				<h3>需要登录</h3>
+				<p>{{ hintMessage }}</p>
+			</div>
+			<router-link to="/login" class="login-button">立即登录</router-link>
+		</div>
 
-        <div v-else-if="fortuneData" class="fortune-content">
-          <div class="category-card">
-            <div class="category-header">
-              <span class="icon">💖</span>
-              <h3>感情运势</h3>
-            </div>
-            <div class="progress-bar">
-              <div
-                  class="progress-fill"
-                  :style="{
-                  width: `${fortuneData.love.amount}%`,
-                  backgroundColor: getProgressColor(fortuneData.love.amount)
-                }"
-              ></div>
-              <span class="progress-text">{{ fortuneData.love.amount }}%</span>
-            </div>
-            <p class="comment">{{ fortuneData.love.comment }}</p>
-          </div>
+		<p v-else-if="errorMessage" class="state-box error">{{ errorMessage }}</p>
 
-          <div class="category-card">
-            <div class="category-header">
-              <span class="icon">💼</span>
-              <h3>事业运势</h3>
-            </div>
-            <div class="progress-bar">
-              <div
-                  class="progress-fill"
-                  :style="{
-                  width: `${fortuneData.career.amount}%`,
-                  backgroundColor: getProgressColor(fortuneData.career.amount)
-                }"
-              ></div>
-              <span class="progress-text">{{ fortuneData.career.amount }}%</span>
-            </div>
-            <p class="comment">{{ fortuneData.career.comment }}</p>
-          </div>
+		<div v-else-if="isLoading" class="state-box">正在获取今日运势...</div>
 
-          <div class="category-card">
-            <div class="category-header">
-              <span class="icon">💰</span>
-              <h3>财富运势</h3>
-            </div>
-            <div class="progress-bar">
-              <div
-                  class="progress-fill"
-                  :style="{
-                  width: `${fortuneData.wealth.amount}%`,
-                  backgroundColor: getProgressColor(fortuneData.wealth.amount)
-                }"
-              ></div>
-              <span class="progress-text">{{ fortuneData.wealth.amount }}%</span>
-            </div>
-            <p class="comment">{{ fortuneData.wealth.comment }}</p>
-          </div>
-
-        </div>
-        <button @click="fetchFortune" class="refresh-button">
-          <svg viewBox="0 0 24 24" class="refresh-icon">
-            <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
-          </svg>
-          刷新运势
-        </button>
-      </template>
-    </div>
-  </div>
+		<div v-else-if="fortuneData" class="fortune-content">
+			<article v-for="item in fortuneItems" :key="item.key" class="category-card">
+				<div class="category-header">
+					<div>
+						<h3>{{ item.label }}运势</h3>
+						<span>{{ item.data.amount }}%</span>
+					</div>
+				</div>
+				<div class="progress-bar">
+					<div
+						class="progress-fill"
+						:style="{
+							width: `${item.data.amount}%`,
+							backgroundColor: getProgressColor(item.data.amount)
+						}"
+					></div>
+				</div>
+				<p class="comment">{{ item.data.comment }}</p>
+			</article>
+		</div>
+	</section>
 </template>
 
 <style scoped>
-.fortune-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-.fortune-card {
-  background: var(--card-background);
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.title {
-  color: var(--title-color);
-  text-align: center;
-  margin-bottom: 2rem;
-  font-size: 2.5rem;
-}
-
-.login-prompt {
-  text-align: center;
-  padding: 2rem;
-  background: var(--background-secondary);
-  border-radius: 12px;
-}
-
-.prompt-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-}
-
-.prompt-text {
-  color: var(--text-secondary);
-  font-size: 1.2rem;
-  margin-bottom: 1.5rem;
-}
-
-.login-button {
-  display: inline-block;
-  padding: 0.8rem 2rem;
-  background: var(--button-primary-bg);
-  color: var(--button-primary-text);
-  border-radius: 8px;
-  text-decoration: none;
-  transition: background 0.3s;
-}
-
-.login-button:hover {
-  background: var(--button-primary-hover);
-}
-
-.loading {
-  text-align: center;
-  padding: 2rem;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  margin: 0 auto 1rem;
-  border: 4px solid rgba(37, 99, 235, 0.2);
-  border-top-color: var(--primary);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.fortune-result {
-  text-align: center;
+.fortune-panel {
+	--fortune-border: var(--border-soft, var(--split));
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	max-width: 1180px;
+	width: 100%;
+	margin: 0 auto;
+	color: var(--text-main);
 }
 
 .fortune-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1rem;
+	border: 1px solid var(--fortune-border);
+	background: var(--background);
+	padding: 1rem;
 }
 
-.fortune-icon {
-  font-size: 3rem;
+.fortune-header h2 {
+	margin: 0;
+	color: var(--title-color);
+	font-size: clamp(1.25rem, 1.8vw, 1.65rem);
+	line-height: 1.2;
 }
 
-.fortune-level {
-  font-size: 2.5rem;
-  margin: 0;
+.fortune-header p {
+	margin: 0.32rem 0 0;
+	color: var(--text-secondary);
+	line-height: 1.5;
 }
 
-.fortune-message {
-  white-space: pre-wrap;
-  text-align: left;
-  background: var(--background-secondary);
-  padding: 1.5rem;
-  border-radius: 8px;
-  font-family: inherit;
-  line-height: 1.6;
-  color: var(--text-main);
+.refresh-button,
+.login-button {
+	border: 1px solid var(--primary);
+	background: var(--button-primary-bg);
+	color: var(--button-primary-text);
+	padding: 0.72rem 1rem;
+	font-weight: 700;
+	cursor: pointer;
+	text-decoration: none;
+	white-space: nowrap;
+	transition: background-color 0.18s ease;
 }
 
-.refresh-button {
-  margin-top: 2rem;
-  padding: 0.8rem 1.5rem;
-  background: var(--button-secondary-bg);
-  border: 2px solid var(--button-secondary-border);
-  color: var(--button-secondary-text);
-  border-radius: 8px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s;
+.refresh-button:hover:not(:disabled),
+.login-button:hover {
+	background: var(--button-primary-hover);
 }
 
-.refresh-button:hover {
-  background: var(--button-secondary-hover);
-  color: var(--button-secondary-text);
+.refresh-button:disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
 }
 
-.refresh-icon {
-  width: 20px;
-  height: 20px;
-  fill: currentColor;
+.state-box,
+.login-prompt {
+	border: 1px solid var(--fortune-border);
+	background: var(--background);
+	padding: 1rem;
+	color: var(--text-secondary);
+	line-height: 1.5;
 }
 
-@media (max-width: 768px) {
-  .fortune-container {
-    padding: 1rem;
-  }
-
-  .fortune-card {
-    padding: 1.5rem;
-  }
-
-  .title {
-    font-size: 2rem;
-  }
-
-  .fortune-level {
-    font-size: 2rem;
-  }
+.state-box {
+	margin: 0;
 }
-.date {
-  text-align: center;
-  color: var(--title-color);
-  margin-bottom: 2rem;
-  font-size: 1.2rem;
+
+.state-box.error {
+	border-color: color-mix(in srgb, var(--error) 48%, var(--fortune-border));
+	color: var(--error);
+}
+
+.login-prompt {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+}
+
+.login-prompt h3 {
+	margin: 0;
+	color: var(--title-color);
+	font-size: 1.05rem;
+}
+
+.login-prompt p {
+	margin: 0.3rem 0 0;
+	color: var(--text-secondary);
 }
 
 .fortune-content {
-  display: grid;
-  gap: 1.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 1rem;
 }
 
 .category-card {
-  background: var(--card-background);
-  padding: 1.5rem;
-  border-radius: 12px;
-  transition: transform 0.3s;
-}
-
-.category-card:hover {
-  transform: translateY(-3px);
+	background: var(--background);
+	border: 1px solid var(--fortune-border);
+	padding: 1rem;
+	min-width: 0;
 }
 
 .category-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
+	margin-bottom: 0.9rem;
 }
 
-.category-header .icon {
-  font-size: 1.8rem;
+.category-header > div {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 1rem;
+}
+
+.category-header h3 {
+	margin: 0;
+	color: var(--title-color);
+	font-size: 1rem;
+	line-height: 1.2;
+}
+
+.category-header span {
+	color: var(--text-main);
+	font-weight: 800;
 }
 
 .progress-bar {
-  height: 24px;
-  background: var(--split);
-  border-radius: 12px;
-  overflow: hidden;
-  position: relative;
-  margin: 1rem 0;
+	height: 10px;
+	border: 1px solid var(--fortune-border);
+	background: var(--background-secondary);
+	overflow: hidden;
+	margin: 0 0 0.9rem;
 }
 
 .progress-fill {
-  height: 100%;
-  transition: width 0.8s ease, background-color 0.3s;
-}
-
-.progress-text {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-main);
-  font-weight: bold;
-  mix-blend-mode: normal;
+	height: 100%;
+	transition:
+		width 0.45s ease,
+		background-color 0.18s ease;
 }
 
 .comment {
-  color: var(--text-main);
-  line-height: 1.6;
-  margin: 0;
-  padding: 0.5rem;
-  background: var(--background-secondary);
-  border-radius: 6px;
+	color: var(--text-secondary);
+	line-height: 1.55;
+	margin: 0;
+	padding-top: 0.8rem;
+	border-top: 1px solid var(--fortune-border);
+	overflow-wrap: anywhere;
+}
+
+@media (max-width: 980px) {
+	.fortune-content {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 620px) {
+	.fortune-header,
+	.login-prompt {
+		flex-direction: column;
+	}
+
+	.refresh-button,
+	.login-button {
+		width: 100%;
+		text-align: center;
+	}
 }
 </style>
