@@ -12,9 +12,10 @@
 <script setup>
 import NavBar from './components/NavBar.vue';
 import {computed, onMounted} from "vue";
-import {useRoute, useRouter} from "vue-router";
+import {useRoute} from "vue-router";
 const route = useRoute();
 const showNavBar = computed(() => route.meta.showNavBar !== false);
+
 onMounted(() => {
 	if (import.meta.env.PROD) {
 		document.addEventListener('contextmenu', e => e.preventDefault());

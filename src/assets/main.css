@@ -23,14 +23,14 @@
   --button-ghost-bg: transparent;
   --button-ghost-text: #2563EB;
   --button-ghost-hover: #EFF6FF;
-  --dark-bg: #0B1220;
-  --dark-card: #111827;
-  --dark-border: #1F2937;
-  --dark-text-primary: #E5E7EB;
-  --dark-text-secondary: #9CA3AF;
-  --dark-text-muted: #6B7280;
-  --code-bg: #0F172A;
-  --code-text: #E5E7EB;
+  --dark-bg: #050914;
+  --dark-card: #0B1120;
+  --dark-border: #263247;
+  --dark-text-primary: #F1F5F9;
+  --dark-text-secondary: #BAC6D6;
+  --dark-text-muted: #8593A6;
+  --code-bg: #070D1A;
+  --code-text: #F1F5F9;
   --code-keyword: #60A5FA;
   --code-string: #34D399;
   --code-comment: #64748B;
@@ -40,16 +40,16 @@
 :root[data-theme="dark"]{
   --background: var(--dark-bg);
   --background-secondary: var(--dark-card);
-  --card-background: var(--dark-card);
+  --card-background: #0F172A;
   --split: var(--dark-border);
   --text-main: var(--dark-text-primary);
   --text-secondary: var(--dark-text-secondary);
   --title-color: var(--dark-text-primary);
-  --button-secondary-bg: var(--dark-card);
-  --button-secondary-border: var(--primary);
-  --button-secondary-text: var(--primary);
+  --button-secondary-bg: #0F172A;
+  --button-secondary-border: #3B82F6;
+  --button-secondary-text: #93C5FD;
   --button-secondary-hover: var(--code-bg);
-  --button-ghost-text: var(--primary);
+  --button-ghost-text: #93C5FD;
   --button-ghost-hover: var(--code-bg);
   --text: var(--text-main);
 }

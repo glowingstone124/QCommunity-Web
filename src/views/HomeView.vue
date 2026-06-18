@@ -188,7 +188,8 @@ function initShaderBackground() {
 	const resolutionLocation = gl.getUniformLocation(program, 'u_resolution')
 	const timeLocation = gl.getUniformLocation(program, 'u_time')
 	const themeLocation = gl.getUniformLocation(program, 'u_theme')
-	const start = performance.now()
+	const start = window.__qoSharedShaderStart ?? performance.now()
+	window.__qoSharedShaderStart = start
 	let isCanvasVisible = true
 	let shouldRender = true
 	let isLoopRunning = false
