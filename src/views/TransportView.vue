@@ -331,7 +331,6 @@ const closeOnOutsideClick = (event) => {
       <div v-if="isLoading" class="loading-state" aria-live="polite" aria-busy="true">
         <div class="loading-copy">
           <span class="loading-spinner" aria-hidden="true"></span>
-          <p class="loading-eyebrow">ROUTE SEARCH</p>
           <h3>正在生成换乘方案</h3>
           <p>系统正在比对线路颜色、停靠站点和已禁用交通方式，请稍候片刻。</p>
         </div>
@@ -733,14 +732,6 @@ label {
   border: 4px solid rgba(37, 99, 235, 0.15);
   border-top-color: var(--primary);
   animation: spin 0.85s linear infinite;
-}
-
-.loading-eyebrow {
-  margin-bottom: 0.5em !important;
-  letter-spacing: 0.16em;
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: var(--primary) !important;
 }
 
 .loading-skeleton {

@@ -8,7 +8,8 @@ const shaderCanvas = ref(null)
 let animationFrame = 0
 let cleanupShader = () => {}
 let shaderTheme = 0
-const shaderFrameInterval = 1000 / 30
+const shaderFrameInterval = 1000 / 36
+const shaderTimeScale = 2.2
 
 const localizedTiles = computed(() =>
 	homeTiles.map((item) => ({
@@ -150,7 +151,7 @@ function initShaderBackground() {
 			vec2 drift = vec2(t * 0.035, -t * 0.022);
 			float smoke = fbm(q * 2.0 + drift);
 			smoke += 0.55 * fbm(q * 4.0 - drift.yx + 2.7);
-			smoke = smoke / 0.65;
+			smoke = smoke / 0.75;
 
 			float haze = fbm(q * 0.78 + vec2(-t * 0.018, t * 0.014));
 			float plume = smoothstep(0.24, 0.92, smoke);
@@ -227,7 +228,7 @@ function initShaderBackground() {
 		gl.enableVertexAttribArray(positionLocation)
 		gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0)
 		gl.uniform2f(resolutionLocation, canvas.width, canvas.height)
-		gl.uniform1f(timeLocation, (performance.now() - start) / 1000)
+		gl.uniform1f(timeLocation, ((performance.now() - start) / 1000) * shaderTimeScale)
 		gl.uniform1f(themeLocation, shaderTheme)
 		gl.drawArrays(gl.TRIANGLES, 0, 6)
 	}

@@ -202,7 +202,6 @@ onBeforeUnmount(() => {
 	<div class="chat">
 		<header class="chat-header">
 			<div>
-				<p class="eyebrow">Community</p>
 				<h1 class="title">聊天记录</h1>
 				<p class="subtitle">公共频道消息按时间同步展示</p>
 			</div>
@@ -291,19 +290,11 @@ onBeforeUnmount(() => {
 }
 
 .chat-header {
+	flex: 0 0 auto;
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-start;
 	gap: 1rem;
-}
-
-.eyebrow {
-	text-transform: uppercase;
-	letter-spacing: 0;
-	font-size: 0.75rem;
-	color: var(--text-secondary);
-	margin: 0 0 0.35rem 0;
-	font-weight: 700;
 }
 
 .title {
@@ -328,7 +319,7 @@ onBeforeUnmount(() => {
 }
 
 .chat-body {
-	flex: 1;
+	flex: 1 1 auto;
 	min-height: 0;
 	display: flex;
 	border-radius: 8px;
@@ -339,10 +330,13 @@ onBeforeUnmount(() => {
 }
 
 .message-container {
-	flex: 1;
+	flex: 1 1 auto;
+	width: 100%;
 	min-height: 0;
 	padding: 1rem;
+	box-sizing: border-box;
 	overflow: auto;
+	overscroll-behavior: contain;
 	display: flex;
 	flex-direction: column;
 	gap: 0.65rem;
@@ -361,6 +355,7 @@ onBeforeUnmount(() => {
 }
 
 .state-panel {
+	flex: 0 0 auto;
 	border: 1px solid var(--chat-border);
 	background: var(--chat-soft);
 	border-radius: 6px;
@@ -374,6 +369,7 @@ onBeforeUnmount(() => {
 }
 
 .message-bubble {
+	flex: 0 0 auto;
 	background: var(--chat-soft);
 	border-radius: 6px;
 	padding: 0.82rem 0.9rem;
@@ -446,6 +442,7 @@ onBeforeUnmount(() => {
 }
 
 .composer {
+	flex: 0 0 auto;
 	position: sticky;
 	bottom: 0;
 }

@@ -1,4 +1,6 @@
 <template>
+	<div class="background-blur" :class="{ active: isNavHovered }">
+	</div>
 	<header class="app-header">
 		<div class="header-content">
 			<button type="button" class="logo-section" @click="goHome">
@@ -11,34 +13,27 @@
 				</span>
 			</button>
 
-			<nav
-				class="primary-nav"
-				aria-label="主导航"
+			<div
+				class="navigation-zone"
 				@mouseleave="clearActiveNav"
 				@focusout="clearActiveNav"
 			>
-				<div
-					v-for="category in navCategories"
-					:key="category.key"
-					class="nav-category"
-				>
-					<button
-						type="button"
-						class="nav-trigger"
-						:class="{ 'is-active': activeNavKey === category.key }"
-						@focus="setActiveNav(category.key)"
-						@mouseenter="setActiveNav(category.key)"
-					>
-						<span>{{ category.label }}</span>
-						<span class="nav-trigger-line" aria-hidden="true"></span>
-					</button>
-				</div>
-
+				<AppNavigation
+					:active-key="activeNavKey"
+					aria-label="主导航"
+					class="primary-nav"
+					density="header"
+					:items="primaryNavItems"
+					orientation="horizontal"
+					@activate="setActiveNav($event.key)"
+					@select="setActiveNav($event.key)"
+				/>
 				<Transition name="mega-shell">
 					<div
 						v-if="activeNavCategory"
 						class="mega-panel"
 						:style="{ height: megaPanelHeight }"
+						@mouseenter="cancelClearActiveNav"
 					>
 						<Transition
 							name="mega-content"
@@ -56,25 +51,19 @@
 									<strong>{{ activeNavCategory.title }}</strong>
 								</div>
 
-								<div class="mega-links">
-									<button
-										v-for="item in activeNavCategory.items"
-										:key="item.path"
-										type="button"
-										class="mega-link"
-										@click="goTo(item.path)"
-									>
-										<span>
-											<strong>{{ item.label }}</strong>
-											<small>{{ item.description }}</small>
-										</span>
-									</button>
-								</div>
+								<AppNavigation
+									class="mega-links"
+									:items="activeMegaItems"
+									aria-label="主导航链接"
+									density="compact"
+									orientation="vertical"
+									@select="goTo($event.path)"
+								/>
 							</div>
 						</Transition>
 					</div>
 				</Transition>
-			</nav>
+			</div>
 
 			<div class="user-section">
 				<button v-if="!loggedIn" type="button" class="login-alert" @click="goToLogin">
@@ -114,14 +103,17 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useHeaderProfile } from '@/composables/useHeaderProfile.js'
+import AppNavigation from '@/components/ui/AppNavigation.vue'
 
 const router = useRouter()
 const { locale, t } = useI18n()
 const { avatarUrl, loggedIn, playtime, theme, username } = useHeaderProfile()
 const activeNavKey = ref(null)
 const megaPanelContent = ref(null)
+const isNavHovered = computed(() => activeNavKey.value !== null)
 const megaPanelHeight = ref('auto')
 let resizeObserver = null
+let clearNavTimer = 0
 
 const navCategories = computed(() => [
 	{
@@ -219,6 +211,22 @@ const activeNavCategory = computed(() => {
 	return navCategories.value.find((category) => category.key === activeNavKey.value) || null
 })
 
+const primaryNavItems = computed(() =>
+	navCategories.value.map((category) => ({
+		key: category.key,
+		label: category.label,
+	}))
+)
+
+const activeMegaItems = computed(() =>
+	(activeNavCategory.value?.items || []).map((item) => ({
+		key: item.path,
+		path: item.path,
+		label: item.label,
+		description: item.description,
+	}))
+)
+
 const measureMegaPanel = (element) => {
 	const target = element || megaPanelContent.value
 
@@ -237,6 +245,7 @@ const scheduleMegaPanelMeasure = async () => {
 }
 
 const setActiveNav = (key) => {
+	cancelClearActiveNav()
 	activeNavKey.value = key
 }
 
@@ -245,7 +254,16 @@ const clearActiveNav = (event) => {
 		return
 	}
 
-	activeNavKey.value = null
+	clearNavTimer = window.setTimeout(() => {
+		activeNavKey.value = null
+	}, 120)
+}
+
+const cancelClearActiveNav = () => {
+	if (clearNavTimer) {
+		window.clearTimeout(clearNavTimer)
+		clearNavTimer = 0
+	}
 }
 
 const goHome = () => {
@@ -253,6 +271,7 @@ const goHome = () => {
 }
 
 const goTo = (path) => {
+	cancelClearActiveNav()
 	activeNavKey.value = null
 	router.push(path)
 }
@@ -300,6 +319,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+	cancelClearActiveNav()
 	resizeObserver?.disconnect()
 })
 </script>
@@ -362,7 +382,25 @@ onBeforeUnmount(() => {
 	transform: skewY(10deg);
 	background: transparent;
 }
+.background-blur {
+	z-index: 39;
+	position: fixed;
+	inset: 0;
+	backdrop-filter: blur(0px);
+	background: transparent;
+	opacity: 0;
+	pointer-events: none;
+	transition:
+		opacity 180ms ease,
+		backdrop-filter 180ms ease,
+		background-color 180ms ease;
+}
 
+.background-blur.active {
+	backdrop-filter: blur(10px);
+	background: #0B122050;
+	opacity: 1;
+}
 .logo-mark-main {
 	inset: 1px 8px 8px 2px;
 }
@@ -397,54 +435,13 @@ onBeforeUnmount(() => {
 	text-align: left;
 }
 
-.primary-nav {
+.navigation-zone {
 	display: flex;
-	align-items: stretch;
 	align-self: stretch;
-	gap: 0.15rem;
 }
 
-.nav-category {
-	display: flex;
-	align-items: center;
-}
-
-.nav-trigger {
-	height: 100%;
-	border: none;
-	background: transparent;
-	color: var(--text-main);
-	padding: 0 1rem;
-	cursor: pointer;
-	position: relative;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 0.95rem;
-}
-
-.nav-trigger-line {
-	position: absolute;
-	left: 1rem;
-	right: 1rem;
-	bottom: 0;
-	height: 2px;
-	background: var(--text-main);
-	transform: scaleX(0);
-	transform-origin: center;
-	transition: transform 160ms ease;
-}
-
-.nav-category:hover .nav-trigger,
-.nav-category:focus-within .nav-trigger,
-.nav-trigger.is-active {
-	background: var(--background-secondary);
-}
-
-.nav-category:hover .nav-trigger-line,
-.nav-category:focus-within .nav-trigger-line,
-.nav-trigger.is-active .nav-trigger-line {
-	transform: scaleX(1);
+.primary-nav {
+	min-height: var(--app-header-height);
 }
 
 .mega-panel {
@@ -532,51 +529,7 @@ onBeforeUnmount(() => {
 }
 
 .mega-links {
-	display: grid;
-	grid-template-columns: 1fr;
-	gap: 0.45rem;
 	grid-column: 2;
-}
-
-.mega-link {
-	text-align: left;
-	border: none;
-	border-left: 1px solid var(--split);
-	background: transparent;
-	color: var(--text-main);
-	padding: 0.72rem 0.85rem;
-	min-height: 0;
-	cursor: pointer;
-	display: flex;
-	align-items: flex-start;
-	transition:
-		border-color 160ms ease,
-		background-color 160ms ease,
-		transform 160ms ease;
-}
-
-.mega-link:hover,
-.mega-link:focus-visible {
-	border-color: var(--text-main);
-	background: var(--background-secondary);
-	transform: translateX(3px);
-	outline: none;
-}
-
-.mega-link strong,
-.mega-link small {
-	display: block;
-}
-
-.mega-link strong {
-	font-size: 1rem;
-	margin-bottom: 0.35rem;
-}
-
-.mega-link small {
-	color: var(--text-secondary);
-	font-size: 0.82rem;
-	line-height: 1.45;
 }
 
 .user-section {
@@ -724,15 +677,6 @@ onBeforeUnmount(() => {
 		overflow-x: auto;
 	}
 
-	.nav-category {
-		flex: 1 0 9rem;
-	}
-
-	.nav-trigger {
-		width: 100%;
-		min-height: 44px;
-	}
-
 	.mega-panel {
 		top: 100%;
 	}
@@ -783,12 +727,7 @@ onBeforeUnmount(() => {
 	}
 
 	.mega-links {
-		grid-template-columns: 1fr;
 		grid-column: auto;
-	}
-
-	.mega-link {
-		min-height: auto;
 	}
 
 	.login-alert {

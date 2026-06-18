@@ -52,7 +52,6 @@ const infoItems = computed(() => [
 				crossorigin="anonymous"
 			/>
 			<div class="profile-title">
-				<span class="eyebrow">查询结果</span>
 				<h2>{{ username }}</h2>
 				<span class="status-pill" :class="statusClass">{{ statusText }}</span>
 			</div>
@@ -118,12 +117,6 @@ const infoItems = computed(() => [
 	min-width: 0;
 	display: grid;
 	gap: 0.28rem;
-}
-
-.eyebrow {
-	color: var(--text-secondary);
-	font-size: 0.82rem;
-	font-weight: 700;
 }
 
 .profile-title h2 {

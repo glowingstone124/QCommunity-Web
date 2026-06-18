@@ -59,6 +59,11 @@
 }
 
 @font-face {
+    font-family: 'SpaceMono';
+    src: url('/src/assets/SpaceMono-Regular.ttf');
+}
+
+@font-face {
   font-family: 'Inter';
   src: url('/src/assets/Inter-VariableFont_opsz,wght.ttf');
 }

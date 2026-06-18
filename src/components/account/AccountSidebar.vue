@@ -1,5 +1,8 @@
 <script setup>
-defineProps({
+import { computed } from 'vue'
+import AppNavigation from '@/components/ui/AppNavigation.vue'
+
+const props = defineProps({
 	currentSetting: {
 		type: Number,
 		required: true,
@@ -11,28 +14,30 @@ defineProps({
 })
 
 const emit = defineEmits(['select', 'logout'])
+
+const navigationItems = computed(() =>
+	props.tabs.map((tab) => ({
+		key: tab.id,
+		label: tab.title,
+		description: tab.description,
+	}))
+)
 </script>
 
 <template>
 	<aside class="side">
 		<div class="side-header">
-			<p class="eyebrow">Account</p>
 			<h1>账户中心</h1>
 			<p class="side-sub">集中管理账户、登录安全与个性化配置</p>
 		</div>
-		<nav class="nav">
-			<button
-				v-for="tab in tabs"
-				:key="tab.id"
-				type="button"
-				class="nav-item"
-				:class="{ active: currentSetting === tab.id }"
-				@click="emit('select', tab.id)"
-			>
-				<span class="nav-title">{{ tab.title }}</span>
-				<span class="nav-desc">{{ tab.description }}</span>
-			</button>
-		</nav>
+		<AppNavigation
+			:active-key="currentSetting"
+			:items="navigationItems"
+			aria-label="账户中心导航"
+			density="panel"
+			orientation="vertical"
+			@select="emit('select', $event.key)"
+		/>
 		<div class="side-foot">
 			<button type="button" class="logout-button" @click="emit('logout')">
 				<span class="logout-title">注销登录</span>
@@ -70,89 +75,11 @@ const emit = defineEmits(['select', 'logout'])
 	color: var(--title-color);
 }
 
-.eyebrow {
-	text-transform: uppercase;
-	letter-spacing: 0;
-	font-size: 0.75rem;
-	color: var(--text-secondary);
-	margin: 0;
-	font-weight: 700;
-}
-
 .side-sub {
 	margin: 0;
 	color: var(--text-secondary);
 	line-height: 1.5;
 	font-size: 0.92rem;
-}
-
-.nav {
-	display: flex;
-	flex-direction: column;
-	gap: 0.25rem;
-	border-top: 1px solid var(--border-soft);
-	border-bottom: 1px solid var(--border-soft);
-	padding: 0.25rem 0;
-}
-
-.nav-item {
-	border: none;
-	background: transparent;
-	border-radius: 0;
-	padding: 0.88rem 0;
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 0.25rem;
-	text-align: left;
-	position: relative;
-	color: var(--text-main);
-	cursor: pointer;
-	transition:
-		background-color 0.18s ease,
-		color 0.18s ease,
-		padding 0.18s ease;
-}
-
-.nav-item::after {
-	content: '';
-	position: absolute;
-	left: 0;
-	top: 0;
-	bottom: 0;
-	width: 2px;
-	background: var(--text-main);
-	transform: scaleY(0);
-	transform-origin: center;
-	transition: transform 0.18s ease;
-}
-
-.nav-item:hover,
-.nav-item.active {
-	padding-left: 0.75rem;
-	background: var(--text-main);
-	color: var(--background);
-}
-
-.nav-item.active {
-	font-weight: 700;
-}
-
-.nav-item:hover::after,
-.nav-item.active::after {
-	transform: scaleY(1);
-}
-
-.nav-title {
-	font-size: 1rem;
-	font-weight: 600;
-	color: currentColor;
-}
-
-.nav-desc {
-	color: currentColor;
-	font-size: 0.9rem;
-	opacity: 0.68;
 }
 
 .side-foot {
@@ -221,25 +148,6 @@ const emit = defineEmits(['select', 'logout'])
 	.side {
 		position: static;
 		min-height: auto;
-	}
-
-	.nav {
-		flex-direction: row;
-		flex-wrap: wrap;
-		border: none;
-		padding: 0;
-	}
-
-	.nav-item {
-		flex: 1 1 160px;
-		border: 1px solid var(--border-soft);
-		padding: 0.82rem 0.9rem;
-	}
-}
-
-@media (max-width: 640px) {
-	.nav-item {
-		flex: 1 1 100%;
 	}
 }
 </style>

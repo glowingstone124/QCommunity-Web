@@ -39,14 +39,6 @@ defineProps({
 	gap: 1rem;
 }
 
-.eyebrow {
-	text-transform: uppercase;
-	letter-spacing: 0.35rem;
-	font-size: 0.75rem;
-	color: var(--text-secondary);
-	margin: 0;
-}
-
 .hero-title {
 	margin: 0;
 	font-size: clamp(2.6rem, 7vw, 4.2rem);
