@@ -276,8 +276,8 @@ onMounted(fetchAccounts);
 
 .text-input:focus {
 	outline: none;
-	border-color: rgba(37, 99, 235, 0.6);
-	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+	border-color: var(--primary);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 15%, transparent);
 }
 
 .filled-button {

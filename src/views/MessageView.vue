@@ -262,16 +262,18 @@ onBeforeUnmount(() => {
 <style scoped>
 :global(:root) {
 	--chat-bg: var(--background-secondary);
-	--chat-card: var(--background);
+	--chat-card: color-mix(in srgb, var(--background) 96%, var(--primary));
 	--chat-soft: color-mix(in srgb, var(--text-main) 4%, transparent);
-	--chat-border: color-mix(in srgb, var(--text-main) 14%, transparent);
+	--chat-border: color-mix(in srgb, var(--text-main) 13%, transparent);
+	--chat-border-strong: color-mix(in srgb, var(--text-main) 24%, transparent);
 }
 
 :global(:root[data-theme="dark"]) {
 	--chat-bg: var(--background);
-	--chat-card: var(--background-secondary);
+	--chat-card: color-mix(in srgb, var(--background-secondary) 92%, var(--primary));
 	--chat-soft: color-mix(in srgb, var(--dark-text-primary) 7%, transparent);
 	--chat-border: color-mix(in srgb, var(--dark-text-primary) 18%, transparent);
+	--chat-border-strong: color-mix(in srgb, var(--dark-text-primary) 26%, transparent);
 }
 
 .chat {
@@ -295,6 +297,8 @@ onBeforeUnmount(() => {
 	justify-content: space-between;
 	align-items: flex-start;
 	gap: 1rem;
+	width: min(1400px, 100%);
+	margin: 0 auto;
 }
 
 .title {
@@ -311,7 +315,6 @@ onBeforeUnmount(() => {
 
 .status-pill {
 	padding: 0.35rem 0.65rem;
-	border-radius: 6px;
 	background: var(--chat-soft);
 	border: 1px solid var(--chat-border);
 	color: var(--text-main);
@@ -322,11 +325,11 @@ onBeforeUnmount(() => {
 	flex: 1 1 auto;
 	min-height: 0;
 	display: flex;
-	border-radius: 8px;
 	border: 1px solid var(--chat-border);
 	background: var(--chat-card);
-	box-shadow: none;
 	overflow: hidden;
+	width: min(1400px, 100%);
+	margin: 0 auto;
 }
 
 .message-container {
@@ -358,7 +361,6 @@ onBeforeUnmount(() => {
 	flex: 0 0 auto;
 	border: 1px solid var(--chat-border);
 	background: var(--chat-soft);
-	border-radius: 6px;
 	padding: 0.9rem 1rem;
 	color: var(--text-secondary);
 }
@@ -371,7 +373,6 @@ onBeforeUnmount(() => {
 .message-bubble {
 	flex: 0 0 auto;
 	background: var(--chat-soft);
-	border-radius: 6px;
 	padding: 0.82rem 0.9rem;
 	border: 1px solid var(--chat-border);
 	border-left-width: 3px;
@@ -418,7 +419,6 @@ onBeforeUnmount(() => {
 
 .source-label {
 	border: 1px solid var(--chat-border);
-	border-radius: 4px;
 	color: var(--text-secondary);
 	font-size: 0.72rem;
 	padding: 0.08rem 0.35rem;
@@ -445,6 +445,8 @@ onBeforeUnmount(() => {
 	flex: 0 0 auto;
 	position: sticky;
 	bottom: 0;
+	width: min(1400px, 100%);
+	margin: 0 auto;
 }
 
 .input-container {
@@ -453,25 +455,24 @@ onBeforeUnmount(() => {
 	padding: 0.9rem 1rem;
 	background: var(--chat-card);
 	border: 1px solid var(--chat-border);
-	border-radius: 8px;
-	box-shadow: none;
 }
 
 .message-input {
 	flex: 1;
 	padding: 0.85rem 1rem;
 	border: 1px solid var(--chat-border);
-	border-radius: 6px;
 	font-size: 1rem;
 	background: transparent;
 	color: var(--text-main);
-	transition: border-color 0.3s, box-shadow 0.3s;
+	transition:
+		border-color 160ms ease,
+		background-color 160ms ease;
 }
 
 .message-input:focus {
-	border-color: rgba(37, 99, 235, 0.6);
+	border-color: var(--primary);
 	outline: none;
-	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+	background: var(--background);
 }
 
 .send-button {
@@ -479,9 +480,10 @@ onBeforeUnmount(() => {
 	background: var(--button-primary-bg);
 	color: var(--button-primary-text);
 	border: 1px solid var(--primary);
-	border-radius: 6px;
 	cursor: pointer;
-	transition: all 0.3s;
+	transition:
+		background-color 160ms ease,
+		border-color 160ms ease;
 	font-weight: 600;
 }
 

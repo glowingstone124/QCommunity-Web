@@ -344,11 +344,7 @@ onBeforeUnmount(stopPolling)
 	height: 100%;
 	min-height: 0;
 	padding: 1rem;
-	background:
-		linear-gradient(90deg, color-mix(in srgb, var(--split) 32%, transparent) 1px, transparent 1px),
-		linear-gradient(180deg, color-mix(in srgb, var(--split) 28%, transparent) 1px, transparent 1px),
-		linear-gradient(180deg, var(--dashboard-surface-muted), var(--background));
-	background-size: 48px 48px, 48px 48px, auto;
+	background: var(--dashboard-surface-muted);
 	color: var(--text-main);
 	overflow: auto;
 }
@@ -414,7 +410,6 @@ onBeforeUnmount(stopPolling)
 	padding: 0.82rem 0.95rem;
 	min-width: 184px;
 	box-sizing: border-box;
-	box-shadow: inset 0 1px 0 color-mix(in srgb, white 28%, transparent);
 }
 
 .status-panel small {
@@ -427,22 +422,18 @@ onBeforeUnmount(stopPolling)
 	height: 0.6rem;
 	border-radius: 50%;
 	background: var(--success);
-	box-shadow: 0 0 0 4px color-mix(in srgb, var(--success) 16%, transparent);
 }
 
 .status-panel.notice .status-dot {
 	background: var(--primary);
-	box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 16%, transparent);
 }
 
 .status-panel.warning .status-dot {
 	background: var(--warning);
-	box-shadow: 0 0 0 4px color-mix(in srgb, var(--warning) 18%, transparent);
 }
 
 .status-panel.danger .status-dot {
 	background: var(--error);
-	box-shadow: 0 0 0 4px color-mix(in srgb, var(--error) 18%, transparent);
 }
 
 .server-switcher {
@@ -515,9 +506,6 @@ onBeforeUnmount(stopPolling)
 .players-panel {
 	border: 1px solid var(--dashboard-line);
 	background: color-mix(in srgb, var(--dashboard-surface) 92%, transparent);
-	box-shadow:
-		inset 0 1px 0 color-mix(in srgb, white 24%, transparent),
-		0 18px 50px color-mix(in srgb, var(--text-main) 7%, transparent);
 }
 
 .metric-card {

@@ -135,8 +135,9 @@ input[type='text'] {
 }
 
 input:focus {
-	border-color: rgba(37, 99, 235, 0.6);
-	box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.5);
+	outline: none;
+	border-color: var(--primary);
+	box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 70%, transparent);
 }
 
 .btn {

@@ -201,11 +201,11 @@ function formatDate(timestamp) {
 }
 
 .login-record.success {
-	border-color: rgba(22, 163, 74, 0.35);
+	border-color: color-mix(in srgb, var(--success) 42%, var(--border-soft));
 }
 
 .login-record.fail {
-	border-color: rgba(220, 38, 38, 0.35);
+	border-color: color-mix(in srgb, var(--error) 42%, var(--border-soft));
 }
 
 .login-record h2 {

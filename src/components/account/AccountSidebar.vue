@@ -101,8 +101,9 @@ const navigationItems = computed(() =>
 	gap: 0.25rem;
 	text-align: left;
 	cursor: pointer;
-	color:white;
+	color: var(--error);
 	transition:
+		color 0.2s ease,
 		background-color 0.2s ease,
 		border-color 0.2s ease;
 }
