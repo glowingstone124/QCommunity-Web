@@ -349,7 +349,7 @@ onBeforeUnmount(stopPolling)
 	overflow: auto;
 }
 
-:global(:root[data-theme='dark']) .dashboard {
+:global(:root[data-theme='dark'] .dashboard) {
 	--dashboard-surface: color-mix(in srgb, var(--background-secondary) 82%, var(--primary));
 	--dashboard-surface-muted: color-mix(in srgb, var(--background) 88%, var(--primary));
 	--dashboard-line: color-mix(in srgb, var(--dark-text-primary) 14%, transparent);

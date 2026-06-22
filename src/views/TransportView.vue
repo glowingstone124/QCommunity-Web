@@ -486,8 +486,8 @@ const closeOnOutsideClick = (event) => {
   --transport-active: color-mix(in srgb, var(--primary) 12%, transparent);
 }
 
-:global(:root[data-theme='dark']) .title,
-:global(:root[data-theme='dark']) .container {
+:global(:root[data-theme='dark'] .title),
+:global(:root[data-theme='dark'] .container) {
   --transport-surface: color-mix(in srgb, var(--background-secondary) 92%, var(--primary));
   --transport-line: color-mix(in srgb, var(--dark-text-primary) 18%, transparent);
   --transport-line-strong: color-mix(in srgb, var(--dark-text-primary) 26%, transparent);

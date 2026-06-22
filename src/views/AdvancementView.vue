@@ -178,7 +178,7 @@ onMounted(async () => {
 	box-sizing: border-box;
 }
 
-:global(:root[data-theme='dark']) .advancement-page {
+:global(:root[data-theme='dark'] .advancement-page) {
 	--advancement-border: color-mix(in srgb, var(--dark-text-primary) 18%, transparent);
 	--advancement-soft: color-mix(in srgb, var(--dark-text-primary) 7%, transparent);
 }

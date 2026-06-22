@@ -366,7 +366,7 @@ onBeforeUnmount(() => {
 	position: relative;
 	min-height: calc(100dvh - var(--app-header-height, 0px));
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) minmax(400px, 520px);
+	grid-template-columns: minmax(0, 580px) minmax(380px, 480px);
 	align-items: center;
 	gap: clamp(1.5rem, 5vw, 4rem);
 	padding: clamp(1rem, 5vw, 4rem);
@@ -375,6 +375,7 @@ onBeforeUnmount(() => {
 		color-mix(in srgb, var(--background-secondary) 78%, #0f172a);
 	overflow: hidden;
 	box-sizing: border-box;
+	justify-content: center;
 }
 
 .shader-background {
@@ -393,7 +394,7 @@ onBeforeUnmount(() => {
 }
 
 .login-copy {
-	max-width: 760px;
+	max-width: 580px;
 	align-self: center;
 }
 
@@ -557,7 +558,7 @@ button:disabled {
 	}
 }
 
-:global(:root[data-theme='dark']) .login-wrapper {
+:global(:root[data-theme='dark'] .login-wrapper) {
 	background:
 		linear-gradient(180deg, color-mix(in srgb, var(--background) 76%, #0f172a), color-mix(in srgb, var(--background) 88%, #0f172a)),
 		color-mix(in srgb, var(--background-secondary) 68%, #0f172a);
@@ -571,11 +572,16 @@ button:disabled {
 	.login-wrapper {
 		grid-template-columns: 1fr;
 		align-content: center;
+		justify-items: center;
 		gap: 1.5rem;
 	}
 
 	.login-copy {
-		max-width: none;
+		width: min(100%, 480px);
+	}
+
+	.login-container {
+		max-width: 480px;
 	}
 }
 

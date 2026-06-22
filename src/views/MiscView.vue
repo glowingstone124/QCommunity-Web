@@ -70,7 +70,7 @@ const switchComponent = (item) => {
 	overflow: auto;
 }
 
-:global(:root[data-theme='dark']) .misc-page {
+:global(:root[data-theme='dark'] .misc-page) {
 	--misc-border: color-mix(in srgb, var(--dark-text-primary) 18%, transparent);
 }
 

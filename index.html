@@ -5,15 +5,107 @@
     <link rel="icon" href="favicon.svg" style="--stroke-width:100">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QCommunity</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+      }
+
+      body {
+        margin: 0;
+        background: #ffffff;
+      }
+
+      #asset-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: grid;
+        place-items: center;
+        background: #ffffff;
+        color: #0f172a;
+        font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        transition: opacity 180ms ease, visibility 180ms ease;
+      }
+
+      #asset-loader.is-hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .asset-loader__panel {
+        width: min(320px, calc(100vw - 48px));
+      }
+
+      .asset-loader__header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 12px;
+      }
+
+      .asset-loader__brand {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      .asset-loader__percent {
+        min-width: 4ch;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        color: #2563eb;
+        font-weight: 700;
+      }
+
+      .asset-loader__track {
+        height: 6px;
+        overflow: hidden;
+        background: #e5e7eb;
+      }
+
+      .asset-loader__bar {
+        width: 0%;
+        height: 100%;
+        background: #2563eb;
+        transition: width 120ms ease;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        body,
+        #asset-loader {
+          background: #050914;
+          color: #f1f5f9;
+        }
+
+        .asset-loader__track {
+          background: #263247;
+        }
+
+        .asset-loader__percent {
+          color: #93c5fd;
+        }
+
+        .asset-loader__bar {
+          background: #60a5fa;
+        }
+      }
+    </style>
   </head>
   <body>
+    <div id="asset-loader" role="status" aria-live="polite" aria-label="Loading assets">
+      <div class="asset-loader__panel">
+        <div class="asset-loader__header">
+          <p class="asset-loader__brand">QCommunity</p>
+          <span id="asset-loader-percent" class="asset-loader__percent">0%</span>
+        </div>
+        <div class="asset-loader__track" aria-hidden="true">
+          <div id="asset-loader-bar" class="asset-loader__bar"></div>
+        </div>
+      </div>
+    </div>
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
   </body>
-    <style>
-
-    body {
-        margin: 0;
-    }
-    </style>
 </html>

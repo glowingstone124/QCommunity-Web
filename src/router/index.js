@@ -1,18 +1,19 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import AccountCenterView from '@/views/AccountCenterView.vue'
-import AdvancementView from '@/views/AdvancementView.vue'
-import CardSingletonView from '@/views/CardSingletonView.vue'
-import DashboardView from '@/views/DashBoardView.vue'
-import HomeView from '@/views/HomeView.vue'
-import LoginView from '@/views/LoginView.vue'
-import MessageView from '@/views/MessageView.vue'
-import MiscView from '@/views/MiscView.vue'
-import NewsView from '@/views/NewsView.vue'
-import NotFoundView from '@/views/NotFoundView.vue'
-import QueryView from '@/views/QueryView.vue'
-import RegisterView from '@/views/RegisterView.vue'
-import SponsorsView from '@/views/SponsorsView.vue'
-import TransportView from '@/views/TransportView.vue'
+
+const AccountCenterView = () => import('@/views/AccountCenterView.vue')
+const AdvancementView = () => import('@/views/AdvancementView.vue')
+const CardSingletonView = () => import('@/views/CardSingletonView.vue')
+const DashboardView = () => import('@/views/DashBoardView.vue')
+const HomeView = () => import('@/views/HomeView.vue')
+const LoginView = () => import('@/views/LoginView.vue')
+const MessageView = () => import('@/views/MessageView.vue')
+const MiscView = () => import('@/views/MiscView.vue')
+const NewsView = () => import('@/views/NewsView.vue')
+const NotFoundView = () => import('@/views/NotFoundView.vue')
+const QueryView = () => import('@/views/QueryView.vue')
+const RegisterView = () => import('@/views/RegisterView.vue')
+const SponsorsView = () => import('@/views/SponsorsView.vue')
+const TransportView = () => import('@/views/TransportView.vue')
 
 const routes = [
 	{
@@ -46,7 +47,7 @@ const routes = [
 		meta: { pageTitle: '仪表板', showNavBar: true },
 	},
 	{
-		path: '/news',
+		path: '/news/:id?',
 		name: 'news',
 		component: NewsView,
 		meta: { pageTitle: '', showNavBar: true },

@@ -35,5 +35,17 @@
     "error": "登录失败:",
     "err_user": "用户名或密码错误，请重试",
     "err_network": "网络连接错误，请稍后再试"
+  },
+  "homePage": {
+    "hero_title": "我们正在筹备中。",
+    "hero_description": "Quantum Original 的官网正在经历新一轮样式调整。您现在看到的页面是 Beta 版本，可能并不反映原始内容。",
+    "scroll_to_feed": "向下滑动查看信息流",
+    "read_more": "查看详情"
+  },
+  "newsPage": {
+    "not_found": "没有找到这条信息流内容。",
+    "no_body": "这条信息暂时没有更多正文。",
+    "back_home": "返回首页",
+    "back_feed": "返回信息流"
   }
 }

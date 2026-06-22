@@ -1,161 +1,299 @@
 <script setup>
-import { onMounted, ref } from 'vue';
-import Redirect from '@/components/RedirectButton.vue';
+import { computed, onMounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
+import { homeNews } from '@/data/home'
 
-const proxies = ref([]);
-const isLoading = ref(true);
-const error = ref(null);
+const route = useRoute()
+const router = useRouter()
+const { locale, t } = useI18n()
+const isLoading = ref(true)
 
-const fetchProxies = async () => {
-  try {
-    const response = await fetch('https://api.qoriginal.vip/qo/proxies/status');
-    if (!response.ok) {
-      throw new Error('网络响应不正常');
-    }
-    const data = await response.json();
-    proxies.value = data;
-  } catch (err) {
-    error.value = '无法获取代理列表，请稍后重试。';
-    console.error('API 请求失败:', err);
-  } finally {
-    isLoading.value = false;
-  }
-};
+const article = computed(() => {
+	const id = route.params.id || homeNews[0]?.id
+	return homeNews.find((item) => item.id === id) || null
+})
 
-const copyToClipboard = (text) => {
-  navigator.clipboard.writeText(text).then(() => {
-    alert(`已复制: ${text}`);
-  }).catch(err => {
-    console.error('复制失败', err);
-  });
-};
+const localizedArticle = computed(() => {
+	if (!article.value) {
+		return null
+	}
+
+	return {
+		...article.value,
+		type: article.value.type[locale.value] || article.value.type.zh,
+		title: article.value.title[locale.value] || article.value.title.zh,
+		description: article.value.description[locale.value] || article.value.description.zh,
+		body: (article.value.body || []).map((block) => block[locale.value] || block.zh),
+	}
+})
+
+function resolveRoute() {
+	if (!route.params.id && homeNews[0]?.id) {
+		router.replace(`/news/${homeNews[0].id}`)
+	}
+}
+
+function startSkeleton() {
+	isLoading.value = true
+	window.setTimeout(() => {
+		isLoading.value = false
+	}, 220)
+}
 
 onMounted(() => {
-  fetchProxies();
-});
+	resolveRoute()
+	startSkeleton()
+})
+
+watch(
+	() => route.params.id,
+	() => {
+		resolveRoute()
+		startSkeleton()
+	}
+)
 </script>
 
 <template>
-  <div class="container">
-    <div class="column">
-      <h1>域名列表</h1>
-      <h2>在这里找到所有的可用分布式连接，随便选择一个可用的来连接到 QuantumOriginal，单击复制到剪切板。</h2>
-      <Redirect />
-    </div>
+	<main class="news-page page-shell">
+		<article v-if="isLoading" class="article-shell" aria-busy="true" aria-live="polite">
+			<div class="article-meta skeleton-line skeleton-line--meta"></div>
+			<div class="skeleton-line skeleton-line--title"></div>
+			<div class="skeleton-line skeleton-line--title-short"></div>
+			<div class="skeleton-media"></div>
+			<div class="article-body">
+				<div v-for="item in 4" :key="item" class="skeleton-paragraph">
+					<span class="skeleton-line"></span>
+					<span class="skeleton-line"></span>
+					<span class="skeleton-line skeleton-line--short"></span>
+				</div>
+			</div>
+		</article>
 
-    <div class="column">
-      <div v-if="isLoading" class="loading">
-        加载中...
-      </div>
+		<section v-else-if="!localizedArticle" class="empty-state">
+			<p>{{ t('newsPage.not_found') }}</p>
+			<router-link class="back-link" to="/">{{ t('newsPage.back_home') }}</router-link>
+		</section>
 
-      <div v-if="error" class="error">
-        {{ error }}
-      </div>
-      <div
-          v-for="(proxy, index) in proxies"
-          :key="'proxy-' + index"
-          class="domain-item"
-          :class="{ 'dead': proxy.stat === 'DEAD' }"
-          @click="copyToClipboard(proxy.url)"
-      >
-        <p>{{ proxy.url }}</p>
-        <span class="status" :class="{ 'alive': proxy.stat === 'ALIVE', 'dead': proxy.stat === 'DEAD' }">
-          {{ proxy.stat === 'ALIVE' ? '可用' : '不可用' }}
-        </span>
-      </div>
-    </div>
-  </div>
+		<article v-else class="article-shell">
+			<header class="article-header">
+				<div class="article-meta">
+					<span>{{ localizedArticle.type }}</span>
+					<time :datetime="localizedArticle.date">{{ localizedArticle.date }}</time>
+				</div>
+				<h1>{{ localizedArticle.title }}</h1>
+				<p>{{ localizedArticle.description }}</p>
+			</header>
+
+			<img
+				v-if="localizedArticle.image"
+				class="article-image"
+				:src="localizedArticle.image"
+				:alt="localizedArticle.title"
+			>
+
+			<div class="article-body">
+				<p v-for="(paragraph, index) in localizedArticle.body" :key="index">
+					{{ paragraph }}
+				</p>
+				<p v-if="!localizedArticle.body.length">{{ t('newsPage.no_body') }}</p>
+			</div>
+
+			<footer class="article-footer">
+				<router-link class="back-link" to="/">{{ t('newsPage.back_feed') }}</router-link>
+			</footer>
+		</article>
+	</main>
 </template>
 
 <style scoped>
-h1, h2, p {
-  color: var(--text-main);
+.news-page {
+	min-height: 100%;
+	background: var(--background-secondary);
+	color: var(--text-main);
+	overflow: auto;
+	padding: clamp(1rem, 4vw, 3rem);
 }
 
-.container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  width: 90%;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: var(--background-secondary);
-  border-radius: 8px;
+.article-shell,
+.empty-state {
+	width: min(920px, 100%);
+	margin: 0 auto;
+	box-sizing: border-box;
 }
 
-.column {
-  width: 100%;
-  padding: 10px 0;
+.article-shell {
+	display: grid;
+	gap: clamp(1.5rem, 4vw, 2.5rem);
+	padding: clamp(1.25rem, 4vw, 3rem) 0 clamp(3rem, 8vw, 5rem);
 }
 
-.domain-item {
-  padding: 16px;
-  margin: 8px 0;
-  background-color: var(--card-background);
-  border-radius: 30px;
-  font-size: 18px;
-  color: var(--text-main);
-  cursor: pointer;
-  text-align: center;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.article-header {
+	display: grid;
+	gap: 0.95rem;
 }
 
-.domain-item:hover {
-  background-color: var(--button-secondary-hover);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+.article-meta {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.75rem;
+	color: var(--text-secondary);
+	font-size: 0.86rem;
+	font-weight: 760;
 }
 
-.domain-item.dead {
-  background-color: var(--error);
-  cursor: not-allowed;
+.article-meta span {
+	color: var(--primary);
 }
 
-.domain-item.dead:hover {
-  background-color: var(--error);
+.article-meta span::after {
+	content: "/";
+	margin-left: 0.75rem;
+	color: var(--text-secondary);
+	font-weight: 400;
 }
 
-.status {
-  font-size: 14px;
-  margin-left: 10px;
+.article-header h1 {
+	margin: 0;
+	color: var(--title-color);
+	font-size: clamp(2rem, 6vw, 4.8rem);
+	font-weight: 680;
+	line-height: 1.05;
+	letter-spacing: 0;
 }
 
-.status.alive {
-  color: var(--success);
+.article-header p {
+	max-width: 760px;
+	margin: 0;
+	color: var(--text-secondary);
+	font-size: clamp(1rem, 2vw, 1.35rem);
+	line-height: 1.6;
 }
 
-.status.dead {
-  color: var(--error);
+.article-image,
+.skeleton-media {
+	width: 100%;
+	aspect-ratio: 16 / 9;
+	display: block;
+	object-fit: cover;
+	background: var(--card-background);
+	border: 1px solid color-mix(in srgb, var(--text-main) 12%, transparent);
+	box-sizing: border-box;
 }
 
-.loading, .error {
-  padding: 16px;
-  margin: 8px 0;
-  background-color: var(--card-background);
-  border-radius: 30px;
-  font-size: 18px;
-  color: var(--text-main);
-  text-align: center;
+.article-body {
+	display: grid;
+	gap: 1.15rem;
+	max-width: 760px;
 }
 
-.error {
-  background-color: var(--error);
-  color: var(--button-primary-text);
+.article-body p {
+	margin: 0;
+	color: var(--text-main);
+	font-size: clamp(1rem, 1.25vw, 1.12rem);
+	line-height: 1.82;
+	overflow-wrap: anywhere;
 }
 
-@media (min-width: 768px) {
-  .container {
-    flex-direction: row;
-    width: 70vw;
-  }
+.article-footer {
+	padding-top: 0.5rem;
+}
 
-  .column {
-    flex: 1;
-    padding: 0 10px;
-  }
+.back-link {
+	display: inline-flex;
+	align-items: center;
+	color: var(--primary);
+	font-weight: 720;
+	text-decoration: none;
+}
+
+.back-link:hover {
+	color: var(--primary-dark);
+}
+
+.empty-state {
+	min-height: calc(100dvh - var(--app-header-height, 0px) - 6rem);
+	display: grid;
+	place-content: center;
+	justify-items: center;
+	gap: 1rem;
+	text-align: center;
+}
+
+.empty-state p {
+	margin: 0;
+	color: var(--text-secondary);
+	font-size: 1rem;
+}
+
+.skeleton-line,
+.skeleton-media {
+	position: relative;
+	overflow: hidden;
+	background: color-mix(in srgb, var(--text-main) 10%, transparent);
+}
+
+.skeleton-line {
+	display: block;
+	height: 1rem;
+	width: 100%;
+}
+
+.skeleton-line--meta {
+	width: 180px;
+	height: 0.9rem;
+}
+
+.skeleton-line--title {
+	width: min(760px, 100%);
+	height: clamp(2.6rem, 6vw, 4.8rem);
+}
+
+.skeleton-line--title-short {
+	width: min(520px, 76%);
+	height: clamp(2.6rem, 6vw, 4.8rem);
+}
+
+.skeleton-line--short {
+	width: 64%;
+}
+
+.skeleton-paragraph {
+	display: grid;
+	gap: 0.65rem;
+}
+
+.skeleton-line::after,
+.skeleton-media::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--background) 42%, transparent), transparent);
+	transform: translateX(-100%);
+	animation: skeleton-shimmer 1.35s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+	to {
+		transform: translateX(100%);
+	}
+}
+
+@media (max-width: 640px) {
+	.news-page {
+		padding: 1rem;
+	}
+
+	.article-shell {
+		padding-top: 1rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.skeleton-line::after,
+	.skeleton-media::after {
+		animation: none;
+	}
 }
 </style>

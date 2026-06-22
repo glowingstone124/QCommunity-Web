@@ -129,7 +129,7 @@ onBeforeUnmount(() => {
 }
 
 p {
-	font-family: 'Bahnschrift', 'NotoSans', serif;
+	font-family: 'Bahnschrift', 'PingFang SC', 'Microsoft YaHei', sans-serif;
 }
 .details-transition-enter-from,
 .details-transition-leave-to {

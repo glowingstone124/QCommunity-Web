@@ -13,7 +13,8 @@
     "transport": "Transport",
     "greeting_text": "You have already played {played} minutes",
     "account_center": "Account Center",
-    "miscs": "Miscs"
+    "miscs": "Miscs",
+    "advancements": "Advancements"
   },
   "mainPage_description": {
     "register": "Register your QuantumOriginal account here",
@@ -24,7 +25,8 @@
     "dashboard": "Check server status",
     "transport": "Get possible routes to anywhere",
     "miscs": "Some interesting toys & tools",
-    "click_login": "Login"
+    "click_login": "Login",
+    "advancements": "View Quantum Original advancement progress"
   },
   "loginPage": {
     "welcome_back": "Welcome Back!",
@@ -33,5 +35,17 @@
     "error": "Failed to login:",
     "err_user": "Username and password don't match. Please try again.",
     "err_network": "Network error. Please try later."
+  },
+  "homePage": {
+    "hero_title": "We are preparing.",
+    "hero_description": "The Quantum Original website is going through another style refresh. This beta page may not reflect the original content.",
+    "scroll_to_feed": "Scroll down to view the feed",
+    "read_more": "Read more"
+  },
+  "newsPage": {
+    "not_found": "This feed item could not be found.",
+    "no_body": "This item does not have more article content yet.",
+    "back_home": "Back home",
+    "back_feed": "Back to feed"
   }
 }
