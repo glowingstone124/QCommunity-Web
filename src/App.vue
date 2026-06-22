@@ -73,7 +73,7 @@ input, textarea {
 
 .app-shell {
 	height: 100dvh;
-	background-color: var(--background);
+	background-color: var(--page-background);
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
@@ -83,6 +83,7 @@ input, textarea {
 	width: 100%;
 	flex: 1;
 	min-height: 0;
+	background: var(--page-background);
 	overflow: auto;
 	overflow-x: hidden;
 }

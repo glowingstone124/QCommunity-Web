@@ -204,7 +204,7 @@ watch(ipAddr, validateIP)
 @import '/src/assets/colors.css';
 
 :global(:root) {
-	--account-bg: var(--background-secondary);
+	--account-bg: var(--page-background);
 	--glass-strong: var(--background);
 	--glass-soft: var(--background);
 	--nav-bg: var(--background);
@@ -214,7 +214,7 @@ watch(ipAddr, validateIP)
 }
 
 :global(:root[data-theme='dark']) {
-	--account-bg: var(--background);
+	--account-bg: var(--page-background);
 	--glass-strong: var(--background-secondary);
 	--glass-soft: var(--background-secondary);
 	--nav-bg: var(--background-secondary);

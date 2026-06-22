@@ -370,9 +370,7 @@ onBeforeUnmount(() => {
 	align-items: center;
 	gap: clamp(1.5rem, 5vw, 4rem);
 	padding: clamp(1rem, 5vw, 4rem);
-	background:
-		linear-gradient(180deg, color-mix(in srgb, var(--background) 84%, #0f172a), color-mix(in srgb, var(--background) 92%, #0f172a)),
-		color-mix(in srgb, var(--background-secondary) 78%, #0f172a);
+	background: var(--page-background);
 	overflow: hidden;
 	box-sizing: border-box;
 	justify-content: center;
@@ -559,9 +557,7 @@ button:disabled {
 }
 
 :global(:root[data-theme='dark'] .login-wrapper) {
-	background:
-		linear-gradient(180deg, color-mix(in srgb, var(--background) 76%, #0f172a), color-mix(in srgb, var(--background) 88%, #0f172a)),
-		color-mix(in srgb, var(--background-secondary) 68%, #0f172a);
+	background: var(--page-background);
 }
 
 .login-wrapper :deep(*) {

@@ -332,9 +332,7 @@ onBeforeUnmount(() => {
 	align-items: center;
 	gap: clamp(1.5rem, 5vw, 4rem);
 	min-height: calc(100dvh - var(--app-header-height, 0px));
-	background:
-		linear-gradient(180deg, color-mix(in srgb, var(--background) 86%, #0f172a), color-mix(in srgb, var(--background) 94%, #0f172a)),
-		color-mix(in srgb, var(--background-secondary) 78%, #0f172a);
+	background: var(--page-background);
 	color: var(--text-main);
 	padding: clamp(1rem, 5vw, 4rem);
 	box-sizing: border-box;
@@ -343,9 +341,7 @@ onBeforeUnmount(() => {
 
 :global(:root[data-theme='dark'] .register-page) {
 	--register-border: color-mix(in srgb, var(--dark-text-primary) 18%, transparent);
-	background:
-		linear-gradient(180deg, color-mix(in srgb, var(--background) 76%, #0f172a), color-mix(in srgb, var(--background) 88%, #0f172a)),
-		color-mix(in srgb, var(--background-secondary) 68%, #0f172a);
+	background: var(--page-background);
 }
 
 .register-copy {

@@ -1,6 +1,6 @@
 :root{
   --app-header-height: 72px;
-  --font-sans: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-sans: 'Space Grotesk', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'SpaceMono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
   --font-display: var(--font-sans);
   --primary: #2563EB;
@@ -8,6 +8,7 @@
   --primary-light: #60A5FA;
   --background: #FFFFFF;
   --background-secondary: #F8FAFC;
+  --page-background: var(--background-secondary);
   --card-background: #F1F5F9;
   --split: #E5E7EB;
   --text-secondary: #64748B;
@@ -43,6 +44,7 @@
 :root[data-theme="dark"]{
   --background: var(--dark-bg);
   --background-secondary: var(--dark-card);
+  --page-background: var(--background);
   --card-background: #0F172A;
   --split: var(--dark-border);
   --text-main: var(--dark-text-primary);
@@ -56,6 +58,47 @@
   --button-ghost-hover: var(--code-bg);
   --text: var(--text-main);
 }
+
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('/src/assets/fonts/space-grotesk/space-grotesk-latin-300-normal.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('/src/assets/fonts/space-grotesk/space-grotesk-latin-400-normal.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('/src/assets/fonts/space-grotesk/space-grotesk-latin-500-normal.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('/src/assets/fonts/space-grotesk/space-grotesk-latin-600-normal.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('/src/assets/fonts/space-grotesk/space-grotesk-latin-700-normal.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 @font-face {
   font-family: 'GSans';
   src: url('/src/assets/GoogleSans-Regular.ttf');

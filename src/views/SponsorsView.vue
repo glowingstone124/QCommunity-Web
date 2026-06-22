@@ -105,7 +105,7 @@ span {
 	width: 130px;
 }
 .bg {
-	background-color: var(--background-secondary);
+	background-color: var(--page-background);
 	height:90vh;
 	padding: 3rem;
 	overflow: scroll;

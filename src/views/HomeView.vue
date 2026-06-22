@@ -1,24 +1,30 @@
 <script setup>
 import {computed, onBeforeUnmount, onMounted, ref} from 'vue'
 import {useI18n} from 'vue-i18n'
-import {homeNews} from '@/data/home'
+import {loadNewsFeed} from '@/utils/newsFeed'
 
 const {locale, t} = useI18n()
 const shaderCanvas = ref(null)
+const newsItems = ref([])
 let animationFrame = 0
 let cleanupShader = () => {}
 let shaderTheme = 0
+let newsRefreshTimer = 0
 const shaderFrameInterval = 1000 / 36
 const shaderTimeScale = 2.2
 
 const localizedNews = computed(() =>
-	homeNews.map((item) => ({
+	newsItems.value.map((item) => ({
 		...item,
 		type: item.type[locale.value] || item.type.zh,
 		title: item.title[locale.value] || item.title.zh,
 		description: item.description[locale.value] || item.description.zh,
 	}))
 )
+
+async function syncNewsFeed() {
+	newsItems.value = await loadNewsFeed()
+}
 
 
 function createShader(gl, type, source) {
@@ -300,9 +306,14 @@ function initShaderBackground() {
 	}
 }
 
-onMounted(initShaderBackground)
+onMounted(() => {
+	initShaderBackground()
+	syncNewsFeed()
+	newsRefreshTimer = window.setInterval(syncNewsFeed, 15000)
+})
 
 onBeforeUnmount(() => {
+	window.clearInterval(newsRefreshTimer)
 	cleanupShader()
 })
 </script>
@@ -604,7 +615,7 @@ onBeforeUnmount(() => {
 	flex-direction: column;
 	gap: 1.7rem;
 	overflow: auto;
-	background: color-mix(in srgb, var(--background-secondary) 78%, #0f172a);
+	background: var(--page-background);
 }
 
 .shader-background {
@@ -617,7 +628,7 @@ onBeforeUnmount(() => {
 }
 
 :global(:root[data-theme='dark'] .home) {
-	background: color-mix(in srgb, var(--background-secondary) 72%, #0f172a);
+	background: var(--page-background);
 }
 
 :global(:root[data-theme='dark'] .news-feed) {

@@ -2,16 +2,17 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
-import { homeNews } from '@/data/home'
+import { loadNewsFeed } from '@/utils/newsFeed'
 
 const route = useRoute()
 const router = useRouter()
 const { locale, t } = useI18n()
+const newsItems = ref([])
 const isLoading = ref(true)
 
 const article = computed(() => {
-	const id = route.params.id || homeNews[0]?.id
-	return homeNews.find((item) => item.id === id) || null
+	const id = route.params.id || newsItems.value[0]?.id
+	return newsItems.value.find((item) => item.id === id) || null
 })
 
 const localizedArticle = computed(() => {
@@ -24,33 +25,33 @@ const localizedArticle = computed(() => {
 		type: article.value.type[locale.value] || article.value.type.zh,
 		title: article.value.title[locale.value] || article.value.title.zh,
 		description: article.value.description[locale.value] || article.value.description.zh,
-		body: (article.value.body || []).map((block) => block[locale.value] || block.zh),
+		body: article.value.body?.[locale.value] || article.value.body?.zh || [],
 	}
 })
 
 function resolveRoute() {
-	if (!route.params.id && homeNews[0]?.id) {
-		router.replace(`/news/${homeNews[0].id}`)
+	if (!route.params.id && newsItems.value[0]?.id) {
+		router.replace(`/news/${newsItems.value[0].id}`)
 	}
 }
 
-function startSkeleton() {
+async function syncArticle() {
 	isLoading.value = true
+	newsItems.value = await loadNewsFeed()
+	resolveRoute()
 	window.setTimeout(() => {
 		isLoading.value = false
 	}, 220)
 }
 
 onMounted(() => {
-	resolveRoute()
-	startSkeleton()
+	syncArticle()
 })
 
 watch(
 	() => route.params.id,
 	() => {
-		resolveRoute()
-		startSkeleton()
+		syncArticle()
 	}
 )
 </script>
@@ -94,9 +95,14 @@ watch(
 			>
 
 			<div class="article-body">
-				<p v-for="(paragraph, index) in localizedArticle.body" :key="index">
-					{{ paragraph }}
-				</p>
+				<template v-for="(block, index) in localizedArticle.body" :key="index">
+					<h2 v-if="block.type === 'heading'">{{ block.text }}</h2>
+					<h3 v-else-if="block.type === 'subheading'">{{ block.text }}</h3>
+					<ul v-else-if="block.type === 'list'">
+						<li v-for="item in block.items" :key="item">{{ item }}</li>
+					</ul>
+					<p v-else>{{ block.text }}</p>
+				</template>
 				<p v-if="!localizedArticle.body.length">{{ t('newsPage.no_body') }}</p>
 			</div>
 
@@ -110,7 +116,7 @@ watch(
 <style scoped>
 .news-page {
 	min-height: 100%;
-	background: var(--background-secondary);
+	background: var(--page-background);
 	color: var(--text-main);
 	overflow: auto;
 	padding: clamp(1rem, 4vw, 3rem);
@@ -194,6 +200,35 @@ watch(
 	font-size: clamp(1rem, 1.25vw, 1.12rem);
 	line-height: 1.82;
 	overflow-wrap: anywhere;
+}
+
+.article-body h2,
+.article-body h3 {
+	margin: 0;
+	color: var(--title-color);
+	line-height: 1.25;
+	letter-spacing: 0;
+}
+
+.article-body h2 {
+	font-size: clamp(1.35rem, 2.2vw, 1.85rem);
+}
+
+.article-body h3 {
+	font-size: clamp(1.15rem, 1.7vw, 1.35rem);
+}
+
+.article-body ul {
+	display: grid;
+	gap: 0.45rem;
+	margin: 0;
+	padding-left: 1.25rem;
+	color: var(--text-main);
+	line-height: 1.7;
+}
+
+.article-body li {
+	padding-left: 0.25rem;
 }
 
 .article-footer {

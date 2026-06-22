@@ -171,7 +171,7 @@ function submitSearch() {
 	height: 100%;
 	min-height: 0;
 	overflow: auto;
-	background: var(--background-secondary);
+	background: var(--page-background);
 	padding: 1rem;
 }
 

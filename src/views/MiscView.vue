@@ -63,7 +63,7 @@ const switchComponent = (item) => {
 	gap: 1rem;
 	height: 100%;
 	min-height: calc(100dvh - var(--app-header-height, 0px));
-	background: var(--background-secondary);
+	background: var(--page-background);
 	color: var(--text-main);
 	padding: 1rem;
 	box-sizing: border-box;

@@ -333,7 +333,7 @@ onBeforeUnmount(stopPolling)
 <style scoped>
 .dashboard {
 	--dashboard-surface: color-mix(in srgb, var(--background) 94%, var(--primary));
-	--dashboard-surface-muted: color-mix(in srgb, var(--background-secondary) 92%, var(--primary));
+	--dashboard-surface-muted: var(--page-background);
 	--dashboard-line: color-mix(in srgb, var(--text-main) 13%, transparent);
 	--dashboard-line-strong: color-mix(in srgb, var(--text-main) 24%, transparent);
 	--dashboard-soft: color-mix(in srgb, var(--text-main) 4%, transparent);
@@ -344,14 +344,14 @@ onBeforeUnmount(stopPolling)
 	height: 100%;
 	min-height: 0;
 	padding: 1rem;
-	background: var(--dashboard-surface-muted);
+	background: var(--page-background);
 	color: var(--text-main);
 	overflow: auto;
 }
 
 :global(:root[data-theme='dark'] .dashboard) {
 	--dashboard-surface: color-mix(in srgb, var(--background-secondary) 82%, var(--primary));
-	--dashboard-surface-muted: color-mix(in srgb, var(--background) 88%, var(--primary));
+	--dashboard-surface-muted: var(--page-background);
 	--dashboard-line: color-mix(in srgb, var(--dark-text-primary) 14%, transparent);
 	--dashboard-line-strong: color-mix(in srgb, var(--dark-text-primary) 24%, transparent);
 	--dashboard-soft: color-mix(in srgb, var(--dark-text-primary) 6%, transparent);

@@ -261,7 +261,7 @@ onBeforeUnmount(() => {
 
 <style scoped>
 :global(:root) {
-	--chat-bg: var(--background-secondary);
+	--chat-bg: var(--page-background);
 	--chat-card: color-mix(in srgb, var(--background) 96%, var(--primary));
 	--chat-soft: color-mix(in srgb, var(--text-main) 4%, transparent);
 	--chat-border: color-mix(in srgb, var(--text-main) 13%, transparent);
@@ -269,7 +269,7 @@ onBeforeUnmount(() => {
 }
 
 :global(:root[data-theme="dark"]) {
-	--chat-bg: var(--background);
+	--chat-bg: var(--page-background);
 	--chat-card: color-mix(in srgb, var(--background-secondary) 92%, var(--primary));
 	--chat-soft: color-mix(in srgb, var(--dark-text-primary) 7%, transparent);
 	--chat-border: color-mix(in srgb, var(--dark-text-primary) 18%, transparent);

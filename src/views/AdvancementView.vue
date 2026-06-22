@@ -171,8 +171,8 @@ onMounted(async () => {
 	gap: 1rem;
 	height: 100%;
 	min-height: 0;
-	padding: 1rem;
-	background: var(--background-secondary);
+	padding: 1rem clamp(1.75rem, 5vw, 5rem);
+	background: var(--page-background);
 	color: var(--text-main);
 	overflow: auto;
 	box-sizing: border-box;
@@ -352,8 +352,8 @@ onMounted(async () => {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: 1rem;
-	background: var(--background-secondary);
+	padding: 1rem clamp(1.75rem, 5vw, 5rem);
+	background: var(--page-background);
 	color: var(--text-main);
 	box-sizing: border-box;
 }
