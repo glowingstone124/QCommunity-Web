@@ -11,14 +11,6 @@ const commands = [
 		args: [],
 	},
 	{
-		name: '/myloc',
-		category: '信息',
-		description: '向公屏发送你当前所在世界与坐标。',
-		usage: '/myloc',
-		keywords: ['location', 'coords', 'coordinate', '坐标', '位置'],
-		args: [],
-	},
-	{
 		name: '/shutup',
 		category: '聊天',
 		description: '控制你的聊天消息是否同步到 QQ 等外部平台。',
@@ -29,12 +21,33 @@ const commands = [
 				key: 'mode',
 				label: '模式',
 				required: true,
+				placeholder: 'query|enable|disable',
 				options: [
 					{ value: 'query', label: 'query', description: '查询消息同步状态' },
-					{ value: 'disable', label: 'disable', description: '禁用服务器消息同步' },
 					{ value: 'enable', label: 'enable', description: '启用服务器消息同步' },
+					{ value: 'disable', label: 'disable', description: '禁用服务器消息同步' },
 				],
 			},
+		],
+	},
+	{
+		name: '/myloc',
+		category: '信息',
+		description: '向在线玩家分享当前位置，并提供高亮坐标的点击建议。',
+		usage: '/myloc',
+		keywords: ['location', 'coords', 'coordinate', '坐标', '位置'],
+		args: [],
+	},
+	{
+		name: '/highlight',
+		category: '信息',
+		description: '用粒子高亮一个坐标方向。游戏内补全会优先给出准星方块或当前位置坐标。',
+		usage: '/highlight <x> <y> <z>',
+		keywords: ['particle', 'location', 'coords', '坐标', '高亮', '粒子'],
+		args: [
+			{ key: 'x', label: 'x', required: true, placeholder: 'x' },
+			{ key: 'y', label: 'y', required: true, placeholder: 'y' },
+			{ key: 'z', label: 'z', required: true, placeholder: 'z' },
 		],
 	},
 	{
@@ -44,6 +57,46 @@ const commands = [
 		usage: '/showitem',
 		keywords: ['item', 'hand', 'broadcast', '物品', '展示'],
 		args: [],
+	},
+	{
+		name: '/querybind',
+		category: '账户',
+		description: '查询玩家绑定信息。游戏内补全在线玩家名。',
+		usage: '/querybind <player>',
+		keywords: ['bind', 'account', 'qq', '绑定', '账户'],
+		args: [
+			{ key: 'player', label: '玩家名', required: true, placeholder: 'player', dynamic: 'onlinePlayerNames' },
+		],
+	},
+	{
+		name: '/viewInventory',
+		category: '账户',
+		description: '请求查看玩家背包。请求通过后会打开对方背包视图。',
+		usage: '/viewInventory <player>',
+		keywords: ['inventory', 'request', '背包', '查看'],
+		args: [
+			{ key: 'player', label: '玩家名', required: true, placeholder: 'player', dynamic: 'onlinePlayerNames' },
+		],
+	},
+	{
+		name: '/summontext',
+		category: '展示',
+		description: '在准星指向位置生成文字展示。',
+		usage: '/summontext <text>',
+		keywords: ['text', 'display', '文字', '展示'],
+		args: [
+			{ key: 'text', label: '文本', required: true, placeholder: 'text' },
+		],
+	},
+	{
+		name: '/login',
+		category: '账户',
+		description: '访客登录。',
+		usage: '/login <password>',
+		keywords: ['password', 'visitor', 'login', '登录', '访客'],
+		args: [
+			{ key: 'password', label: '密码', required: true, placeholder: 'password' },
+		],
 	},
 	{
 		name: '/damageindicator',
@@ -56,11 +109,217 @@ const commands = [
 				key: 'mode',
 				label: '模式',
 				required: true,
+				placeholder: 'query|enable|disable',
 				options: [
 					{ value: 'query', label: 'query', description: '查询伤害指示器状态' },
 					{ value: 'enable', label: 'enable', description: '启用' },
 					{ value: 'disable', label: 'disable', description: '禁用' },
 				],
+			},
+		],
+	},
+	{
+		name: '/leavemessage',
+		category: '消息',
+		description: '给离线玩家留言。当前服务端实现要求玩家名和消息各占一个参数。',
+		usage: '/leavemessage <player> <message>',
+		keywords: ['leave', 'message', 'offline', '留言', '离线'],
+		args: [
+			{ key: 'player', label: '玩家名', required: true, placeholder: 'player', dynamic: 'onlinePlayerNames' },
+			{ key: 'message', label: '消息', required: true, placeholder: 'message' },
+		],
+	},
+	{
+		name: '/elite',
+		category: '物品',
+		description: '将主手物品升级为精英武器，并写入名称和铭文。',
+		usage: '/elite <name> <inscription>',
+		keywords: ['weapon', 'elite', 'legendary', '铭文', '武器'],
+		args: [
+			{ key: 'name', label: '武器名', required: true, placeholder: 'weapon_name', suggestions: ['weapon_name'] },
+			{ key: 'inscription', label: '铭文', required: true, placeholder: 'inscription', suggestions: ['inscription'] },
+		],
+	},
+	{
+		name: '/gm',
+		category: '角色',
+		description: '切换自己的游戏模式，仅允许生存和旁观。',
+		usage: '/gm <s|sc>',
+		keywords: ['gamemode', 'survival', 'spectator', '模式'],
+		args: [
+			{
+				key: 'mode',
+				label: '模式',
+				required: true,
+				placeholder: 's|sc',
+				options: [
+					{ value: 's', label: 's', description: '切换到生存模式' },
+					{ value: 'sc', label: 'sc', description: '切换到旁观模式' },
+				],
+			},
+		],
+	},
+	{
+		name: '/firework',
+		category: '活动',
+		description: '新年烟花。活动未开始时不可用。',
+		usage: '/firework <get|launch> [type]',
+		keywords: ['newyear', 'firework', '烟花', '新年'],
+		args: [
+			{
+				key: 'action',
+				label: '操作',
+				required: true,
+				placeholder: 'get|launch',
+				options: [
+					{ value: 'get', label: 'get', description: '获取新年烟花' },
+					{ value: 'launch', label: 'launch', description: '在身边燃放随机烟花' },
+				],
+			},
+			{
+				key: 'type',
+				label: '类型',
+				required: false,
+				placeholder: 'type',
+				dependsOn: { key: 'action', value: 'get' },
+				options: [
+					{ value: '1', label: '1', description: '烟花方案 1' },
+					{ value: '2', label: '2', description: '烟花方案 2' },
+					{ value: '3', label: '3', description: '烟花方案 3' },
+					{ value: '4', label: '4', description: '烟花方案 4' },
+				],
+			},
+		],
+	},
+	{
+		name: '/newyeartnt',
+		category: '活动',
+		description: '获取新年爆竹。活动未开始时不可用。',
+		usage: '/newyeartnt give',
+		keywords: ['newyear', 'tnt', 'firecracker', '新年', '爆竹'],
+		args: [
+			{
+				key: 'action',
+				label: '操作',
+				required: true,
+				placeholder: 'give',
+				options: [
+					{ value: 'give', label: 'give', description: '获取新年爆竹' },
+				],
+			},
+		],
+	},
+	{
+		name: '/newyeardumplings',
+		category: '活动',
+		description: '获取新年团子。活动未开始时不可用。',
+		usage: '/newyeardumplings',
+		keywords: ['newyear', 'snowball', 'dumpling', '新年', '团子'],
+		args: [],
+	},
+	{
+		name: '/flight',
+		category: '飞行',
+		description: '配置飞行仪表、公开飞行信息和飞行目的地。',
+		usage: '/flight <report|gui|dest> ...',
+		keywords: ['flight', 'elytra', 'destination', '飞行', '仪表', '目的地'],
+		args: [
+			{
+				key: 'section',
+				label: '模块',
+				required: true,
+				placeholder: 'report|gui|dest',
+				options: [
+					{ value: 'report', label: 'report', description: '公开飞行信息' },
+					{ value: 'gui', label: 'gui', description: '显示或隐藏飞行仪表盘' },
+					{ value: 'dest', label: 'dest', description: '管理飞行目的地' },
+					{ value: 'destination', label: 'destination', description: 'dest 的完整别名' },
+				],
+			},
+			{
+				key: 'toggle',
+				label: '开关',
+				required: true,
+				placeholder: 'on|off',
+				dependsOnAny: [
+					{ key: 'section', value: 'report' },
+					{ key: 'section', value: 'gui' },
+				],
+				options: [
+					{ value: 'on', label: 'on', description: '开启' },
+					{ value: 'off', label: 'off', description: '关闭' },
+				],
+			},
+			{
+				key: 'destAction',
+				label: '目的地操作',
+				required: true,
+				placeholder: 'set|unset|list',
+				dependsOnAny: [
+					{ key: 'section', value: 'dest' },
+					{ key: 'section', value: 'destination' },
+				],
+				options: [
+					{ value: 'set', label: 'set', description: '设置目的地' },
+					{ value: 'unset', label: 'unset', description: '清除目的地' },
+					{ value: 'list', label: 'list', description: '列出可用目的地' },
+				],
+			},
+			{
+				key: 'destination',
+				label: '目的地',
+				required: true,
+				placeholder: 'XCA|ZCA|FDA|NONE',
+				dependsOn: { key: 'destAction', value: 'set' },
+				options: [
+					{ value: 'XCA', label: 'XCA', description: '飞行目的地 XCA' },
+					{ value: 'ZCA', label: 'ZCA', description: '飞行目的地 ZCA' },
+					{ value: 'FDA', label: 'FDA', description: '飞行目的地 FDA' },
+					{ value: 'NONE', label: 'NONE', description: '无目的地' },
+				],
+			},
+		],
+	},
+	{
+		name: '/fakeplayer',
+		category: '假人',
+		description: '管理服务器假人：生成、移除、列出或打开背包。',
+		usage: '/fakeplayer <spawn|remove|list|inventory> ...',
+		keywords: ['fakeplayer', 'bot', 'inventory', '假人', '背包'],
+		args: [
+			{
+				key: 'action',
+				label: '操作',
+				required: true,
+				placeholder: 'spawn|remove|list|inventory',
+				options: [
+					{ value: 'spawn', label: 'spawn', description: '在当前位置生成假人' },
+					{ value: 'remove', label: 'remove', description: '移除指定假人' },
+					{ value: 'list', label: 'list', description: '查看假人列表' },
+					{ value: 'inventory', label: 'inventory', description: '打开假人背包' },
+					{ value: 'inv', label: 'inv', description: 'inventory 的短别名' },
+				],
+			},
+			{
+				key: 'name',
+				label: '假人名',
+				required: true,
+				placeholder: 'name',
+				dependsOnAny: [
+					{ key: 'action', value: 'spawn' },
+					{ key: 'action', value: 'remove' },
+					{ key: 'action', value: 'inventory' },
+					{ key: 'action', value: 'inv' },
+				],
+				dynamic: 'fakePlayerNames',
+			},
+			{
+				key: 'skinPlayer',
+				label: '皮肤来源',
+				required: false,
+				placeholder: 'skinPlayer',
+				dependsOn: { key: 'action', value: 'spawn' },
+				dynamic: 'onlinePlayerNames',
 			},
 		],
 	},
@@ -101,7 +360,7 @@ const completionOptions = computed(() => {
 	const term = normalizedQuery.value
 
 	if (!term || term === '/') {
-		return commands.slice(0, 6).map((command) => ({
+		return commands.slice(0, 10).map((command) => ({
 			type: 'command',
 			value: command.name,
 			label: command.name,
@@ -111,7 +370,7 @@ const completionOptions = computed(() => {
 	}
 
 	if (!term.includes(' ')) {
-		return filteredCommands.value.slice(0, 8).map((command) => ({
+		return filteredCommands.value.slice(0, 10).map((command) => ({
 			type: 'command',
 			value: command.name,
 			label: command.name,
@@ -120,19 +379,22 @@ const completionOptions = computed(() => {
 		}))
 	}
 
-	const [commandName, partial = ''] = term.split(/\s+/, 2)
+	const parts = term.split(/\s+/)
+	const commandName = parts[0]
 	const command = commands.find((item) => item.name === commandName || item.name.slice(1) === commandName)
-	const arg = command?.args[0]
+	const argIndex = Math.max(0, parts.length - 2)
+	const arg = command ? visibleArgs(command)[argIndex] : null
+	const partial = parts[parts.length - 1] || ''
 
 	if (!arg) {
 		return []
 	}
 
-	return arg.options
-		.filter((option) => option.value.includes(partial))
+	return suggestionsForArg(arg)
+		.filter((option) => option.value.toLowerCase().includes(partial))
 		.map((option) => ({
 			type: 'argument',
-			value: `${command.name} ${option.value}`,
+			value: [...parts.slice(0, -1), option.value].join(' '),
 			label: option.label,
 			description: option.description,
 			command,
@@ -144,12 +406,18 @@ const completionOptions = computed(() => {
 const composedCommand = computed(() => {
 	const command = activeCommand.value
 
-	if (!command.args.length) {
+	const args = visibleArgs(command)
+
+	if (!args.length) {
 		return command.name
 	}
 
-	const args = command.args.map((arg) => selectedArgs.value[`${command.name}:${arg.key}`] || `<${arg.label}>`)
-	return [command.name, ...args].join(' ')
+	return [
+		command.name,
+		...args
+			.filter((arg) => arg.required || selectedArgs.value[`${command.name}:${arg.key}`])
+			.map((arg) => selectedArgs.value[`${command.name}:${arg.key}`] || `<${arg.placeholder || arg.label}>`),
+	].join(' ')
 })
 
 function selectCommand(command) {
@@ -159,22 +427,83 @@ function selectCommand(command) {
 
 function applyCompletion(option) {
 	activeCommandName.value = option.command.name
-	query.value = option.value
 
 	if (option.type === 'argument') {
 		selectedArgs.value = {
 			...selectedArgs.value,
 			[`${option.command.name}:${option.argKey}`]: option.argValue,
 		}
+		query.value = composedCommand.value
+		return
 	}
+
+	query.value = option.value
 }
 
 function setArg(command, arg, value) {
+	const visibleKeys = new Set(visibleArgs(command).map((item) => item.key))
 	selectedArgs.value = {
-		...selectedArgs.value,
+		...Object.fromEntries(Object.entries(selectedArgs.value).filter(([key]) => {
+			const [, argKey] = key.split(':')
+			return visibleKeys.has(argKey)
+		})),
 		[`${command.name}:${arg.key}`]: value,
 	}
-	query.value = `${command.name} ${value}`
+	query.value = composedCommand.value
+}
+
+function dependencyMatches(command, dependency) {
+	return selectedArgs.value[`${command.name}:${dependency.key}`] === dependency.value
+}
+
+function isArgVisible(command, arg) {
+	if (arg.dependsOn) {
+		return dependencyMatches(command, arg.dependsOn)
+	}
+
+	if (arg.dependsOnAny) {
+		return arg.dependsOnAny.some((dependency) => dependencyMatches(command, dependency))
+	}
+
+	return true
+}
+
+function visibleArgs(command) {
+	return command.args.filter((arg) => isArgVisible(command, arg))
+}
+
+function suggestionsForArg(arg) {
+	if (arg.options) {
+		return arg.options
+	}
+
+	if (arg.suggestions) {
+		return arg.suggestions.map((value) => ({
+			value,
+			label: value,
+			description: `填入 ${arg.label}`,
+		}))
+	}
+
+	if (arg.dynamic === 'onlinePlayerNames') {
+		return [
+			{ value: '<player>', label: '<player>', description: '游戏内会补全在线玩家名' },
+		]
+	}
+
+	if (arg.dynamic === 'fakePlayerNames') {
+		return [
+			{ value: '<fakePlayer>', label: '<fakePlayer>', description: '游戏内会补全当前假人名' },
+		]
+	}
+
+	return [
+		{ value: `<${arg.placeholder || arg.label}>`, label: `<${arg.placeholder || arg.label}>`, description: `填入 ${arg.label}` },
+	]
+}
+
+function optionKey(command, arg) {
+	return `${command.name}:${arg.key}`
 }
 
 async function copyCommand() {
@@ -243,16 +572,19 @@ async function copyCommand() {
 					<code>{{ activeCommand.usage }}</code>
 				</div>
 
-				<div v-if="activeCommand.args.length" class="arg-builder">
-					<section v-for="arg in activeCommand.args" :key="arg.key" class="arg-section">
-						<h3>{{ arg.label }}</h3>
+				<div v-if="visibleArgs(activeCommand).length" class="arg-builder">
+					<section v-for="arg in visibleArgs(activeCommand)" :key="arg.key" class="arg-section">
+						<h3>
+							{{ arg.label }}
+							<span v-if="!arg.required">可选</span>
+						</h3>
 						<div class="arg-options">
 							<button
-								v-for="option in arg.options"
+								v-for="option in suggestionsForArg(arg)"
 								:key="option.value"
 								type="button"
 								class="arg-option"
-								:class="{ 'is-selected': selectedArgs[`${activeCommand.name}:${arg.key}`] === option.value }"
+								:class="{ 'is-selected': selectedArgs[optionKey(activeCommand, arg)] === option.value }"
 								@click="setArg(activeCommand, arg, option.value)"
 							>
 								<strong>{{ option.label }}</strong>
