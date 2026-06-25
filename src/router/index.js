@@ -4,6 +4,7 @@ const AccountCenterView = () => import('@/views/AccountCenterView.vue')
 const AdvancementView = () => import('@/views/AdvancementView.vue')
 const CardSingletonView = () => import('@/views/CardSingletonView.vue')
 const DashboardView = () => import('@/views/DashBoardView.vue')
+const GuidesView = () => import('@/views/GuidesView.vue')
 const HomeView = () => import('@/views/HomeView.vue')
 const LoginView = () => import('@/views/LoginView.vue')
 const MessageView = () => import('@/views/MessageView.vue')
@@ -51,6 +52,12 @@ const routes = [
 		name: 'news',
 		component: NewsView,
 		meta: { pageTitle: '', showNavBar: true },
+	},
+	{
+		path: '/guides/:id?',
+		name: 'guides',
+		component: GuidesView,
+		meta: { pageTitle: '指南', showNavBar: true },
 	},
 	{
 		path: '/register',

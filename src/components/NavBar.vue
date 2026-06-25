@@ -47,7 +47,6 @@
 								class="mega-panel-inner"
 							>
 								<div class="mega-panel-heading">
-									<span class="mega-kicker">{{ activeNavCategory.kicker }}</span>
 									<strong>{{ activeNavCategory.title }}</strong>
 								</div>
 
@@ -119,9 +118,6 @@ const navCategories = computed(() => [
 	{
 		key: 'community',
 		label: locale.value === 'zh' ? '社区' : 'Community',
-		kicker: loggedIn.value
-			? (locale.value === 'zh' ? '进入社区' : 'Community')
-			: (locale.value === 'zh' ? '需要账户' : 'Account Required'),
 		title: loggedIn.value
 			? (locale.value === 'zh' ? '账户、查询与消息' : 'Accounts, Query and Messages')
 			: (locale.value === 'zh' ? '登录或注册后访问社区功能' : 'Sign in or register to access community features'),
@@ -152,7 +148,6 @@ const navCategories = computed(() => [
 	{
 		key: 'server',
 		label: locale.value === 'zh' ? '服务器' : 'Server',
-		kicker: locale.value === 'zh' ? '实时工具' : 'Live Tools',
 		title: locale.value === 'zh' ? '状态、连接与交通' : 'Status, Connections and Transport',
 		items: [
 			{
@@ -173,11 +168,25 @@ const navCategories = computed(() => [
 		],
 	},
 	{
+		key: 'guides',
+		label: locale.value === 'zh' ? '内容' : 'Content',
+		title: locale.value === 'zh' ? '官网更新、入服指南与服务器资料' : 'Updates, Guides and Server Notes',
+		items: [
+			{
+				path: '/news',
+				label: locale.value === 'zh' ? '新闻动态' : 'News',
+				description: locale.value === 'zh' ? '官网进度、服务器公告和内容更新。' : 'Website progress, server announcements and content updates.',
+			},
+			{
+				path: '/guides',
+				label: locale.value === 'zh' ? 'Wiki 指南' : 'Wiki Guides',
+				description: locale.value === 'zh' ? '浏览全部 Wiki、规则与服务器资料。' : 'Browse the full wiki, rules and server reference.',
+			},
+		],
+	},
+	{
 		key: 'explore',
 		label: locale.value === 'zh' ? '探索' : 'Explore',
-		kicker: loggedIn.value
-			? (locale.value === 'zh' ? '更多内容' : 'More')
-			: (locale.value === 'zh' ? '需要账户' : 'Account Required'),
 		title: loggedIn.value
 			? (locale.value === 'zh' ? '成就、致谢与小功能' : 'Advancements, Sponsors and Tools')
 			: (locale.value === 'zh' ? '登录或注册后访问探索内容' : 'Sign in or register to access explore content'),
@@ -345,6 +354,7 @@ onBeforeUnmount(() => {
 	padding: 0 1rem;
 	gap: 1rem;
 	position: relative;
+	box-sizing: border-box;
 }
 
 .logo-section {
@@ -447,9 +457,8 @@ onBeforeUnmount(() => {
 .mega-panel {
 	position: absolute;
 	top: 100%;
-	left: 50%;
+	left: calc(50% - 50vw);
 	width: 100vw;
-	margin-left: -50vw;
 	border-bottom: 1px solid var(--split);
 	background: var(--background);
 	pointer-events: auto;
@@ -520,12 +529,6 @@ onBeforeUnmount(() => {
 .mega-panel-heading strong {
 	font-size: 1.4rem;
 	line-height: 1.15;
-}
-
-.mega-kicker {
-	font-size: 0.76rem;
-	color: var(--text-secondary);
-	text-transform: uppercase;
 }
 
 .mega-links {

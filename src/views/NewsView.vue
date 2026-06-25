@@ -29,10 +29,23 @@ const localizedArticle = computed(() => {
 	}
 })
 
+const localizedNewsItems = computed(() =>
+	newsItems.value.map((item) => ({
+		...item,
+		type: item.type[locale.value] || item.type.zh,
+		title: item.title[locale.value] || item.title.zh,
+		description: item.description[locale.value] || item.description.zh,
+	}))
+)
+
 function resolveRoute() {
 	if (!route.params.id && newsItems.value[0]?.id) {
 		router.replace(`/news/${newsItems.value[0].id}`)
 	}
+}
+
+function goToArticle(id) {
+	router.push(`/news/${id}`)
 }
 
 async function syncArticle() {
@@ -58,74 +71,183 @@ watch(
 
 <template>
 	<main class="news-page page-shell">
-		<article v-if="isLoading" class="article-shell" aria-busy="true" aria-live="polite">
-			<div class="article-meta skeleton-line skeleton-line--meta"></div>
-			<div class="skeleton-line skeleton-line--title"></div>
-			<div class="skeleton-line skeleton-line--title-short"></div>
-			<div class="skeleton-media"></div>
-			<div class="article-body">
-				<div v-for="item in 4" :key="item" class="skeleton-paragraph">
-					<span class="skeleton-line"></span>
-					<span class="skeleton-line"></span>
-					<span class="skeleton-line skeleton-line--short"></span>
-				</div>
+		<aside class="news-sidebar" aria-label="新闻列表">
+			<div class="news-sidebar-heading">
+				<h1>{{ locale === 'zh' ? '新闻动态' : 'News' }}</h1>
 			</div>
-		</article>
 
-		<section v-else-if="!localizedArticle" class="empty-state">
-			<p>{{ t('newsPage.not_found') }}</p>
-			<router-link class="back-link" to="/">{{ t('newsPage.back_home') }}</router-link>
+			<nav class="news-nav">
+				<button
+					v-for="item in localizedNewsItems"
+					:key="item.id"
+					type="button"
+					class="news-nav-item"
+					:class="{ 'is-active': item.id === article?.id }"
+					@click="goToArticle(item.id)"
+				>
+					<span class="news-nav-meta">
+						<span>{{ item.type }}</span>
+						<time :datetime="item.date">{{ item.date }}</time>
+					</span>
+					<strong>{{ item.title }}</strong>
+					<small>{{ item.description }}</small>
+				</button>
+			</nav>
+		</aside>
+
+		<section class="news-reader">
+			<article v-if="isLoading" class="article-shell" aria-busy="true" aria-live="polite">
+				<div class="article-meta skeleton-line skeleton-line--meta"></div>
+				<div class="skeleton-line skeleton-line--title"></div>
+				<div class="skeleton-line skeleton-line--title-short"></div>
+				<div class="skeleton-media"></div>
+				<div class="article-body">
+					<div v-for="item in 4" :key="item" class="skeleton-paragraph">
+						<span class="skeleton-line"></span>
+						<span class="skeleton-line"></span>
+						<span class="skeleton-line skeleton-line--short"></span>
+					</div>
+				</div>
+			</article>
+
+			<section v-else-if="!localizedArticle" class="empty-state">
+				<p>{{ t('newsPage.not_found') }}</p>
+				<router-link class="back-link" to="/">{{ t('newsPage.back_home') }}</router-link>
+			</section>
+
+			<article v-else class="article-shell">
+				<header class="article-header">
+					<div class="article-meta">
+						<span>{{ localizedArticle.type }}</span>
+						<time :datetime="localizedArticle.date">{{ localizedArticle.date }}</time>
+					</div>
+					<h1>{{ localizedArticle.title }}</h1>
+					<p>{{ localizedArticle.description }}</p>
+				</header>
+
+				<img
+					v-if="localizedArticle.image"
+					class="article-image"
+					:src="localizedArticle.image"
+					:alt="localizedArticle.title"
+				>
+
+				<div class="article-body">
+					<template v-for="(block, index) in localizedArticle.body" :key="index">
+						<h2 v-if="block.type === 'heading'">{{ block.text }}</h2>
+						<h3 v-else-if="block.type === 'subheading'">{{ block.text }}</h3>
+						<ul v-else-if="block.type === 'list'">
+							<li v-for="item in block.items" :key="item">{{ item }}</li>
+						</ul>
+						<p v-else>{{ block.text }}</p>
+					</template>
+					<p v-if="!localizedArticle.body.length">{{ t('newsPage.no_body') }}</p>
+				</div>
+
+				<footer class="article-footer">
+					<router-link class="back-link" to="/">{{ t('newsPage.back_feed') }}</router-link>
+				</footer>
+			</article>
 		</section>
-
-		<article v-else class="article-shell">
-			<header class="article-header">
-				<div class="article-meta">
-					<span>{{ localizedArticle.type }}</span>
-					<time :datetime="localizedArticle.date">{{ localizedArticle.date }}</time>
-				</div>
-				<h1>{{ localizedArticle.title }}</h1>
-				<p>{{ localizedArticle.description }}</p>
-			</header>
-
-			<img
-				v-if="localizedArticle.image"
-				class="article-image"
-				:src="localizedArticle.image"
-				:alt="localizedArticle.title"
-			>
-
-			<div class="article-body">
-				<template v-for="(block, index) in localizedArticle.body" :key="index">
-					<h2 v-if="block.type === 'heading'">{{ block.text }}</h2>
-					<h3 v-else-if="block.type === 'subheading'">{{ block.text }}</h3>
-					<ul v-else-if="block.type === 'list'">
-						<li v-for="item in block.items" :key="item">{{ item }}</li>
-					</ul>
-					<p v-else>{{ block.text }}</p>
-				</template>
-				<p v-if="!localizedArticle.body.length">{{ t('newsPage.no_body') }}</p>
-			</div>
-
-			<footer class="article-footer">
-				<router-link class="back-link" to="/">{{ t('newsPage.back_feed') }}</router-link>
-			</footer>
-		</article>
 	</main>
 </template>
 
 <style scoped>
 .news-page {
 	min-height: 100%;
+	display: grid;
+	grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+	gap: clamp(1.25rem, 3vw, 2.5rem);
 	background: var(--page-background);
 	color: var(--text-main);
 	overflow: auto;
 	padding: clamp(1rem, 4vw, 3rem);
 }
 
+.news-sidebar {
+	position: sticky;
+	top: 1rem;
+	align-self: start;
+	max-height: calc(100dvh - var(--app-header-height) - 2rem);
+	overflow: auto;
+	border-right: 1px solid var(--split);
+	padding-right: 1rem;
+}
+
+.news-sidebar-heading {
+	display: grid;
+	gap: 0.35rem;
+	margin-bottom: 1.25rem;
+}
+
+.news-sidebar-heading h1 {
+	margin: 0;
+	color: var(--title-color);
+	font-size: 1.7rem;
+	line-height: 1.1;
+	letter-spacing: 0;
+}
+
+.news-nav {
+	display: grid;
+	gap: 0.6rem;
+}
+
+.news-nav-item {
+	width: 100%;
+	display: grid;
+	gap: 0.42rem;
+	border: 1px solid transparent;
+	border-left-color: var(--split);
+	background: transparent;
+	color: var(--text-main);
+	text-align: left;
+	padding: 0.78rem 0.85rem;
+	cursor: pointer;
+}
+
+.news-nav-item:hover,
+.news-nav-item:focus-visible,
+.news-nav-item.is-active {
+	border-left-color: var(--primary);
+	background: var(--background);
+	outline: none;
+	transform: translateX(3px);
+}
+
+.news-nav-meta {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	color: var(--text-secondary);
+	font-size: 0.76rem;
+	font-weight: 720;
+	line-height: 1.2;
+}
+
+.news-nav-meta span {
+	color: var(--primary);
+}
+
+.news-nav-item strong {
+	color: var(--title-color);
+	font-size: 0.98rem;
+	line-height: 1.28;
+}
+
+.news-nav-item small {
+	color: var(--text-secondary);
+	font-size: 0.82rem;
+	line-height: 1.42;
+}
+
+.news-reader {
+	min-width: 0;
+}
+
 .article-shell,
 .empty-state {
-	width: min(920px, 100%);
-	margin: 0 auto;
+	width: min(900px, 100%);
 	box-sizing: border-box;
 }
 
@@ -317,7 +439,29 @@ watch(
 
 @media (max-width: 640px) {
 	.news-page {
+		grid-template-columns: 1fr;
 		padding: 1rem;
+	}
+
+	.news-sidebar {
+		position: static;
+		max-height: none;
+		border-right: none;
+		border-bottom: 1px solid var(--split);
+		padding-right: 0;
+		padding-bottom: 1rem;
+	}
+
+	.news-nav {
+		display: flex;
+		overflow-x: auto;
+		padding-bottom: 0.2rem;
+		scroll-snap-type: x mandatory;
+	}
+
+	.news-nav-item {
+		min-width: min(82vw, 20rem);
+		scroll-snap-align: start;
 	}
 
 	.article-shell {

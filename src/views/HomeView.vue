@@ -21,6 +21,7 @@ const localizedNews = computed(() =>
 		description: item.description[locale.value] || item.description.zh,
 	}))
 )
+const currentYear = new Date().getFullYear()
 
 async function syncNewsFeed() {
 	newsItems.value = await loadNewsFeed()
@@ -355,6 +356,13 @@ onBeforeUnmount(() => {
 					</article>
 				</div>
 			</section>
+
+			<footer class="home-footer">
+				<div class="footer-brand">
+					<strong>Quantum Original</strong>
+					<p>Copyright {{ currentYear }} Quantum Original & Holographic Lab. All rights reserved.</p>
+				</div>
+			</footer>
 		</div>
 	</div>
 </template>
@@ -366,12 +374,58 @@ onBeforeUnmount(() => {
 	width: min(1560px, 100%);
 	min-height: 100%;
 	margin: 0 auto;
-	padding: 0 clamp(1rem, 4vw, 3rem) clamp(8rem, 20vh, 20rem);
+	padding: 0 clamp(1rem, 4vw, 3rem) clamp(10rem, 22vh, 18rem);
 	box-sizing: border-box;
 	display: grid;
 	grid-template-columns: minmax(0, 1fr);
 	align-content: start;
 	gap: clamp(4rem, 10vh, 8rem);
+}
+
+.home-footer {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: clamp(1.5rem, 4vw, 3rem);
+	border-top: 1px solid color-mix(in srgb, var(--text-main) 12%, transparent);
+	padding: clamp(1.5rem, 4vw, 2.4rem) 0 clamp(3rem, 8vh, 6rem);
+	color: var(--text-secondary);
+}
+
+.footer-brand {
+	display: grid;
+	gap: 0.45rem;
+}
+
+.footer-brand strong {
+	color: var(--title-color);
+	font-size: clamp(1.15rem, 2vw, 1.45rem);
+	font-weight: 680;
+	line-height: 1.15;
+}
+
+.footer-brand p {
+	margin: 0;
+	font-size: 0.9rem;
+	line-height: 1.5;
+}
+
+.footer-links {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	gap: 0.65rem 1rem;
+}
+
+.footer-links a {
+	color: var(--text-secondary);
+	font-size: 0.92rem;
+	font-weight: 680;
+	text-decoration: none;
+}
+
+.footer-links a:hover {
+	color: var(--primary);
 }
 
 .home-hero {
@@ -396,7 +450,7 @@ onBeforeUnmount(() => {
 	font-size: clamp(3rem, 9vw, 8.4rem);
 	font-weight: 520;
 	line-height: 0.98;
-	white-space: nowrap;
+	overflow-wrap: anywhere;
 }
 
 .hero-description {
@@ -448,7 +502,8 @@ onBeforeUnmount(() => {
 
 .news-feed {
 	width: 100%;
-	padding: clamp(1.25rem, 3vw, 2.5rem);
+	padding: 0;
+	box-sizing: border-box;
 }
 
 .section-heading {
@@ -466,15 +521,18 @@ onBeforeUnmount(() => {
 
 .news-list {
 	display: grid;
-	grid-template-columns: 1fr;
-	gap: clamp(1.5rem, 3vw, 2.25rem);
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+	grid-auto-flow: dense;
+	gap: clamp(0.9rem, 2vw, 1.35rem);
+	align-items: stretch;
 }
 
 .news-item {
 	position: relative;
 	display: grid;
-	grid-template-columns: minmax(280px, 36%) minmax(0, 1fr);
-	min-height: clamp(340px, 40vh, 520px);
+	grid-template-columns: 1fr;
+	grid-column: span 2;
+	min-height: clamp(320px, 34vh, 460px);
 	background: color-mix(in srgb, var(--background) 42%, transparent);
 	border: 1px solid color-mix(in srgb, var(--text-main) 12%, transparent);
 	backdrop-filter: blur(16px) saturate(115%);
@@ -506,10 +564,13 @@ onBeforeUnmount(() => {
 
 .news-item--text-only {
 	grid-template-columns: 1fr;
+	grid-column: span 1;
+	min-height: 0;
 }
 
 .news-image {
-	min-height: 100%;
+	aspect-ratio: 16 / 9;
+	min-height: 0;
 	background: color-mix(in srgb, var(--text-main) 6%, transparent);
 }
 
@@ -523,7 +584,13 @@ onBeforeUnmount(() => {
 .news-body {
 	display: flex;
 	flex-direction: column;
-	padding: clamp(1.6rem, 4vw, 3.4rem);
+	padding: clamp(1.25rem, 3vw, 2.2rem);
+	min-width: 0;
+	min-height: 0;
+}
+
+.news-item--text-only .news-body {
+	padding: clamp(1rem, 2vw, 1.45rem);
 }
 
 .news-meta {
@@ -548,20 +615,34 @@ onBeforeUnmount(() => {
 }
 
 .news-item h3 {
-	margin: 1.35rem 0 0;
+	margin: 1rem 0 0;
 	color: var(--title-color);
-	font-size: clamp(1.35rem, 2.8vw, 2.45rem);
+	font-size: clamp(1.2rem, 2.2vw, 2rem);
 	font-weight: 720;
 	line-height: 1.16;
+	overflow-wrap: anywhere;
+}
+
+.news-item--text-only h3 {
+	font-size: clamp(1.05rem, 1.4vw, 1.35rem);
+	line-height: 1.2;
 }
 
 .news-item p {
-	margin: 1.1rem 0 0;
+	margin: 0.85rem 0 0;
 	color: var(--text-secondary);
 	font-size: clamp(0.92rem, 1.15vw, 1.05rem);
 	font-weight: 430;
 	line-height: 1.6;
 	max-width: 72ch;
+	overflow-wrap: anywhere;
+}
+
+.news-item--text-only p {
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
 }
 
 .news-link {
@@ -570,7 +651,7 @@ onBeforeUnmount(() => {
 	gap: 0.7rem;
 	align-self: flex-start;
 	margin-top: auto;
-	padding-top: 1.5rem;
+	padding-top: 1.15rem;
 	color: var(--primary);
 	font-size: 0.92rem;
 	font-weight: 700;
@@ -639,13 +720,17 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 980px) {
+	.home-content {
+		width: 100%;
+		padding-inline: clamp(1rem, 4vw, 2rem);
+	}
+
 	.home-hero {
 		min-height: auto;
 	}
 
-	.news-item,
-	.news-item--text-only {
-		grid-template-columns: 1fr;
+	.news-item {
+		grid-column: span 1;
 	}
 
 	.news-image {
@@ -655,13 +740,34 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 640px) {
-	.home-hero h1 {
-		white-space: normal;
-		overflow-wrap: anywhere;
+	.home-content {
+		padding-inline: 1rem;
+		padding-bottom: 8rem;
+	}
+
+	.home-footer {
+		padding-bottom: 4.5rem;
+	}
+
+	.home-hero {
+		padding-top: 3rem;
 	}
 
 	.news-feed {
-		padding: 1rem;
+		padding: 0;
+	}
+
+	.news-list {
+		grid-template-columns: 1fr;
+	}
+
+	.home-footer {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+
+	.footer-links {
+		justify-content: flex-start;
 	}
 
 	.shader-background {
