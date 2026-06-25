@@ -69,16 +69,6 @@ const commands = [
 		],
 	},
 	{
-		name: '/viewInventory',
-		category: '账户',
-		description: '请求查看玩家背包。请求通过后会打开对方背包视图。',
-		usage: '/viewInventory <player>',
-		keywords: ['inventory', 'request', '背包', '查看'],
-		args: [
-			{ key: 'player', label: '玩家名', required: true, placeholder: 'player', dynamic: 'onlinePlayerNames' },
-		],
-	},
-	{
 		name: '/summontext',
 		category: '展示',
 		description: '在准星指向位置生成文字展示。',
