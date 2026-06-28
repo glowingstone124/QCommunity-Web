@@ -53,7 +53,7 @@
 
 					<div v-if="step === 4" class="quiz-intro">
 						<p>为保证服务器秩序，Quantum Original 只接受初中含在读及以上学历，或具备一定文化常识与文字理解能力的玩家。</p>
-						<p>测试共 9 道选择题。答对 6 题方为通过。</p>
+						<p>测试共 10 道选择题。答对 6 题方为通过。</p>
 						<p>测试通过后，请返回 QQ 群输入相应的 `.approve-register &lt;参数&gt;` 完成绑定验证。</p>
 					</div>
 
@@ -65,7 +65,7 @@
 					</button>
 				</form>
 
-				<div v-else-if="step === 4 && quiz_seq <= 8" :key="`quiz-${quiz_seq}`" class="quiz-section">
+				<div v-else-if="step === 4 && quiz_seq <= 9" :key="`quiz-${quiz_seq}`" class="quiz-section">
 					<div class="quiz-window">
 						<div>
 							<h3>{{ questions[quiz_seq] }}</h3>
@@ -77,7 +77,7 @@
 						<button v-if="quiz_seq === 0" type="button" class="secondary-button" @click="switchPage">跳过等待</button>
 					</div>
 
-					<div class="options" v-if="quiz_seq >= 0 && quiz_seq <= 8">
+					<div class="options" v-if="quiz_seq >= 0 && quiz_seq <= 9">
 						<button type="button" @click="selectAnswer(0)">{{ optionA[quiz_seq] }}</button>
 						<button type="button" @click="selectAnswer(1)">{{ optionB[quiz_seq] }}</button>
 						<button type="button" @click="selectAnswer(2)">{{ optionC[quiz_seq] }}</button>
@@ -166,7 +166,7 @@ const optionB = [
   "B. 17",
   "B. giraffe",
   "B. 猿猱欲渡愁攀援",
-  "B. 辽宁沈阳",
+  "B. 新疆哈密",
   "B. 总是成对出现，作用在不同物体上",
   "B. 稀盐酸和石英",
   "B. 第二象限",
