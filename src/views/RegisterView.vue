@@ -52,8 +52,8 @@
 					</label>
 
 					<div v-if="step === 4" class="quiz-intro">
-						<p>为保证服务器秩序，Quantum Original 只接受初中含在读及以上学历，或具备一定文字理解能力的玩家。</p>
-						<p>测试共 1 个阅读语篇、8 道选择题。答对 6 题方为通过。</p>
+						<p>为保证服务器秩序，Quantum Original 只接受初中含在读及以上学历，或具备一定文化常识与文字理解能力的玩家。</p>
+						<p>测试共 9 道选择题。答对 6 题方为通过。</p>
 						<p>测试通过后，请返回 QQ 群输入相应的 `.approve-register &lt;参数&gt;` 完成绑定验证。</p>
 					</div>
 
@@ -67,17 +67,8 @@
 
 				<div v-else-if="step === 4 && quiz_seq <= 8" :key="`quiz-${quiz_seq}`" class="quiz-section">
 					<div class="quiz-window">
-						<div v-if="quiz_seq === 0">
-							<h3>阅读材料</h3>
-							<p>夜幕来临，阿弥诺斯大陆华灯盏盏，从飞机上向下俯瞰，整个大陆如同地上散落的星河。（甲）近日，一幅玩家在从主城飞往锡城的途中从飞机舷窗外拍摄主城夜景的照片在 QO 社区中广受好评。</p>
-							<p>这幅璀璨的星图的右前方，有一颗被称作主城北站的亮星。该站始建于 2023 年，系 G3 线蓝冰化改造后新建的终点站。由于其南临主城核心区，北有海洋的独特地理禀赋，历经多次改造，主城北站已成为铁路联通全物品分类机、末地门，蓝冰高速联通出生点和锡城，并即将开通接入 6 号线的一级站。</p>
-							<p>（乙）正值主城北片区改造工程之际，由 Wsiogn 领衔的 QO 玩家通过炸山平地的方式，在主城北北面开创性地设计并制造了第 1 座机场，解决了主城北站无法进行大于 5 千米旅行的短板。</p>
-							<p>芙岛原住民 Anonymous 表示，空运对于芙岛的哞菇产业有着不可替代的作用，有助于芙岛整只出口哞菇，打响产业品牌。（丙）但以 MineCreeper 为代表的玩家表示，设立机场这一举措有华而不实之嫌。</p>
-							<p>不过，机场的开通提供了一种稳定且快速的运输实体的方式，这是任何一种已有的交通方式都难以实现的短板。（丁）交通的进步为打造一个货物互联、资源互补、经济互助、民心相通的 Quantum Original 铸造了更多机遇。</p>
-						</div>
-						<div v-else>
-							<h3>{{ questions[quiz_seq - 1] }}</h3>
-							<p v-if="quiz_seq === 8">事实上，机场只是服务器大力推进交通建设的一个缩影。服务器自研的矿车高速化和闭塞区段插件极大地解决了原版服务器中矿车速度过慢的问题。</p>
+						<div>
+							<h3>{{ questions[quiz_seq] }}</h3>
 						</div>
 					</div>
 
@@ -86,17 +77,17 @@
 						<button v-if="quiz_seq === 0" type="button" class="secondary-button" @click="switchPage">跳过等待</button>
 					</div>
 
-					<div class="options" v-if="quiz_seq >= 1 && quiz_seq <= 8">
-						<button type="button" @click="selectAnswer(0)">{{ optionA[quiz_seq - 1] }}</button>
-						<button type="button" @click="selectAnswer(1)">{{ optionB[quiz_seq - 1] }}</button>
-						<button type="button" @click="selectAnswer(2)">{{ optionC[quiz_seq - 1] }}</button>
-						<button type="button" @click="selectAnswer(3)">{{ optionD[quiz_seq - 1] }}</button>
+					<div class="options" v-if="quiz_seq >= 0 && quiz_seq <= 8">
+						<button type="button" @click="selectAnswer(0)">{{ optionA[quiz_seq] }}</button>
+						<button type="button" @click="selectAnswer(1)">{{ optionB[quiz_seq] }}</button>
+						<button type="button" @click="selectAnswer(2)">{{ optionC[quiz_seq] }}</button>
+						<button type="button" @click="selectAnswer(3)">{{ optionD[quiz_seq] }}</button>
 					</div>
 				</div>
 
 				<div v-else-if="quiz_seq >= 9" :key="`result-${quiz_seq}`" class="result-panel">
-					<p v-if="quiz_seq === 9 && score < 6" class="message">您的得分为 {{ score }} / 8 分，不合格，请联系管理员并附上证明材料。</p>
-					<p v-if="quiz_seq === 9 && score >= 6" class="quiz-success">您的得分为 {{ score }} / 8 分，合格，{{ countdown }} 秒后自动为您注册。</p>
+					<p v-if="quiz_seq === 9 && score < 6" class="message">您的得分为 {{ score }} / 9 分，不合格，请联系管理员并附上证明材料。</p>
+					<p v-if="quiz_seq === 9 && score >= 6" class="quiz-success">您的得分为 {{ score }} / 9 分，合格，{{ countdown }} 秒后自动为您注册。</p>
 					<p v-if="quiz_seq === 10"><span v-if="isLoading" class="spinner"></span>正在注册</p>
 				</div>
 			</Transition>
@@ -154,7 +145,8 @@ const questions = [
   "5.\t以下哪种货物最适合通过飞机运输？",
   "6.\t描写飞机俯瞰阿弥诺斯大陆的意图不包括下列哪个？",
   "7.\t下列说法正确的是？",
-  "8.\t如果要插入以下内容，最适合插入在哪一个位置？"
+  "8.\t如果要插入以下内容，最适合插入在哪一个位置？",
+  "9.\t"
 ]
 const optionA = [
   "A. 填海造陆",
@@ -164,7 +156,8 @@ const optionA = [
   "A. 热带猪",
   "A. 展示大陆的美丽夜景",
   "A. 飞机是服务器中长途运输实体的唯一方式",
-  "A. (甲)"
+  "A. (甲)",
+  "A. "
 ]
 const optionB = [
   "B. 夷山平地",
@@ -174,7 +167,8 @@ const optionB = [
   "B. 寒带鸡",
   "B. 暗示主城的新建机场",
   "B. 芙岛已经成为主城重要的\"卫星城\"之一",
-  "B. (乙)"
+  "B. (乙)",
+  "B. "
 ]
 const optionC = [
   "C. 珍珠炮炸山",
@@ -184,7 +178,8 @@ const optionC = [
   "C. 末影水晶",
   "C. 引出主城北站的介绍",
   "C. 珍珠炮是目前实现玩家长途旅行的最优解",
-  "C. (丙)"
+  "C. (丙)",
+  "C. "
 ]
 const optionD = [
   "D. 铁路建设",
@@ -194,7 +189,8 @@ const optionD = [
   "D. 潜影盒",
   "D. 描摹大陆星空的壮美",
   "D. 6号线的开通将使得主城北能够联通芙岛",
-  "D. (丁)"
+  "D. (丁)",
+  "A. "
 ]
 const score = ref(0)
 
