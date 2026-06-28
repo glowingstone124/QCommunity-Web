@@ -274,9 +274,9 @@ function count() {
 function switchPage() {
   quiz_seq.value++
   if (quiz_seq.value === 0 && !countdownTimer) countdownTimer = setInterval(count, 1000)
-  if (quiz_seq.value <= 8) {
+  if (quiz_seq.value <= 9) {
     countdown.value = pageTime[quiz_seq.value]
-  } else if (quiz_seq.value === 9){
+  } else if (quiz_seq.value === 10){
     countdown.value = 5
   } else {
     submitForm()
