@@ -52,8 +52,8 @@
 					</label>
 
 					<div v-if="step === 4" class="quiz-intro">
-						<p>为保证服务器秩序，Quantum Original 只接受初中含在读及以上学历，或具备一定文字理解能力的玩家。</p>
-						<p>测试共 1 个阅读语篇、8 道选择题。答对 6 题方为通过。</p>
+						<p>为保证服务器秩序，Quantum Original 只接受初中含在读及以上学历，或具备一定文化常识与文字理解能力的玩家。</p>
+						<p>测试共 9 道选择题。答对 6 题方为通过。</p>
 						<p>测试通过后，请返回 QQ 群输入相应的 `.approve-register &lt;参数&gt;` 完成绑定验证。</p>
 					</div>
 
@@ -67,17 +67,8 @@
 
 				<div v-else-if="step === 4 && quiz_seq <= 8" :key="`quiz-${quiz_seq}`" class="quiz-section">
 					<div class="quiz-window">
-						<div v-if="quiz_seq === 0">
-							<h3>阅读材料</h3>
-							<p>夜幕来临，阿弥诺斯大陆华灯盏盏，从飞机上向下俯瞰，整个大陆如同地上散落的星河。（甲）近日，一幅玩家在从主城飞往锡城的途中从飞机舷窗外拍摄主城夜景的照片在 QO 社区中广受好评。</p>
-							<p>这幅璀璨的星图的右前方，有一颗被称作主城北站的亮星。该站始建于 2023 年，系 G3 线蓝冰化改造后新建的终点站。由于其南临主城核心区，北有海洋的独特地理禀赋，历经多次改造，主城北站已成为铁路联通全物品分类机、末地门，蓝冰高速联通出生点和锡城，并即将开通接入 6 号线的一级站。</p>
-							<p>（乙）正值主城北片区改造工程之际，由 Wsiogn 领衔的 QO 玩家通过炸山平地的方式，在主城北北面开创性地设计并制造了第 1 座机场，解决了主城北站无法进行大于 5 千米旅行的短板。</p>
-							<p>芙岛原住民 Anonymous 表示，空运对于芙岛的哞菇产业有着不可替代的作用，有助于芙岛整只出口哞菇，打响产业品牌。（丙）但以 MineCreeper 为代表的玩家表示，设立机场这一举措有华而不实之嫌。</p>
-							<p>不过，机场的开通提供了一种稳定且快速的运输实体的方式，这是任何一种已有的交通方式都难以实现的短板。（丁）交通的进步为打造一个货物互联、资源互补、经济互助、民心相通的 Quantum Original 铸造了更多机遇。</p>
-						</div>
-						<div v-else>
-							<h3>{{ questions[quiz_seq - 1] }}</h3>
-							<p v-if="quiz_seq === 8">事实上，机场只是服务器大力推进交通建设的一个缩影。服务器自研的矿车高速化和闭塞区段插件极大地解决了原版服务器中矿车速度过慢的问题。</p>
+						<div>
+							<h3>{{ questions[quiz_seq] }}</h3>
 						</div>
 					</div>
 
@@ -86,17 +77,17 @@
 						<button v-if="quiz_seq === 0" type="button" class="secondary-button" @click="switchPage">跳过等待</button>
 					</div>
 
-					<div class="options" v-if="quiz_seq >= 1 && quiz_seq <= 8">
-						<button type="button" @click="selectAnswer(0)">{{ optionA[quiz_seq - 1] }}</button>
-						<button type="button" @click="selectAnswer(1)">{{ optionB[quiz_seq - 1] }}</button>
-						<button type="button" @click="selectAnswer(2)">{{ optionC[quiz_seq - 1] }}</button>
-						<button type="button" @click="selectAnswer(3)">{{ optionD[quiz_seq - 1] }}</button>
+					<div class="options" v-if="quiz_seq >= 0 && quiz_seq <= 8">
+						<button type="button" @click="selectAnswer(0)">{{ optionA[quiz_seq] }}</button>
+						<button type="button" @click="selectAnswer(1)">{{ optionB[quiz_seq] }}</button>
+						<button type="button" @click="selectAnswer(2)">{{ optionC[quiz_seq] }}</button>
+						<button type="button" @click="selectAnswer(3)">{{ optionD[quiz_seq] }}</button>
 					</div>
 				</div>
 
 				<div v-else-if="quiz_seq >= 9" :key="`result-${quiz_seq}`" class="result-panel">
-					<p v-if="quiz_seq === 9 && score < 6" class="message">您的得分为 {{ score }} / 8 分，不合格，请联系管理员并附上证明材料。</p>
-					<p v-if="quiz_seq === 9 && score >= 6" class="quiz-success">您的得分为 {{ score }} / 8 分，合格，{{ countdown }} 秒后自动为您注册。</p>
+					<p v-if="quiz_seq === 9 && score < 6" class="message">您的得分为 {{ score }} / 9 分，不合格，请联系管理员并附上证明材料。</p>
+					<p v-if="quiz_seq === 9 && score >= 6" class="quiz-success">您的得分为 {{ score }} / 9 分，合格，{{ countdown }} 秒后自动为您注册。</p>
 					<p v-if="quiz_seq === 10"><span v-if="isLoading" class="spinner"></span>正在注册</p>
 				</div>
 			</Transition>
@@ -144,57 +135,62 @@ const countdown = ref(80)
 const router = useRouter()
 const isDevMode = import.meta.env.DEV
 let countdownTimer = null
-const pageTime = [80, 20, 20, 20, 20, 30, 30, 30, 50]
-const answer = [-1, 1, 2, 0, 3, 0, 3, 2, 3]
+const pageTime = [15, 15, 15, 15, 20, 25, 25, 30, 50]
+const answer = [1, 2, 0, 2, 0, 3, 2, 2, 3]
 const questions = [
-  "1.\t建造主城北机场采用了下列哪个工艺？",
-  "2.\t以下哪一个人对机场的设立采取了批判态度？",
-  "3.\t以下哪一个地点不能通过不乘坐飞机的方式从主城北直接到达？",
-  "4.\t主城北枢纽可用的交通方式不包括下列哪个？",
-  "5.\t以下哪种货物最适合通过飞机运输？",
-  "6.\t描写飞机俯瞰阿弥诺斯大陆的意图不包括下列哪个？",
-  "7.\t下列说法正确的是？",
-  "8.\t如果要插入以下内容，最适合插入在哪一个位置？"
+  "1.\t关于单位正方形，说法错误的是：",
+  "2.\t以下哪个数不属于质数？",
+  "3.\t以下哪个单词所代表的物品不与其余三个同类？",
+  "4.\t昔人已乘黄鹤去，__________。",
+  "5.\t关于“力”，以下说法<b>最不恰当</b>的一项是？",
+  "6.\t以下物质在常温常压下能发生反应的是？",
+  "7.\t过 (0,0), (4,0) 且二次项系数大于 0 的二次函数一定不经过？",
+  "8.\t以下选项中的两个人物出自不同神话体系的是？",
+  "9.\t将电动机与一 5Ω 电阻串联接入 20V 无内阻直流电源，电动机正常工作，使 5N 重物以 2.5m/s 匀速上升。若电阻电压为 8V，则电动机效率约为？"
 ]
 const optionA = [
-  "A. 填海造陆",
-  "A. Wsiogn",
-  "A. 芙岛",
-  "A. 铁路",
-  "A. 热带猪",
-  "A. 展示大陆的美丽夜景",
-  "A. 飞机是服务器中长途运输实体的唯一方式",
-  "A. (甲)"
+  "A. 有 4 条边",
+  "A. 2",
+  "A. peach",
+  "A. 白云千载空悠悠",
+  "A. 4N 的力与 3N 的力将合成为 7N 的力",
+  "A. 胆矾和蒸馏水",
+  "A. 第一象限",
+  "A. 阿克琉斯、奥德赛",
+  "A. 0.732"
 ]
 const optionB = [
-  "B. 夷山平地",
-  "B. Anonymous",
-  "B. 末地门",
-  "B. 飞机",
-  "B. 寒带鸡",
-  "B. 暗示主城的新建机场",
-  "B. 芙岛已经成为主城重要的\"卫星城\"之一",
-  "B. (乙)"
+  "B. 每条对边均相互垂直",
+  "B. 17",
+  "B. giraffe",
+  "B. 猿猱欲渡愁攀援",
+  "B. 总是成对出现，作用在不同物体上",
+  "B. 稀盐酸和石英",
+  "B. 第二象限",
+  "B. 西西弗斯、普罗米修斯",
+  "B. 0.594"
 ]
 const optionC = [
-  "C. 珍珠炮炸山",
-  "C. MineCreeper",
-  "C. 全物品分类机",
-  "C. 蓝冰船",
-  "C. 末影水晶",
-  "C. 引出主城北站的介绍",
-  "C. 珍珠炮是目前实现玩家长途旅行的最优解",
-  "C. (丙)"
+  "C. 面积为 1",
+  "C. 35",
+  "C. monkey",
+  "C. 此地空余黄鹤楼",
+  "C. 作用力的物体与受力的物体不一定接触",
+  "C. 银和稀硫酸",
+  "C. 第三象限",
+  "C. 摩西、宙斯",
+  "C. 0.711"
 ]
 const optionD = [
-  "D. 铁路建设",
-  "D. Quantum Original",
-  "D. 锡城",
-  "D. 珍珠炮",
-  "D. 潜影盒",
-  "D. 描摹大陆星空的壮美",
-  "D. 6号线的开通将使得主城北能够联通芙岛",
-  "D. (丁)"
+  "D. 每个顶点形成的角均为 90 度",
+  "D. 23",
+  "D. fish",
+  "D. 我欲因之梦江陵",
+  "D. 重力由地球提供",
+  "D. 铁和硫酸铜溶液",
+  "D. 第四象限",
+  "D. 伊什塔尔、吉尔伽美什",
+  "D. 0.651"
 ]
 const score = ref(0)
 
