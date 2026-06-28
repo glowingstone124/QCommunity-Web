@@ -1,4 +1,5 @@
-const NEWS_SOURCE_URL = '/content/news.md'
+const NEWS_MANIFEST_URL = '/content/news/manifest.json'
+const NEWS_SOURCE_BASE = '/content/news'
 
 function parseFrontmatter(source) {
 	return source.split('\n').reduce((acc, line) => {
@@ -84,15 +85,15 @@ function markdownToBlocks(markdown) {
 
 export function parseNewsMarkdown(source) {
 	const articles = []
-	const articlePattern = /---\n([\s\S]*?)\n---\n([\s\S]*?)(?=\n---\n|$)/g
+	const articlePattern = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/m
 	let match
 
-	while ((match = articlePattern.exec(source)) !== null) {
+	if ((match = articlePattern.exec(source)) !== null) {
 		const meta = parseFrontmatter(match[1])
 		const id = meta.id?.trim()
 
 		if (!id) {
-			continue
+			return articles
 		}
 
 		const zhBody = parseLocalizedBody(match[2], 'zh')
@@ -125,19 +126,32 @@ export function parseNewsMarkdown(source) {
 	return articles
 }
 
+async function loadNewsArticle(id) {
+	const response = await fetch(`${NEWS_SOURCE_BASE}/${id}.md?t=${Date.now()}`, {
+		cache: 'no-store',
+	})
+
+	if (!response.ok) {
+		throw new Error(`Failed to load news article ${id}: ${response.status}`)
+	}
+
+	const markdown = await response.text()
+	return parseNewsMarkdown(markdown)[0] || null
+}
+
 export async function loadNewsFeed() {
 	try {
-		const response = await fetch(`${NEWS_SOURCE_URL}?t=${Date.now()}`, {
+		const response = await fetch(`${NEWS_MANIFEST_URL}?t=${Date.now()}`, {
 			cache: 'no-store',
 		})
 
 		if (!response.ok) {
-			throw new Error(`Failed to load news markdown: ${response.status}`)
+			throw new Error(`Failed to load news manifest: ${response.status}`)
 		}
 
-		const markdown = await response.text()
-		const news = parseNewsMarkdown(markdown)
-		return news
+		const articleIds = await response.json()
+		const articles = await Promise.all(articleIds.map((id) => loadNewsArticle(id)))
+		return articles.filter(Boolean)
 	} catch (error) {
 		console.error(error)
 		return []

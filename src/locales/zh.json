@@ -40,12 +40,45 @@
     "hero_title": "我们正在筹备中。",
     "hero_description": "Quantum Original 的官网正在经历新一轮样式调整。您现在看到的页面是 Beta 版本，可能并不反映原始内容。",
     "scroll_to_feed": "向下滑动查看信息流",
-    "read_more": "查看详情"
+    "read_more": "查看详情",
+    "footer_rights": "版权所有。",
+    "footer_news": "新闻动态",
+    "footer_guides": "Wiki 指南"
   },
   "newsPage": {
     "not_found": "没有找到这条信息流内容。",
     "no_body": "这条信息暂时没有更多正文。",
     "back_home": "返回首页",
     "back_feed": "返回信息流"
+  },
+  "miscPage": {
+    "title": "小功能",
+    "description": "轻量工具与账号相关的小组件。",
+    "nav_label": "小功能导航",
+    "fortune": "今日运势",
+    "fortune_description": "查看账号今日指数",
+    "beacon_color": "信标颜色",
+    "beacon_color_description": "Java 光束颜色序列"
+  },
+  "guidePage": {
+    "title": "指南",
+    "select_label": "选择指南",
+    "sidebar_label": "指南目录",
+    "not_found_title": "没有找到这篇指南",
+    "not_found_description": "请选择左侧目录中的其他文章。",
+    "pager_label": "指南翻页",
+    "first_page": "已经是第一篇",
+    "last_page": "已经是最后一篇"
+  },
+  "commandPage": {
+    "title": "指令一览",
+    "description": "输入指令、关键词或参数，使用补全候选快速定位可用命令。",
+    "completion_label": "补全候选",
+    "list_label": "指令列表",
+    "optional": "可选",
+    "copy": "复制",
+    "fill": "填入 {label}",
+    "online_player_hint": "游戏内会补全在线玩家名",
+    "fake_player_hint": "游戏内会补全当前假人名"
   }
 }

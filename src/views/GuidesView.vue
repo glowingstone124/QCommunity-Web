@@ -9,6 +9,7 @@ const route = useRoute()
 const router = useRouter()
 const guide = ref(null)
 const isLoading = ref(true)
+const isGuideMenuOpen = ref(false)
 
 const activeId = computed(() => route.params.id || defaultGuideId)
 
@@ -33,6 +34,7 @@ const nextGuide = computed(() =>
 const isCommandReference = computed(() => activeId.value === 'commands')
 
 function goToGuide(id) {
+	isGuideMenuOpen.value = false
 	router.push(`/guides/${id}`)
 }
 
@@ -88,9 +90,18 @@ watch(
 		<aside class="guides-sidebar" aria-label="指南目录">
 			<div class="guides-sidebar-heading">
 				<h1>指南</h1>
+				<button
+					type="button"
+					class="guide-menu-toggle"
+					:aria-expanded="isGuideMenuOpen"
+					aria-controls="guide-nav-list"
+					@click="isGuideMenuOpen = !isGuideMenuOpen"
+				>
+					{{ isGuideMenuOpen ? '收起' : '展开目录' }}
+				</button>
 			</div>
 
-			<nav class="guide-nav">
+			<nav id="guide-nav-list" class="guide-nav" :class="{ 'is-open': isGuideMenuOpen }">
 				<section v-for="section in guideSections" :key="section.key" class="guide-section">
 					<h2>{{ section.title }}</h2>
 					<button
@@ -206,7 +217,9 @@ watch(
 }
 
 .guides-sidebar-heading {
-	display: grid;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 	gap: 0.35rem;
 	margin-bottom: 1.25rem;
 }
@@ -223,6 +236,23 @@ watch(
 .guides-sidebar-heading h1 {
 	font-size: 1.7rem;
 	line-height: 1.1;
+}
+
+.guide-menu-toggle {
+	display: none;
+	border: 1px solid var(--split);
+	background: var(--background);
+	color: var(--text-main);
+	padding: 0.55rem 0.75rem;
+	font-size: 0.86rem;
+	font-weight: 720;
+	cursor: pointer;
+}
+
+.guide-menu-toggle:hover,
+.guide-menu-toggle:focus-visible {
+	border-color: var(--primary);
+	outline: none;
 }
 
 .guide-nav {
@@ -571,16 +601,30 @@ watch(
 
 @media (max-width: 900px) {
 	.guides-page {
-		grid-template-columns: 1fr;
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
 	}
 
 	.guides-sidebar {
+		width: 100%;
 		position: static;
 		max-height: none;
+		overflow: visible;
 		border-right: none;
 		border-bottom: 1px solid var(--split);
 		padding-right: 0;
 		padding-bottom: 1rem;
+	}
+
+	.guides-sidebar-heading {
+		margin-bottom: 0;
+	}
+
+	.guide-menu-toggle {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.guide-toolbar {
@@ -588,15 +632,22 @@ watch(
 	}
 
 	.guide-nav {
-		display: flex;
-		overflow-x: auto;
-		padding-bottom: 0.2rem;
-		scroll-snap-type: x mandatory;
+		display: none;
+		margin-top: 1rem;
+	}
+
+	.guide-nav.is-open {
+		display: grid;
 	}
 
 	.guide-section {
-		min-width: min(82vw, 22rem);
-		scroll-snap-align: start;
+		min-width: 0;
+	}
+
+	.guide-nav-item:hover,
+	.guide-nav-item:focus-visible,
+	.guide-nav-item.is-active {
+		transform: none;
 	}
 }
 

@@ -9,6 +9,7 @@ const router = useRouter()
 const { locale, t } = useI18n()
 const newsItems = ref([])
 const isLoading = ref(true)
+const isNewsMenuOpen = ref(false)
 
 const article = computed(() => {
 	const id = route.params.id || newsItems.value[0]?.id
@@ -45,6 +46,7 @@ function resolveRoute() {
 }
 
 function goToArticle(id) {
+	isNewsMenuOpen.value = false
 	router.push(`/news/${id}`)
 }
 
@@ -74,9 +76,18 @@ watch(
 		<aside class="news-sidebar" aria-label="新闻列表">
 			<div class="news-sidebar-heading">
 				<h1>{{ locale === 'zh' ? '新闻动态' : 'News' }}</h1>
+				<button
+					type="button"
+					class="news-menu-toggle"
+					:aria-expanded="isNewsMenuOpen"
+					aria-controls="news-nav-list"
+					@click="isNewsMenuOpen = !isNewsMenuOpen"
+				>
+					{{ isNewsMenuOpen ? (locale === 'zh' ? '收起' : 'Collapse') : (locale === 'zh' ? '展开列表' : 'Show List') }}
+				</button>
 			</div>
 
-			<nav class="news-nav">
+			<nav id="news-nav-list" class="news-nav" :class="{ 'is-open': isNewsMenuOpen }">
 				<button
 					v-for="item in localizedNewsItems"
 					:key="item.id"
@@ -175,7 +186,9 @@ watch(
 }
 
 .news-sidebar-heading {
-	display: grid;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 	gap: 0.35rem;
 	margin-bottom: 1.25rem;
 }
@@ -186,6 +199,23 @@ watch(
 	font-size: 1.7rem;
 	line-height: 1.1;
 	letter-spacing: 0;
+}
+
+.news-menu-toggle {
+	display: none;
+	border: 1px solid var(--split);
+	background: var(--background);
+	color: var(--text-main);
+	padding: 0.55rem 0.75rem;
+	font-size: 0.86rem;
+	font-weight: 720;
+	cursor: pointer;
+}
+
+.news-menu-toggle:hover,
+.news-menu-toggle:focus-visible {
+	border-color: var(--primary);
+	outline: none;
 }
 
 .news-nav {
@@ -439,29 +469,56 @@ watch(
 
 @media (max-width: 640px) {
 	.news-page {
-		grid-template-columns: 1fr;
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
 		padding: 1rem;
 	}
 
 	.news-sidebar {
+		width: 100%;
 		position: static;
 		max-height: none;
+		overflow: visible;
 		border-right: none;
 		border-bottom: 1px solid var(--split);
 		padding-right: 0;
 		padding-bottom: 1rem;
 	}
 
+	.news-sidebar-heading {
+		margin-bottom: 0;
+	}
+
+	.news-menu-toggle {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+
 	.news-nav {
-		display: flex;
-		overflow-x: auto;
-		padding-bottom: 0.2rem;
-		scroll-snap-type: x mandatory;
+		display: none;
+		margin-top: 1rem;
+	}
+
+	.news-nav.is-open {
+		display: grid;
+		position: static;
+		overflow: visible;
 	}
 
 	.news-nav-item {
-		min-width: min(82vw, 20rem);
-		scroll-snap-align: start;
+		min-width: 0;
+	}
+
+	.news-nav-item:hover,
+	.news-nav-item:focus-visible,
+	.news-nav-item.is-active {
+		transform: none;
+	}
+
+	.news-reader {
+		width: 100%;
 	}
 
 	.article-shell {

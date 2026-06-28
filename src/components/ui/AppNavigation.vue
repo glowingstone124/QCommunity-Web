@@ -243,11 +243,12 @@ const emit = defineEmits(['activate', 'clear', 'select'])
 	}
 
 	.app-navigation.is-header .app-navigation-entry {
-		flex: 1 0 9rem;
+		flex: 0 0 auto;
 	}
 
 	.app-navigation.is-header .app-navigation-item {
 		min-height: 44px;
+		padding-inline: 0.8rem;
 	}
 
 	.app-navigation.is-panel {

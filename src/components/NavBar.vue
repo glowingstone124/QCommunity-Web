@@ -448,6 +448,7 @@ onBeforeUnmount(() => {
 .navigation-zone {
 	display: flex;
 	align-self: stretch;
+	min-width: 0;
 }
 
 .primary-nav {
@@ -671,13 +672,31 @@ onBeforeUnmount(() => {
 		padding: 0.75rem 1rem;
 		align-items: flex-start;
 		flex-wrap: wrap;
+		gap: 0.65rem;
+		overflow: visible;
+	}
+
+	.navigation-zone {
+		order: 3;
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+		overflow: visible;
 	}
 
 	.primary-nav {
-		order: 3;
 		width: 100%;
+		max-width: 100%;
+		min-width: 0;
 		min-height: 44px;
 		overflow-x: auto;
+		overflow-y: hidden;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: none;
+	}
+
+	.primary-nav::-webkit-scrollbar {
+		display: none;
 	}
 
 	.mega-panel {
@@ -703,25 +722,23 @@ onBeforeUnmount(() => {
 		flex-direction: row;
 	}
 
-	.logo-section,
-	.user-section {
-		width: 100%;
-	}
-
 	.user-section {
 		justify-content: space-between;
 	}
 
 	.logo-section {
 		width: auto;
+		max-width: calc(100% - 0.5rem);
 	}
 
-	.primary-nav {
+	.navigation-zone {
 		order: 2;
 	}
 
 	.user-section {
 		order: 3;
+		width: 100%;
+		min-width: 0;
 	}
 
 	.mega-panel-inner {

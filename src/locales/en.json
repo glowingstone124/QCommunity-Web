@@ -40,12 +40,45 @@
     "hero_title": "We are preparing.",
     "hero_description": "The Quantum Original website is going through another style refresh. This beta page may not reflect the original content.",
     "scroll_to_feed": "Scroll down to view the feed",
-    "read_more": "Read more"
+    "read_more": "Read more",
+    "footer_rights": "All rights reserved.",
+    "footer_news": "News",
+    "footer_guides": "Wiki Guides"
   },
   "newsPage": {
     "not_found": "This feed item could not be found.",
     "no_body": "This item does not have more article content yet.",
     "back_home": "Back home",
     "back_feed": "Back to feed"
+  },
+  "miscPage": {
+    "title": "Tools",
+    "description": "Small utilities and account-related widgets.",
+    "nav_label": "Tools navigation",
+    "fortune": "Daily Fortune",
+    "fortune_description": "View today's account index",
+    "beacon_color": "Beacon Color",
+    "beacon_color_description": "Java beam color sequence"
+  },
+  "guidePage": {
+    "title": "Guides",
+    "select_label": "Select guide",
+    "sidebar_label": "Guide index",
+    "not_found_title": "Guide not found",
+    "not_found_description": "Choose another article from the guide index.",
+    "pager_label": "Guide pagination",
+    "first_page": "This is the first guide",
+    "last_page": "This is the last guide"
+  },
+  "commandPage": {
+    "title": "Command Reference",
+    "description": "Search commands, keywords or arguments and use completion suggestions to find the command you need.",
+    "completion_label": "Completion suggestions",
+    "list_label": "Command list",
+    "optional": "Optional",
+    "copy": "Copy",
+    "fill": "Fill {label}",
+    "online_player_hint": "In-game completion suggests online player names",
+    "fake_player_hint": "In-game completion suggests current fake player names"
   }
 }
