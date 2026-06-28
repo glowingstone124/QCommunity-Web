@@ -85,10 +85,10 @@
 					</div>
 				</div>
 
-				<div v-else-if="quiz_seq >= 9" :key="`result-${quiz_seq}`" class="result-panel">
-					<p v-if="quiz_seq === 9 && score < 6" class="message">您的得分为 {{ score }} / 9 分，不合格，请联系管理员并附上证明材料。</p>
-					<p v-if="quiz_seq === 9 && score >= 6" class="quiz-success">您的得分为 {{ score }} / 9 分，合格，{{ countdown }} 秒后自动为您注册。</p>
-					<p v-if="quiz_seq === 10"><span v-if="isLoading" class="spinner"></span>正在注册</p>
+				<div v-else-if="quiz_seq >= 10" :key="`result-${quiz_seq}`" class="result-panel">
+					<p v-if="quiz_seq === 10 && score < 6" class="message">您的得分为 {{ score }} / 10 分，自助验证失败，请联系管理员并附上证明材料。</p>
+					<p v-if="quiz_seq === 10 && score >= 6" class="quiz-success">您的得分为 {{ score }} / 10 分，自助验证成功，{{ countdown }} 秒后自动为您注册。</p>
+					<p v-if="quiz_seq === 11"><span v-if="isLoading" class="spinner"></span>正在注册</p>
 				</div>
 			</Transition>
 
@@ -135,24 +135,26 @@ const countdown = ref(80)
 const router = useRouter()
 const isDevMode = import.meta.env.DEV
 let countdownTimer = null
-const pageTime = [15, 15, 15, 15, 20, 25, 25, 30, 50]
-const answer = [1, 2, 0, 2, 0, 3, 2, 2, 3]
+const pageTime = [15, 15, 15, 15, 20, 20, 25, 25, 30, 50]
+const answer = [1, 2, 0, 2, 1, 0, 3, 2, 2, 3]
 const questions = [
   "1.\t关于单位正方形，说法错误的是：",
   "2.\t以下哪个数不属于质数？",
   "3.\t以下哪个单词所代表的物品不与其余三个同类？",
   "4.\t昔人已乘黄鹤去，__________。",
-  "5.\t关于“力”，以下说法最不恰当的一项是？",
-  "6.\t以下物质在常温常压下能发生反应的是？",
-  "7.\t过 (0,0), (4,0) 且二次项系数大于 0 的二次函数一定不经过？",
-  "8.\t以下选项中的两个人物出自不同神话体系的是？",
-  "9.\t将电动机与一 5Ω 电阻串联接入 20V 无内阻直流电源，电动机正常工作，使 5N 重物以 2.5m/s 匀速上升。若电阻电压为 8V，则电动机效率约为？"
+  "5.\t以下省市对应关系正确的是？"
+  "6.\t关于“力”，以下说法最不恰当的一项是？",
+  "7.\t以下物质在常温常压下能发生反应的是？",
+  "8.\t过 (0,0), (4,0) 且二次项系数大于 0 的二次函数一定不经过？",
+  "9.\t以下选项中的两个人物出自不同神话体系的是？",
+  "10.\t将电动机与一 5Ω 电阻串联接入 20V 无内阻直流电源，电动机正常工作，使 5N 重物以 2.5m/s 匀速上升。若电阻电压为 8V，则电动机效率约为？"
 ]
 const optionA = [
   "A. 有 4 条边",
   "A. 2",
   "A. peach",
   "A. 白云千载空悠悠",
+  "A. 浙江南京",
   "A. 4N 的力与 3N 的力将合成为 7N 的力",
   "A. 胆矾和蒸馏水",
   "A. 第一象限",
@@ -164,6 +166,7 @@ const optionB = [
   "B. 17",
   "B. giraffe",
   "B. 猿猱欲渡愁攀援",
+  "B. 辽宁沈阳",
   "B. 总是成对出现，作用在不同物体上",
   "B. 稀盐酸和石英",
   "B. 第二象限",
@@ -175,6 +178,7 @@ const optionC = [
   "C. 35",
   "C. monkey",
   "C. 此地空余黄鹤楼",
+  "C. 云南遵义",
   "C. 作用力的物体与受力的物体不一定接触",
   "C. 银和稀硫酸",
   "C. 第三象限",
@@ -186,6 +190,7 @@ const optionD = [
   "D. 23",
   "D. fish",
   "D. 我欲因之梦江陵",
+  "D. 四川梅州",
   "D. 重力由地球提供",
   "D. 铁和硫酸铜溶液",
   "D. 第四象限",
