@@ -27,6 +27,8 @@ const localizedNews = computed(() =>
 		title: item.title[locale.value] || item.title.zh,
 	}))
 )
+const featuredNews = computed(() => localizedNews.value.find((item) => item.isFeatured) || localizedNews.value[0] || null)
+const regularNews = computed(() => localizedNews.value.filter((item) => item.id !== featuredNews.value?.id))
 const currentYear = new Date().getFullYear()
 
 async function syncNewsFeed() {
@@ -341,16 +343,33 @@ onBeforeUnmount(() => {
 			</section>
 
 			<section id="home-news" class="news-feed" aria-labelledby="news-title">
+				<article
+					v-if="featuredNews"
+					class="news-item news-item--featured"
+					:class="{ 'news-item--text-only': !featuredNews.image }"
+				>
+					<div v-if="featuredNews.image" class="news-image">
+						<img :src="featuredNews.image" :alt="featuredNews.title" loading="lazy">
+					</div>
+					<div class="news-body">
+						<div class="news-meta">
+							<span>{{ featuredNews.type }}</span>
+							<time :datetime="featuredNews.date">{{ featuredNews.date }}</time>
+						</div>
+						<h3>{{ featuredNews.title }}</h3>
+						<router-link :to="featuredNews.to" class="news-link">
+							<span>{{ t('homePage.read_more') }}</span>
+							<span class="news-link-arrow" aria-hidden="true"></span>
+						</router-link>
+					</div>
+				</article>
 
-				<div class="news-list">
+				<div class="news-list" v-if="regularNews.length">
 					<article
-						v-for="item in localizedNews"
+						v-for="item in regularNews"
 						:key="item.id"
 						class="news-item"
-						:class="{
-							'news-item--featured': item.isFeatured,
-							'news-item--text-only': !item.image,
-						}"
+						:class="{ 'news-item--text-only': !item.image }"
 					>
 						<div v-if="item.image" class="news-image">
 							<img :src="item.image" :alt="item.title" loading="lazy">
@@ -520,6 +539,8 @@ onBeforeUnmount(() => {
 	width: 100%;
 	padding: 0;
 	box-sizing: border-box;
+	display: grid;
+	gap: clamp(0.9rem, 2vw, 1.35rem);
 }
 
 .section-heading {
@@ -536,28 +557,32 @@ onBeforeUnmount(() => {
 }
 
 .news-list {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
-	grid-auto-flow: dense;
-	gap: clamp(0.9rem, 2vw, 1.35rem);
-	align-items: stretch;
+	column-width: 18rem;
+	column-gap: clamp(0.9rem, 2vw, 1.35rem);
 }
 
 .news-item {
 	position: relative;
 	display: grid;
 	grid-template-columns: 1fr;
-	grid-column: span 1;
-	min-height: clamp(320px, 34vh, 460px);
+	width: 100%;
+	margin: 0;
+	min-height: 0;
 	background: color-mix(in srgb, var(--background) 42%, transparent);
 	border: 1px solid color-mix(in srgb, var(--text-main) 12%, transparent);
 	backdrop-filter: blur(16px) saturate(115%);
 	overflow: hidden;
+	break-inside: avoid;
+	page-break-inside: avoid;
 	transition: transform 220ms ease, border-color 220ms ease, background-color 220ms ease;
 }
 
+.news-list .news-item {
+	display: inline-grid;
+	margin-bottom: clamp(0.9rem, 2vw, 1.35rem);
+}
+
 .news-item--featured {
-	grid-column: 1 / -1;
 	grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
 	min-height: clamp(360px, 46vh, 560px);
 	background: color-mix(in srgb, var(--background) 52%, transparent);
@@ -588,7 +613,6 @@ onBeforeUnmount(() => {
 
 .news-item--text-only {
 	grid-template-columns: 1fr;
-	grid-column: span 1;
 	min-height: 0;
 }
 
@@ -749,11 +773,12 @@ onBeforeUnmount(() => {
 
 	.news-item {
 		grid-template-columns: 1fr;
-		grid-column: span 1;
 	}
 
 	.news-item--featured .news-image {
 		order: initial;
+		aspect-ratio: 16 / 9;
+		height: auto;
 	}
 
 	.news-image {
@@ -781,7 +806,8 @@ onBeforeUnmount(() => {
 	}
 
 	.news-list {
-		grid-template-columns: 1fr;
+		column-width: auto;
+		column-count: 1;
 	}
 
 	.home-footer {
