@@ -25,7 +25,6 @@ const localizedArticle = computed(() => {
 		...article.value,
 		type: article.value.type[locale.value] || article.value.type.zh,
 		title: article.value.title[locale.value] || article.value.title.zh,
-		description: article.value.description[locale.value] || article.value.description.zh,
 		body: article.value.body?.[locale.value] || article.value.body?.zh || [],
 	}
 })
@@ -35,7 +34,6 @@ const localizedNewsItems = computed(() =>
 		...item,
 		type: item.type[locale.value] || item.type.zh,
 		title: item.title[locale.value] || item.title.zh,
-		description: item.description[locale.value] || item.description.zh,
 	}))
 )
 
@@ -73,9 +71,9 @@ watch(
 
 <template>
 	<main class="news-page page-shell">
-		<aside class="news-sidebar" aria-label="新闻列表">
+		<aside class="news-sidebar" :aria-label="t('newsPage.sidebar_label')">
 			<div class="news-sidebar-heading">
-				<h1>{{ locale === 'zh' ? '新闻动态' : 'News' }}</h1>
+				<h1>{{ t('newsPage.title') }}</h1>
 				<button
 					type="button"
 					class="news-menu-toggle"
@@ -83,7 +81,7 @@ watch(
 					aria-controls="news-nav-list"
 					@click="isNewsMenuOpen = !isNewsMenuOpen"
 				>
-					{{ isNewsMenuOpen ? (locale === 'zh' ? '收起' : 'Collapse') : (locale === 'zh' ? '展开列表' : 'Show List') }}
+					{{ isNewsMenuOpen ? t('newsPage.collapse') : t('newsPage.show_list') }}
 				</button>
 			</div>
 
@@ -101,7 +99,6 @@ watch(
 						<time :datetime="item.date">{{ item.date }}</time>
 					</span>
 					<strong>{{ item.title }}</strong>
-					<small>{{ item.description }}</small>
 				</button>
 			</nav>
 		</aside>
@@ -133,7 +130,6 @@ watch(
 						<time :datetime="localizedArticle.date">{{ localizedArticle.date }}</time>
 					</div>
 					<h1>{{ localizedArticle.title }}</h1>
-					<p>{{ localizedArticle.description }}</p>
 				</header>
 
 				<img
@@ -265,12 +261,6 @@ watch(
 	line-height: 1.28;
 }
 
-.news-nav-item small {
-	color: var(--text-secondary);
-	font-size: 0.82rem;
-	line-height: 1.42;
-}
-
 .news-reader {
 	min-width: 0;
 }
@@ -319,14 +309,6 @@ watch(
 	font-weight: 680;
 	line-height: 1.05;
 	letter-spacing: 0;
-}
-
-.article-header p {
-	max-width: 760px;
-	margin: 0;
-	color: var(--text-secondary);
-	font-size: clamp(1rem, 2vw, 1.35rem);
-	line-height: 1.6;
 }
 
 .article-image,

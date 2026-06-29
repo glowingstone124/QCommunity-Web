@@ -2,6 +2,7 @@
 import {computed, onBeforeUnmount, onMounted, ref} from 'vue'
 import {useI18n} from 'vue-i18n'
 import {loadNewsFeed} from '@/utils/newsFeed'
+import {homeCampaign, regularHome} from '@/data/home'
 
 const {locale, t} = useI18n()
 const shaderCanvas = ref(null)
@@ -12,13 +13,18 @@ let shaderTheme = 0
 let newsRefreshTimer = 0
 const shaderFrameInterval = 1000 / 36
 const shaderTimeScale = 2.2
+const activeHome = computed(() => (homeCampaign.enabled ? homeCampaign : regularHome))
+const heroTitle = computed(() => t(activeHome.value.titleKey))
+const heroBrand = computed(() => t(activeHome.value.brandKey))
 
 const localizedNews = computed(() =>
-	newsItems.value.map((item) => ({
+	newsItems.value.slice(0, 20).map((item, index) => ({
 		...item,
+		isFeatured: homeCampaign.enabled
+			? item.id === homeCampaign.featuredNewsId || (!homeCampaign.featuredNewsId && index === 0)
+			: index === 0,
 		type: item.type[locale.value] || item.type.zh,
 		title: item.title[locale.value] || item.title.zh,
-		description: item.description[locale.value] || item.description.zh,
 	}))
 )
 const currentYear = new Date().getFullYear()
@@ -168,9 +174,9 @@ function initShaderBackground() {
 			float density = softBody * 0.74 + plume * 0.24 + filament * 0.08;
 
 			float edgeFalloff = 0.86 + 0.14 * smoothstep(1.4, 0.1, length(p));
-			vec3 ink = vec3(0.03, 0.06, 0.11);
-			vec3 blue = vec3(0.05, 0.16, 0.42);
-			vec3 cyan = vec3(0.12, 0.30, 0.48);
+			vec3 ink = vec3(0.01, 0.018, 0.035);
+			vec3 blue = vec3(0.025, 0.08, 0.20);
+			vec3 cyan = vec3(0.06, 0.14, 0.22);
 			vec3 color = mix(ink, blue, smoke);
 			color = mix(color, cyan, filament * 0.08);
 			float alpha = density * edgeFalloff * mix(0.64, 0.24, u_theme);
@@ -320,13 +326,13 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-	<div class="home page-shell">
+	<div class="home page-shell" :class="{ 'home--campaign': homeCampaign.enabled }">
 		<canvas ref="shaderCanvas" class="shader-background" aria-hidden="true"></canvas>
 		<div class="home-content">
 			<section class="home-hero" aria-labelledby="home-title">
 				<div class="hero-copy">
-					<h1 id="home-title">{{ t('homePage.hero_title') }}</h1>
-					<p class="hero-description">{{ t('homePage.hero_description') }}</p>
+					<span class="hero-brand">{{ heroBrand }}</span>
+					<h1 id="home-title">{{ heroTitle }}</h1>
 				</div>
 				<a class="scroll-cue" href="#home-news" :aria-label="t('homePage.scroll_to_feed')">
 					<span>{{ t('homePage.scroll_to_feed') }}</span>
@@ -337,7 +343,15 @@ onBeforeUnmount(() => {
 			<section id="home-news" class="news-feed" aria-labelledby="news-title">
 
 				<div class="news-list">
-					<article v-for="item in localizedNews" :key="item.id" class="news-item" :class="{ 'news-item--text-only': !item.image }">
+					<article
+						v-for="item in localizedNews"
+						:key="item.id"
+						class="news-item"
+						:class="{
+							'news-item--featured': item.isFeatured,
+							'news-item--text-only': !item.image,
+						}"
+					>
 						<div v-if="item.image" class="news-image">
 							<img :src="item.image" :alt="item.title" loading="lazy">
 						</div>
@@ -347,7 +361,6 @@ onBeforeUnmount(() => {
 								<time :datetime="item.date">{{ item.date }}</time>
 							</div>
 							<h3>{{ item.title }}</h3>
-							<p>{{ item.description }}</p>
 							<router-link :to="item.to" class="news-link">
 								<span>{{ t('homePage.read_more') }}</span>
 								<span class="news-link-arrow" aria-hidden="true"></span>
@@ -441,29 +454,32 @@ onBeforeUnmount(() => {
 
 .hero-copy {
 	display: grid;
-	gap: 1.25rem;
+	gap: 1rem;
+}
+
+.hero-brand {
+	width: fit-content;
+	color: var(--primary-light);
+	font-size: clamp(1.15rem, 2.2vw, 1.9rem);
+	font-weight: 700;
+	line-height: 1;
 }
 
 .home-hero h1 {
 	margin: 0;
 	color: var(--title-color);
-	font-size: clamp(3rem, 9vw, 8.4rem);
+	font-size: clamp(2.2rem, 5.8vw, 5rem);
 	font-weight: 520;
 	line-height: 0.98;
 	overflow-wrap: anywhere;
 }
 
-.hero-description {
-	max-width: 920px;
-	margin: 0;
-	color: #d8dade;
-	font-size: clamp(1.05rem, 2.4vw, 1.75rem);
-	font-weight: 420;
-	line-height: 1.55;
+.home--campaign .hero-brand {
+	color: #93c5fd;
 }
 
-:global(:root[data-theme='light'] .hero-description) {
-	color: #1e2534;
+.home--campaign .home-hero h1 {
+	max-width: 12ch;
 }
 
 .scroll-cue {
@@ -531,13 +547,21 @@ onBeforeUnmount(() => {
 	position: relative;
 	display: grid;
 	grid-template-columns: 1fr;
-	grid-column: span 2;
+	grid-column: span 1;
 	min-height: clamp(320px, 34vh, 460px);
 	background: color-mix(in srgb, var(--background) 42%, transparent);
 	border: 1px solid color-mix(in srgb, var(--text-main) 12%, transparent);
 	backdrop-filter: blur(16px) saturate(115%);
 	overflow: hidden;
 	transition: transform 220ms ease, border-color 220ms ease, background-color 220ms ease;
+}
+
+.news-item--featured {
+	grid-column: 1 / -1;
+	grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+	min-height: clamp(360px, 46vh, 560px);
+	background: color-mix(in srgb, var(--background) 52%, transparent);
+	border-color: color-mix(in srgb, var(--primary) 34%, transparent);
 }
 
 .news-item::after {
@@ -574,6 +598,12 @@ onBeforeUnmount(() => {
 	background: color-mix(in srgb, var(--text-main) 6%, transparent);
 }
 
+.news-item--featured .news-image {
+	order: 2;
+	aspect-ratio: auto;
+	height: 100%;
+}
+
 .news-image img {
 	width: 100%;
 	height: 100%;
@@ -587,6 +617,10 @@ onBeforeUnmount(() => {
 	padding: clamp(1.25rem, 3vw, 2.2rem);
 	min-width: 0;
 	min-height: 0;
+}
+
+.news-item--featured .news-body {
+	justify-content: flex-end;
 }
 
 .news-item--text-only .news-body {
@@ -628,21 +662,9 @@ onBeforeUnmount(() => {
 	line-height: 1.2;
 }
 
-.news-item p {
-	margin: 0.85rem 0 0;
-	color: var(--text-secondary);
-	font-size: clamp(0.92rem, 1.15vw, 1.05rem);
-	font-weight: 430;
-	line-height: 1.6;
-	max-width: 72ch;
-	overflow-wrap: anywhere;
-}
-
-.news-item--text-only p {
-	display: -webkit-box;
-	-webkit-line-clamp: 3;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
+.news-item--featured h3 {
+	font-size: clamp(1.8rem, 4vw, 3.6rem);
+	line-height: 1.04;
 }
 
 .news-link {
@@ -715,10 +737,6 @@ onBeforeUnmount(() => {
 :global(:root[data-theme='dark'] .news-feed) {
 }
 
-:global(:root[data-theme='dark'] .hero-description) {
-	color: #d8dade;
-}
-
 @media (max-width: 980px) {
 	.home-content {
 		width: 100%;
@@ -730,7 +748,12 @@ onBeforeUnmount(() => {
 	}
 
 	.news-item {
+		grid-template-columns: 1fr;
 		grid-column: span 1;
+	}
+
+	.news-item--featured .news-image {
+		order: initial;
 	}
 
 	.news-image {

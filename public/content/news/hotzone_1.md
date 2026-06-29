@@ -26,7 +26,7 @@ HotZone2025 活动信息记录如下：
 ## 临时关闭服务
 
 - Web Map
-- QCommunity Dashboard
+- QHub Dashboard
 - Player Tracker
 - CoreProtect
 

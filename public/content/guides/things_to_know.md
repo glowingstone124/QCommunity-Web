@@ -71,7 +71,7 @@
 
 ---
 
-## 五、关于 QCommunity 与 QOAPP
+## 五、关于 QHub 与 QOAPP
 
 **QOAPP** 为 Quantum Original 的辅助应用，用于提升玩家的社区与游玩体验。
 应用中涉及的所有个人信息均基于玩家自愿提交。

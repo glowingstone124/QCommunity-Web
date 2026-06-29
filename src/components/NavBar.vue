@@ -8,9 +8,7 @@
 					<span class="logo-mark-main"></span>
 					<span class="logo-mark-sub"></span>
 				</span>
-				<span class="logo-copy">
-					<span class="logo-kicker">Quantum Original</span>
-				</span>
+				<span class="logo-text">QHub</span>
 			</button>
 
 			<div
@@ -56,7 +54,7 @@
 									aria-label="主导航链接"
 									density="compact"
 									orientation="vertical"
-									@select="goTo($event.path)"
+									@select="goTo($event.path, $event)"
 								/>
 							</div>
 						</Transition>
@@ -83,13 +81,13 @@
 					<button
 						type="button"
 						class="theme-btn"
-						:title="theme === 'dark' ? '切换到浅色模式' : '切换到深色模式'"
+						:title="themeToggleTitle"
 						@click="toggleTheme"
 					>
 						{{ theme === 'dark' ? '🌙' : '☀️' }}
 					</button>
 					<button type="button" class="lang-btn" @click="toggleLang">
-						{{ locale === 'zh' ? 'EN' : '中文' }}
+						{{ nextLocaleLabel }}
 					</button>
 				</div>
 			</div>
@@ -110,6 +108,8 @@ const { avatarUrl, loggedIn, playtime, theme, username } = useHeaderProfile()
 const activeNavKey = ref(null)
 const megaPanelContent = ref(null)
 const isNavHovered = computed(() => activeNavKey.value !== null)
+const nextLocaleLabel = computed(() => t(locale.value === 'zh' ? 'nav.language_english' : 'nav.language_chinese'))
+const themeToggleTitle = computed(() => t(theme.value === 'dark' ? 'nav.theme_light' : 'nav.theme_dark'))
 const megaPanelHeight = ref('auto')
 let resizeObserver = null
 let clearNavTimer = 0
@@ -117,10 +117,10 @@ let clearNavTimer = 0
 const navCategories = computed(() => [
 	{
 		key: 'community',
-		label: locale.value === 'zh' ? '社区' : 'Community',
+		label: t('nav.community'),
 		title: loggedIn.value
-			? (locale.value === 'zh' ? '账户、查询与消息' : 'Accounts, Query and Messages')
-			: (locale.value === 'zh' ? '登录或注册后访问社区功能' : 'Sign in or register to access community features'),
+			? t('nav.community_title_logged_in')
+			: t('nav.community_title_guest'),
 		items: loggedIn.value ? [
 			{
 				path: '/query',
@@ -135,8 +135,8 @@ const navCategories = computed(() => [
 		] : [
 			{
 				path: '/login',
-				label: locale.value === 'zh' ? '登录账户' : 'Sign In',
-				description: locale.value === 'zh' ? '使用已有 Quantum Original 账户继续访问社区。' : 'Continue with an existing Quantum Original account.',
+				label: t('nav.sign_in'),
+				description: t('nav.sign_in_description'),
 			},
 			{
 				path: '/register',
@@ -147,8 +147,8 @@ const navCategories = computed(() => [
 	},
 	{
 		key: 'server',
-		label: locale.value === 'zh' ? '服务器' : 'Server',
-		title: locale.value === 'zh' ? '状态、连接与交通' : 'Status, Connections and Transport',
+		label: t('nav.server'),
+		title: t('nav.server_title'),
 		items: [
 			{
 				path: '/dashboard',
@@ -169,32 +169,32 @@ const navCategories = computed(() => [
 	},
 	{
 		key: 'guides',
-		label: locale.value === 'zh' ? '内容' : 'Content',
-		title: locale.value === 'zh' ? '官网更新、入服指南与服务器资料' : 'Updates, Guides and Server Notes',
+		label: t('nav.content'),
+		title: t('nav.content_title'),
 		items: [
 			{
 				path: '/news',
-				label: locale.value === 'zh' ? '新闻动态' : 'News',
-				description: locale.value === 'zh' ? '官网进度、服务器公告和内容更新。' : 'Website progress, server announcements and content updates.',
+				label: t('nav.news'),
+				description: t('nav.news_description'),
 			},
 			{
 				path: '/guides',
-				label: locale.value === 'zh' ? 'Wiki 指南' : 'Wiki Guides',
-				description: locale.value === 'zh' ? '浏览全部 Wiki、规则与服务器资料。' : 'Browse the full wiki, rules and server reference.',
+				label: t('nav.wiki_guides'),
+				description: t('nav.wiki_guides_description'),
 			},
 		],
 	},
 	{
 		key: 'explore',
-		label: locale.value === 'zh' ? '探索' : 'Explore',
+		label: t('nav.explore'),
 		title: loggedIn.value
-			? (locale.value === 'zh' ? '成就、致谢与小功能' : 'Advancements, Sponsors and Tools')
-			: (locale.value === 'zh' ? '登录或注册后访问探索内容' : 'Sign in or register to access explore content'),
+			? t('nav.explore_title_logged_in')
+			: t('nav.explore_title_guest'),
 		items: loggedIn.value ? [
 			{
 				path: '/advancements',
 				label: t('mainPage.advancements'),
-				description: locale.value === 'zh' ? t('mainPage_description.advancements') : 'Track QuantumOriginal advancement progress',
+				description: t('mainPage_description.advancements'),
 			},
 			{
 				path: '/miscs',
@@ -204,8 +204,8 @@ const navCategories = computed(() => [
 		] : [
 			{
 				path: '/login',
-				label: locale.value === 'zh' ? '登录账户' : 'Sign In',
-				description: locale.value === 'zh' ? '登录后查看成就、小功能和更多内容。' : 'Sign in to view advancements, tools and more.',
+				label: t('nav.sign_in'),
+				description: t('nav.explore_sign_in_description'),
 			},
 			{
 				path: '/register',
@@ -214,6 +214,19 @@ const navCategories = computed(() => [
 			},
 		],
 	},
+	{
+		key: 'join',
+		label: t('nav.join_us'),
+		title: t('nav.join_us_title'),
+		items: [
+			{
+				path: 'https://qm.qq.com/q/ca25kxwf0k',
+				external: true,
+				label: t('nav.join_us_qq'),
+				description: t('nav.join_us_qq_description'),
+			}
+		]
+	}
 ])
 
 const activeNavCategory = computed(() => {
@@ -231,8 +244,9 @@ const activeMegaItems = computed(() =>
 	(activeNavCategory.value?.items || []).map((item) => ({
 		key: item.path,
 		path: item.path,
+		external: item.external,
+		target: item.target,
 		label: item.label,
-		description: item.description,
 	}))
 )
 
@@ -279,9 +293,17 @@ const goHome = () => {
 	router.push('/')
 }
 
-const goTo = (path) => {
+const isExternalUrl = (path) => /^[a-z][a-z0-9+.-]*:\/\//i.test(path) || path.startsWith('mailto:') || path.startsWith('tel:')
+
+const goTo = (path, options = {}) => {
 	cancelClearActiveNav()
 	activeNavKey.value = null
+
+	if (options.external || isExternalUrl(path)) {
+		window.open(path, options.target || '_blank', 'noopener,noreferrer')
+		return
+	}
+
 	router.push(path)
 }
 
@@ -408,7 +430,7 @@ onBeforeUnmount(() => {
 
 .background-blur.active {
 	backdrop-filter: blur(10px);
-	background: #0B122050;
+	background: #03050A66;
 	opacity: 1;
 }
 .logo-mark-main {
@@ -420,21 +442,6 @@ onBeforeUnmount(() => {
 	height: 14px;
 	right: 1px;
 	bottom: 1px;
-}
-
-.logo-copy {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	line-height: 1;
-	letter-spacing: 0;
-}
-
-.logo-kicker {
-	font-size: 0.88rem;
-	text-transform: uppercase;
-	color: currentColor;
-	opacity: 0.84;
 }
 
 .logo-text {

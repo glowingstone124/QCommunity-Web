@@ -24,7 +24,7 @@ MAIN_WORLD ONLY
 COORDINATES: (1000,-1000) → (-6500,5000)
 [2025-08-01 03:02:20.0916 UTC] DISABLING SERVICES:
 [x] Web Map
-[x] QCommunity Dashboard
+[x] QHub Dashboard
 [x] Player Tracker
 [x] CoreProtect
 [2025-08-01 03:02:20.0919 UTC] ENABLING ANTI-XRAY MODULE ... ██████░░░ 70%

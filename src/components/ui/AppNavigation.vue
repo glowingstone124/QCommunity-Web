@@ -52,7 +52,6 @@ const emit = defineEmits(['activate', 'clear', 'select'])
 			>
 				<span class="app-navigation-copy">
 					<span class="app-navigation-title">{{ item.label }}</span>
-					<span v-if="item.description" class="app-navigation-description">{{ item.description }}</span>
 				</span>
 				<span class="app-navigation-indicator" aria-hidden="true"></span>
 			</button>
@@ -174,13 +173,6 @@ const emit = defineEmits(['activate', 'clear', 'select'])
 
 .app-navigation-item.is-active .app-navigation-title {
 	font-weight: 700;
-}
-
-.app-navigation-description {
-	color: currentColor;
-	font-size: 0.88rem;
-	line-height: 1.35;
-	opacity: 0.68;
 }
 
 .app-navigation-indicator {

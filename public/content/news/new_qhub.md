@@ -7,6 +7,7 @@ title_zh: 欢迎全新的QHub!
 title_en: Say Hello to QHub!
 description_zh: 四周年之际，我们正式重做了Quantum Original的网页服务。
 description_en: We re-designed Quantum Original's web services during QO's four years anniversary.
+image: /content/news/assets/qhub-anniversary.svg
 to: /news/new_qhub
 ---
 ::: zh

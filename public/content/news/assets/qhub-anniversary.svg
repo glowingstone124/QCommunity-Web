@@ -1,0 +1,7 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">QHub placeholder cover</title>
+  <desc id="desc">Minimal placeholder cover for the QHub announcement.</desc>
+  <rect width="1600" height="900" fill="#050812"/>
+  <rect x="80" y="80" width="1440" height="740" fill="#070B12" stroke="#1A2433" stroke-width="2"/>
+
+</svg>

@@ -28,6 +28,33 @@
     "click_login": "Login",
     "advancements": "View Quantum Original advancement progress"
   },
+  "nav": {
+    "theme_light": "Switch to light mode",
+    "theme_dark": "Switch to dark mode",
+    "language_english": "EN",
+    "language_chinese": "中文",
+    "community": "Community",
+    "community_title_logged_in": "Accounts, Query and Messages",
+    "community_title_guest": "Sign in or register to access community features",
+    "server": "Server",
+    "server_title": "Status, Connections and Transport",
+    "content": "Content",
+    "content_title": "Guides and Server Notes",
+    "news": "News",
+    "news_description": "Server announcements and news.",
+    "wiki_guides": "Wiki Guides",
+    "wiki_guides_description": "Browse wiki, rules and server reference.",
+    "explore": "Explore",
+    "explore_title_logged_in": "Advancements, Sponsors and Tools",
+    "explore_title_guest": "Sign in or register to access explore content",
+    "sign_in": "Sign In",
+    "sign_in_description": "Continue with an existing Quantum Original account.",
+    "explore_sign_in_description": "Sign in to view advancements, tools and more.",
+    "join_us": "Join Us",
+    "join_us_title": "Community and external links",
+    "join_us_qq": "Join QQ Group",
+    "join_us_qq_description": "Open the Quantum Original official QQ group invitation."
+  },
   "loginPage": {
     "welcome_back": "Welcome Back!",
     "login": "Please log in",
@@ -37,7 +64,11 @@
     "err_network": "Network error. Please try later."
   },
   "homePage": {
-    "hero_title": "We are preparing.",
+    "campaign_brand": "QHub",
+    "campaign_title": "Welcome to Quantum Original 4th Anniversary",
+    "regular_brand": "Quantum Original",
+    "regular_title": "Welcome to QHub",
+    "hero_title": "Quantum Original 4th Anniversary",
     "hero_description": "The Quantum Original website is going through another style refresh. This beta page may not reflect the original content.",
     "scroll_to_feed": "Scroll down to view the feed",
     "read_more": "Read more",
@@ -46,6 +77,10 @@
     "footer_guides": "Wiki Guides"
   },
   "newsPage": {
+    "title": "News",
+    "sidebar_label": "News list",
+    "collapse": "Collapse",
+    "show_list": "Show List",
     "not_found": "This feed item could not be found.",
     "no_body": "This item does not have more article content yet.",
     "back_home": "Back home",

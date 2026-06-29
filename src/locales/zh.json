@@ -28,6 +28,33 @@
     "click_login": "点击此处登录",
     "advancements": "查看QO成就完成情况"
   },
+  "nav": {
+    "theme_light": "切换到浅色模式",
+    "theme_dark": "切换到深色模式",
+    "language_english": "EN",
+    "language_chinese": "中文",
+    "community": "社区",
+    "community_title_logged_in": "账户、查询与消息",
+    "community_title_guest": "登录或注册后访问社区功能",
+    "server": "服务器",
+    "server_title": "状态、连接与交通",
+    "content": "内容",
+    "content_title": "指南与服务器资料",
+    "news": "新闻动态",
+    "news_description": "服务器公告和新闻。",
+    "wiki_guides": "Wiki 指南",
+    "wiki_guides_description": "浏览 Wiki、规则与服务器资料。",
+    "explore": "探索",
+    "explore_title_logged_in": "成就、致谢与小功能",
+    "explore_title_guest": "登录或注册后访问探索内容",
+    "sign_in": "登录账户",
+    "sign_in_description": "使用已有 Quantum Original 账户继续访问社区。",
+    "explore_sign_in_description": "登录后查看成就、小功能和更多内容。",
+    "join_us": "加入我们",
+    "join_us_title": "可用的选项",
+    "join_us_qq": "加入 QQ 群",
+    "join_us_qq_description": "加入我们的QQ讨论群"
+  },
   "loginPage": {
     "welcome_back": "欢迎回来",
     "login": "请登录您的账户",
@@ -37,7 +64,11 @@
     "err_network": "网络连接错误，请稍后再试"
   },
   "homePage": {
-    "hero_title": "我们正在筹备中。",
+    "campaign_brand": "QHub",
+    "campaign_title": "欢迎来到 Quantum Original 4周年",
+    "regular_brand": "Quantum Original",
+    "regular_title": "欢迎来到 QHub",
+    "hero_title": "Quantum Original 4周年",
     "hero_description": "Quantum Original 的官网正在经历新一轮样式调整。您现在看到的页面是 Beta 版本，可能并不反映原始内容。",
     "scroll_to_feed": "向下滑动查看信息流",
     "read_more": "查看详情",
@@ -46,6 +77,10 @@
     "footer_guides": "Wiki 指南"
   },
   "newsPage": {
+    "title": "新闻动态",
+    "sidebar_label": "新闻列表",
+    "collapse": "收起",
+    "show_list": "展开列表",
     "not_found": "没有找到这条信息流内容。",
     "no_body": "这条信息暂时没有更多正文。",
     "back_home": "返回首页",

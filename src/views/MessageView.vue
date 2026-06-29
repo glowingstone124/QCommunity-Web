@@ -203,7 +203,6 @@ onBeforeUnmount(() => {
 		<header class="chat-header">
 			<div>
 				<h1 class="title">聊天记录</h1>
-				<p class="subtitle">公共频道消息按时间同步展示</p>
 			</div>
 			<span class="status-pill">{{ loginstat ? '已连接' : '未登录' }}</span>
 		</header>
@@ -306,11 +305,6 @@ onBeforeUnmount(() => {
 	font-size: 1.45rem;
 	line-height: 1.2;
 	color: var(--title-color);
-}
-
-.subtitle {
-	margin: 0.35rem 0 0 0;
-	color: var(--text-secondary);
 }
 
 .status-pill {

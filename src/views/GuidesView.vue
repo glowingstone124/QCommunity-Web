@@ -113,7 +113,6 @@ watch(
 						@click="goToGuide(item.id)"
 					>
 						<span>{{ item.title }}</span>
-						<small>{{ item.description }}</small>
 					</button>
 				</section>
 			</nav>
@@ -164,7 +163,6 @@ watch(
 			<article v-else class="guide-article">
 				<header class="guide-header">
 					<h1>{{ guide.title }}</h1>
-					<p>{{ guide.description }}</p>
 				</header>
 
 				<div class="guide-content" v-html="guide.html" @click="openGuideLink"></div>
@@ -299,12 +297,6 @@ watch(
 	line-height: 1.25;
 }
 
-.guide-nav-item small {
-	color: var(--text-secondary);
-	font-size: 0.82rem;
-	line-height: 1.42;
-}
-
 .guide-reader {
 	min-width: 0;
 }
@@ -371,7 +363,6 @@ watch(
 	line-height: 1.04;
 }
 
-.guide-header p,
 .guide-empty p {
 	max-width: 720px;
 	margin: 0;

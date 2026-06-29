@@ -212,7 +212,6 @@ onBeforeUnmount(stopPolling)
 		<section class="dashboard-hero">
 			<div class="hero-copy">
 				<h1>服务器仪表板</h1>
-				<p>实时查看 Quantum Original 服务器在线状态、性能指标与玩家活动。</p>
 			</div>
 
 			<div class="status-panel" :class="performanceState.className">
@@ -254,7 +253,6 @@ onBeforeUnmount(stopPolling)
 			<article class="server-summary">
 				<div class="section-title">
 					<h2>{{ currentServer.name }}</h2>
-					<p>{{ currentServer.description }}</p>
 				</div>
 
 				<div class="load-meter">
@@ -332,7 +330,7 @@ onBeforeUnmount(stopPolling)
 
 <style scoped>
 .dashboard {
-	--dashboard-surface: color-mix(in srgb, var(--background) 94%, var(--primary));
+	--dashboard-surface: color-mix(in srgb, var(--background) 96%, var(--primary));
 	--dashboard-surface-muted: var(--page-background);
 	--dashboard-line: color-mix(in srgb, var(--text-main) 13%, transparent);
 	--dashboard-line-strong: color-mix(in srgb, var(--text-main) 24%, transparent);
@@ -350,11 +348,14 @@ onBeforeUnmount(stopPolling)
 }
 
 :global(:root[data-theme='dark'] .dashboard) {
-	--dashboard-surface: color-mix(in srgb, var(--background-secondary) 82%, var(--primary));
-	--dashboard-surface-muted: var(--page-background);
-	--dashboard-line: color-mix(in srgb, var(--dark-text-primary) 14%, transparent);
-	--dashboard-line-strong: color-mix(in srgb, var(--dark-text-primary) 24%, transparent);
-	--dashboard-soft: color-mix(in srgb, var(--dark-text-primary) 6%, transparent);
+	--dashboard-surface: #070B12;
+	--dashboard-surface-muted: #050812;
+	--dashboard-line: #131A26;
+	--dashboard-line-strong: #1A2433;
+	--dashboard-soft: color-mix(in srgb, #E6EAF2 5%, transparent);
+	--dashboard-blue-soft: color-mix(in srgb, var(--primary) 16%, #070B12);
+	--dashboard-green-soft: color-mix(in srgb, var(--success) 13%, #070B12);
+	--dashboard-yellow-soft: color-mix(in srgb, var(--warning) 15%, #070B12);
 }
 
 .dashboard-hero,
@@ -370,7 +371,7 @@ onBeforeUnmount(stopPolling)
 	align-items: flex-end;
 	justify-content: space-between;
 	gap: 1rem;
-	padding: 0.75rem 0 1.15rem;
+	padding: 0.65rem 0 1rem;
 }
 
 .hero-copy {
@@ -387,16 +388,9 @@ onBeforeUnmount(stopPolling)
 }
 
 .hero-copy h1 {
-	font-size: clamp(2.4rem, 6vw, 5.2rem);
+	font-size: clamp(2rem, 4.8vw, 4rem);
 	font-weight: 520;
 	letter-spacing: 0;
-}
-
-.hero-copy p,
-.section-title p {
-	margin: 0;
-	color: var(--text-secondary);
-	line-height: 1.55;
 }
 
 .status-panel {
@@ -406,7 +400,7 @@ onBeforeUnmount(stopPolling)
 	align-items: center;
 	gap: 0.2rem 0.55rem;
 	border: 1px solid var(--dashboard-line);
-	background: color-mix(in srgb, var(--dashboard-surface) 88%, transparent);
+	background: color-mix(in srgb, var(--dashboard-surface) 94%, transparent);
 	padding: 0.82rem 0.95rem;
 	min-width: 184px;
 	box-sizing: border-box;
@@ -420,7 +414,6 @@ onBeforeUnmount(stopPolling)
 .status-dot {
 	width: 0.6rem;
 	height: 0.6rem;
-	border-radius: 50%;
 	background: var(--success);
 }
 
@@ -447,7 +440,7 @@ onBeforeUnmount(stopPolling)
 
 .server-option {
 	border: none;
-	background: color-mix(in srgb, var(--dashboard-surface) 94%, transparent);
+	background: color-mix(in srgb, var(--dashboard-surface) 96%, transparent);
 	color: var(--text-main);
 	padding: 1rem 1.05rem;
 	text-align: left;
@@ -486,7 +479,7 @@ onBeforeUnmount(stopPolling)
 
 .server-option:hover,
 .server-option.active {
-	background: var(--dashboard-blue-soft);
+	background: color-mix(in srgb, var(--dashboard-blue-soft) 84%, var(--dashboard-surface));
 	color: var(--text-main);
 }
 
@@ -505,7 +498,7 @@ onBeforeUnmount(stopPolling)
 .server-summary,
 .players-panel {
 	border: 1px solid var(--dashboard-line);
-	background: color-mix(in srgb, var(--dashboard-surface) 92%, transparent);
+	background: color-mix(in srgb, var(--dashboard-surface) 96%, transparent);
 }
 
 .metric-card {
@@ -525,7 +518,7 @@ onBeforeUnmount(stopPolling)
 	left: 1rem;
 	width: calc(100% - 2rem);
 	bottom: 0;
-	height: 3px;
+	height: 2px;
 	background: var(--primary);
 	transform-origin: left center;
 }
@@ -549,7 +542,7 @@ onBeforeUnmount(stopPolling)
 	left: 1rem;
 	right: 1rem;
 	bottom: 0;
-	height: 3px;
+	height: 2px;
 	background: color-mix(in srgb, var(--text-main) 10%, transparent);
 }
 
@@ -569,7 +562,7 @@ onBeforeUnmount(stopPolling)
 
 .metric-card strong {
 	color: var(--title-color);
-	font-size: clamp(2.3rem, 6vw, 4rem);
+	font-size: clamp(2rem, 5vw, 3.4rem);
 	line-height: 0.95;
 	font-weight: 500;
 	font-family: 'SpaceMono', 'Inter', sans-serif;
@@ -617,7 +610,7 @@ onBeforeUnmount(stopPolling)
 	gap: 0.7rem;
 	padding: 1rem;
 	border: 1px solid var(--dashboard-line);
-	background: var(--dashboard-soft);
+	background: color-mix(in srgb, var(--dashboard-soft) 76%, transparent);
 }
 
 .load-meter-header,
@@ -637,8 +630,8 @@ onBeforeUnmount(stopPolling)
 }
 
 .load-track {
-	height: 0.65rem;
-	background: color-mix(in srgb, var(--text-main) 8%, transparent);
+	height: 0.5rem;
+	background: color-mix(in srgb, var(--text-main) 7%, transparent);
 	overflow: hidden;
 }
 
@@ -665,8 +658,9 @@ onBeforeUnmount(stopPolling)
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	background: var(--text-main);
-	color: var(--background);
+	background: var(--dashboard-blue-soft);
+	color: var(--title-color);
+	border: 1px solid var(--dashboard-line-strong);
 	font-weight: 700;
 }
 
@@ -696,7 +690,7 @@ onBeforeUnmount(stopPolling)
 	grid-template-columns: minmax(0, 1fr) auto;
 	align-items: center;
 	gap: 1rem;
-	background: color-mix(in srgb, var(--dashboard-surface) 95%, transparent);
+	background: color-mix(in srgb, var(--dashboard-surface) 96%, transparent);
 }
 
 .player-list-head {
@@ -715,7 +709,7 @@ onBeforeUnmount(stopPolling)
 }
 
 .player-row:hover {
-	background: var(--dashboard-blue-soft);
+	background: color-mix(in srgb, var(--dashboard-blue-soft) 82%, var(--dashboard-surface));
 }
 
 .player-main {
@@ -740,7 +734,7 @@ onBeforeUnmount(stopPolling)
 	height: 2.4rem;
 	display: block;
 	object-fit: cover;
-	background: var(--background-secondary);
+	background: var(--dashboard-surface-muted);
 	border: 1px solid var(--dashboard-line-strong);
 	flex: 0 0 auto;
 }
