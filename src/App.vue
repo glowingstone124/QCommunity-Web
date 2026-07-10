@@ -86,13 +86,13 @@ input, textarea {
 	background: var(--page-background);
 	overflow: auto;
 	overflow-x: hidden;
+	-webkit-overflow-scrolling: touch;
+	overscroll-behavior-y: contain;
+	touch-action: pan-y;
 }
 
 .app-main--contained {
 	overflow: hidden;
 }
 
-* {
-	transition: all 0.3s ease-in-out;
-}
 </style>

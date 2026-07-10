@@ -24,6 +24,11 @@ const logins = ref([])
 const iplist = ref([])
 const ipAddr = ref('')
 const isValidIp = ref(false)
+const isSubmittingIp = ref(false)
+const isLoadingIps = ref(false)
+const deletingIp = ref('')
+const ipFeedback = ref('')
+const ipFeedbackType = ref('')
 const isImmersive = ref(true)
 const isFrozen = ref(null)
 const statusHint = ref('')
@@ -71,40 +76,124 @@ function queryAccountStatus() {
 		})
 }
 
-function submitIp() {
-	fetch(`https://api.qoriginal.vip/qo/authorization/ip/add?ip=${ipAddr.value}`, {
-		headers: {
-			token: localStorage.getItem('token'),
-		},
-	})
-		.then((res) => res.json())
-		.then((data) => {
-			if (data.code === 1) {
-				alert({ text: '登录失效，请重新登陆' })
-			}
-			if (data.code === 2) {
-				alert({ text: '您最多只能注册五个ip' })
-			}
-			queryIpDetails()
-		})
+function setIpFeedback(message, type = 'error') {
+	ipFeedback.value = message
+	ipFeedbackType.value = type
 }
 
-function queryIpDetails() {
-	fetch('https://api.qoriginal.vip/qo/authorization/ip/query', {
-		headers: {
-			token: localStorage.getItem('token'),
-		},
-	})
-		.then((res) => res.json())
-		.then((data) => {
-			iplist.value = data
+async function submitIp() {
+	if (!isValidIp.value || isSubmittingIp.value) return
+	isSubmittingIp.value = true
+	ipFeedback.value = ''
+	try {
+		const response = await fetch(
+			`https://api.qoriginal.vip/qo/authorization/ip/add?ip=${encodeURIComponent(ipAddr.value)}`,
+			{ headers: { token: localStorage.getItem('token') || '' } },
+		)
+		if (!response.ok) throw new Error(`HTTP ${response.status}`)
+		const data = await response.json()
+		if (data.code === 0) {
+			setIpFeedback('IP 已加入登录白名单。', 'success')
+			ipAddr.value = ''
+			await queryIpDetails()
+		} else if (data.code === 1) {
+			alert({ text: '登录失效，请重新登录' })
+			setIpFeedback('登录状态已失效，请重新登录。')
+		} else if (data.code === 2) {
+			setIpFeedback('最多只能登记 5 个 IP，请先删除不再使用的地址。')
+		} else if (data.code === 4) {
+			setIpFeedback('IP 格式不正确，请检查后重试。')
+		} else {
+			setIpFeedback(data.reason || '添加失败，请稍后重试。')
+		}
+	} catch (error) {
+		console.error('添加 IP 失败:', error)
+		setIpFeedback('无法连接到服务器，请稍后重试。')
+	} finally {
+		isSubmittingIp.value = false
+	}
+}
+
+async function removeIp(ip) {
+	if (deletingIp.value) return
+	deletingIp.value = ip
+	ipFeedback.value = ''
+	try {
+		const response = await fetch(
+			`https://api.qoriginal.vip/qo/authorization/ip/remove?ip=${encodeURIComponent(ip)}`,
+			{
+				method: 'DELETE',
+				headers: { token: localStorage.getItem('token') || '' },
+			},
+		)
+		if (!response.ok) throw new Error(`HTTP ${response.status}`)
+		const data = await response.json()
+		if (data.code === 0) {
+			setIpFeedback('IP 已从白名单移除。', 'success')
+			await queryIpDetails()
+		} else if (data.code === 1) {
+			setIpFeedback('登录状态已失效，请重新登录。')
+		} else if (data.code === 3) {
+			setIpFeedback('该 IP 已不在白名单中。')
+			await queryIpDetails()
+		} else {
+			setIpFeedback(data.reason || '删除失败，请稍后重试。')
+		}
+	} catch (error) {
+		console.error('删除 IP 失败:', error)
+		setIpFeedback('无法连接到服务器，请稍后重试。')
+	} finally {
+		deletingIp.value = ''
+	}
+}
+
+async function queryIpDetails() {
+	isLoadingIps.value = true
+	try {
+		const response = await fetch('https://api.qoriginal.vip/qo/authorization/ip/query', {
+			headers: { token: localStorage.getItem('token') || '' },
 		})
+		if (!response.ok) throw new Error(`HTTP ${response.status}`)
+		const data = await response.json()
+		iplist.value = Array.isArray(data)
+			? data.map((item) => (typeof item === 'string' ? item : item?.ip)).filter(Boolean)
+			: []
+	} catch (error) {
+		console.error('加载 IP 白名单失败:', error)
+		setIpFeedback('白名单加载失败，请稍后重试。')
+	} finally {
+		isLoadingIps.value = false
+	}
+}
+
+function isValidIpv4(value) {
+	const parts = value.split('.')
+	return parts.length === 4 && parts.every((part) => {
+		if (!/^\d+$/.test(part) || (part.length > 1 && part.startsWith('0'))) return false
+		const octet = Number(part)
+		return octet >= 0 && octet <= 255
+	})
+}
+
+function isValidIpv6(value) {
+	if (!value.includes(':') || value.includes('%') || !/^[0-9a-fA-F:.]+$/.test(value)) return false
+	let candidate = value
+	const lastColon = candidate.lastIndexOf(':')
+	const ipv4Tail = candidate.slice(lastColon + 1)
+	if (ipv4Tail.includes('.')) {
+		if (!isValidIpv4(ipv4Tail)) return false
+		candidate = `${candidate.slice(0, lastColon)}:0:0`
+	}
+	if ((candidate.match(/::/g) || []).length > 1) return false
+	const hasCompression = candidate.includes('::')
+	const groups = candidate.split(':').filter(Boolean)
+	if ((!hasCompression && groups.length !== 8) || (hasCompression && groups.length >= 8)) return false
+	return groups.every((group) => /^[0-9a-fA-F]{1,4}$/.test(group))
 }
 
 function validateIP() {
-	const ipPattern =
-		/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
-	isValidIp.value = ipPattern.test(ipAddr.value)
+	const value = ipAddr.value
+	isValidIp.value = value === value.trim() && value.length <= 45 && (isValidIpv4(value) || isValidIpv6(value))
 }
 
 function logout() {
@@ -178,8 +267,15 @@ watch(ipAddr, validateIP)
 					:ip-addr="ipAddr"
 					:is-valid-ip="isValidIp"
 					:iplist="iplist"
+					:is-submitting="isSubmittingIp"
+					:is-loading="isLoadingIps"
+					:deleting-ip="deletingIp"
+					:feedback="ipFeedback"
+					:feedback-type="ipFeedbackType"
 					@update:ip-addr="ipAddr = $event"
 					@submit="submitIp"
+					@remove="removeIp"
+					@refresh="queryIpDetails"
 				/>
 			</transition>
 
@@ -280,7 +376,7 @@ watch(ipAddr, validateIP)
 @media (max-width: 960px) {
 	.account {
 		grid-template-columns: 1fr;
-		padding: 1rem;
+		padding: 0.85rem;
 		height: 100%;
 		overflow: auto;
 	}
@@ -297,6 +393,21 @@ watch(ipAddr, validateIP)
 		height: auto;
 		overflow: visible;
 		max-width: none;
+	}
+}
+
+@media (max-width: 640px) {
+	.account {
+		padding: 0.75rem;
+		gap: 0.75rem;
+	}
+
+	.content {
+		overflow: visible;
+	}
+
+	.panel-full {
+		padding: 0;
 	}
 }
 

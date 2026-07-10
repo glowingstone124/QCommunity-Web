@@ -4,7 +4,6 @@ import {computed, ref, onMounted} from "vue";
 interface AffiliatedAccount {
 	name: string;
 	host: string;
-	password: string;
 }
 
 const accounts = ref<AffiliatedAccount[]>([]);
@@ -15,6 +14,8 @@ const newAccountPassword = ref("");
 const currentHint = ref("");
 const isLoading = ref(true);
 const isSubmitting = ref(false);
+const deletingAccount = ref("");
+const pendingDelete = ref("");
 const loadError = ref("");
 
 const accountLimit = 3;
@@ -78,17 +79,55 @@ const createAccount = async () => {
 		const result = await response.json();
 		if (result.result === true) {
 			currentHint.value = "附属账户已创建。";
+			newAccountName.value = "";
+			newAccountPassword.value = "";
+			await fetchAccounts();
 		} else {
 			currentHint.value = "创建失败：请检查是否重名，或是否已经达到数量上限。";
 		}
-		newAccountName.value = "";
-		newAccountPassword.value = "";
-		await fetchAccounts();
 	} catch (err) {
 		console.error("创建附属账户失败:", err);
 		currentHint.value = "创建失败：服务器暂时无法处理请求。";
 	} finally {
 		isSubmitting.value = false;
+	}
+};
+
+const requestDelete = (name: string) => {
+	pendingDelete.value = name;
+	currentHint.value = "";
+};
+
+const cancelDelete = () => {
+	pendingDelete.value = "";
+};
+
+const deleteAccount = async (name: string) => {
+	if (deletingAccount.value !== "") return;
+	deletingAccount.value = name;
+	currentHint.value = "";
+	try {
+		const response = await fetch(
+			`https://api.qoriginal.vip/qo/authorization/affiliated/remove?name=${encodeURIComponent(name)}`,
+			{
+				method: "DELETE",
+				headers: { "token": token || "" }
+			}
+		);
+		if (!response.ok) throw new Error(`HTTP ${response.status}`);
+		const result = await response.json();
+		if (result.result === true) {
+			currentHint.value = `附属账户 ${name} 已删除。`;
+			pendingDelete.value = "";
+			await fetchAccounts();
+		} else {
+			currentHint.value = "删除失败：账户不存在或不属于当前主账号。";
+		}
+	} catch (err) {
+		console.error("删除附属账户失败:", err);
+		currentHint.value = "删除失败：服务器暂时无法处理请求。";
+	} finally {
+		deletingAccount.value = "";
 	}
 };
 onMounted(fetchAccounts);
@@ -99,7 +138,7 @@ onMounted(fetchAccounts);
 		<header class="page-header">
 			<div>
 				<h1 class="headline">附属账户</h1>
-				<p class="subhead">用于管理绑定账户与共享访问权限。</p>
+				<p class="subhead">创建和移除绑定账户。账号信息创建后不可修改。</p>
 			</div>
 			<div class="header-meter" aria-label="附属账户容量">
 				<span>{{ accounts.length }}/{{ accountLimit }}</span>
@@ -119,8 +158,8 @@ onMounted(fetchAccounts);
 				<strong>{{ accountSlots }}</strong>
 			</div>
 			<div class="summary-item">
-				<span>访问范围</span>
-				<strong>共享权限</strong>
+				<span>管理方式</span>
+				<strong>只读 · 可删除</strong>
 			</div>
 		</div>
 
@@ -138,19 +177,40 @@ onMounted(fetchAccounts);
 
 				<div v-if="isLoading" class="state-box">正在加载附属账户...</div>
 				<p v-else-if="loadError" class="state-box error">{{ loadError }}</p>
-				<div v-else-if="accounts.length" class="account-grid">
-					<div v-for="account in accounts" :key="account.name" class="account-card">
+				<TransitionGroup v-else-if="accounts.length" name="account-list" tag="div" class="account-grid">
+					<div v-for="account in accounts" :key="account.name" class="account-card" :class="{ 'is-confirming': pendingDelete === account.name }">
 						<div class="avatar">{{ initialOf(account.name) }}</div>
 						<div class="account-copy">
 							<h3 class="account-name">{{ account.name }}</h3>
-							<p class="account-meta">{{ account.host || "未绑定主机" }}</p>
+							<p class="account-meta">主账号 · {{ account.host || "未绑定" }}</p>
 						</div>
-						<span class="account-status">可用</span>
-						<div class="account-foot">
-							<span>登录密码由创建时设置</span>
+						<div class="account-actions">
+							<span class="account-status">只读</span>
+							<button
+								type="button"
+								class="icon-button"
+								:disabled="deletingAccount !== ''"
+								:aria-label="`删除附属账户 ${account.name}`"
+								:title="`删除 ${account.name}`"
+								@click="requestDelete(account.name)"
+							>
+								<font-awesome-icon :icon="['far', 'trash-can']" aria-hidden="true" />
+							</button>
+						</div>
+						<div v-if="pendingDelete === account.name" class="delete-confirm">
+							<p>确定删除该账户？删除后无法恢复。</p>
+							<div>
+								<button type="button" class="confirm-cancel" :disabled="deletingAccount !== ''" @click="cancelDelete">取消</button>
+								<button type="button" class="confirm-delete" :disabled="deletingAccount !== ''" @click="deleteAccount(account.name)">
+									{{ deletingAccount === account.name ? "删除中" : "确认删除" }}
+								</button>
+							</div>
+						</div>
+						<div v-else class="account-foot">
+							<span>密码仅可在创建时设置</span>
 						</div>
 					</div>
-				</div>
+				</TransitionGroup>
 				<div v-else class="state-box">
 					<strong>暂无附属账户</strong>
 					<span>创建后会显示在这里，用于快速识别和管理。</span>
@@ -199,7 +259,7 @@ onMounted(fetchAccounts);
 
 					<p
 						v-if="currentHint !== ''"
-						:class="['inline-hint', currentHint.includes('已创建') ? 'hint-success' : 'hint-error']"
+						:class="['inline-hint', currentHint.includes('已创建') || currentHint.includes('已删除') ? 'hint-success' : 'hint-error']"
 					>
 						{{ currentHint }}
 					</p>
@@ -346,6 +406,21 @@ onMounted(fetchAccounts);
 	gap: 0.65rem;
 }
 
+.account-list-enter-active,
+.account-list-leave-active {
+	transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.account-list-enter-from,
+.account-list-leave-to {
+	opacity: 0;
+	transform: translateY(-8px);
+}
+
+.account-list-move {
+	transition: transform 220ms ease;
+}
+
 .account-card {
 	display: grid;
 	grid-template-columns: 40px minmax(0, 1fr) auto;
@@ -356,6 +431,10 @@ onMounted(fetchAccounts);
 	background: var(--surface-soft);
 	border: 1px solid var(--border-soft);
 	min-width: 0;
+}
+
+.account-card.is-confirming {
+	border-color: color-mix(in srgb, var(--error) 45%, var(--border-soft));
 }
 
 .avatar {
@@ -390,14 +469,40 @@ onMounted(fetchAccounts);
 	overflow-wrap: anywhere;
 }
 
+.account-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+}
+
 .account-status {
-	align-self: start;
-	border: 1px solid color-mix(in srgb, var(--success) 48%, var(--border-soft));
-	color: var(--success);
+	border: 1px solid var(--border-soft);
+	color: var(--text-secondary);
 	font-size: 0.78rem;
 	font-weight: 700;
 	padding: 0.18rem 0.48rem;
 }
+
+.icon-button {
+	width: 34px;
+	height: 34px;
+	padding: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid var(--border-soft);
+	background: transparent;
+	color: var(--text-secondary);
+	cursor: pointer;
+}
+
+.icon-button:hover:not(:disabled) {
+	color: var(--error);
+	border-color: var(--error);
+	background: color-mix(in srgb, var(--error) 7%, transparent);
+}
+
+.icon-button:disabled { opacity: 0.45; cursor: not-allowed; }
 
 .account-foot {
 	grid-column: 1 / -1;
@@ -406,6 +511,29 @@ onMounted(fetchAccounts);
 	color: var(--text-secondary);
 	font-size: 0.82rem;
 }
+
+.delete-confirm {
+	grid-column: 1 / -1;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 0.75rem;
+	padding-top: 0.7rem;
+	border-top: 1px solid color-mix(in srgb, var(--error) 35%, var(--border-soft));
+}
+
+.delete-confirm p {
+	margin: 0;
+	color: var(--error);
+	font-size: 0.82rem;
+	line-height: 1.4;
+}
+
+.delete-confirm > div { display: flex; gap: 0.45rem; flex: 0 0 auto; }
+.confirm-cancel, .confirm-delete { min-height: 34px; padding: 0 0.7rem; border: 1px solid var(--border-soft); cursor: pointer; font-weight: 600; }
+.confirm-cancel { background: transparent; color: var(--text-main); }
+.confirm-delete { background: var(--error); border-color: var(--error); color: white; }
+.confirm-cancel:disabled, .confirm-delete:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .new-account-form {
 	display: flex;
@@ -604,6 +732,28 @@ onMounted(fetchAccounts);
 
 	.form-actions {
 		align-items: stretch;
+	}
+}
+
+@media (max-width: 520px) {
+	.affiliated { padding: 0.85rem; }
+	.summary-item { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+	.summary-item strong { text-align: right; font-size: 1rem; overflow-wrap: anywhere; }
+	.panel { padding: 0.85rem; }
+	.account-grid { grid-template-columns: 1fr; }
+	.account-card { grid-template-columns: 38px minmax(0, 1fr) auto; padding: 0.75rem; }
+	.avatar { width: 38px; height: 38px; }
+	.account-status { display: none; }
+	.delete-confirm { align-items: stretch; flex-direction: column; }
+	.delete-confirm > div { width: 100%; }
+	.confirm-cancel, .confirm-delete { flex: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.account-list-enter-active,
+	.account-list-leave-active,
+	.account-list-move {
+		transition: none;
 	}
 }
 </style>

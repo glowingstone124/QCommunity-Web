@@ -1,16 +1,18 @@
 <script setup>
-import {computed, onBeforeUnmount, onMounted, ref} from 'vue'
+import {computed, nextTick, onBeforeUnmount, onMounted, ref, watch} from 'vue'
 import {useI18n} from 'vue-i18n'
 import {loadNewsFeed} from '@/utils/newsFeed'
 import {homeCampaign, regularHome} from '@/data/home'
 
 const {locale, t} = useI18n()
 const shaderCanvas = ref(null)
+const homeRoot = ref(null)
 const newsItems = ref([])
 let animationFrame = 0
 let cleanupShader = () => {}
 let shaderTheme = 0
 let newsRefreshTimer = 0
+let revealObserver = null
 const shaderFrameInterval = 1000 / 36
 const shaderTimeScale = 2.2
 const activeHome = computed(() => (homeCampaign.enabled ? homeCampaign : regularHome))
@@ -33,6 +35,19 @@ const currentYear = new Date().getFullYear()
 
 async function syncNewsFeed() {
 	newsItems.value = await loadNewsFeed()
+}
+
+async function observeRevealItems() {
+	await nextTick()
+	const elements = homeRoot.value?.querySelectorAll('.reveal-item:not(.is-observed)') || []
+	elements.forEach((element) => {
+		element.classList.add('is-observed')
+		if (revealObserver) {
+			revealObserver.observe(element)
+		} else {
+			element.classList.add('is-visible')
+		}
+	})
 }
 
 
@@ -315,20 +330,33 @@ function initShaderBackground() {
 	}
 }
 
-onMounted(() => {
+onMounted(async () => {
 	initShaderBackground()
-	syncNewsFeed()
+	if (!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+		revealObserver = new IntersectionObserver((entries) => {
+			entries.forEach((entry) => {
+				if (!entry.isIntersecting) return
+				entry.target.classList.add('is-visible')
+				revealObserver?.unobserve(entry.target)
+			})
+		}, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 })
+	}
+	await syncNewsFeed()
+	await observeRevealItems()
 	newsRefreshTimer = window.setInterval(syncNewsFeed, 15000)
 })
 
+watch(newsItems, observeRevealItems)
+
 onBeforeUnmount(() => {
 	window.clearInterval(newsRefreshTimer)
+	revealObserver?.disconnect()
 	cleanupShader()
 })
 </script>
 
 <template>
-	<div class="home page-shell" :class="{ 'home--campaign': homeCampaign.enabled }">
+	<div ref="homeRoot" class="home page-shell" :class="{ 'home--campaign': homeCampaign.enabled }">
 		<canvas ref="shaderCanvas" class="shader-background" aria-hidden="true"></canvas>
 		<div class="home-content">
 			<section class="home-hero" aria-labelledby="home-title">
@@ -345,7 +373,7 @@ onBeforeUnmount(() => {
 			<section id="home-news" class="news-feed" aria-labelledby="news-title">
 				<article
 					v-if="featuredNews"
-					class="news-item news-item--featured"
+					class="news-item news-item--featured reveal-item"
 					:class="{ 'news-item--text-only': !featuredNews.image }"
 				>
 					<div v-if="featuredNews.image" class="news-image">
@@ -366,10 +394,11 @@ onBeforeUnmount(() => {
 
 				<div class="news-list" v-if="regularNews.length">
 					<article
-						v-for="item in regularNews"
+						v-for="(item, index) in regularNews"
 						:key="item.id"
-						class="news-item"
+						class="news-item reveal-item"
 						:class="{ 'news-item--text-only': !item.image }"
+						:style="{ '--reveal-order': Math.min(index, 5) }"
 					>
 						<div v-if="item.image" class="news-image">
 							<img :src="item.image" :alt="item.title" loading="lazy">
@@ -389,7 +418,7 @@ onBeforeUnmount(() => {
 				</div>
 			</section>
 
-			<footer class="home-footer">
+			<footer class="home-footer reveal-item">
 				<div class="footer-brand">
 					<strong>Quantum Original</strong>
 					<p>Copyright {{ currentYear }} Quantum Original & Holographic Lab. All rights reserved.</p>
@@ -406,7 +435,7 @@ onBeforeUnmount(() => {
 	width: min(1560px, 100%);
 	min-height: 100%;
 	margin: 0 auto;
-	padding: 0 clamp(1rem, 4vw, 3rem) clamp(10rem, 22vh, 18rem);
+	padding: 0 clamp(1rem, 4vw, 3rem) clamp(3rem, 8vh, 6rem);
 	box-sizing: border-box;
 	display: grid;
 	grid-template-columns: minmax(0, 1fr);
@@ -474,6 +503,8 @@ onBeforeUnmount(() => {
 .hero-copy {
 	display: grid;
 	gap: 1rem;
+	width: 100%;
+	min-width: 0;
 }
 
 .hero-brand {
@@ -482,6 +513,7 @@ onBeforeUnmount(() => {
 	font-size: clamp(1.15rem, 2.2vw, 1.9rem);
 	font-weight: 700;
 	line-height: 1;
+	animation: hero-brand-in 520ms cubic-bezier(0.22, 1, 0.36, 1) 80ms both;
 }
 
 .home-hero h1 {
@@ -490,7 +522,11 @@ onBeforeUnmount(() => {
 	font-size: clamp(2.2rem, 5.8vw, 5rem);
 	font-weight: 520;
 	line-height: 0.98;
-	overflow-wrap: anywhere;
+	max-width: min(100%, 20ch);
+	overflow-wrap: normal;
+	word-break: normal;
+	text-wrap: balance;
+	animation: hero-title-in 720ms cubic-bezier(0.16, 1, 0.3, 1) 150ms both;
 }
 
 .home--campaign .hero-brand {
@@ -498,7 +534,7 @@ onBeforeUnmount(() => {
 }
 
 .home--campaign .home-hero h1 {
-	max-width: 12ch;
+	max-width: min(100%, 24ch);
 }
 
 .scroll-cue {
@@ -514,6 +550,7 @@ onBeforeUnmount(() => {
 	font-size: 0.92rem;
 	font-weight: 760;
 	text-decoration: none;
+	animation: scroll-cue-in 520ms ease 620ms both;
 }
 
 .scroll-cue:hover {
@@ -529,6 +566,7 @@ onBeforeUnmount(() => {
 	border-right: 2px solid currentColor;
 	border-bottom: 2px solid currentColor;
 	transform: rotate(45deg);
+	animation: scroll-cue-pulse 1.8s ease-in-out 1s infinite;
 }
 
 .scroll-cue-line::after {
@@ -575,6 +613,21 @@ onBeforeUnmount(() => {
 	break-inside: avoid;
 	page-break-inside: avoid;
 	transition: transform 220ms ease, border-color 220ms ease, background-color 220ms ease;
+}
+
+.reveal-item {
+	opacity: 0;
+	transform: translateY(24px);
+	transition:
+		opacity 560ms ease calc(var(--reveal-order, 0) * 55ms),
+		transform 560ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--reveal-order, 0) * 55ms),
+		border-color 220ms ease,
+		background-color 220ms ease;
+}
+
+.reveal-item.is-visible {
+	opacity: 1;
+	transform: translateY(0);
 }
 
 .news-list .news-item {
@@ -736,12 +789,13 @@ onBeforeUnmount(() => {
 
 .home {
 	position: relative;
-	height: 100%;
-	min-height: 0;
+	height: auto;
+	min-height: 100%;
+	padding: 0;
 	display: flex;
 	flex-direction: column;
 	gap: 1.7rem;
-	overflow: auto;
+	overflow: visible;
 	background: var(--page-background);
 }
 
@@ -752,6 +806,32 @@ onBeforeUnmount(() => {
 	height: 100dvh;
 	pointer-events: none;
 	opacity: 1;
+	animation: shader-in 900ms ease both;
+}
+
+@keyframes shader-in {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+@keyframes hero-brand-in {
+	from { opacity: 0; transform: translateY(10px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hero-title-in {
+	from { opacity: 0; transform: translateY(24px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scroll-cue-in {
+	from { opacity: 0; transform: translate(-50%, 8px); }
+	to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@keyframes scroll-cue-pulse {
+	0%, 100% { transform: translateY(-2px) rotate(45deg); opacity: 0.55; }
+	50% { transform: translateY(4px) rotate(45deg); opacity: 1; }
 }
 
 :global(:root[data-theme='dark'] .home) {
@@ -768,7 +848,7 @@ onBeforeUnmount(() => {
 	}
 
 	.home-hero {
-		min-height: auto;
+		min-height: calc(100dvh - var(--app-header-height, 128px));
 	}
 
 	.news-item {
@@ -790,15 +870,29 @@ onBeforeUnmount(() => {
 @media (max-width: 640px) {
 	.home-content {
 		padding-inline: 1rem;
-		padding-bottom: 8rem;
+		padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
 	}
 
 	.home-footer {
-		padding-bottom: 4.5rem;
+		padding-bottom: 1rem;
 	}
 
 	.home-hero {
-		padding-top: 3rem;
+		min-height: calc(100dvh - var(--app-header-height, 108px));
+		padding: 2.25rem 0 2rem;
+	}
+
+	.home-hero h1,
+	.home--campaign .home-hero h1 {
+		width: 100%;
+		max-width: 100%;
+		font-size: 2.45rem;
+		line-height: 1.04;
+		text-wrap: pretty;
+	}
+
+	.hero-brand {
+		font-size: 1.1rem;
 	}
 
 	.news-feed {
@@ -827,6 +921,19 @@ onBeforeUnmount(() => {
 @media (prefers-reduced-motion: reduce) {
 	.shader-background {
 		display: none;
+	}
+
+	.hero-brand,
+	.home-hero h1,
+	.scroll-cue,
+	.scroll-cue-line {
+		animation: none;
+	}
+
+	.reveal-item {
+		opacity: 1;
+		transform: none;
+		transition: none;
 	}
 }
 </style>

@@ -17,6 +17,7 @@ const isLoading = ref(false)
 // 查询结果
 const routeResult = ref(null)
 const showOptions = ref(false)
+const showMapPreview = ref(false)
 // 交通方式映射
 const transportTypes = ref([
   {id: 0, name: '地铁', int_name: 'METRO', disabled: false},
@@ -118,15 +119,27 @@ const handleEndFocus = () => {
 }
 
 const showMap = () => {
-  window.open('https://bucket.glowingstone.cn/metro.png')
+  showMapPreview.value = true
+}
+
+const closeMap = () => {
+  showMapPreview.value = false
+}
+
+const handleEscape = (event) => {
+  if (event.key !== 'Escape') return
+  if (showMapPreview.value) closeMap()
+  if (showOptions.value) closeOptions()
 }
 
 onMounted(() => {
   document.addEventListener('click', closeSuggestionsOnClickOutside)
+  document.addEventListener('keydown', handleEscape)
 })
 
 onUnmounted(() => {
   document.removeEventListener('click', closeSuggestionsOnClickOutside)
+  document.removeEventListener('keydown', handleEscape)
 })
 const closeSuggestionsOnClickOutside = (event) => {
   const isClickInsideStartInput = event.target.closest('.start-input-container')
@@ -261,6 +274,7 @@ const closeOnOutsideClick = (event) => {
               class="station-input"
               autocomplete="off"
           />
+          <Transition name="suggestions">
           <div v-if="showStartSuggestions && filteredStartStations.length" class="suggestions">
             <div
                 v-for="station in filteredStartStations"
@@ -274,6 +288,7 @@ const closeOnOutsideClick = (event) => {
               <div class="station-name-en" v-else>{{ station.name_en }}</div>
             </div>
           </div>
+          </Transition>
         </div>
       </div>
 
@@ -290,6 +305,7 @@ const closeOnOutsideClick = (event) => {
               class="station-input"
               autocomplete="off"
           />
+          <Transition name="suggestions">
           <div v-if="showEndSuggestions && filteredEndStations.length" class="suggestions">
             <div
                 v-for="station in filteredEndStations"
@@ -303,6 +319,7 @@ const closeOnOutsideClick = (event) => {
               <div class="station-name-en" v-else>{{ station.name_en }}</div>
             </div>
           </div>
+          </Transition>
         </div>
       </div>
 
@@ -324,11 +341,14 @@ const closeOnOutsideClick = (event) => {
           高级选项
         </button>
       </div>
-      <img src="https://bucket.glowingstone.cn/metro.png" alt="单击查看大图" @click="showMap" class="transport-map"/>
+      <button type="button" class="transport-map-button" aria-label="在应用内查看交通地图" @click="showMap">
+        <img src="https://bucket.glowingstone.cn/metro.png" alt="交通线路地图" class="transport-map"/>
+      </button>
     </div>
 
     <div class="result" :class="{ 'is-loading': isLoading }">
-      <div v-if="isLoading" class="loading-state" aria-live="polite" aria-busy="true">
+      <Transition name="result-swap" mode="out-in">
+      <div v-if="isLoading" key="loading" class="loading-state" aria-live="polite" aria-busy="true">
         <div class="loading-copy">
           <span class="loading-spinner" aria-hidden="true"></span>
           <h3>正在生成换乘方案</h3>
@@ -342,7 +362,7 @@ const closeOnOutsideClick = (event) => {
         </div>
       </div>
 
-      <div v-else-if="routeResult">
+      <div v-else-if="routeResult" key="route-result" class="route-result-content">
         <h3>查询结果：</h3>
         <p v-if="routeResult.message">{{ routeResult.message }}</p>
         <p v-if="routeResult.error" class="error">{{ routeResult.error }}</p>
@@ -351,7 +371,7 @@ const closeOnOutsideClick = (event) => {
               v-for="(segment, seg) in routeResult.data.segments"
               :key="`${segment.lineName}-${seg}`"
               class="route-segment"
-              :style="{ '--segment-color': normalizeColor(segment.color) }"
+              :style="{ '--segment-color': normalizeColor(segment.color), '--segment-index': Math.min(seg, 6) }"
           >
             <div class="timeline-row node-row" v-if="seg===0">
               <div class="timeline-node" aria-hidden="true"></div>
@@ -364,6 +384,8 @@ const closeOnOutsideClick = (event) => {
             <div
                 v-for="(stationId, seq) in segment.stationIds"
                 :key="`${segment.lineName}-${stationId}-${seq}`"
+                class="route-station-step"
+                :style="{ '--station-index': Math.min(seq, 12) }"
             >
               <div v-if="seq === segment.stationIds.length - 1" class="timeline-row node-row">
                 <div class="timeline-node" aria-hidden="true"></div>
@@ -377,13 +399,15 @@ const closeOnOutsideClick = (event) => {
           </div>
         </div>
       </div>
-      <div v-else class="placeholder">
+      <div v-else key="placeholder" class="placeholder">
         <p>查询结果将显示在这里</p>
         <p>请选择始发站和终点站后点击查询按钮</p>
       </div>
+      </Transition>
     </div>
   </div>
 
+  <Transition name="options-modal">
   <div v-if="showOptions" class="options-popup-overlay" @click="closeOnOutsideClick">
     <div class="options-popup">
       <div class="popup-header">
@@ -474,6 +498,31 @@ const closeOnOutsideClick = (event) => {
       </div>
     </div>
   </div>
+  </Transition>
+
+  <Transition name="map-preview">
+    <div
+        v-if="showMapPreview"
+        class="map-preview-overlay"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="map-preview-title"
+        @click.self="closeMap"
+    >
+      <div class="map-preview-shell">
+        <header class="map-preview-header">
+          <div>
+            <span>TRANSPORT NETWORK</span>
+            <h2 id="map-preview-title">交通线路地图</h2>
+          </div>
+          <button type="button" class="map-close-button" aria-label="关闭地图" title="关闭地图" @click="closeMap">&times;</button>
+        </header>
+        <div class="map-preview-viewport">
+          <img src="https://bucket.glowingstone.cn/metro.png" alt="交通线路地图大图" />
+        </div>
+      </div>
+    </div>
+  </Transition>
 </template>
 
 <style scoped>
@@ -499,6 +548,7 @@ const closeOnOutsideClick = (event) => {
   margin: 0 auto;
   padding: 0.75rem 1rem 0.75rem;
   box-sizing: border-box;
+  animation: transport-title-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 h1 {
@@ -527,6 +577,7 @@ h2 {
   align-items: stretch;
   gap: 1rem;
   min-height: 0;
+  animation: transport-workspace-in 620ms cubic-bezier(0.22, 1, 0.36, 1) 80ms both;
 }
 
 .query,
@@ -587,6 +638,18 @@ label {
   overflow-y: auto;
   background: var(--background);
   border: 1px solid var(--transport-line-strong);
+}
+
+.suggestions-enter-active,
+.suggestions-leave-active {
+  transition: opacity 160ms ease, transform 160ms ease;
+  transform-origin: top center;
+}
+
+.suggestions-enter-from,
+.suggestions-leave-to {
+  opacity: 0;
+  transform: translateY(-6px) scaleY(0.98);
 }
 
 .suggestion-item {
@@ -662,11 +725,17 @@ label {
 
 .search-button:hover:not(:disabled) {
   background: var(--button-primary-hover);
+  transform: translateY(-1px);
 }
 
 .options-button:hover:not(:disabled) {
   border-color: var(--text-main);
   background: var(--transport-active);
+  transform: translateY(-1px);
+}
+
+.button-group button:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .button-group button:disabled {
@@ -687,12 +756,28 @@ label {
   border-top-color: white;
 }
 
+.transport-map-button {
+  width: 100%;
+  display: block;
+  margin-top: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: hidden;
+  cursor: zoom-in;
+}
+
 .transport-map {
   width: 100%;
   display: block;
-  cursor: pointer;
   border: 1px solid var(--transport-line);
-  margin-top: auto;
+  box-sizing: border-box;
+  transition: transform 220ms ease, border-color 220ms ease;
+}
+
+.transport-map-button:hover .transport-map {
+  transform: scale(1.006);
+  border-color: var(--primary);
 }
 
 .result {
@@ -714,6 +799,25 @@ label {
 .placeholder,
 .loading-state {
   min-height: 22rem;
+}
+
+.result-swap-enter-active,
+.result-swap-leave-active {
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.result-swap-enter-from {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.result-swap-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+.route-result-content {
+  min-width: 0;
 }
 
 .placeholder {
@@ -775,7 +879,12 @@ label {
   width: var(--skeleton-width);
   height: 0.9rem;
   background: color-mix(in srgb, var(--text-main) 12%, transparent);
+  animation: skeleton-pulse 1.15s ease-in-out infinite alternate;
 }
+
+.skeleton-row:nth-child(2) .skeleton-bar { animation-delay: 120ms; }
+.skeleton-row:nth-child(3) .skeleton-bar { animation-delay: 240ms; }
+.skeleton-row:nth-child(4) .skeleton-bar { animation-delay: 360ms; }
 
 .error {
   color: var(--error);
@@ -799,6 +908,9 @@ label {
   --segment-color: var(--primary);
   display: grid;
   position: relative;
+  opacity: 0;
+  animation: route-segment-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(80ms + var(--segment-index, 0) * 130ms);
 }
 
 .route-segment::before {
@@ -809,6 +921,10 @@ label {
   bottom: calc(var(--timeline-node-size) / 2);
   width: var(--timeline-line-width);
   background: var(--segment-color);
+  transform: scaleY(0);
+  transform-origin: top center;
+  animation: route-line-grow 560ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: calc(150ms + var(--segment-index, 0) * 130ms);
 }
 
 .route-segment:first-child::before {
@@ -822,6 +938,13 @@ label {
   align-items: stretch;
   min-height: 1.75rem;
   position: relative;
+}
+
+.route-station-step {
+  opacity: 0;
+  transform: translateX(-8px);
+  animation: route-station-in 320ms ease forwards;
+  animation-delay: calc(180ms + var(--segment-index, 0) * 130ms + var(--station-index, 0) * 42ms);
 }
 
 .timeline-node,
@@ -867,6 +990,8 @@ label {
   box-sizing: border-box;
   align-self: center;
   position: relative;
+  animation: route-node-pop 360ms cubic-bezier(0.2, 0.9, 0.25, 1.25) both;
+  animation-delay: calc(120ms + var(--segment-index, 0) * 130ms);
 }
 
 .timeline-node::before,
@@ -886,12 +1011,155 @@ label {
   box-sizing: border-box;
 }
 
+.options-modal-enter-active,
+.options-modal-leave-active {
+  transition: opacity 180ms ease;
+}
+
+.options-modal-enter-active .options-popup,
+.options-modal-leave-active .options-popup {
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms ease;
+}
+
+.options-modal-enter-from,
+.options-modal-leave-to {
+  opacity: 0;
+}
+
+.options-modal-enter-from .options-popup,
+.options-modal-leave-to .options-popup {
+  opacity: 0;
+  transform: translateY(16px) scale(0.98);
+}
+
 .options-popup {
   width: min(540px, 100%);
   max-height: 84vh;
   overflow-y: auto;
   background: var(--background);
   border: 1px solid var(--transport-line-strong);
+}
+
+.map-preview-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding:
+      max(0.75rem, env(safe-area-inset-top, 0px))
+      max(0.75rem, env(safe-area-inset-right, 0px))
+      max(0.75rem, env(safe-area-inset-bottom, 0px))
+      max(0.75rem, env(safe-area-inset-left, 0px));
+  box-sizing: border-box;
+  background: color-mix(in srgb, var(--background) 18%, rgba(0, 0, 0, 0.84));
+  backdrop-filter: blur(8px);
+}
+
+.map-preview-shell {
+  width: min(1440px, 100%);
+  height: min(92dvh, 980px);
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  background: var(--background);
+  border: 1px solid var(--transport-line-strong);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+}
+
+.map-preview-header {
+  min-height: 66px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--transport-line);
+  box-sizing: border-box;
+}
+
+.map-preview-header > div {
+  min-width: 0;
+}
+
+.map-preview-header span {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: var(--primary);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.map-preview-header h2 {
+  margin: 0;
+  color: var(--title-color);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.map-close-button {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  padding: 0;
+  border: 1px solid var(--transport-line);
+  background: transparent;
+  color: var(--text-main);
+  font-size: 1.7rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.map-close-button:hover {
+  color: var(--error);
+  border-color: var(--error);
+  background: color-mix(in srgb, var(--error) 7%, transparent);
+}
+
+.map-preview-viewport {
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  display: grid;
+  place-items: center;
+  padding: 0.75rem;
+  box-sizing: border-box;
+  background: color-mix(in srgb, var(--text-main) 4%, var(--background));
+  touch-action: pan-x pan-y pinch-zoom;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.map-preview-viewport img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  object-fit: contain;
+}
+
+.map-preview-enter-active,
+.map-preview-leave-active {
+  transition: opacity 180ms ease;
+}
+
+.map-preview-enter-active .map-preview-shell,
+.map-preview-leave-active .map-preview-shell {
+  transition: opacity 200ms ease, transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.map-preview-enter-from,
+.map-preview-leave-to {
+  opacity: 0;
+}
+
+.map-preview-enter-from .map-preview-shell,
+.map-preview-leave-to .map-preview-shell {
+  opacity: 0;
+  transform: scale(0.975) translateY(12px);
 }
 
 .popup-header,
@@ -995,11 +1263,13 @@ label {
   border: 1px solid var(--transport-line-strong);
   position: relative;
   flex: 0 0 auto;
+  transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
 }
 
 .checkbox-input:checked + .checkbox-custom {
   background: var(--primary);
   border-color: var(--primary);
+  transform: scale(1.06);
 }
 
 .checkbox-input:checked + .checkbox-custom::after {
@@ -1049,6 +1319,39 @@ button:focus-visible,
   }
 }
 
+@keyframes transport-title-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes transport-workspace-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes skeleton-pulse {
+  from { opacity: 0.38; transform: scaleX(0.96); transform-origin: left; }
+  to { opacity: 0.9; transform: scaleX(1); transform-origin: left; }
+}
+
+@keyframes route-segment-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes route-line-grow {
+  to { transform: scaleY(1); }
+}
+
+@keyframes route-station-in {
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes route-node-pop {
+  from { opacity: 0; transform: scale(0.55); }
+  to { opacity: 1; transform: scale(1); }
+}
+
 @media (min-width: 901px) {
   .container {
     min-height: 38rem;
@@ -1093,6 +1396,67 @@ button:focus-visible,
 
   .station-name-en {
     text-align: left;
+  }
+
+  .map-preview-overlay {
+    padding: 0;
+  }
+
+  .map-preview-shell {
+    width: 100%;
+    height: 100dvh;
+    border-left: 0;
+    border-right: 0;
+  }
+
+  .map-preview-header {
+    padding:
+        max(0.65rem, env(safe-area-inset-top, 0px))
+        max(0.75rem, env(safe-area-inset-right, 0px))
+        0.65rem
+        max(0.75rem, env(safe-area-inset-left, 0px));
+  }
+
+  .map-preview-viewport {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .title,
+  .container,
+  .route-segment,
+  .route-segment::before,
+  .route-station-step,
+  .timeline-node,
+  .skeleton-bar {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .suggestions-enter-active,
+  .suggestions-leave-active,
+  .result-swap-enter-active,
+  .result-swap-leave-active,
+  .options-modal-enter-active,
+  .options-modal-leave-active,
+  .options-modal-enter-active .options-popup,
+  .options-modal-leave-active .options-popup {
+    transition: none;
+  }
+
+  .transport-map-button:hover .transport-map,
+  .search-button:hover:not(:disabled),
+  .options-button:hover:not(:disabled) {
+    transform: none;
+  }
+
+  .map-preview-enter-active,
+  .map-preview-leave-active,
+  .map-preview-enter-active .map-preview-shell,
+  .map-preview-leave-active .map-preview-shell {
+    transition: none;
   }
 }
 </style>

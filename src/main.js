@@ -6,9 +6,9 @@ import i18n from './i18n.js';
 import router from '@/router'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faClock } from '@fortawesome/free-regular-svg-icons'
+import { faCircleCheck, faClock, faSquarePlus, faTrashCan } from '@fortawesome/free-regular-svg-icons'
 
-library.add(faClock)
+library.add(faCircleCheck, faClock, faSquarePlus, faTrashCan)
 import "@/assets/colors.css"
 import {usePageStore} from "@/utils/store.ts";
 import { loadCoreAssets } from "@/utils/assetLoader.js";

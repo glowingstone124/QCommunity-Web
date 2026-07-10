@@ -675,6 +675,10 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 980px) {
+	:global(:root) {
+		--app-header-height: 128px;
+	}
+
 	.header-content {
 		padding: 0.75rem 1rem;
 		align-items: flex-start;
@@ -725,27 +729,58 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 640px) {
+	:global(:root) {
+		--app-header-height: 108px;
+	}
+
 	.header-content {
 		flex-direction: row;
+		align-items: center;
+		padding: 0.55rem 0.75rem;
+		gap: 0.45rem;
 	}
 
 	.user-section {
-		justify-content: space-between;
+		--header-control-height: 40px;
+		order: 1;
+		width: auto;
+		margin-left: auto;
+		justify-content: flex-end;
+		flex-wrap: nowrap;
+		gap: 0.4rem;
 	}
 
 	.logo-section {
+		order: 1;
 		width: auto;
-		max-width: calc(100% - 0.5rem);
+		max-width: none;
+		min-height: 40px;
+		padding: 0.2rem 0.45rem 0.2rem 0.3rem;
+		gap: 0.5rem;
+	}
+
+	.logo-mark {
+		width: 26px;
+		height: 31px;
+	}
+
+	.logo-text {
+		display: none;
 	}
 
 	.navigation-zone {
 		order: 2;
+		flex-basis: 100%;
 	}
 
-	.user-section {
-		order: 3;
-		width: 100%;
-		min-width: 0;
+	.header-actions {
+		gap: 0.35rem;
+	}
+
+	.lang-btn,
+	.theme-btn {
+		padding: 0 0.55rem;
+		min-width: var(--header-control-height);
 	}
 
 	.mega-panel-inner {
@@ -758,8 +793,13 @@ onBeforeUnmount(() => {
 	}
 
 	.login-alert {
-		flex: 1;
+		flex: 0 1 auto;
 		justify-content: center;
+		padding: 0 0.7rem;
+	}
+
+	.alert-text {
+		font-size: 0.86rem;
 	}
 }
 </style>

@@ -149,6 +149,73 @@ const navigationItems = computed(() =>
 	.side {
 		position: static;
 		min-height: auto;
+		gap: 0.75rem;
+	}
+
+	.side-foot {
+		margin-top: 0;
+		display: grid;
+		grid-template-columns: minmax(220px, 0.8fr) minmax(300px, 1.2fr);
+	}
+}
+
+@media (max-width: 640px) {
+	.side-header {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.side-header h1 {
+		font-size: 1.4rem;
+		margin: 0;
+		white-space: nowrap;
+	}
+
+	.side-sub,
+	.tip-card,
+	.logout-desc {
+		display: none;
+	}
+
+	.side :deep(.app-navigation.is-panel) {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(112px, 1fr));
+		gap: 0.4rem;
+		overflow-x: auto;
+		padding-bottom: 0.2rem;
+		scrollbar-width: none;
+	}
+
+	.side :deep(.app-navigation.is-panel::-webkit-scrollbar) {
+		display: none;
+	}
+
+	.side :deep(.app-navigation.is-panel .app-navigation-entry) {
+		width: auto;
+		min-width: 0;
+	}
+
+	.side :deep(.app-navigation.is-panel .app-navigation-item),
+	.side :deep(.app-navigation.is-panel .app-navigation-item:hover),
+	.side :deep(.app-navigation.is-panel .app-navigation-item:focus-visible),
+	.side :deep(.app-navigation.is-panel .app-navigation-item.is-active) {
+		padding: 0.7rem 0.75rem;
+		justify-content: center;
+	}
+
+	.side-foot {
+		display: block;
+	}
+
+	.logout-button {
+		padding: 0.65rem 0.8rem;
+		align-items: center;
+	}
+
+	.logout-title {
+		font-size: 0.9rem;
 	}
 }
 </style>
