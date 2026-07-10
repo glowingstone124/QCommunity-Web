@@ -1,5 +1,6 @@
 <script setup>
 import {ref, computed, onUnmounted, onMounted} from 'vue'
+import InteractiveTransportMap from '@/components/transport/InteractiveTransportMap.vue'
 
 // 站点数据
 const stations = ref([])
@@ -124,6 +125,20 @@ const showMap = () => {
 
 const closeMap = () => {
   showMapPreview.value = false
+}
+
+const setMapStartStation = async (station) => {
+  startInput.value = station.name
+  startStationId.value = station.id
+  routeResult.value = null
+  if (endStationId.value) await searchRoute()
+}
+
+const setMapEndStation = async (station) => {
+  endInput.value = station.name
+  endStationId.value = station.id
+  routeResult.value = null
+  if (startStationId.value) await searchRoute()
 }
 
 const handleEscape = (event) => {
@@ -342,7 +357,13 @@ const closeOnOutsideClick = (event) => {
         </button>
       </div>
       <button type="button" class="transport-map-button" aria-label="在应用内查看交通地图" @click="showMap">
-        <img src="https://bucket.glowingstone.cn/metro.png" alt="交通线路地图" class="transport-map"/>
+        <span class="map-entry-copy">
+          <strong>打开交互式交通图</strong>
+          <small>缩放、拖动并查看站点信息</small>
+        </span>
+        <span class="map-entry-art" aria-hidden="true">
+          <i></i><i></i><i></i>
+        </span>
       </button>
     </div>
 
@@ -518,7 +539,17 @@ const closeOnOutsideClick = (event) => {
           <button type="button" class="map-close-button" aria-label="关闭地图" title="关闭地图" @click="closeMap">&times;</button>
         </header>
         <div class="map-preview-viewport">
-          <img src="https://bucket.glowingstone.cn/metro.png" alt="交通线路地图大图" />
+          <InteractiveTransportMap
+              :stations="stations"
+              :route-station-ids="routeResult?.data?.stationIds || []"
+              :route-segments="routeResult?.data?.segments || []"
+              :start-station-id="startStationId"
+              :end-station-id="endStationId"
+              :route-loading="isLoading"
+              :route-message="routeResult?.message || routeResult?.error || ''"
+              @set-start="setMapStartStation"
+              @set-end="setMapEndStation"
+          />
         </div>
       </div>
     </div>
@@ -758,27 +789,74 @@ label {
 
 .transport-map-button {
   width: 100%;
-  display: block;
+  min-height: 132px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(110px, 0.72fr);
+  align-items: center;
+  gap: 1rem;
   margin-top: auto;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  overflow: hidden;
-  cursor: zoom-in;
-}
-
-.transport-map {
-  width: 100%;
-  display: block;
+  padding: 1rem;
   border: 1px solid var(--transport-line);
-  box-sizing: border-box;
-  transition: transform 220ms ease, border-color 220ms ease;
+  background: var(--transport-soft);
+  overflow: hidden;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text-main);
+  transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease;
 }
 
-.transport-map-button:hover .transport-map {
-  transform: scale(1.006);
+.transport-map-button:hover {
   border-color: var(--primary);
+  background: var(--transport-active);
+  transform: translateY(-2px);
 }
+
+.map-entry-copy {
+  min-width: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.map-entry-copy strong {
+  color: var(--title-color);
+  font-size: 1.05rem;
+}
+
+.map-entry-copy small {
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.map-entry-art {
+  position: relative;
+  height: 64px;
+}
+
+.map-entry-art::before,
+.map-entry-art::after {
+  content: '';
+  position: absolute;
+  top: 30px;
+  height: 4px;
+  border-radius: 2px;
+}
+
+.map-entry-art::before {
+  left: 4px;
+  width: calc(50% - 4px);
+  background: #e4002b;
+}
+
+.map-entry-art::after {
+  left: 50%;
+  right: 4px;
+  background: #82bf25;
+}
+
+.map-entry-art i { position: absolute; top: 24px; width: 10px; height: 10px; border-radius: 50%; background: white; border: 2px solid #334155; z-index: 1; }
+.map-entry-art i:nth-child(1) { left: 0; border-color: #e4002b; }
+.map-entry-art i:nth-child(2) { left: calc(50% - 7px); width: 12px; height: 12px; top: 23px; border-color: #00629b; }
+.map-entry-art i:nth-child(3) { right: 0; border-color: #82bf25; }
 
 .result {
   display: flex;
@@ -1121,24 +1199,14 @@ label {
 .map-preview-viewport {
   min-width: 0;
   min-height: 0;
-  overflow: auto;
-  display: grid;
-  place-items: center;
-  padding: 0.75rem;
+  overflow: hidden;
+  display: block;
+  padding: 0;
   box-sizing: border-box;
   background: color-mix(in srgb, var(--text-main) 4%, var(--background));
-  touch-action: pan-x pan-y pinch-zoom;
+  touch-action: none;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
-}
-
-.map-preview-viewport img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  min-width: 0;
-  min-height: 0;
-  object-fit: contain;
 }
 
 .map-preview-enter-active,
@@ -1398,6 +1466,12 @@ button:focus-visible,
     text-align: left;
   }
 
+  .transport-map-button {
+    min-height: 116px;
+    grid-template-columns: minmax(0, 1fr) 96px;
+    padding: 0.85rem;
+  }
+
   .map-preview-overlay {
     padding: 0;
   }
@@ -1417,9 +1491,6 @@ button:focus-visible,
         max(0.75rem, env(safe-area-inset-left, 0px));
   }
 
-  .map-preview-viewport {
-    padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1446,7 +1517,7 @@ button:focus-visible,
     transition: none;
   }
 
-  .transport-map-button:hover .transport-map,
+  .transport-map-button:hover,
   .search-button:hover:not(:disabled),
   .options-button:hover:not(:disabled) {
     transform: none;
