@@ -98,6 +98,7 @@ function formatDate(timestamp) {
 	justify-content: space-between;
 	align-items: center;
 	gap: 1rem;
+	animation: overview-item-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .panel-title {
@@ -139,7 +140,14 @@ function formatDate(timestamp) {
 	display: flex;
 	flex-direction: column;
 	gap: 0.4rem;
+	opacity: 0;
+	animation: overview-item-in 380ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
+
+.stat-card:nth-child(1) { animation-delay: 70ms; }
+.stat-card:nth-child(2) { animation-delay: 110ms; }
+.stat-card:nth-child(3) { animation-delay: 150ms; }
+.stat-card:nth-child(4) { animation-delay: 190ms; }
 
 .stat-card:last-child {
 	border-right: none;
@@ -178,6 +186,8 @@ function formatDate(timestamp) {
 	border: 1px solid var(--border-soft);
 	border-radius: 0;
 	padding: 1rem;
+	opacity: 0;
+	animation: overview-item-in 440ms cubic-bezier(0.22, 1, 0.36, 1) 230ms forwards;
 }
 
 .section-title {
@@ -197,7 +207,11 @@ function formatDate(timestamp) {
 	background: var(--surface-soft);
 	padding: 0.82rem 0.9rem;
 	border: 1px solid var(--border-soft);
+	animation: overview-record-in 360ms ease both;
 }
+
+.login-record:nth-child(2) { animation-delay: 45ms; }
+.login-record:nth-child(3) { animation-delay: 90ms; }
 
 .login-record.success {
 	border-color: color-mix(in srgb, var(--success) 42%, var(--border-soft));
@@ -218,6 +232,16 @@ function formatDate(timestamp) {
 	margin: 0;
 	color: var(--text-secondary);
 	font-size: 0.95rem;
+}
+
+@keyframes overview-item-in {
+	from { opacity: 0; transform: translateY(12px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes overview-record-in {
+	from { opacity: 0; transform: translateX(-8px); }
+	to { opacity: 1; transform: translateX(0); }
 }
 
 @media (max-width: 960px) {
@@ -261,6 +285,17 @@ function formatDate(timestamp) {
 
 	.stat-card:last-child {
 		border-bottom: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.panel-header,
+	.stat-card,
+	.section,
+	.login-record {
+		opacity: 1;
+		animation: none;
+		transform: none;
 	}
 }
 </style>

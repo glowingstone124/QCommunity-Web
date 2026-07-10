@@ -75,6 +75,20 @@ const navigationItems = computed(() =>
 	color: var(--title-color);
 }
 
+.side-header {
+	animation: account-side-item-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.side :deep(.app-navigation-entry) {
+	opacity: 0;
+	animation: account-side-item-in 380ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.side :deep(.app-navigation-entry:nth-child(1)) { animation-delay: 70ms; }
+.side :deep(.app-navigation-entry:nth-child(2)) { animation-delay: 110ms; }
+.side :deep(.app-navigation-entry:nth-child(3)) { animation-delay: 150ms; }
+.side :deep(.app-navigation-entry:nth-child(4)) { animation-delay: 190ms; }
+
 .side-sub {
 	margin: 0;
 	color: var(--text-secondary);
@@ -87,6 +101,8 @@ const navigationItems = computed(() =>
 	display: flex;
 	flex-direction: column;
 	gap: 0.9rem;
+	opacity: 0;
+	animation: account-side-item-in 420ms cubic-bezier(0.22, 1, 0.36, 1) 230ms forwards;
 }
 
 .logout-button {
@@ -143,6 +159,11 @@ const navigationItems = computed(() =>
 	margin: 0;
 	color: var(--text-secondary);
 	line-height: 1.5;
+}
+
+@keyframes account-side-item-in {
+	from { opacity: 0; transform: translateX(-10px); }
+	to { opacity: 1; transform: translateX(0); }
 }
 
 @media (max-width: 960px) {
@@ -216,6 +237,16 @@ const navigationItems = computed(() =>
 
 	.logout-title {
 		font-size: 0.9rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.side-header,
+	.side-foot,
+	.side :deep(.app-navigation-entry) {
+		opacity: 1;
+		animation: none;
+		transform: none;
 	}
 }
 </style>

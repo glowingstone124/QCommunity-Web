@@ -254,7 +254,7 @@ onMounted(fetchAccounts);
 
 					<p class="supporting-text">
 						使用该功能则证明您阅读并且认可
-						<a href="https://qoriginal.vip/docs#/affiliatedaccount" class="link-text">使用须知</a>
+						<a href="https://qoriginal.vip/guides/affiliatedaccount" class="link-text">使用须知</a>
 					</p>
 
 					<p
@@ -291,6 +291,7 @@ onMounted(fetchAccounts);
 	gap: 1rem;
 	padding-bottom: 1rem;
 	border-bottom: 1px solid var(--border-soft);
+	animation: affiliated-block-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .headline {
@@ -335,6 +336,8 @@ onMounted(fetchAccounts);
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
 	border: 1px solid var(--border-soft);
+	opacity: 0;
+	animation: affiliated-block-in 420ms cubic-bezier(0.22, 1, 0.36, 1) 70ms forwards;
 }
 
 .summary-item {
@@ -376,7 +379,12 @@ onMounted(fetchAccounts);
 	flex-direction: column;
 	gap: 1rem;
 	min-width: 0;
+	opacity: 0;
+	animation: affiliated-block-in 460ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
+
+.grid .panel:nth-child(1) { animation-delay: 130ms; }
+.grid .panel:nth-child(2) { animation-delay: 190ms; }
 
 .section-head {
 	display: flex;
@@ -520,6 +528,7 @@ onMounted(fetchAccounts);
 	gap: 0.75rem;
 	padding-top: 0.7rem;
 	border-top: 1px solid color-mix(in srgb, var(--error) 35%, var(--border-soft));
+	animation: affiliated-confirm-in 180ms ease both;
 }
 
 .delete-confirm p {
@@ -690,6 +699,16 @@ onMounted(fetchAccounts);
 	color: var(--text-secondary);
 }
 
+@keyframes affiliated-block-in {
+	from { opacity: 0; transform: translateY(12px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes affiliated-confirm-in {
+	from { opacity: 0; transform: translateY(-5px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
 @media (max-width: 768px) {
 	.affiliated {
 		padding: 1rem;
@@ -754,6 +773,15 @@ onMounted(fetchAccounts);
 	.account-list-leave-active,
 	.account-list-move {
 		transition: none;
+	}
+
+	.page-header,
+	.summary-grid,
+	.panel,
+	.delete-confirm {
+		opacity: 1;
+		animation: none;
+		transform: none;
 	}
 }
 </style>

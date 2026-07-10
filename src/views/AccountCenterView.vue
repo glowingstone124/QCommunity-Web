@@ -332,6 +332,7 @@ watch(ipAddr, validateIP)
 	padding: 1rem;
 	position: relative;
 	overflow: hidden;
+	animation: account-page-in 300ms ease both;
 }
 
 .content {
@@ -413,13 +414,13 @@ watch(ipAddr, validateIP)
 
 .slide-in-enter-active {
 	transition:
-		opacity 0.22s ease,
-		transform 0.22s ease;
+		opacity 320ms ease,
+		transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .slide-in-enter-from {
 	opacity: 0;
-	transform: translateY(8px);
+	transform: translateY(14px);
 }
 
 .slide-in-enter-to {
@@ -429,5 +430,16 @@ watch(ipAddr, validateIP)
 
 .slide-in-leave-active {
 	display: none;
+}
+
+@keyframes account-page-in {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.account { animation: none; }
+	.slide-in-enter-active { transition: none; }
+	.slide-in-enter-from { opacity: 1; transform: none; }
 }
 </style>
