@@ -741,18 +741,18 @@ onBeforeUnmount(() => {
 .map-toolbar { position: absolute; z-index: 5; top: 0.75rem; left: 0.75rem; right: 0.75rem; display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; pointer-events: none; }
 .map-search, .zoom-controls { pointer-events: auto; }
 .map-search { position: relative; width: min(320px, 48%); }
-.map-search input { width: 100%; height: 42px; padding: 0 0.8rem; box-sizing: border-box; border: 1px solid #cbd5e1; background: rgba(255,255,255,0.96); color: #172033; box-shadow: 0 8px 24px rgba(15,23,42,0.1); }
+.map-search input { width: 100%; height: 42px; padding: 0 0.8rem; box-sizing: border-box; border: 1px solid #cbd5e1; background: rgba(255,255,255,0.96); color: #172033; }
 .map-search input:focus { outline: 2px solid rgba(37,99,235,0.22); border-color: #2563eb; }
-.search-results { margin-top: 0.35rem; border: 1px solid #cbd5e1; background: white; box-shadow: 0 12px 28px rgba(15,23,42,0.14); max-height: 260px; overflow: auto; }
+.search-results { margin-top: 0.35rem; border: 1px solid #cbd5e1; background: white; max-height: 260px; overflow: auto; }
 .search-results button { width: 100%; display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem; padding: 0.65rem 0.75rem; border: 0; border-bottom: 1px solid #e2e8f0; background: white; color: #172033; text-align: left; cursor: pointer; }
 .search-results button:hover { background: #eff6ff; }
 .search-results span { color: #64748b; font-size: 0.78rem; text-align: right; }
-.zoom-controls { display: flex; align-items: center; min-height: 42px; border: 1px solid #cbd5e1; background: rgba(255,255,255,0.96); box-shadow: 0 8px 24px rgba(15,23,42,0.1); }
+.zoom-controls { display: flex; align-items: center; min-height: 42px; border: 1px solid #cbd5e1; background: rgba(255,255,255,0.96); }
 .zoom-controls button { width: 40px; height: 40px; padding: 0; border: 0; border-right: 1px solid #e2e8f0; background: transparent; color: #172033; cursor: pointer; font-size: 1.1rem; }
 .zoom-controls button:hover { background: #eff6ff; color: #1d4ed8; }
 .zoom-controls span { min-width: 56px; text-align: center; font-family: var(--font-mono); font-size: 0.75rem; }
 .zoom-controls .reset-button { width: auto; padding: 0 0.7rem; border-right: 0; font-size: 0.82rem; }
-.map-route-status { position: absolute; z-index: 4; right: 0.75rem; bottom: 0.75rem; display: flex; align-items: center; gap: 0.65rem; max-width: min(380px, calc(100% - 1.5rem)); padding: 0.65rem 0.8rem; box-sizing: border-box; border: 1px solid #cbd5e1; background: rgba(255,255,255,0.96); box-shadow: 0 8px 24px rgba(15,23,42,0.12); pointer-events: none; }
+.map-route-status { position: absolute; z-index: 4; right: 0.75rem; bottom: 0.75rem; display: flex; align-items: center; gap: 0.65rem; max-width: min(380px, calc(100% - 1.5rem)); padding: 0.65rem 0.8rem; box-sizing: border-box; border: 1px solid #cbd5e1; background: rgba(255,255,255,0.96); pointer-events: none; }
 .map-route-status div { display: grid; gap: 0.15rem; }
 .map-route-status strong { color: #172033; font-size: 0.8rem; }
 .map-route-status small { color: #64748b; font-size: 0.68rem; }
@@ -791,7 +791,7 @@ onBeforeUnmount(() => {
 .map-station.end-point .station-core { fill: #ffe4e6; stroke: #be123c; stroke-width: 3; }
 .map-station:focus { outline: none; }
 .map-station:focus .station-core { stroke: #2563eb; stroke-width: 2.5; }
-.station-panel { position: absolute; z-index: 4; left: 0.75rem; bottom: 0.75rem; width: min(320px, calc(100% - 1.5rem)); padding: 1rem; box-sizing: border-box; border: 1px solid #cbd5e1; background: rgba(255,255,255,0.97); box-shadow: 0 16px 36px rgba(15,23,42,0.18); }
+.station-panel { position: absolute; z-index: 4; left: 0.75rem; bottom: 0.75rem; width: min(320px, calc(100% - 1.5rem)); padding: 1rem; box-sizing: border-box; border: 1px solid #cbd5e1; background: rgba(255,255,255,0.97); }
 .panel-close { position: absolute; top: 0.5rem; right: 0.5rem; width: 32px; height: 32px; border: 1px solid #e2e8f0; background: transparent; color: #475569; cursor: pointer; font-size: 1.25rem; }
 .station-kicker { color: #2563eb; font-size: 0.68rem; font-weight: 800; }
 .station-panel h3 { margin: 0.35rem 2rem 0 0; font-size: 1.25rem; color: #0f172a; }
@@ -820,8 +820,39 @@ onBeforeUnmount(() => {
 	.map-search { width: 100%; order: 2; }
 	.zoom-controls { margin-left: auto; }
 	.map-route-status { right: 0.6rem; bottom: max(0.6rem, env(safe-area-inset-bottom, 0px)); max-width: calc(100% - 1.2rem); }
-	.station-panel { left: 0.6rem; bottom: max(0.6rem, env(safe-area-inset-bottom, 0px)); width: calc(100% - 1.2rem); }
-	.station-panel + .map-route-status { display: none; }
+	.station-panel { left: 0.6rem; bottom: max(0.6rem, env(safe-area-inset-bottom, 0px)); width: calc(100% - 1.2rem); max-height: min(58dvh, 430px); overflow-y: auto; overscroll-behavior: contain; }
+}
+
+@media (max-width: 420px) {
+	.map-toolbar { top: max(0.4rem, env(safe-area-inset-top, 0px)); left: 0.4rem; right: 0.4rem; gap: 0.4rem; }
+	.map-search input { height: 38px; padding-inline: 0.65rem; font-size: 0.88rem; }
+	.search-results { max-height: min(42dvh, 220px); }
+	.search-results button { align-items: flex-start; flex-direction: column; gap: 0.15rem; padding: 0.55rem 0.65rem; }
+	.search-results span { text-align: left; overflow-wrap: anywhere; }
+	.zoom-controls { min-height: 38px; }
+	.zoom-controls button { width: 36px; height: 36px; }
+	.zoom-controls span { min-width: 46px; font-size: 0.7rem; }
+	.zoom-controls .reset-button { padding-inline: 0.55rem; font-size: 0.76rem; }
+	.map-route-status { right: 0.4rem; bottom: max(0.4rem, env(safe-area-inset-bottom, 0px)); max-width: calc(100% - 0.8rem); padding: 0.55rem 0.65rem; }
+	.map-route-status strong, .map-route-status small { overflow-wrap: anywhere; }
+	.station-panel { left: 0.4rem; bottom: max(0.4rem, env(safe-area-inset-bottom, 0px)); width: calc(100% - 0.8rem); max-height: min(62dvh, 420px); padding: 0.75rem; }
+	.station-panel h3 { font-size: 1.08rem; overflow-wrap: anywhere; }
+	.station-panel p { overflow-wrap: anywhere; }
+	.station-facts { gap: 0.35rem; margin-top: 0.65rem; }
+	.station-facts div { min-width: 0; padding: 0.45rem 0.5rem; }
+	.station-facts dd { overflow-wrap: anywhere; }
+	.station-connections { margin-top: 0.55rem; }
+	.station-connections li { min-width: 0; overflow-wrap: anywhere; }
+	.station-actions { gap: 0.35rem; margin-top: 0.65rem; }
+	.station-actions button { min-width: 0; min-height: 36px; padding-inline: 0.35rem; font-size: 0.78rem; overflow-wrap: anywhere; }
+}
+
+@media (max-width: 320px) {
+	.zoom-controls button { width: 32px; }
+	.zoom-controls span { min-width: 40px; }
+	.zoom-controls .reset-button { padding-inline: 0.4rem; }
+	.station-kicker { font-size: 0.62rem; }
+	.station-facts { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -64,7 +64,7 @@ onMounted(() => {
 watch(
 	() => route.params.id,
 	() => {
-		syncArticle()
+		isNewsMenuOpen.value = false
 	}
 )
 </script>

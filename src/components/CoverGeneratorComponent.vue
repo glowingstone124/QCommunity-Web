@@ -201,8 +201,6 @@ function drawTitle(ctx, palette, isDark) {
 	ctx.textBaseline = 'alphabetic'
 
 	ctx.font = `700 ${fontSize}px "Space Grotesk", "PingFang SC", sans-serif`
-	ctx.shadowColor = isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.7)'
-	ctx.shadowBlur = 14
 	ctx.fillStyle = isDark ? '#f8fafc' : '#0f172a'
 	lines.forEach((line, index) => {
 		ctx.fillText(line, x, y + index * lineHeight)

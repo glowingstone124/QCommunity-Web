@@ -1143,7 +1143,6 @@ label {
   grid-template-rows: auto minmax(0, 1fr);
   background: var(--background);
   border: 1px solid var(--transport-line-strong);
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
 }
 
 .map-preview-header {
@@ -1491,6 +1490,170 @@ button:focus-visible,
         max(0.75rem, env(safe-area-inset-left, 0px));
   }
 
+}
+
+@media (max-width: 420px) {
+  .title,
+  .container {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .title {
+    padding-top: 0.5rem;
+    padding-bottom: 0.6rem;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+    line-height: 1.12;
+    overflow-wrap: anywhere;
+  }
+
+  h2 {
+    margin-top: 0.45rem;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+
+  .container {
+    gap: 0.65rem;
+  }
+
+  .query,
+  .result {
+    padding: 0.75rem;
+  }
+
+  .query {
+    gap: 0.75rem;
+  }
+
+  .station-input {
+    padding: 0.72rem 0.75rem;
+    font-size: 0.95rem;
+  }
+
+  .button-group {
+    gap: 0.5rem;
+  }
+
+  .button-group button {
+    min-height: 42px;
+    padding-inline: 0.75rem;
+    font-size: 0.92rem;
+  }
+
+  .transport-map-button {
+    min-height: 104px;
+    grid-template-columns: minmax(0, 1fr) 72px;
+    gap: 0.5rem;
+    padding: 0.7rem;
+  }
+
+  .map-entry-copy strong {
+    font-size: 0.96rem;
+    overflow-wrap: anywhere;
+  }
+
+  .map-entry-copy small {
+    font-size: 0.78rem;
+  }
+
+  .result,
+  .placeholder,
+  .loading-state {
+    min-height: 16rem;
+  }
+
+  .route-timeline {
+    --timeline-track: 1.65rem;
+    --timeline-line-width: 0.34rem;
+    --timeline-node-size: 1.3rem;
+  }
+
+  .timeline-row {
+    gap: 0.55rem;
+  }
+
+  .node_stations {
+    min-width: 0;
+    font-size: 1.15rem;
+    overflow-wrap: anywhere;
+  }
+
+  .line_name,
+  .small_stations {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .options-popup-overlay {
+    padding: 0;
+  }
+
+  .options-popup {
+    width: 100%;
+    max-height: 100dvh;
+    min-height: 100dvh;
+    border-left: 0;
+    border-right: 0;
+  }
+
+  .popup-header,
+  .popup-footer,
+  .popup-content {
+    padding: 0.75rem;
+  }
+
+  .map-preview-header {
+    min-height: 54px;
+    gap: 0.5rem;
+  }
+
+  .map-preview-header span {
+    display: none;
+  }
+
+  .map-preview-header h2 {
+    font-size: 0.95rem;
+  }
+
+  .map-close-button {
+    width: 36px;
+    height: 36px;
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 340px) {
+  .title,
+  .container {
+    padding-left: 0.375rem;
+    padding-right: 0.375rem;
+  }
+
+  h1 {
+    font-size: 1.55rem;
+  }
+
+  .query,
+  .result {
+    padding: 0.625rem;
+  }
+
+  .transport-map-button {
+    grid-template-columns: minmax(0, 1fr) 58px;
+  }
+
+  .map-entry-copy small {
+    font-size: 0.72rem;
+  }
+
+  .suggestion-item {
+    gap: 0.2rem;
+    padding: 0.65rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

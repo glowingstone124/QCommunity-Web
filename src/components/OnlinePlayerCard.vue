@@ -93,7 +93,6 @@ onBeforeUnmount(() => {
 	padding: 20px;
 	margin: auto;
 	text-align: left;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 	transition: all 0.2s;
 	cursor: pointer;
 }
@@ -112,10 +111,9 @@ onBeforeUnmount(() => {
 	height: 70px;
 	margin: 0 10px;
 	border-radius: 50%;
-	box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
 	border: 2px solid var(--split);
 	object-fit: cover;
-	transition: transform 0.3s ease, box-shadow 0.3s ease;
+	transition: transform 0.3s ease;
 }
 
 

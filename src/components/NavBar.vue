@@ -363,7 +363,6 @@ onBeforeUnmount(() => {
 	z-index: 40;
 	background: color-mix(in srgb, var(--background) 92%, transparent);
 	border-bottom: 1px solid var(--split);
-	box-shadow: none;
 }
 
 .header-content {
@@ -800,6 +799,54 @@ onBeforeUnmount(() => {
 
 	.alert-text {
 		font-size: 0.86rem;
+	}
+}
+
+@media (max-width: 360px) {
+	.header-content {
+		padding: 0.45rem;
+		gap: 0.3rem;
+	}
+
+	.logo-section {
+		min-width: 0;
+		padding-inline: 0.2rem;
+	}
+
+	.logo-mark {
+		width: 23px;
+		height: 28px;
+	}
+
+	.user-section {
+		--header-control-height: 36px;
+		min-width: 0;
+		gap: 0.25rem;
+	}
+
+	.header-actions {
+		gap: 0.25rem;
+	}
+
+	.lang-btn,
+	.theme-btn {
+		min-width: 36px;
+		padding-inline: 0.4rem;
+		font-size: 0.8rem;
+	}
+
+	.login-alert {
+		min-width: 0;
+		padding-inline: 0.5rem;
+	}
+
+	.alert-text {
+		font-size: 0.74rem;
+		white-space: nowrap;
+	}
+
+	.mega-panel-inner {
+		padding: 0.75rem;
 	}
 }
 </style>

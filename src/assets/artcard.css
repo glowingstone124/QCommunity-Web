@@ -5,7 +5,6 @@
     h2, p {
         color: var(--dark-text-primary);
         font-family: "Bahnschrift", sans-serif;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
     }
     h2 {
         font-size: 1.9rem;

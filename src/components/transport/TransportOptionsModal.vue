@@ -122,7 +122,6 @@ function closeOnOutsideClick(event) {
 	max-width: 500px;
 	max-height: 80vh;
 	overflow-y: auto;
-	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
 .popup-header,

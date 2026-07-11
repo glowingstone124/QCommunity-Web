@@ -90,7 +90,6 @@ function normalizeColor(color) {
 	height: 2rem;
 	margin-left: 1.05rem;
 	border-radius: 0;
-	box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.08);
 }
 
 .line-name {

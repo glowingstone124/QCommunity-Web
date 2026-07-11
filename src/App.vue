@@ -2,10 +2,24 @@
 	<div v-if="showNavBar" class="app-shell">
 		<NavBar />
 		<main class="app-main" :class="{ 'app-main--contained': route.meta.containedScroll }">
-			<router-view />
+			<router-view v-slot="{ Component, route: viewRoute }">
+				<transition name="route-fade" mode="out-in">
+					<component
+						:is="Component"
+						:key="['guides', 'news'].includes(viewRoute.name) ? viewRoute.name : viewRoute.fullPath"
+					/>
+				</transition>
+			</router-view>
 		</main>
 	</div>
-	<router-view v-else />
+	<router-view v-else v-slot="{ Component, route: viewRoute }">
+		<transition name="route-fade" mode="out-in">
+			<component
+				:is="Component"
+				:key="['guides', 'news'].includes(viewRoute.name) ? viewRoute.name : viewRoute.fullPath"
+			/>
+		</transition>
+	</router-view>
 </template>
 
 
@@ -41,7 +55,7 @@ onMounted(() => {
 	user-select: none;
 }
 
-input, textarea {
+input, textarea, article, .article-content, .markdown-body, [data-selectable] {
 	user-select: text;
 }
 
@@ -93,6 +107,28 @@ input, textarea {
 
 .app-main--contained {
 	overflow: hidden;
+}
+
+.route-fade-enter-active,
+.route-fade-leave-active {
+	transition: opacity var(--motion-fast) var(--ease-standard), transform var(--motion-fast) var(--ease-standard);
+}
+
+.route-fade-enter-from {
+	opacity: 0;
+	transform: translateY(8px);
+}
+
+.route-fade-leave-to {
+	opacity: 0;
+	transform: translateY(-4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.route-fade-enter-active,
+	.route-fade-leave-active {
+		transition: none;
+	}
 }
 
 </style>

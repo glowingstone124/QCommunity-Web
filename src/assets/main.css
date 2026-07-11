@@ -39,6 +39,13 @@
   --code-string: #34D399;
   --code-comment: #64748B;
   --text: var(--text-main);
+  --border-soft: color-mix(in srgb, var(--split) 82%, transparent);
+  --radius-panel: 18px;
+  --motion-fast: 180ms;
+  --motion-base: 320ms;
+  --motion-slow: 520ms;
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+  --measure-readable: 72ch;
 }
 
 :root[data-theme="dark"]{
@@ -124,6 +131,7 @@
 }
 * {
   font-family: var(--font-sans);
+  box-sizing: border-box;
 }
 
 html {
@@ -153,6 +161,32 @@ select {
   font: inherit;
 }
 
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:where(button, a, input, textarea, select, [tabindex]):focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--primary) 42%, transparent);
+  outline-offset: 3px;
+}
+
+:where(p, li) {
+  line-height: 1.65;
+}
+
+:where(h1, h2, h3) {
+  color: var(--title-color);
+  text-wrap: balance;
+}
+
+:where(p, li, dd) {
+  overflow-wrap: anywhere;
+}
+
 a {
   color: inherit;
 }
@@ -166,8 +200,36 @@ a {
   overflow-x: hidden;
 }
 
+/* Shared, restrained entrance treatment for every routed page. */
+:where(.query-page, .dashboard, .advancement-page, .misc-page, .register-page, .chat, .guides-page, .news-page, .account, .transport-page) > :where(header, section, main, .page-header, .chat-header, .chat-body, .composer) {
+  animation: app-section-in var(--motion-slow) var(--ease-standard) both;
+}
+
+:where(.query-page, .dashboard, .advancement-page, .misc-page, .register-page, .chat, .guides-page, .news-page) > :where(header, section, main, .chat-body):nth-child(2) {
+  animation-delay: 70ms;
+}
+
+:where(button, a, [role="button"]) {
+  transition-duration: var(--motion-fast);
+}
+
+@keyframes app-section-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 @media (max-width: 640px) {
   .page-shell {
     padding: 1rem 0 1.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
   }
 }

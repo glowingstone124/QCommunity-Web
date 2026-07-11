@@ -102,7 +102,6 @@ h1, p {
 	text-decoration: none;
 	background: var(--button-primary-bg);
 	margin-top: 20px;
-	box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
 	padding: 30px 80px;
 	border-radius: 20px;
 	color: var(--button-primary-text);
@@ -144,14 +143,13 @@ input[type="password"] {
 	margin-bottom: 10px;
 	box-sizing: border-box;
 	background-color: var(--background-secondary) !important;
-	transition: border-bottom 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+	transition: border-bottom 0.3s ease-in-out;
 }
 
 input[type="text"]:focus,
 input[type="password"]:focus {
 	outline: none;
 	border-bottom: 4px solid var(--primary);
-	box-shadow: 0 2px 5px rgba(37, 99, 235, 0.2);
 }
 
 input[type="text"]::placeholder,

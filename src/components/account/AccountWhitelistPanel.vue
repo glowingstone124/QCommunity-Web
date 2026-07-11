@@ -28,7 +28,6 @@ function confirmRemove(ip) {
 	<section class="panel">
 		<header class="panel-header">
 			<div>
-				<p class="eyebrow">登录安全</p>
 				<h2 class="panel-title">海外 IP 白名单</h2>
 				<p class="panel-sub">登记可信地址后，即可从海外网络登录服务器。</p>
 			</div>
@@ -144,14 +143,6 @@ function confirmRemove(ip) {
 	padding-bottom: 1.15rem;
 	border-bottom: 1px solid var(--border-soft);
 	animation: whitelist-block-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.eyebrow {
-	margin: 0 0 0.4rem;
-	font-size: 0.76rem;
-	font-weight: 700;
-	color: var(--primary);
-	text-transform: uppercase;
 }
 
 .panel-title {

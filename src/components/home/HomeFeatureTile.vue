@@ -40,13 +40,11 @@ defineProps({
 	border: 1px solid var(--split);
 	text-decoration: none;
 	color: inherit;
-	box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
-	transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+	transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .tile:hover {
 	transform: translateY(-4px);
-	box-shadow: 0 18px 32px rgba(15, 23, 42, 0.12);
 	border-color: var(--primary-light);
 }
 

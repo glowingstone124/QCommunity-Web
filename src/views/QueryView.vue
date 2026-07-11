@@ -242,7 +242,6 @@ function submitSearch() {
 
 .search-field input:focus {
 	border-color: var(--primary);
-	box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 14%, transparent);
 }
 
 .search-btn {
