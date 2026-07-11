@@ -201,8 +201,8 @@ const stations = computed(() => graphNodes
 		const payload = nodePayload(node)
 		const type = node.attributes.type || ''
 		let apiStation = names.map((name) => apiStationLookup.value.get(normalized(name))).find(Boolean) || null
-		if (!apiStation && type === 'suzhourt-int' && names[0] === '三岛') apiStation = apiStationLookup.value.get(normalized('高铁三岛站')) || null
-		if (!apiStation && type === 'suzhourt-int' && names[0] === '海底谭') apiStation = apiStationLookup.value.get(normalized('高铁海底谭站')) || null
+		if (!apiStation && type === 'suzhourt-int') apiStation = apiStationLookup.value.get(normalized('高铁'+names[0]+'站')) || null
+		if (!apiStation && type === 'suzhourt-basic' && colors[2] != "#000000" && colors[2] != "#e0e0e0") apiStation = apiStationLookup.value.get(normalized('高铁'+names[0]+'站')) || null
 		return {
 			key: node.key,
 			x: node.attributes.x,
