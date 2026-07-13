@@ -260,12 +260,17 @@ const routeEdgeKeys = computed(() => {
 		adjacency.get(edge.target).push({ node: edge.source, edge: edge.key })
 	}
 	const result = new Set()
-	const findPath = (source, target, segmentColor) => {
-		const queue = [source]
-		const previous = new Map([[source, null]])
+	const findPath = (sources, targets, segmentColor) => {
+		const targetKeys = new Set(targets)
+		const queue = [...sources]
+		const previous = new Map(sources.map((source) => [source, null]))
+		let reachedTarget = null
 		while (queue.length) {
 			const current = queue.shift()
-			if (current === target) break
+			if (targetKeys.has(current)) {
+				reachedTarget = current
+				break
+			}
 			const candidates = [...(adjacency.get(current) || [])].sort((first, second) => {
 				const firstEdge = edgeByKey.get(first.edge)
 				const secondEdge = edgeByKey.get(second.edge)
@@ -276,15 +281,15 @@ const routeEdgeKeys = computed(() => {
 			for (const next of candidates) {
 				if (previous.has(next.node)) continue
 				const candidate = nodeByKey.get(next.node)
-				const isOtherNamedStation = next.node !== target && candidate?.key.startsWith('stn_') && nodeNames(candidate).some(Boolean)
+				const isOtherNamedStation = !targetKeys.has(next.node) && candidate?.key.startsWith('stn_') && nodeNames(candidate).some(Boolean)
 				if (isOtherNamedStation) continue
 				previous.set(next.node, { node: current, edge: next.edge })
 				queue.push(next.node)
 			}
 		}
-		if (!previous.has(target)) return false
-		let cursor = target
-		while (cursor !== source) {
+		if (!reachedTarget) return false
+		let cursor = reachedTarget
+		while (previous.get(cursor)) {
 			const step = previous.get(cursor)
 			result.add(step.edge)
 			cursor = step.node
@@ -293,12 +298,15 @@ const routeEdgeKeys = computed(() => {
 	}
 	for (const segment of props.routeSegments) {
 		const segmentColor = normalizedColor(segment.color)
-		const keys = (segment.stationIds || []).map((id) => {
+		const candidateKeys = (segment.stationIds || []).map((id) => {
 			const candidates = stationByApiId.get(String(id)) || []
-			return (candidates.find((station) => station.connections.some((connection) => colorsMatch(connection.color, segmentColor))) || candidates[0])?.key
-		}).filter(Boolean)
-		for (let index = 0; index < keys.length - 1; index += 1) {
-			findPath(keys[index], keys[index + 1], segmentColor)
+			return [...candidates]
+				.sort((first, second) => Number(second.connections.some((connection) => colorsMatch(connection.color, segmentColor))) - Number(first.connections.some((connection) => colorsMatch(connection.color, segmentColor))))
+				.map((station) => station.key)
+		})
+		for (let index = 0; index < candidateKeys.length - 1; index += 1) {
+			if (!candidateKeys[index].length || !candidateKeys[index + 1].length) continue
+			findPath(candidateKeys[index], candidateKeys[index + 1], segmentColor)
 		}
 	}
 	return result
