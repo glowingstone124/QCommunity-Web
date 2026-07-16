@@ -27,6 +27,7 @@ const localizedNews = computed(() =>
 			: index === 0,
 		type: item.type[locale.value] || item.type.zh,
 		title: item.title[locale.value] || item.title.zh,
+		description: item.description[locale.value] || item.description.zh,
 	}))
 )
 const featuredNews = computed(() => localizedNews.value.find((item) => item.isFeatured) || localizedNews.value[0] || null)
@@ -374,17 +375,24 @@ onBeforeUnmount(() => {
 				<article
 					v-if="featuredNews"
 					class="news-item news-item--featured reveal-item"
-					:class="{ 'news-item--text-only': !featuredNews.image }"
+					:class="{
+						'news-item--text-only': !featuredNews.image,
+						'news-item--collapse': featuredNews.id === '2026collapse',
+					}"
 				>
 					<div v-if="featuredNews.image" class="news-image">
 						<img :src="featuredNews.image" :alt="featuredNews.title" loading="lazy">
 					</div>
 					<div class="news-body">
+						<div v-if="featuredNews.id === '2026collapse'" class="collapse-signal">
+							{{ locale === 'zh' ? 'DOC. STEINBECK // 实验进行中' : 'DR. STEINBECK // EXPERIMENT IN PROGRESS' }}
+						</div>
 						<div class="news-meta">
 							<span>{{ featuredNews.type }}</span>
 							<time :datetime="featuredNews.date">{{ featuredNews.date }}</time>
 						</div>
 						<h3>{{ featuredNews.title }}</h3>
+						<p v-if="featuredNews.id === '2026collapse'" class="news-deck">{{ featuredNews.description }}</p>
 						<router-link :to="featuredNews.to" class="news-link">
 							<span>{{ t('homePage.read_more') }}</span>
 							<span class="news-link-arrow" aria-hidden="true"></span>
@@ -397,7 +405,10 @@ onBeforeUnmount(() => {
 						v-for="(item, index) in regularNews"
 						:key="item.id"
 						class="news-item reveal-item"
-						:class="{ 'news-item--text-only': !item.image }"
+						:class="{
+							'news-item--text-only': !item.image,
+							'news-item--collapse': item.id === '2026collapse',
+						}"
 						:style="{ '--reveal-order': Math.min(index, 5) }"
 					>
 						<div v-if="item.image" class="news-image">
@@ -642,6 +653,78 @@ onBeforeUnmount(() => {
 	border-color: color-mix(in srgb, var(--primary) 34%, transparent);
 }
 
+.news-item--collapse {
+	isolation: isolate;
+	min-height: clamp(390px, 50vh, 580px);
+	border-color: color-mix(in srgb, #ff4b32 66%, transparent);
+	background: linear-gradient(135deg, color-mix(in srgb, #300d0b 88%, var(--background)) 0%, color-mix(in srgb, #0d111b 92%, var(--background)) 72%);
+	box-shadow: inset 10px 0 0 #ff4b32, 0 24px 70px color-mix(in srgb, #180504 34%, transparent);
+}
+
+.news-item--collapse::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	background-image:
+		linear-gradient(color-mix(in srgb, #ff765e 10%, transparent) 1px, transparent 1px),
+		linear-gradient(90deg, color-mix(in srgb, #ff765e 10%, transparent) 1px, transparent 1px),
+		linear-gradient(115deg, transparent 55%, color-mix(in srgb, #ff4b32 12%, transparent) 55% 56%, transparent 56%);
+	background-size: 38px 38px, 38px 38px, 100% 100%;
+	mask-image: linear-gradient(90deg, black, transparent 92%);
+}
+
+.news-item--collapse:hover {
+	border-color: #ff765e;
+	background: linear-gradient(135deg, color-mix(in srgb, #3b100d 90%, var(--background)) 0%, color-mix(in srgb, #0d111b 94%, var(--background)) 72%);
+}
+
+.news-item--collapse .news-body {
+	position: relative;
+	z-index: 1;
+	max-width: 760px;
+	padding: clamp(1.5rem, 4vw, 3.6rem);
+}
+
+.news-item--collapse .news-meta,
+.news-item--collapse .news-deck {
+	color: color-mix(in srgb, #fff 72%, transparent);
+}
+
+.news-item--collapse .news-meta span,
+.news-item--collapse .news-link {
+	color: #ff8a69;
+}
+
+.news-item--collapse h3 {
+	max-width: 820px;
+	color: #fff7f1;
+}
+
+.collapse-signal {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.65rem;
+	align-self: flex-start;
+	margin-bottom: clamp(1.5rem, 4vw, 3rem);
+	padding: 0.48rem 0.68rem;
+	border: 1px solid color-mix(in srgb, #ff765e 55%, transparent);
+	background: color-mix(in srgb, #160706 76%, transparent);
+	color: #ffb09b;
+	font-family: "Space Mono", monospace;
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+}
+
+.news-deck {
+	max-width: 680px;
+	margin: 1.25rem 0 0;
+	font-size: clamp(1rem, 1.6vw, 1.25rem);
+	line-height: 1.65;
+}
+
 .news-item::after {
 	content: "";
 	position: absolute;
@@ -702,6 +785,14 @@ onBeforeUnmount(() => {
 
 .news-item--text-only .news-body {
 	padding: clamp(1rem, 2vw, 1.45rem);
+}
+
+.news-item--collapse.news-item--text-only {
+	min-height: clamp(390px, 50vh, 580px);
+}
+
+.news-item--collapse.news-item--text-only .news-body {
+	padding: clamp(1.5rem, 4vw, 3.6rem);
 }
 
 .news-meta {

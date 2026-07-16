@@ -26,6 +26,18 @@ function markdownToBlocks(markdown) {
 	const lines = markdown.split('\n')
 	let paragraph = []
 	let listItems = []
+	const parseTableRow = (line) => {
+		const value = line.trim()
+		if (!value.includes('|')) {
+			return []
+		}
+
+		return value
+			.replace(/^\|/, '')
+			.replace(/\|$/, '')
+			.split('|')
+			.map((cell) => cell.trim())
+	}
 
 	const flushParagraph = () => {
 		if (paragraph.length) {
@@ -47,13 +59,50 @@ function markdownToBlocks(markdown) {
 		}
 	}
 
-	lines.forEach((line) => {
+	for (let index = 0; index < lines.length; index += 1) {
+		const line = lines[index]
 		const trimmed = line.trim()
 
 		if (!trimmed) {
 			flushParagraph()
 			flushList()
-			return
+			continue
+		}
+
+		const tableHeaders = parseTableRow(trimmed)
+		const tableSeparators = parseTableRow(lines[index + 1] || '')
+		const isTable = tableHeaders.length > 0
+			&& tableSeparators.length === tableHeaders.length
+			&& tableSeparators.every((cell) => /^:?-{3,}:?$/.test(cell))
+
+		if (isTable) {
+			flushParagraph()
+			flushList()
+			const alignments = tableSeparators.map((cell) => {
+				if (cell.startsWith(':') && cell.endsWith(':')) return 'center'
+				if (cell.endsWith(':')) return 'right'
+				return 'left'
+			})
+			const rows = []
+			let rowIndex = index + 2
+
+			while (rowIndex < lines.length) {
+				const cells = parseTableRow(lines[rowIndex])
+				if (!cells.length) {
+					break
+				}
+				rows.push(tableHeaders.map((_, cellIndex) => cells[cellIndex] || ''))
+				rowIndex += 1
+			}
+
+			blocks.push({
+				type: 'table',
+				headers: tableHeaders,
+				alignments,
+				rows,
+			})
+			index = rowIndex - 1
+			continue
 		}
 
 		const heading = trimmed.match(/^(#{2,3})\s+(.+)$/)
@@ -64,19 +113,31 @@ function markdownToBlocks(markdown) {
 				type: heading[1].length === 2 ? 'heading' : 'subheading',
 				text: heading[2].trim(),
 			})
-			return
+			continue
+		}
+
+		const image = trimmed.match(/^!\[([^\]]*)\]\((\S+)\)$/)
+		if (image) {
+			flushParagraph()
+			flushList()
+			blocks.push({
+				type: 'image',
+				alt: image[1].trim(),
+					src: image[2].trim(),
+			})
+			continue
 		}
 
 		const listItem = trimmed.match(/^[-*]\s+(.+)$/)
 		if (listItem) {
 			flushParagraph()
 			listItems.push(listItem[1].trim())
-			return
+			continue
 		}
 
 		flushList()
 		paragraph.push(trimmed)
-	})
+	}
 
 	flushParagraph()
 	flushList()

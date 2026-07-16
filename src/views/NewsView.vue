@@ -16,6 +16,10 @@ const article = computed(() => {
 	return newsItems.value.find((item) => item.id === id) || null
 })
 
+const isCollapseArticle = computed(() =>
+	route.params.id === '2026collapse' || article.value?.id === '2026collapse'
+)
+
 const localizedArticle = computed(() => {
 	if (!article.value) {
 		return null
@@ -70,8 +74,8 @@ watch(
 </script>
 
 <template>
-	<main class="news-page page-shell">
-		<aside class="news-sidebar" :aria-label="t('newsPage.sidebar_label')">
+	<main class="news-page page-shell" :class="{ 'news-page--collapse': isCollapseArticle }">
+		<aside v-if="!isCollapseArticle" class="news-sidebar" :aria-label="t('newsPage.sidebar_label')">
 			<div class="news-sidebar-heading">
 				<h1>{{ t('newsPage.title') }}</h1>
 				<button
@@ -103,8 +107,14 @@ watch(
 			</nav>
 		</aside>
 
-		<section class="news-reader">
-			<article v-if="isLoading" class="article-shell" aria-busy="true" aria-live="polite">
+		<section class="news-reader" :class="{ 'news-reader--collapse': isCollapseArticle }">
+			<article
+				v-if="isLoading"
+				class="article-shell"
+				:class="{ 'article-shell--collapse': isCollapseArticle }"
+				aria-busy="true"
+				aria-live="polite"
+			>
 				<div class="article-meta skeleton-line skeleton-line--meta"></div>
 				<div class="skeleton-line skeleton-line--title"></div>
 				<div class="skeleton-line skeleton-line--title-short"></div>
@@ -123,8 +133,11 @@ watch(
 				<router-link class="back-link" to="/">{{ t('newsPage.back_home') }}</router-link>
 			</section>
 
-			<article v-else class="article-shell">
+			<article v-else class="article-shell" :class="{ 'article-shell--collapse': isCollapseArticle }">
 				<header class="article-header">
+					<div v-if="isCollapseArticle" class="collapse-article-label">
+						{{ locale === 'zh' ? 'DOC. STEINBECK // 长期实验档案' : 'DR. STEINBECK // LONG-TERM EXPERIMENT FILE' }}
+					</div>
 					<div class="article-meta">
 						<span>{{ localizedArticle.type }}</span>
 						<time :datetime="localizedArticle.date">{{ localizedArticle.date }}</time>
@@ -143,6 +156,36 @@ watch(
 					<template v-for="(block, index) in localizedArticle.body" :key="index">
 						<h2 v-if="block.type === 'heading'">{{ block.text }}</h2>
 						<h3 v-else-if="block.type === 'subheading'">{{ block.text }}</h3>
+						<figure v-else-if="block.type === 'image'" class="article-body-image">
+							<img :src="block.src" :alt="block.alt" loading="lazy" decoding="async">
+							<figcaption v-if="block.alt">{{ block.alt }}</figcaption>
+						</figure>
+						<div v-else-if="block.type === 'table'" class="article-table-wrap">
+							<table>
+								<thead>
+									<tr>
+										<th
+											v-for="(header, cellIndex) in block.headers"
+											:key="cellIndex"
+											:style="{ textAlign: block.alignments[cellIndex] }"
+										>
+											{{ header }}
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="(row, rowIndex) in block.rows" :key="rowIndex">
+										<td
+											v-for="(cell, cellIndex) in row"
+											:key="cellIndex"
+											:style="{ textAlign: block.alignments[cellIndex] }"
+										>
+											{{ cell }}
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
 						<ul v-else-if="block.type === 'list'">
 							<li v-for="item in block.items" :key="item">{{ item }}</li>
 						</ul>
@@ -169,6 +212,31 @@ watch(
 	color: var(--text-main);
 	overflow: auto;
 	padding: clamp(1rem, 4vw, 3rem);
+}
+
+.news-page--collapse {
+	position: relative;
+	display: block;
+	min-height: calc(100dvh - var(--app-header-height, 0px));
+	padding: clamp(1.25rem, 4vw, 4rem);
+	background:
+		linear-gradient(color-mix(in srgb, #ff654c 7%, transparent) 1px, transparent 1px),
+		linear-gradient(90deg, color-mix(in srgb, #ff654c 7%, transparent) 1px, transparent 1px),
+		linear-gradient(145deg, #240b0a 0%, #10131c 42%, #080b12 100%);
+	background-size: 42px 42px, 42px 42px, 100% 100%;
+	color: #e9e5e2;
+}
+
+.news-page--collapse::before {
+	content: "";
+	position: fixed;
+	top: var(--app-header-height, 0px);
+	bottom: 0;
+	left: 0;
+	width: clamp(10px, 1.2vw, 18px);
+	z-index: 3;
+	background: repeating-linear-gradient(-45deg, #ff4b32 0 18px, #180706 18px 36px);
+	pointer-events: none;
 }
 
 .news-sidebar {
@@ -265,6 +333,10 @@ watch(
 	min-width: 0;
 }
 
+.news-reader--collapse {
+	width: 100%;
+}
+
 .article-shell,
 .empty-state {
 	width: min(900px, 100%);
@@ -275,6 +347,92 @@ watch(
 	display: grid;
 	gap: clamp(1.5rem, 4vw, 2.5rem);
 	padding: clamp(1.25rem, 4vw, 3rem) 0 clamp(3rem, 8vw, 5rem);
+}
+
+.article-shell--collapse {
+	width: min(1180px, 100%);
+	margin: 0 auto;
+	padding: clamp(2rem, 5vw, 5rem) clamp(0.5rem, 3vw, 2.5rem) clamp(4rem, 9vw, 8rem);
+}
+
+.collapse-article-label {
+	display: inline-flex;
+	align-items: center;
+	justify-self: start;
+	padding: 0.5rem 0.75rem;
+	border: 1px solid color-mix(in srgb, #ff765e 58%, transparent);
+	background: color-mix(in srgb, #170706 78%, transparent);
+	color: #ffb09b;
+	font-family: "Space Mono", monospace;
+	font-size: clamp(0.68rem, 1vw, 0.78rem);
+	font-weight: 700;
+	letter-spacing: 0.08em;
+}
+
+.article-shell--collapse .article-header {
+	gap: 1.25rem;
+	padding-bottom: clamp(1.5rem, 4vw, 3rem);
+	border-bottom: 1px solid color-mix(in srgb, #ff765e 32%, transparent);
+}
+
+.article-shell--collapse .article-meta {
+	color: #aaa5a2;
+}
+
+.article-shell--collapse .article-meta span {
+	color: #ff8068;
+}
+
+.article-shell--collapse .article-header h1 {
+	max-width: 980px;
+	color: #fff7f2;
+	font-size: clamp(2.6rem, 7vw, 6.2rem);
+}
+
+.article-shell--collapse .article-body {
+	max-width: 920px;
+	gap: 1.35rem;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	column-gap: clamp(0.9rem, 2vw, 1.35rem);
+}
+
+.article-shell--collapse .article-body > :not(.article-body-image) {
+	grid-column: 1 / -1;
+}
+
+.article-shell--collapse .article-body p,
+.article-shell--collapse .article-body ul {
+	color: #d9d5d2;
+}
+
+.article-shell--collapse .article-body h2 {
+	margin-top: clamp(1.5rem, 4vw, 3rem);
+	padding-left: 0.8rem;
+	border-left: 5px solid #ff4b32;
+	color: #fff6f0;
+}
+
+.article-shell--collapse .article-body h3 {
+	margin-top: 1rem;
+	color: #ff9a82;
+}
+
+.article-shell--collapse .article-body-image {
+	width: 100%;
+	justify-self: start;
+}
+
+.article-shell--collapse .article-body-image img {
+	border-color: color-mix(in srgb, #ff765e 34%, transparent);
+	background: #0c0e14;
+}
+
+.article-shell--collapse .article-body-image figcaption {
+	color: #aaa5a2;
+}
+
+.article-shell--collapse .back-link {
+	color: #ff8068;
 }
 
 .article-header {
@@ -363,6 +521,93 @@ watch(
 
 .article-body li {
 	padding-left: 0.25rem;
+}
+
+.article-body-image {
+	display: grid;
+	gap: 0.55rem;
+	margin: 0;
+}
+
+.article-body-image img {
+	display: block;
+	width: 100%;
+	height: auto;
+	border: 1px solid color-mix(in srgb, var(--text-main) 12%, transparent);
+	background: var(--card-background);
+	box-sizing: border-box;
+}
+
+.article-body-image figcaption {
+	color: var(--text-secondary);
+	font-size: 0.86rem;
+	line-height: 1.5;
+}
+
+.article-table-wrap {
+	width: 100%;
+	overflow-x: auto;
+	border: 1px solid color-mix(in srgb, var(--text-main) 14%, transparent);
+	background: color-mix(in srgb, var(--background) 72%, transparent);
+}
+
+.article-table-wrap table {
+	width: 100%;
+	min-width: 680px;
+	border-collapse: collapse;
+	color: var(--text-main);
+	font-size: 0.92rem;
+	line-height: 1.55;
+}
+
+.article-table-wrap th,
+.article-table-wrap td {
+	padding: 0.75rem 0.85rem;
+	border-right: 1px solid color-mix(in srgb, var(--text-main) 11%, transparent);
+	border-bottom: 1px solid color-mix(in srgb, var(--text-main) 11%, transparent);
+	vertical-align: top;
+}
+
+.article-table-wrap th:last-child,
+.article-table-wrap td:last-child {
+	border-right: none;
+}
+
+.article-table-wrap tbody tr:last-child td {
+	border-bottom: none;
+}
+
+.article-table-wrap th {
+	background: color-mix(in srgb, var(--primary) 12%, var(--background));
+	color: var(--title-color);
+	font-weight: 760;
+}
+
+.article-table-wrap tbody tr:nth-child(even) {
+	background: color-mix(in srgb, var(--text-main) 3%, transparent);
+}
+
+.article-shell--collapse .article-table-wrap {
+	border-color: color-mix(in srgb, #ff765e 30%, transparent);
+	background: color-mix(in srgb, #090b11 86%, transparent);
+}
+
+.article-shell--collapse .article-table-wrap table {
+	color: #d9d5d2;
+}
+
+.article-shell--collapse .article-table-wrap th,
+.article-shell--collapse .article-table-wrap td {
+	border-color: color-mix(in srgb, #ff765e 16%, transparent);
+}
+
+.article-shell--collapse .article-table-wrap th {
+	background: color-mix(in srgb, #ff4b32 14%, #10121a);
+	color: #fff6f0;
+}
+
+.article-shell--collapse .article-table-wrap tbody tr:nth-child(even) {
+	background: color-mix(in srgb, #ff765e 5%, transparent);
 }
 
 .article-footer {
@@ -505,6 +750,10 @@ watch(
 
 	.article-shell {
 		padding-top: 1rem;
+	}
+
+	.article-shell--collapse .article-body {
+		grid-template-columns: minmax(0, 1fr);
 	}
 }
 

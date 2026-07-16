@@ -1,6 +1,6 @@
 export const homeCampaign = {
 	enabled: true,
-	featuredNewsId: 'new_qhub',
+	featuredNewsId: '2026collapse',
 	brandKey: 'homePage.campaign_brand',
 	titleKey: 'homePage.campaign_title',
 }
