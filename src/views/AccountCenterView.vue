@@ -12,6 +12,7 @@ import AccountWhitelistPanel from '@/components/account/AccountWhitelistPanel.vu
 import AffiliatedAccountComponent from '@/components/AffiliatedAccountComponent.vue'
 import PlayerCardsListComponent from '@/components/PlayerCardsListComponent.vue'
 import { accountTabs } from '@/data/accountCenter'
+import { getFallenTeamSelection } from '@/services/fallen.js'
 
 defaultModules.set(PNotifyMobile, {})
 
@@ -32,6 +33,7 @@ const ipFeedbackType = ref('')
 const isImmersive = ref(true)
 const isFrozen = ref(null)
 const statusHint = ref('')
+const fallenSelection = ref(null)
 
 function selectTab(tabId) {
 	currentSetting.value = tabId
@@ -51,6 +53,17 @@ function queryAccountData() {
 			logins.value = data.logins
 			queryAccountStatus()
 		})
+	queryFallenTeam()
+}
+
+async function queryFallenTeam() {
+	try {
+		const data = await getFallenTeamSelection()
+		fallenSelection.value = data.selected ? data : null
+	} catch (error) {
+		console.error('加载阵营信息失败:', error)
+		fallenSelection.value = null
+	}
 }
 
 function queryAccountStatus() {
@@ -206,6 +219,7 @@ function logout() {
 	playtime.value = 0
 	logins.value = []
 	iplist.value = []
+	fallenSelection.value = null
 
 	router.push('/login').then(() => window.location.reload())
 }
@@ -257,6 +271,7 @@ watch(ipAddr, validateIP)
 					:logins="logins"
 					:is-frozen="isFrozen"
 					:status-hint="statusHint"
+					:fallen-selection="fallenSelection"
 				/>
 			</transition>
 

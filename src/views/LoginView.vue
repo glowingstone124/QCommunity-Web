@@ -341,7 +341,11 @@ const login = async () => {
 			localStorage.setItem('username', username.value)
 			localStorage.setItem('token', response.token)
 
-			router.push('/').then(() => window.location.reload())
+			const requestedRedirect = router.currentRoute.value.query.redirect
+			const redirect = typeof requestedRedirect === 'string' && requestedRedirect.startsWith('/')
+				? requestedRedirect
+				: '/'
+			router.push(redirect).then(() => window.location.reload())
 		} else {
 			errorMessage.value = '用户名或密码错误，请重试'
 		}

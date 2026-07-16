@@ -173,6 +173,11 @@ const navCategories = computed(() => [
 		title: t('nav.content_title'),
 		items: [
 			{
+				path: '/collapse',
+				label: locale.value === 'zh' ? '《陷落》阵营选择' : 'Fallen faction selection',
+				description: locale.value === 'zh' ? '为周年活动选择并锁定你的阵营。' : 'Choose and lock your faction for the anniversary event.',
+			},
+			{
 				path: '/news',
 				label: t('nav.news'),
 				description: t('nav.news_description'),

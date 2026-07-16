@@ -5,6 +5,7 @@ const AdvancementView = () => import('@/views/AdvancementView.vue')
 const CardSingletonView = () => import('@/views/CardSingletonView.vue')
 const DashboardView = () => import('@/views/DashBoardView.vue')
 const GuidesView = () => import('@/views/GuidesView.vue')
+const FallenTeamView = () => import('@/views/FallenTeamView.vue')
 const HomeView = () => import('@/views/HomeView.vue')
 const LoginView = () => import('@/views/LoginView.vue')
 const MessageView = () => import('@/views/MessageView.vue')
@@ -22,6 +23,12 @@ const routes = [
 		name: 'home',
 		component: HomeView,
 		meta: { pageTitle: '', showNavBar: true },
+	},
+	{
+		path: '/collapse',
+		name: 'collapse',
+		component: FallenTeamView,
+		meta: { pageTitle: '陷落 · 阵营选择', showNavBar: true },
 	},
 	{
 		path: '/login',

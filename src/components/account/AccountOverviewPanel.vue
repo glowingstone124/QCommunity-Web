@@ -24,7 +24,17 @@ defineProps({
 		type: String,
 		default: '',
 	},
+	fallenSelection: {
+		type: Object,
+		default: null,
+	},
 })
+
+const teamNames = {
+	A: 'A · 旧城同盟',
+	B: 'B · 主城守望',
+	C: 'C · 锡城联合',
+}
 
 function formatDate(timestamp) {
 	const date = new Date(timestamp)
@@ -57,6 +67,13 @@ function formatDate(timestamp) {
 			<div class="stat-card">
 				<p class="stat-label">账号状态</p>
 				<p class="stat-value" :class="isFrozen ? 'status-frozen' : 'status-ok'">{{ statusHint || '检测中' }}</p>
+			</div>
+			<div class="stat-card faction-card">
+				<p class="stat-label">{{ fallenSelection?.finalized ? '当前阵营' : '当前阵营（预计）' }}</p>
+				<p class="stat-value faction-value">
+					{{ fallenSelection ? teamNames[fallenSelection.team] : '尚未选择' }}
+				</p>
+				<small v-if="fallenSelection && !fallenSelection.finalized">7 月 29 日均衡分配后确定</small>
 			</div>
 		</div>
 		<div class="section">
@@ -125,7 +142,7 @@ function formatDate(timestamp) {
 
 .stats {
 	display: grid;
-	grid-template-columns: repeat(4, minmax(0, 1fr));
+	grid-template-columns: repeat(5, minmax(0, 1fr));
 	border: 1px solid var(--border-soft);
 	border-radius: 0;
 	overflow: hidden;
@@ -148,6 +165,7 @@ function formatDate(timestamp) {
 .stat-card:nth-child(2) { animation-delay: 110ms; }
 .stat-card:nth-child(3) { animation-delay: 150ms; }
 .stat-card:nth-child(4) { animation-delay: 190ms; }
+.stat-card:nth-child(5) { animation-delay: 230ms; }
 
 .stat-card:last-child {
 	border-right: none;
@@ -173,6 +191,16 @@ function formatDate(timestamp) {
 
 .status-frozen {
 	color: var(--error);
+}
+
+.faction-value {
+	color: var(--primary);
+}
+
+.faction-card small {
+	color: var(--text-secondary);
+	font-size: 0.76rem;
+	line-height: 1.35;
 }
 
 .stat-num {
@@ -263,7 +291,11 @@ function formatDate(timestamp) {
 		border-right: none;
 	}
 
-	.stat-card:nth-child(-n + 2) {
+	.stat-card:nth-child(4) {
+		border-right: none;
+	}
+
+	.stat-card:not(:last-child) {
 		border-bottom: 1px solid var(--border-soft);
 	}
 }
