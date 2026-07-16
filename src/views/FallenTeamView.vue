@@ -18,7 +18,7 @@ const teams = [
 	{
 		id: 'A',
 		name: {zh: '旧城同盟', en: 'Old City Alliance'},
-		location: {zh: '旧主城 · 芙岛', en: 'Old Spawn · Fu Island'},
+		location: {zh: '旧主城 + 芙岛', en: 'Old Spawn + Fu Island'},
 		perk: {zh: '领地内移动速度 +5%', en: '+5% movement speed in your territory'},
 		description: {zh: '横跨旧主城与芙岛的双城阵线，依靠机动与固定传送站快速支援。', en: 'A two-city front built around mobility and fixed transit stations.'},
 		image: 'https://bucket.glowingstone.cn/group_oldcity.png',
@@ -26,8 +26,8 @@ const teams = [
 	},
 	{
 		id: 'B',
-		name: {zh: '主城守望', en: 'Spawn Wardens'},
-		location: {zh: '主城 · 全物品区 · 老工业区', en: 'Spawn · All Items · Old Industrial District'},
+		name: {zh: '主城守望', en: 'Main City'},
+		location: {zh: '主城', en: 'Main City'},
 		perk: {zh: '降低饥饿值消耗', en: 'Reduced hunger consumption'},
 		description: {zh: '盘踞主城核心地带，以稳定补给和密集建筑群构筑持久防线。', en: 'A fortified central faction sustained by reliable supplies and dense city blocks.'},
 		image: 'https://bucket.glowingstone.cn/group_maincity.png',
@@ -49,7 +49,7 @@ const expectedTeam = computed(() => teams.find((team) => team.id === selection.v
 const pending = computed(() => teams.find((team) => team.id === pendingTeam.value) || null)
 const text = computed(() => locale.value === 'en' ? {
 	eyebrow: 'FALLEN // FACTION REGISTRATION',
-	title: 'Choose the city you hope to defend.',
+	title: 'Choose your desired team.',
 	intro: 'Register one faction preference. Final teams will be balanced and assigned on July 29.',
 	locked: selection.value?.finalized ? 'FACTION ASSIGNED' : 'PREFERENCE REGISTERED',
 	selected: selection.value?.finalized ? 'Your final faction is assigned. Join the server and prepare for deployment.' : 'Your preference is registered. Final assignment will be published on July 29.',
@@ -62,7 +62,7 @@ const text = computed(() => locale.value === 'en' ? {
 	rules: 'Read event rules',
 } : {
 	eyebrow: 'FALLEN // 阵营登记',
-	title: '选择你希望守护的城市。',
+	title: '选择你的阵营',
 	intro: '登记一个阵营意向。7 月 29 日系统将在尽量尊重意向的前提下均衡分配正式阵营。',
 	locked: selection.value?.finalized ? '正式阵营已确定' : '阵营意向已登记',
 	selected: selection.value?.finalized ? '你的正式阵营已经确定。进入服务器，准备部署。' : '你的阵营意向已经登记，正式结果将在 7 月 29 日公布。',
