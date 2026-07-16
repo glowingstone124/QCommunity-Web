@@ -364,6 +364,20 @@ onBeforeUnmount(() => {
 				<div class="hero-copy">
 					<span class="hero-brand">{{ heroBrand }}</span>
 					<h1 id="home-title">{{ heroTitle }}</h1>
+					<div class="collapse-choice-prompt">
+						<div class="choice-prompt-signal" aria-hidden="true">
+							<span></span><span></span><span></span>
+						</div>
+						<div class="choice-prompt-copy">
+							<span>{{ locale === 'zh' ? '《陷落》阵营意向登记' : 'COLLAPSE FACTION REGISTRATION' }}</span>
+							<strong>{{ locale === 'zh' ? '选择你希望守护的城市' : 'Choose the city you hope to defend' }}</strong>
+							<p>{{ locale === 'zh' ? '7 月 29 日将在尽量尊重意向的前提下均衡分配正式阵营。' : 'Final teams will be balanced and assigned on July 29.' }}</p>
+						</div>
+						<router-link class="choice-prompt-action" to="/collapse">
+							{{ locale === 'zh' ? '立即选择' : 'Choose now' }}
+							<span aria-hidden="true">→</span>
+						</router-link>
+					</div>
 				</div>
 				<a class="scroll-cue" href="#home-news" :aria-label="t('homePage.scroll_to_feed')">
 					<span>{{ t('homePage.scroll_to_feed') }}</span>
@@ -546,6 +560,58 @@ onBeforeUnmount(() => {
 
 .home--campaign .home-hero h1 {
 	max-width: min(100%, 24ch);
+}
+
+.collapse-choice-prompt {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	align-items: center;
+	gap: clamp(.9rem, 2vw, 1.4rem);
+	width: min(100%, 900px);
+	margin-top: clamp(.5rem, 1.8vh, 1.15rem);
+	padding: clamp(.9rem, 1.6vw, 1.2rem);
+	box-sizing: border-box;
+	border: 1px solid color-mix(in srgb, #d36649 55%, transparent);
+	border-left: 4px solid #d36649;
+	background: color-mix(in srgb, var(--background) 72%, transparent);
+	backdrop-filter: blur(18px) saturate(115%);
+	box-shadow: 0 20px 70px rgba(4, 8, 13, .14);
+	animation: collapse-prompt-in 680ms cubic-bezier(.16,1,.3,1) 430ms both;
+}
+
+.choice-prompt-signal {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	width: 34px;
+	height: 34px;
+}
+
+.choice-prompt-signal span {
+	display: block;
+	width: 5px;
+	height: 22px;
+	background: #d36649;
+	animation: choice-signal 1.15s ease-in-out infinite;
+}
+
+.choice-prompt-signal span:nth-child(2) { height: 32px; animation-delay: 100ms; }
+.choice-prompt-signal span:nth-child(3) { height: 16px; animation-delay: 200ms; }
+.choice-prompt-copy { min-width: 0; display: grid; gap: .24rem; }
+.choice-prompt-copy > span { color: #d36649; font: 700 .68rem/1.3 'Space Mono', monospace; letter-spacing: .12em; }
+.choice-prompt-copy strong { color: var(--title-color); font-size: clamp(1rem, 1.6vw, 1.25rem); line-height: 1.25; }
+.choice-prompt-copy p { margin: 0; color: var(--text-secondary); font-size: .86rem; line-height: 1.45; }
+.choice-prompt-action { display: inline-flex; align-items: center; justify-content: space-between; gap: 1.2rem; min-width: 110px; padding: .85rem 1rem; background: #b85238; border: 1px solid #c86449; color: #fff; font-size: .9rem; font-weight: 760; text-decoration: none; transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease; }
+.choice-prompt-action:hover { transform: translateX(4px); background: #cf6246; box-shadow: -8px 0 24px rgba(184,82,56,.22); }
+
+@keyframes collapse-prompt-in {
+	from { opacity: 0; transform: translateY(22px); clip-path: inset(0 100% 0 0); }
+	to { opacity: 1; transform: none; clip-path: inset(0); }
+}
+
+@keyframes choice-signal {
+	0%, 100% { transform: scaleY(.55); opacity: .45; }
+	50% { transform: scaleY(1); opacity: 1; }
 }
 
 .scroll-cue {
@@ -986,6 +1052,19 @@ onBeforeUnmount(() => {
 		font-size: 1.1rem;
 	}
 
+	.collapse-choice-prompt {
+		grid-template-columns: auto minmax(0, 1fr);
+		gap: .8rem;
+		margin-top: .35rem;
+		padding: .85rem;
+	}
+
+	.choice-prompt-action {
+		grid-column: 1 / -1;
+		width: 100%;
+		box-sizing: border-box;
+	}
+
 	.news-feed {
 		padding: 0;
 	}
@@ -1016,6 +1095,8 @@ onBeforeUnmount(() => {
 
 	.hero-brand,
 	.home-hero h1,
+	.collapse-choice-prompt,
+	.choice-prompt-signal span,
 	.scroll-cue,
 	.scroll-cue-line {
 		animation: none;

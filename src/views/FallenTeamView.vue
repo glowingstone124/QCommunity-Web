@@ -1,18 +1,21 @@
 <script setup>
-import {computed, onMounted, ref} from 'vue'
+import {computed, onBeforeUnmount, onMounted, ref} from 'vue'
 import {useI18n} from 'vue-i18n'
 import {useRouter} from 'vue-router'
 import {getFallenTeamSelection, selectFallenTeam} from '@/services/fallen.js'
 
 const {locale} = useI18n()
 const router = useRouter()
+const isDevMode = import.meta.env.DEV
 const loading = ref(true)
 const submitting = ref(false)
 const selection = ref(null)
 const pendingTeam = ref(null)
 const message = ref('')
 const errorMessage = ref('')
+const celebrating = ref(false)
 const loggedIn = computed(() => Boolean(localStorage.getItem('token')))
+let celebrationTimer = 0
 
 const teams = [
 	{
@@ -81,7 +84,7 @@ function localized(value) {
 
 function openConfirmation(team) {
 	if (selection.value || submitting.value) return
-	if (!localStorage.getItem('token')) {
+	if (!isDevMode && !localStorage.getItem('token')) {
 		router.push({path: '/login', query: {redirect: '/collapse'}})
 		return
 	}
@@ -94,9 +97,26 @@ async function confirmSelection() {
 	submitting.value = true
 	errorMessage.value = ''
 	try {
+		if (isDevMode) {
+			await new Promise((resolve) => window.setTimeout(resolve, 520))
+			selection.value = {
+				selected: true,
+				team: pendingTeam.value,
+				expectedTeam: pendingTeam.value,
+				finalized: false,
+				selectedAt: Date.now(),
+			}
+			message.value = locale.value === 'en'
+				? 'Development preview only. No request was sent to the server.'
+				: '仅为开发环境预览，本次选择未发送到服务器。'
+			triggerCelebration()
+			pendingTeam.value = null
+			return
+		}
 		const result = await selectFallenTeam(pendingTeam.value)
 		selection.value = result
 		message.value = result.message || text.value.selected
+		triggerCelebration()
 		pendingTeam.value = null
 	} catch (error) {
 		if (error.status === 401) {
@@ -113,7 +133,27 @@ async function confirmSelection() {
 	}
 }
 
+function triggerCelebration() {
+	window.clearTimeout(celebrationTimer)
+	celebrating.value = true
+	celebrationTimer = window.setTimeout(() => {
+		celebrating.value = false
+	}, 1800)
+}
+
+function resetDevPreview() {
+	if (!isDevMode) return
+	selection.value = null
+	pendingTeam.value = null
+	message.value = ''
+	errorMessage.value = ''
+}
+
 onMounted(async () => {
+	if (isDevMode) {
+		loading.value = false
+		return
+	}
 	if (!localStorage.getItem('token')) {
 		loading.value = false
 		return
@@ -130,6 +170,8 @@ onMounted(async () => {
 		loading.value = false
 	}
 })
+
+onBeforeUnmount(() => window.clearTimeout(celebrationTimer))
 </script>
 
 <template>
@@ -140,36 +182,64 @@ onMounted(async () => {
 				<p class="eyebrow">{{ text.eyebrow }}</p>
 				<h1>{{ text.title }}</h1>
 				<p class="intro">{{ text.intro }}</p>
+				<p v-if="isDevMode" class="dev-banner">
+					DEV PREVIEW // 本地选择只用于预览，不会向服务器提交数据
+				</p>
 			</div>
 			<router-link class="rules-link" to="/news/2026collapse">{{ text.rules }} <span>↗</span></router-link>
 		</header>
 
-		<div v-if="loading" class="loading-state" role="status">
-			<span></span><span></span><span></span>
-		</div>
-
-		<section v-else-if="currentTeam" class="locked-panel" :style="{'--team-accent': currentTeam.accent}">
-			<img :src="currentTeam.image" :alt="localized(currentTeam.name)">
-			<div class="locked-overlay"></div>
-			<div class="locked-content">
-				<p class="status-label">● {{ text.locked }} // {{ currentTeam.id }}</p>
-				<h2>{{ localized(currentTeam.name) }}</h2>
-				<p>{{ localized(currentTeam.location) }}</p>
-				<strong>{{ localized(currentTeam.perk) }}</strong>
-				<small v-if="selection.finalized && expectedTeam && expectedTeam.id !== currentTeam.id">
-					{{ locale === 'en' ? `Registered preference: ${localized(expectedTeam.name)}` : `登记意向：${localized(expectedTeam.name)}` }}
-				</small>
-				<span>{{ message || text.selected }}</span>
+		<Transition name="selection-stage" mode="out-in">
+			<div v-if="loading" key="loading" class="loading-state" role="status">
+				<span></span><span></span><span></span>
 			</div>
-		</section>
 
-		<section v-else class="team-grid" aria-label="阵营选项">
-			<article
-				v-for="team in teams"
-				:key="team.id"
-				class="team-card"
-				:style="{'--team-accent': team.accent}"
+			<section
+				v-else-if="currentTeam"
+				key="result"
+				class="locked-panel"
+				:class="{'is-celebrating': celebrating}"
+				:style="{'--team-accent': currentTeam.accent}"
 			>
+				<img :src="currentTeam.image" :alt="localized(currentTeam.name)">
+				<div class="locked-overlay"></div>
+				<div v-if="celebrating" class="impact-fx" aria-hidden="true">
+					<span class="impact-flash"></span>
+					<span class="impact-ring impact-ring--one"></span>
+					<span class="impact-ring impact-ring--two"></span>
+					<span
+						v-for="index in 12"
+						:key="index"
+						class="impact-ray"
+						:style="{'--ray-index': index - 1}"
+					></span>
+				</div>
+				<div class="locked-content">
+					<p class="status-label">● {{ text.locked }} // {{ currentTeam.id }}</p>
+					<h2>{{ localized(currentTeam.name) }}</h2>
+					<p>{{ localized(currentTeam.location) }}</p>
+					<strong>{{ localized(currentTeam.perk) }}</strong>
+					<small v-if="selection.finalized && expectedTeam && expectedTeam.id !== currentTeam.id">
+						{{ locale === 'en' ? `Registered preference: ${localized(expectedTeam.name)}` : `登记意向：${localized(expectedTeam.name)}` }}
+					</small>
+					<span>{{ message || text.selected }}</span>
+					<button v-if="isDevMode" type="button" class="reset-preview" @click="resetDevPreview">
+						重新点选预览
+					</button>
+				</div>
+			</section>
+
+			<section v-else key="choices" class="team-grid" aria-label="阵营选项">
+				<article
+					v-for="(team, index) in teams"
+					:key="team.id"
+					class="team-card"
+					:class="{
+						'is-pending': pendingTeam === team.id,
+						'is-dimmed': pendingTeam && pendingTeam !== team.id,
+					}"
+					:style="{'--team-accent': team.accent, '--team-index': index}"
+				>
 				<div class="team-image">
 					<img :src="team.image" :alt="localized(team.name)">
 					<span class="team-code">0{{ team.id.charCodeAt(0) - 64 }}</span>
@@ -180,17 +250,19 @@ onMounted(async () => {
 					<p class="team-description">{{ localized(team.description) }}</p>
 					<div class="perk"><span>◆</span>{{ localized(team.perk) }}</div>
 					<button type="button" @click="openConfirmation(team)">
-						{{ loggedIn ? text.choose : text.login }}
+						{{ loggedIn || isDevMode ? text.choose : text.login }}
 						<span>→</span>
 					</button>
 				</div>
-			</article>
-		</section>
+				</article>
+			</section>
+		</Transition>
 
 		<p v-if="errorMessage" class="error-banner" role="alert">{{ errorMessage }}</p>
 
-		<div v-if="pending" class="modal-backdrop" @click.self="pendingTeam = null">
-			<section class="confirm-modal" role="dialog" aria-modal="true" :aria-labelledby="'confirm-title'">
+		<Transition name="confirm-pop">
+			<div v-if="pending" class="modal-backdrop" @click.self="pendingTeam = null">
+				<section class="confirm-modal" role="dialog" aria-modal="true" :aria-labelledby="'confirm-title'">
 				<p class="modal-code">FALLEN / {{ pending.id }}</p>
 				<h2 id="confirm-title">{{ text.confirmTitle }}</h2>
 				<p>{{ text.confirmBody }}</p>
@@ -200,8 +272,9 @@ onMounted(async () => {
 						{{ submitting ? '…' : text.confirm }}
 					</button>
 				</div>
-			</section>
-		</div>
+				</section>
+			</div>
+		</Transition>
 	</div>
 </template>
 
@@ -231,12 +304,15 @@ onMounted(async () => {
 .eyebrow, .modal-code { margin: 0 0 1rem; color: #d36649; font: 700 .75rem/1.2 'Space Mono', monospace; letter-spacing: .18em; }
 .fallen-hero h1 { max-width: 900px; margin: 0; font-size: clamp(2.6rem, 6vw, 6.3rem); font-weight: 430; line-height: .98; letter-spacing: -.045em; }
 .intro { max-width: 720px; margin: 1.4rem 0 0; color: #aaa9a4; font-size: clamp(1rem, 1.6vw, 1.22rem); line-height: 1.65; }
+.dev-banner { width: fit-content; margin: 1.15rem 0 0; padding: .65rem .8rem; border: 1px solid rgba(211,102,73,.55); background: rgba(211,102,73,.1); color: #e6a18e; font: 700 .7rem/1.5 'Space Mono', monospace; letter-spacing: .06em; }
 .rules-link { flex: none; color: #dad8d1; text-decoration: none; border-bottom: 1px solid #595854; padding: .7rem 0; font-weight: 650; }
 .rules-link:hover { color: #fff; border-color: #d36649; }
 
 .team-grid { max-width: 1680px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: #343638; border: 1px solid #343638; }
-.team-card { min-width: 0; background: #111518; display: flex; flex-direction: column; transition: transform .25s ease, background .25s ease; }
+.team-card { min-width: 0; background: #111518; display: flex; flex-direction: column; opacity: 0; animation: team-card-in 620ms cubic-bezier(.16,1,.3,1) calc(var(--team-index) * 90ms) forwards; transition: transform .35s cubic-bezier(.16,1,.3,1), background .25s ease, opacity .28s ease, filter .28s ease, box-shadow .35s ease; }
 .team-card:hover { background: #171b1e; transform: translateY(-6px); z-index: 2; }
+.team-card.is-pending { transform: translateY(-10px) scale(1.018); z-index: 3; box-shadow: 0 24px 65px color-mix(in srgb, var(--team-accent) 28%, transparent); }
+.team-card.is-dimmed { opacity: .42 !important; filter: grayscale(.65); transform: scale(.985); }
 .team-image { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: #181b1d; }
 .team-image::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 45%, rgba(9,12,15,.9)); }
 .team-image img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.72) contrast(1.08); transition: transform .6s cubic-bezier(.2,.8,.2,1), filter .3s; }
@@ -259,6 +335,33 @@ onMounted(async () => {
 .locked-content h2 { margin: .4rem 0; font-size: clamp(3rem, 7vw, 6.5rem); line-height: .95; }
 .locked-content p, .locked-content span { margin: 0; color: #b7b6b0; line-height: 1.6; }
 .locked-content strong { margin: 1rem 0; font-size: 1.08rem; color: #fff; }
+.reset-preview { width: fit-content; margin-top: 1rem; padding: .8rem 1rem; border: 1px solid color-mix(in srgb, var(--team-accent) 65%, #fff); border-radius: 0; background: transparent; color: #fff; font: inherit; font-weight: 700; cursor: pointer; transition: background .2s ease, transform .2s ease; }
+.reset-preview:hover { background: var(--team-accent); transform: translateX(4px); }
+
+.locked-panel.is-celebrating {
+	animation: result-impact 900ms cubic-bezier(.12,.9,.2,1) both;
+}
+.locked-panel.is-celebrating > img {
+	animation: result-image-strike 1500ms cubic-bezier(.12,.9,.2,1) both;
+}
+.locked-panel.is-celebrating .locked-overlay {
+	animation: result-overlay-strike 1200ms ease-out both;
+}
+.locked-panel.is-celebrating .status-label {
+	animation: result-label-strike 720ms cubic-bezier(.12,1.3,.25,1) 170ms both;
+}
+.locked-panel.is-celebrating .locked-content h2 {
+	animation: result-title-strike 820ms cubic-bezier(.1,1.2,.2,1) 80ms both;
+}
+.locked-panel.is-celebrating .locked-content > :not(h2):not(.status-label) {
+	animation: result-copy-in 600ms ease-out 520ms both;
+}
+.impact-fx { position: absolute; z-index: 3; inset: 0; overflow: hidden; pointer-events: none; }
+.impact-flash { position: absolute; inset: -20%; background: radial-gradient(circle at 36% 58%, #fff 0, color-mix(in srgb, var(--team-accent) 88%, #fff) 8%, color-mix(in srgb, var(--team-accent) 42%, transparent) 24%, transparent 55%); mix-blend-mode: screen; animation: impact-flash 760ms ease-out both; }
+.impact-ring { position: absolute; left: 36%; top: 58%; width: 80px; height: 80px; border: 4px solid color-mix(in srgb, var(--team-accent) 75%, #fff); border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 35px var(--team-accent), inset 0 0 25px var(--team-accent); }
+.impact-ring--one { animation: impact-ring 1050ms cubic-bezier(.1,.7,.2,1) both; }
+.impact-ring--two { animation: impact-ring 1250ms cubic-bezier(.1,.7,.2,1) 100ms both; }
+.impact-ray { position: absolute; left: 36%; top: 58%; width: clamp(110px, 17vw, 280px); height: 3px; transform-origin: left center; background: linear-gradient(90deg, color-mix(in srgb, var(--team-accent) 75%, #fff), transparent); transform: rotate(calc(var(--ray-index) * 30deg)) scaleX(0); animation: impact-ray 900ms cubic-bezier(.12,.85,.2,1) calc(var(--ray-index) * 12ms) both; }
 
 .loading-state { position: relative; z-index: 2; height: 320px; display: flex; align-items: center; justify-content: center; gap: .65rem; }
 .loading-state span { width: 7px; height: 44px; background: #d36649; animation: signal 1s ease-in-out infinite; }
@@ -274,7 +377,69 @@ onMounted(async () => {
 .modal-actions .secondary { color: #d1d0ca; border: 1px solid #42474a; background: transparent; }.modal-actions .primary { color: #fff; border: 1px solid #b85238; background: #b85238; }
 .modal-actions button:disabled { opacity: .55; cursor: wait; }
 
+.selection-stage-enter-active,
+.selection-stage-leave-active { transition: opacity .38s ease, transform .48s cubic-bezier(.16,1,.3,1), filter .38s ease; }
+.selection-stage-enter-from { opacity: 0; transform: translateY(24px) scale(.985); filter: blur(5px); }
+.selection-stage-leave-to { opacity: 0; transform: translateY(-14px) scale(.99); filter: blur(4px); }
+.confirm-pop-enter-active,
+.confirm-pop-leave-active { transition: opacity .25s ease; }
+.confirm-pop-enter-active .confirm-modal,
+.confirm-pop-leave-active .confirm-modal { transition: transform .4s cubic-bezier(.16,1,.3,1), opacity .25s ease; }
+.confirm-pop-enter-from,
+.confirm-pop-leave-to { opacity: 0; }
+.confirm-pop-enter-from .confirm-modal { opacity: 0; transform: translateY(24px) scale(.94); }
+.confirm-pop-leave-to .confirm-modal { opacity: 0; transform: translateY(10px) scale(.97); }
+
+@keyframes team-card-in {
+	from { opacity: 0; transform: translateY(30px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+@keyframes result-impact {
+	0% { clip-path: inset(48% 0 48% 0); transform: scaleX(.82); filter: brightness(2.4) contrast(1.25); }
+	42% { clip-path: inset(0); transform: scaleX(1.018); filter: brightness(1.35) contrast(1.15); }
+	68% { transform: scaleX(.994); }
+	100% { clip-path: inset(0); transform: scale(1); filter: none; }
+}
+@keyframes result-image-strike {
+	0% { transform: scale(1.3); filter: saturate(0) brightness(2); }
+	35% { filter: saturate(1.45) brightness(1.12); }
+	100% { transform: scale(1); filter: saturate(.72) contrast(1.08); }
+}
+@keyframes result-overlay-strike {
+	0% { opacity: 0; }
+	26% { opacity: .2; }
+	100% { opacity: 1; }
+}
+@keyframes result-title-strike {
+	0% { opacity: 0; transform: translateX(-90px) skewX(-12deg) scaleX(1.3); letter-spacing: .08em; filter: blur(7px); }
+	55% { opacity: 1; transform: translateX(8px) skewX(1deg) scaleX(.98); filter: blur(0); }
+	100% { opacity: 1; transform: none; letter-spacing: normal; filter: none; }
+}
+@keyframes result-label-strike {
+	0% { opacity: 0; transform: translateY(-22px); letter-spacing: .45em; }
+	100% { opacity: 1; transform: none; }
+}
+@keyframes result-copy-in {
+	from { opacity: 0; transform: translateY(18px); }
+	to { opacity: 1; transform: none; }
+}
+@keyframes impact-flash {
+	0% { opacity: 0; transform: scale(.2); }
+	12% { opacity: 1; }
+	100% { opacity: 0; transform: scale(1.65); }
+}
+@keyframes impact-ring {
+	0% { opacity: 1; transform: translate(-50%, -50%) scale(.05); }
+	75% { opacity: .7; }
+	100% { opacity: 0; transform: translate(-50%, -50%) scale(11); }
+}
+@keyframes impact-ray {
+	0% { opacity: 0; transform: rotate(calc(var(--ray-index) * 30deg)) scaleX(0); }
+	18% { opacity: 1; }
+	100% { opacity: 0; transform: rotate(calc(var(--ray-index) * 30deg)) scaleX(1.8); }
+}
+
 @media (max-width: 900px) { .team-grid { grid-template-columns: 1fr; gap: 1px; }.team-card { display: grid; grid-template-columns: minmax(280px, 1.15fr) 1fr; }.team-image { height: 100%; min-height: 260px; aspect-ratio: auto; }.fallen-hero { align-items: start; flex-direction: column; }.team-card:hover { transform: none; } }
 @media (max-width: 580px) { .fallen-page { padding-top: 2.3rem; }.team-card { display: flex; }.team-image { min-height: 0; aspect-ratio: 16/9; }.rules-link { align-self: flex-start; }.locked-overlay { background: linear-gradient(0deg, rgba(7,9,11,.98), rgba(7,9,11,.25)); }.modal-actions { grid-template-columns: 1fr; }.fallen-hero h1 { font-size: 2.8rem; } }
-@media (prefers-reduced-motion: reduce) { .team-card, .team-image img, .loading-state span { transition: none; animation: none; } }
+@media (prefers-reduced-motion: reduce) { .team-card, .team-image img, .loading-state span, .selection-stage-enter-active, .selection-stage-leave-active, .confirm-pop-enter-active, .confirm-pop-leave-active, .confirm-modal, .locked-panel.is-celebrating, .locked-panel.is-celebrating *, .impact-fx * { transition: none; animation: none; }.team-card { opacity: 1; }.impact-fx { display: none; } }
 </style>
