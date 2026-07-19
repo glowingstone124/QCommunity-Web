@@ -62,7 +62,7 @@
 <script setup>
 import {onBeforeUnmount, onMounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
-import {get} from '/src/utils/request.js'
+import {post} from '/src/utils/request.js'
 
 const router = useRouter()
 const username = ref('')
@@ -334,8 +334,11 @@ const login = async () => {
 	loading.value = true
 
 	try {
-		const url = `https://api.qoriginal.vip/qo/game/login?username=${encodeURIComponent(username.value)}&password=${encodeURIComponent(password.value)}&web=true`
-		const response = await get(url)
+		const response = await post('https://api.qoriginal.vip/qo/game/login', {
+			username: username.value,
+			password: password.value,
+			web: true,
+		})
 
 		if (response.result) {
 			localStorage.setItem('username', username.value)

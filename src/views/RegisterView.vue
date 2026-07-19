@@ -120,7 +120,7 @@
 <script setup>
 import {computed, onBeforeUnmount, ref} from "vue";
 import {useRouter} from "vue-router";
-import {get} from "/src/utils/request";
+import {post} from "/src/utils/request";
 
 const step = ref(1)
 const quiz_seq = ref(-1)
@@ -296,9 +296,12 @@ function submitForm() {
 	}
 
 	isLoading.value = true
-	const url = `https://api.glowingstone.cn/qo/upload/registry?name=${username.value}&password=${password.value}&uid=${qq.value}&score=${score.value}`
-
-	get(url)
+	post('https://api.glowingstone.cn/qo/upload/registry', {
+		name: username.value,
+		password: password.value,
+		uid: Number(qq.value),
+		score: score.value,
+	})
 		.then(result => {
 			if (result.code === 0) {
 				isDialogVisible.value = true

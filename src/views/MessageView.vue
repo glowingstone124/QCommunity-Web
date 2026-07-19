@@ -1,7 +1,7 @@
 <script setup>
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 
-const MESSAGE_DOWNLOAD_URL = 'https://api.glowingstone.cn/qo/msglist/download'
+const MESSAGE_DOWNLOAD_URL = 'https://api.glowingstone.cn/qo/msglist/public'
 const POLLING_INTERVAL = 3000
 const messageContainer = ref(null)
 const messageList = ref([])

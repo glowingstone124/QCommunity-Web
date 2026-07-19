@@ -1,6 +1,6 @@
 <script setup>
 import {ref, onMounted} from 'vue';
-import {get} from "@/utils/request.js";
+import {post} from "@/utils/request.js";
 
 const username = ref(localStorage.getItem('username') || "");
 const token = ref(localStorage.getItem('token') || "");
@@ -36,8 +36,11 @@ function accountcenter() {
 }
 
 function login() {
-	const url = `https://api.glowingstone.cn/qo/game/login?username=${username.value}&password=${password.value}`;
-	get(url).then(result => {
+	post('https://api.glowingstone.cn/qo/game/login', {
+		username: username.value,
+		password: password.value,
+		web: true,
+	}).then(result => {
 		if (result.result === true) {
 			localStorage.setItem("username", username.value);
 			localStorage.setItem("token", result.token);
