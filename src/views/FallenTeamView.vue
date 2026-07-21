@@ -2,7 +2,8 @@
 import {computed, onBeforeUnmount, onMounted, ref} from 'vue'
 import {useI18n} from 'vue-i18n'
 import {useRouter} from 'vue-router'
-import {getFallenTeamSelection, selectFallenTeam} from '@/services/fallen.js'
+import FallenLiveStatus from '@/components/fallen/FallenLiveStatus.vue'
+import {getFallenActivityStatus, getFallenTeamSelection, selectFallenTeam} from '@/services/fallen.js'
 
 const {locale} = useI18n()
 const router = useRouter()
@@ -14,8 +15,15 @@ const pendingTeam = ref(null)
 const message = ref('')
 const errorMessage = ref('')
 const celebrating = ref(false)
+const activityStatus = ref(null)
+const activityChecked = ref(false)
 const loggedIn = computed(() => Boolean(localStorage.getItem('token')))
+const activityActive = computed(() => activityStatus.value?.active === true)
 let celebrationTimer = 0
+let statusPollingTimer = 0
+let statusRequestInFlight = false
+
+const STATUS_POLL_INTERVAL = 1_000
 
 const teams = [
 	{
@@ -77,6 +85,20 @@ const text = computed(() => locale.value === 'en' ? {
 	login: '登录后选择',
 	rules: '查看完整规则',
 })
+
+const heroText = computed(() => activityActive.value
+	? (locale.value === 'en'
+		? {
+			eyebrow: 'FALLEN // LIVE OPERATIONS',
+			title: 'The city is falling.',
+			intro: 'Live faction rosters and scores reported directly by the survival server.',
+		}
+		: {
+			eyebrow: 'FALLEN // 实时战况',
+			title: '陷落正在发生',
+			intro: '生存服实时上报的阵营成员与积分。',
+		})
+	: text.value)
 
 function localized(value) {
 	return value[locale.value] || value.zh
@@ -149,7 +171,28 @@ function resetDevPreview() {
 	errorMessage.value = ''
 }
 
+async function syncActivityStatus() {
+	if (statusRequestInFlight) return
+	statusRequestInFlight = true
+	try {
+		activityStatus.value = await getFallenActivityStatus()
+	} catch (error) {
+		if (activityStatus.value?.active) {
+			activityStatus.value = {...activityStatus.value, stale: true}
+		}
+	} finally {
+		activityChecked.value = true
+		statusRequestInFlight = false
+	}
+}
+
+function startActivityPolling() {
+	syncActivityStatus()
+	statusPollingTimer = window.setInterval(syncActivityStatus, STATUS_POLL_INTERVAL)
+}
+
 onMounted(async () => {
+	startActivityPolling()
 	if (isDevMode) {
 		loading.value = false
 		return
@@ -171,7 +214,10 @@ onMounted(async () => {
 	}
 })
 
-onBeforeUnmount(() => window.clearTimeout(celebrationTimer))
+onBeforeUnmount(() => {
+	window.clearTimeout(celebrationTimer)
+	window.clearInterval(statusPollingTimer)
+})
 </script>
 
 <template>
@@ -179,18 +225,20 @@ onBeforeUnmount(() => window.clearTimeout(celebrationTimer))
 		<div class="atmosphere" aria-hidden="true"></div>
 		<header class="fallen-hero">
 			<div>
-				<p class="eyebrow">{{ text.eyebrow }}</p>
-				<h1>{{ text.title }}</h1>
-				<p class="intro">{{ text.intro }}</p>
-				<p v-if="isDevMode" class="dev-banner">
+				<p class="eyebrow">{{ heroText.eyebrow }}</p>
+				<h1>{{ heroText.title }}</h1>
+				<p class="intro">{{ heroText.intro }}</p>
+				<p v-if="isDevMode && !activityActive" class="dev-banner">
 					DEV PREVIEW // 本地选择只用于预览，不会向服务器提交数据
 				</p>
 			</div>
 			<router-link class="rules-link" to="/news/2026collapse">{{ text.rules }} <span>↗</span></router-link>
 		</header>
 
-		<Transition name="selection-stage" mode="out-in">
-			<div v-if="loading" key="loading" class="loading-state" role="status">
+		<FallenLiveStatus v-if="activityActive" :status="activityStatus" :locale="locale" />
+
+		<Transition v-else name="selection-stage" mode="out-in">
+			<div v-if="loading || !activityChecked" key="loading" class="loading-state" role="status">
 				<span></span><span></span><span></span>
 			</div>
 
@@ -258,10 +306,10 @@ onBeforeUnmount(() => window.clearTimeout(celebrationTimer))
 			</section>
 		</Transition>
 
-		<p v-if="errorMessage" class="error-banner" role="alert">{{ errorMessage }}</p>
+		<p v-if="!activityActive && errorMessage" class="error-banner" role="alert">{{ errorMessage }}</p>
 
 		<Transition name="confirm-pop">
-			<div v-if="pending" class="modal-backdrop" @click.self="pendingTeam = null">
+			<div v-if="!activityActive && pending" class="modal-backdrop" @click.self="pendingTeam = null">
 				<section class="confirm-modal" role="dialog" aria-modal="true" :aria-labelledby="'confirm-title'">
 				<p class="modal-code">FALLEN / {{ pending.id }}</p>
 				<h2 id="confirm-title">{{ text.confirmTitle }}</h2>

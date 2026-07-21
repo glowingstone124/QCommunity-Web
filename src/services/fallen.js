@@ -26,6 +26,24 @@ async function request(path, options = {}) {
 	return data
 }
 
+async function publicRequest(path, options = {}) {
+	const response = await fetch(`${API_BASE_URL}${path}`, {
+		...options,
+		headers: {
+			'Content-Type': 'application/json',
+			...options.headers,
+		},
+	})
+	const data = await response.json().catch(() => ({}))
+	if (!response.ok) {
+		const error = new Error(data.message || '请求失败，请稍后再试。')
+		error.status = response.status
+		error.data = data
+		throw error
+	}
+	return data
+}
+
 export function getFallenTeamSelection() {
 	return request('/qo/authorization/fallen/team')
 }
@@ -35,4 +53,8 @@ export function selectFallenTeam(team) {
 		method: 'POST',
 		body: JSON.stringify({team}),
 	})
+}
+
+export function getFallenActivityStatus() {
+	return publicRequest('/qo/fallen/status', {cache: 'no-store'})
 }

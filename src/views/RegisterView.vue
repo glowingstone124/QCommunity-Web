@@ -43,12 +43,12 @@
 
 					<label v-if="step === 3" class="field">
 						<span>密码</span>
-						<input v-model="password" type="password" placeholder="设置密码" autocomplete="new-password" required />
+						<input v-model="password" type="password" placeholder="设置密码" autocomplete="new-password" minlength="8" required />
 					</label>
 
 					<label v-if="step === 3" class="field">
 						<span>确认密码</span>
-						<input v-model="confirmPassword" type="password" placeholder="再次输入密码" autocomplete="new-password" required />
+						<input v-model="confirmPassword" type="password" placeholder="再次输入密码" autocomplete="new-password" minlength="8" required />
 					</label>
 
 					<div v-if="step === 4" class="quiz-intro">
@@ -216,7 +216,7 @@ const currentStepTitle = computed(() => {
 const currentStepDescription = computed(() => {
 	if (step.value === 1) return "用于服务器白名单、玩家资料和社区身份展示。"
 	if (step.value === 2) return "用于 QQ 群内验证和后续账户绑定。"
-	if (step.value === 3) return "请设置一个至少 4 位的登录密码。"
+	if (step.value === 3) return "请设置一个至少 8 位的登录密码。"
 	return "完成阅读测试，或选择向管理员提交证明材料。"
 })
 
@@ -234,7 +234,7 @@ function validateQQ() {
 async function validateUsername() {
 	const url = `https://api.qoriginal.vip/qo/download/registry?name=${username.value}`
 	const res = await fetch(url).then(r => r.json()).catch(() => null)
-	return res && res.data?.code === 1
+	return res?.code === 0
 }
 async function handleNext() {
 	message.value = ""
@@ -252,8 +252,8 @@ async function handleNext() {
 		}
 		step.value++
 	} else if (step.value === 3) {
-		if (!isDevMode && password.value.length < 4) {
-			message.value = "密码长度不能少于 4 位"
+		if (!isDevMode && password.value.length < 8) {
+			message.value = "密码长度不能少于 8 位"
 			return
 		}
 		if (!isDevMode && password.value !== confirmPassword.value) {

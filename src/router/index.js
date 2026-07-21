@@ -28,7 +28,7 @@ const routes = [
 		path: '/collapse',
 		name: 'collapse',
 		component: FallenTeamView,
-		meta: { pageTitle: '陷落 · 阵营选择', showNavBar: true },
+		meta: { pageTitle: '陷落', showNavBar: true },
 	},
 	{
 		path: '/login',
