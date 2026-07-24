@@ -319,7 +319,8 @@ onBeforeUnmount(stopPolling)
 						</div>
 						<div class="player-meta">
 							<span class="health-value">HP {{ formatHealth(player.health) }}</span>
-							<span class="coordinate-value">{{ formatCoordinate(player.x) }}, {{ formatCoordinate(player.y) }}, {{ formatCoordinate(player.z) }}</span>
+							<!--<span class="coordinate-value">{{ formatCoordinate(player.x) }}, {{ formatCoordinate(player.y) }}, {{ formatCoordinate(player.z) }}</span>-->
+							<span class="coordinate-value">位置信息禁用</span>
 						</div>
 					</div>
 				</div>
