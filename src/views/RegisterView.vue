@@ -51,24 +51,45 @@
 						<input v-model="confirmPassword" type="password" placeholder="再次输入密码" autocomplete="new-password" minlength="8" required />
 					</label>
 
-					<div v-if="step === 4" class="quiz-intro">
+					<div v-if="step === 4" class="verification-options">
+						<button
+							v-for="method in verificationMethods"
+							:key="method.id"
+							type="button"
+							class="verification-option"
+							:class="{ selected: selectedVerificationMethod === method.id }"
+							:disabled="!method.available"
+							@click="selectedVerificationMethod = method.id"
+						>
+							<strong>{{ method.displayName }}</strong>
+							<span>{{ method.description }}</span>
+							<small v-if="method.state === 'reserved'">接口已预留 · 暂未开放</small>
+							<small v-else-if="method.state === 'unavailable'">当前配置不可用</small>
+						</button>
+						<p v-if="verificationMethodsLoading" class="configuration-status">正在读取服务端验证配置……</p>
+					</div>
+
+					<div v-if="step === 4 && selectedVerificationMethod === 'quiz'" class="quiz-intro">
 						<p>为保证服务器秩序，Quantum Original 只接受初中含在读及以上学历，或具备一定文化常识与文字理解能力的玩家。</p>
-						<p>测试共 10 道选择题。答对 6 题方为通过。</p>
+						<p v-if="quizQuestionCount !== null && quizPassingScore !== null">
+							测试共 {{ quizQuestionCount }} 道选择题。答对 {{ quizPassingScore }} 题方为通过。
+						</p>
+						<p v-else>正在从服务端读取题目数量与通过分数……</p>
 						<p>测试通过后，请返回 QQ 群输入相应的 `.approve-register &lt;参数&gt;` 完成绑定验证。</p>
 					</div>
 
-					<p v-if="message && step <= 3" class="message">{{ message }}</p>
+					<p v-if="message" class="message">{{ message }}</p>
 
-					<button type="submit" class="primary-button" :disabled="isLoading">
+					<button type="submit" class="primary-button" :disabled="isLoading || !canStartVerification">
 						<span v-if="isLoading" class="spinner"></span>
 						{{ primaryActionLabel }}
 					</button>
 				</form>
 
-				<div v-else-if="step === 4 && quiz_seq <= 9" :key="`quiz-${quiz_seq}`" class="quiz-section">
+				<div v-else-if="step === 4 && quiz_seq < quizQuestions.length" :key="`quiz-${quiz_seq}`" class="quiz-section">
 					<div class="quiz-window">
 						<div>
-							<h3>{{ questions[quiz_seq] }}</h3>
+							<h3>{{ quizQuestions[quiz_seq].text }}</h3>
 						</div>
 					</div>
 
@@ -77,26 +98,33 @@
 						<button v-if="quiz_seq === 0" type="button" class="secondary-button" @click="switchPage">跳过等待</button>
 					</div>
 
-					<div class="options" v-if="quiz_seq >= 0 && quiz_seq <= 9">
-						<button type="button" @click="selectAnswer(0)">{{ optionA[quiz_seq] }}</button>
-						<button type="button" @click="selectAnswer(1)">{{ optionB[quiz_seq] }}</button>
-						<button type="button" @click="selectAnswer(2)">{{ optionC[quiz_seq] }}</button>
-						<button type="button" @click="selectAnswer(3)">{{ optionD[quiz_seq] }}</button>
+					<div class="options">
+						<button
+							v-for="(option, optionIndex) in quizQuestions[quiz_seq].options"
+							:key="optionIndex"
+							type="button"
+							@click="selectAnswer(optionIndex)"
+						>
+							{{ option }}
+						</button>
 					</div>
 				</div>
 
-				<div v-else-if="quiz_seq >= 10" :key="`result-${quiz_seq}`" class="result-panel">
-					<p v-if="quiz_seq === 10 && score < 6" class="message">您的得分为 {{ score }} / 10 分，自助验证失败，请联系管理员并附上证明材料。</p>
-					<p v-if="quiz_seq === 10 && score >= 6" class="quiz-success">您的得分为 {{ score }} / 10 分，自助验证成功，{{ countdown }} 秒后自动为您注册。</p>
-					<p v-if="quiz_seq === 11"><span v-if="isLoading" class="spinner"></span>正在注册</p>
+				<div v-else :key="`result-${quiz_seq}`" class="result-panel">
+					<p v-if="isSubmittingQuiz"><span class="spinner"></span>正在由服务端核算答题结果</p>
+					<p v-else-if="message" class="message">{{ message }}</p>
+					<p v-else-if="quizResult && !quizResult.passed" class="message">
+						您的得分为 {{ quizResult.score }} / {{ quizQuestionCount }} 分，自助验证失败，请联系管理员并附上证明材料。
+					</p>
+					<p v-else-if="quizResult?.passed && !isLoading" class="quiz-success">
+						您的得分为 {{ quizResult.score }} / {{ quizQuestionCount }} 分，自助验证成功，{{ countdown }} 秒后自动为您注册。
+					</p>
+					<p v-if="isLoading"><span class="spinner"></span>正在注册</p>
 				</div>
 			</Transition>
 
 			<div class="panel-actions" v-if="step === 4 && quiz_seq === -1">
-				<button type="button" class="secondary-button" @click="submitForm" :disabled="isLoading">
-					<span v-if="isLoading" class="spinner"></span>
-					我拒绝参加测试并直接注册，会向管理员提交证明材料
-				</button>
+				<p class="configuration-status">请选择一种账户验证方式。Minecraft 世界测试仅预留接口，开放时间以公告为准。</p>
 			</div>
 
 			<div class="terms">
@@ -118,9 +146,14 @@
 
 
 <script setup>
-import {computed, onBeforeUnmount, ref} from "vue";
+import {computed, onBeforeUnmount, onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
-import {post} from "/src/utils/request";
+import {
+	getRegistrationVerificationMethods,
+	registerAccount,
+	startRegistrationQuiz,
+	submitRegistrationQuiz,
+} from "/src/services/registration";
 
 const step = ref(1)
 const quiz_seq = ref(-1)
@@ -131,73 +164,21 @@ const confirmPassword = ref("")
 const isDialogVisible = ref(false)
 const message = ref("")
 const isLoading = ref(false)
-const countdown = ref(80)
+const isSubmittingQuiz = ref(false)
+const countdown = ref(0)
+const verificationMethodsLoading = ref(true)
+const verificationMethods = ref([])
+const selectedVerificationMethod = ref("")
+const quizQuestionCount = ref(null)
+const quizPassingScore = ref(null)
+const quizSessionId = ref("")
+const quizQuestions = ref([])
+const quizAnswers = ref([])
+const quizResult = ref(null)
+const verificationToken = ref("")
 const router = useRouter()
 const isDevMode = import.meta.env.DEV
 let countdownTimer = null
-const pageTime = [15, 15, 15, 15, 20, 20, 25, 25, 30, 50]
-const answer = [1, 2, 0, 2, 1, 0, 3, 2, 2, 3]
-const questions = [
-  "1.\t关于单位正方形，说法错误的是：",
-  "2.\t以下哪个数不属于质数？",
-  "3.\t以下哪个单词所代表的物品不与其余三个同类？",
-  "4.\t昔人已乘黄鹤去，__________。",
-  "5.\t以下省市对应关系正确的是？",
-  "6.\t关于“力”，以下说法最不恰当的一项是？",
-  "7.\t以下物质在常温常压下能发生反应的是？",
-  "8.\t过 (0,0), (4,0) 且二次项系数大于 0 的二次函数一定不经过？",
-  "9.\t以下选项中的两个人物出自不同神话体系的是？",
-  "10.\t将电动机与一 5Ω 电阻串联接入 20V 无内阻直流电源，电动机正常工作，使 5N 重物以 2.5m/s 匀速上升。若电阻电压为 8V，则电动机效率约为？"
-]
-const optionA = [
-  "A. 有 4 条边",
-  "A. 2",
-  "A. peach",
-  "A. 白云千载空悠悠",
-  "A. 浙江南京",
-  "A. 4N 的力与 3N 的力将合成为 7N 的力",
-  "A. 胆矾和蒸馏水",
-  "A. 第一象限",
-  "A. 阿克琉斯、奥德赛",
-  "A. 0.732"
-]
-const optionB = [
-  "B. 每条对边均相互垂直",
-  "B. 17",
-  "B. giraffe",
-  "B. 猿猱欲渡愁攀援",
-  "B. 新疆哈密",
-  "B. 总是成对出现，作用在不同物体上",
-  "B. 稀盐酸和石英",
-  "B. 第二象限",
-  "B. 西西弗斯、普罗米修斯",
-  "B. 0.594"
-]
-const optionC = [
-  "C. 面积为 1",
-  "C. 35",
-  "C. monkey",
-  "C. 此地空余黄鹤楼",
-  "C. 云南遵义",
-  "C. 作用力的物体与受力的物体不一定接触",
-  "C. 银和稀硫酸",
-  "C. 第三象限",
-  "C. 摩西、宙斯",
-  "C. 0.711"
-]
-const optionD = [
-  "D. 每个顶点形成的角均为 90 度",
-  "D. 23",
-  "D. fish",
-  "D. 我欲因之梦江陵",
-  "D. 四川梅州",
-  "D. 重力由地球提供",
-  "D. 铁和硫酸铜溶液",
-  "D. 第四象限",
-  "D. 伊什塔尔、吉尔伽美什",
-  "D. 0.651"
-]
-const score = ref(0)
 
 const stepItems = [
 	{ id: 1, label: "用户名" },
@@ -217,12 +198,21 @@ const currentStepDescription = computed(() => {
 	if (step.value === 1) return "用于服务器白名单、玩家资料和社区身份展示。"
 	if (step.value === 2) return "用于 QQ 群内验证和后续账户绑定。"
 	if (step.value === 3) return "请设置一个至少 8 位的登录密码。"
-	return "完成阅读测试，或选择向管理员提交证明材料。"
+	return "请选择网页答题，或查看预留的 Minecraft 世界测试方式。"
 })
 
 const primaryActionLabel = computed(() => {
 	if (step.value <= 3) return isDevMode ? "下一步（开发模式跳过校验）" : "下一步"
-	return "我已知悉上述内容，参与测试"
+	return isLoading.value ? "正在创建答题会话" : "我已知悉上述内容，参与测试"
+})
+
+const canStartVerification = computed(() => {
+	if (step.value < 4) return true
+	if (verificationMethodsLoading.value) return false
+	const selected = verificationMethods.value.find(method => method.id === selectedVerificationMethod.value)
+	if (!selected?.available) return false
+	return selected.id !== "quiz" ||
+		(Number.isInteger(quizQuestionCount.value) && Number.isInteger(quizPassingScore.value))
 })
 
 function validateQQ() {
@@ -230,12 +220,39 @@ function validateQQ() {
 	return /^\d{5,12}$/.test(qq.value)
 }
 
-
 async function validateUsername() {
 	const url = `https://api.qoriginal.vip/qo/download/registry?name=${username.value}`
 	const res = await fetch(url).then(r => r.json()).catch(() => null)
 	return res?.code === 0
 }
+
+async function loadVerificationMethods() {
+	verificationMethodsLoading.value = true
+	try {
+		const catalog = await getRegistrationVerificationMethods()
+		verificationMethods.value = Array.isArray(catalog.methods) ? catalog.methods : []
+		const quiz = verificationMethods.value.find(method => method.id === "quiz")
+		quizQuestionCount.value = Number.isInteger(quiz?.questionCount) ? quiz.questionCount : null
+		quizPassingScore.value = Number.isInteger(quiz?.passingScore) ? quiz.passingScore : null
+		const requestedDefault = verificationMethods.value.find(
+			method => method.id === catalog.defaultMethod && method.available,
+		)
+		selectedVerificationMethod.value =
+			requestedDefault?.id || verificationMethods.value.find(method => method.available)?.id || ""
+		if (!selectedVerificationMethod.value) {
+			message.value = "当前没有可用的账户验证方式，请稍后再试。"
+		}
+	} catch (error) {
+		verificationMethods.value = []
+		selectedVerificationMethod.value = ""
+		quizQuestionCount.value = null
+		quizPassingScore.value = null
+		message.value = error.message
+	} finally {
+		verificationMethodsLoading.value = false
+	}
+}
+
 async function handleNext() {
 	message.value = ""
 
@@ -262,59 +279,130 @@ async function handleNext() {
 		}
 		step.value++
 	} else if (step.value === 4) {
-		switchPage()
+		await beginQuiz()
 	}
 }
 
-function count() {
-  countdown.value--
-  if(countdown.value === 0) switchPage()
+async function beginQuiz() {
+	if (selectedVerificationMethod.value !== "quiz") return
+	isLoading.value = true
+	try {
+		const session = await startRegistrationQuiz(username.value, Number(qq.value))
+		if (!Array.isArray(session.questions) || session.questions.length === 0) {
+			throw new Error("服务端未返回有效题目。")
+		}
+		if (!Number.isInteger(session.questionCount) || !Number.isInteger(session.passingScore)) {
+			throw new Error("服务端未返回有效的题目数量或通过分数。")
+		}
+		if (session.questionCount !== session.questions.length) {
+			throw new Error("服务端返回的题目数量不一致。")
+		}
+		quizSessionId.value = session.sessionId
+		quizQuestions.value = session.questions
+		quizAnswers.value = Array(session.questions.length).fill(-1)
+		quizQuestionCount.value = session.questionCount
+		quizPassingScore.value = session.passingScore
+		quizResult.value = null
+		verificationToken.value = ""
+		quiz_seq.value = 0
+		startQuestionCountdown()
+	} catch (error) {
+		message.value = error.message
+	} finally {
+		isLoading.value = false
+	}
+}
+
+function clearCountdown() {
+	if (countdownTimer) clearInterval(countdownTimer)
+	countdownTimer = null
+}
+
+function startQuestionCountdown() {
+	clearCountdown()
+	countdown.value = quizQuestions.value[quiz_seq.value]?.timeLimitSeconds || 0
+	countdownTimer = setInterval(() => {
+		countdown.value--
+		if (countdown.value <= 0) advanceQuiz()
+	}, 1000)
 }
 
 function switchPage() {
-  quiz_seq.value++
-  if (quiz_seq.value === 0 && !countdownTimer) countdownTimer = setInterval(count, 1000)
-  if (quiz_seq.value <= 9) {
-    countdown.value = pageTime[quiz_seq.value]
-  } else if (quiz_seq.value === 10){
-    countdown.value = 5
-  } else {
-    submitForm()
-  }
+	advanceQuiz()
 }
 
-function selectAnswer(idx) {
-  let seq = quiz_seq.value
-  if(idx === answer[seq]) score.value ++
-  switchPage()
+function selectAnswer(optionIndex) {
+	quizAnswers.value[quiz_seq.value] = optionIndex
+	advanceQuiz()
 }
 
-function submitForm() {
+function advanceQuiz() {
+	if (isSubmittingQuiz.value) return
+	if (quiz_seq.value + 1 < quizQuestions.value.length) {
+		quiz_seq.value++
+		startQuestionCountdown()
+		return
+	}
+	void finishQuiz()
+}
+
+async function finishQuiz() {
+	clearCountdown()
+	quiz_seq.value = quizQuestions.value.length
+	isSubmittingQuiz.value = true
+	message.value = ""
+	try {
+		const result = await submitRegistrationQuiz(
+			quizSessionId.value,
+			username.value,
+			Number(qq.value),
+			quizAnswers.value,
+		)
+		quizResult.value = result
+		if (Number.isInteger(result.questionCount)) quizQuestionCount.value = result.questionCount
+		if (Number.isInteger(result.passingScore)) quizPassingScore.value = result.passingScore
+		if (result.passed && result.verificationToken) {
+			verificationToken.value = result.verificationToken
+			countdown.value = 5
+			countdownTimer = setInterval(() => {
+				countdown.value--
+				if (countdown.value <= 0) {
+					clearCountdown()
+					void submitForm()
+				}
+			}, 1000)
+		}
+	} catch (error) {
+		message.value = error.message
+	} finally {
+		isSubmittingQuiz.value = false
+	}
+}
+
+async function submitForm() {
+	if (!verificationToken.value || isLoading.value) return
 	if (isDevMode) {
 		isDialogVisible.value = true
 		return
 	}
-
 	isLoading.value = true
-	post('https://api.glowingstone.cn/qo/upload/registry', {
-		name: username.value,
-		password: password.value,
-		uid: Number(qq.value),
-		score: score.value,
-	})
-		.then(result => {
-			if (result.code === 0) {
-				isDialogVisible.value = true
-			} else {
-				message.value = "注册失败，请检查信息是否已被使用"
-			}
-		})
-		.catch(() => {
-			message.value = "请求失败，请稍后再试"
-		})
-		.finally(() => {
-			isLoading.value = false
-		})
+	try {
+		const result = await registerAccount(
+			username.value,
+			Number(qq.value),
+			password.value,
+			verificationToken.value,
+		)
+		if (result.code === 0) {
+			isDialogVisible.value = true
+		} else {
+			message.value = result.message || "注册失败，请检查信息是否已被使用"
+		}
+	} catch (error) {
+		message.value = error.message
+	} finally {
+		isLoading.value = false
+	}
 }
 
 function closeDialog() {
@@ -323,8 +411,10 @@ function closeDialog() {
 }
 
 onBeforeUnmount(() => {
-	if (countdownTimer) clearInterval(countdownTimer)
+	clearCountdown()
 })
+
+onMounted(loadVerificationMethods)
 
 </script>
 
@@ -469,6 +559,46 @@ onBeforeUnmount(() => {
 .panel-actions {
 	display: grid;
 	gap: 1rem;
+}
+
+.verification-options {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.75rem;
+}
+
+.verification-option {
+	display: grid;
+	align-content: start;
+	gap: 0.4rem;
+	min-height: 120px;
+	text-align: left;
+	border: 1px solid var(--register-border);
+	background: var(--background-secondary);
+	color: var(--text-main);
+}
+
+.verification-option.selected {
+	border-color: var(--primary);
+	background: color-mix(in srgb, var(--primary) 10%, var(--background-secondary));
+}
+
+.verification-option:disabled {
+	cursor: not-allowed;
+	opacity: 0.62;
+}
+
+.verification-option span,
+.verification-option small,
+.configuration-status {
+	color: var(--text-secondary);
+	line-height: 1.45;
+}
+
+.configuration-status {
+	grid-column: 1 / -1;
+	margin: 0;
+	font-size: 0.9rem;
 }
 
 .field {
@@ -697,6 +827,10 @@ a:hover {
 	}
 
 	.options {
+		grid-template-columns: 1fr;
+	}
+
+	.verification-options {
 		grid-template-columns: 1fr;
 	}
 
