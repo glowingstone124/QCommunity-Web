@@ -3,7 +3,8 @@ import {computed, nextTick, onBeforeUnmount, onMounted, ref, watch} from 'vue'
 import {useI18n} from 'vue-i18n'
 import {loadNewsFeed} from '@/utils/newsFeed'
 import {homeCampaign, regularHome} from '@/data/home'
-
+import XiaohongshuIcon from '@iconify-vue/simple-icons/xiaohongshu';
+import BilibiliIcon from '@iconify-vue/simple-icons/bilibili';
 const {locale, t} = useI18n()
 const shaderCanvas = ref(null)
 const homeRoot = ref(null)
@@ -354,6 +355,23 @@ onBeforeUnmount(() => {
 	revealObserver?.disconnect()
 	cleanupShader()
 })
+
+function toSocialMedias(target) {
+	const links = {
+		bilibili: 'https://space.bilibili.com/1092677075',
+		xiaohongshu:
+			'https://www.xiaohongshu.com/user/profile/68d2279d000000001a0061da',
+	};
+
+	const link = links[target];
+
+	if (!link) {
+		console.warn(`未知的社交平台：${target}`);
+		return;
+	}
+
+	window.open(link, '_blank', 'noopener,noreferrer');
+}
 </script>
 
 <template>
@@ -446,6 +464,14 @@ onBeforeUnmount(() => {
 			<footer class="home-footer reveal-item">
 				<div class="footer-brand">
 					<strong>Quantum Original</strong>
+					<div class="logos">
+						<div class="logo" @click="toSocialMedias('xiaohongshu')">
+							<XiaohongshuIcon height="1.5em" />
+						</div>
+						<div class="logo" @click="toSocialMedias('bilibili')">
+							<BilibiliIcon height="1.5em" />
+						</div>
+					</div>
 					<p>Copyright {{ currentYear }} Quantum Original & Holographic Lab. All rights reserved.</p>
 				</div>
 			</footer>
@@ -454,6 +480,17 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+.logos {
+	display: flex;
+	flex-direction: row;
+	gap: 1.1rem;
+}
+.logo {
+	padding: 0.3rem;
+	cursor: pointer;
+	pointer-events: auto;
+}
+
 .home-content {
 	position: relative;
 	z-index: 1;

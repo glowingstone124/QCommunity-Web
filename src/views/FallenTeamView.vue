@@ -59,7 +59,7 @@ const currentTeam = computed(() => teams.find((team) => team.id === selection.va
 const expectedTeam = computed(() => teams.find((team) => team.id === selection.value?.expectedTeam) || null)
 const pending = computed(() => teams.find((team) => team.id === pendingTeam.value) || null)
 const text = computed(() => locale.value === 'en' ? {
-	eyebrow: 'FALLEN // FACTION REGISTRATION',
+	eyebrow: 'FACTION REGISTRATION',
 	title: 'Choose your desired team.',
 	intro: 'Register one faction preference. Final teams will be balanced and assigned on July 29.',
 	locked: selection.value?.finalized ? 'FACTION ASSIGNED' : 'PREFERENCE REGISTERED',
@@ -72,7 +72,7 @@ const text = computed(() => locale.value === 'en' ? {
 	login: 'Sign in to choose',
 	rules: 'Read event rules',
 } : {
-	eyebrow: 'FALLEN // 阵营登记',
+	eyebrow: '阵营登记',
 	title: '选择你的阵营',
 	intro: '登记一个阵营意向。7 月 29 日系统将在尽量尊重意向的前提下均衡分配正式阵营。',
 	locked: selection.value?.finalized ? '正式阵营已确定' : '阵营意向已登记',
@@ -89,12 +89,12 @@ const text = computed(() => locale.value === 'en' ? {
 const heroText = computed(() => activityActive.value
 	? (locale.value === 'en'
 		? {
-			eyebrow: 'FALLEN // LIVE OPERATIONS',
+			eyebrow: 'LIVE OPERATIONS',
 			title: 'The city is falling.',
 			intro: 'Live faction rosters and scores reported directly by the survival server.',
 		}
 		: {
-			eyebrow: 'FALLEN // 实时战况',
+			eyebrow: '实时战况',
 			title: '陷落正在发生',
 			intro: '生存服实时上报的阵营成员与积分。',
 		})
