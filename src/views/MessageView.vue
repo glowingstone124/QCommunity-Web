@@ -120,6 +120,31 @@ function formatMessageContent(content) {
 		.replace(/\[CQ:markdown.*?\]/g, '[MD消息]')
 }
 
+function normalizeImageUrls(images) {
+	if (!Array.isArray(images)) {
+		return []
+	}
+
+	const normalized = []
+	for (const value of images) {
+		if (typeof value !== 'string' || value.length > 2048) {
+			continue
+		}
+		try {
+			const url = new URL(value)
+			if ((url.protocol === 'http:' || url.protocol === 'https:') && !normalized.includes(url.href)) {
+				normalized.push(url.href)
+			}
+		} catch {
+			// Ignore malformed links supplied by older or third-party chat clients.
+		}
+		if (normalized.length >= 8) {
+			break
+		}
+	}
+	return normalized
+}
+
 async function normalizeMessage(rawMessage) {
 	const message = parseRawMessage(rawMessage) || {}
 	const messageType = getMessageType(message.from)
@@ -133,6 +158,7 @@ async function normalizeMessage(rawMessage) {
 
 	return {
 		content: formatMessageContent(message.message),
+		images: normalizeImageUrls(message.images),
 		sender: senderName,
 		senderTooltip,
 		source: messageType,
@@ -230,6 +256,25 @@ onBeforeUnmount(() => {
 						<time class="message-time">{{ message.time }}</time>
 					</div>
 					<p class="message-content">{{ message.content }}</p>
+					<div v-if="message.images.length" class="message-images">
+						<a
+							v-for="(imageUrl, imageIndex) in message.images"
+							:key="imageUrl"
+							:href="imageUrl"
+							class="message-image-link"
+							target="_blank"
+							rel="noopener noreferrer"
+							:aria-label="`打开图片 ${imageIndex + 1}`"
+						>
+							<img
+								:src="imageUrl"
+								:alt="`聊天图片 ${imageIndex + 1}`"
+								class="message-image"
+								loading="lazy"
+								referrerpolicy="no-referrer"
+							/>
+						</a>
+					</div>
 				</div>
 			</div>
 			<div class="message-container empty" v-else>
@@ -433,6 +478,35 @@ onBeforeUnmount(() => {
 	white-space: pre-wrap;
 	overflow-wrap: anywhere;
 	word-break: break-word;
+}
+
+.message-images {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.55rem;
+	margin-top: 0.65rem;
+}
+
+.message-image-link {
+	display: block;
+	max-width: 100%;
+	border: 1px solid var(--chat-border);
+	background: var(--chat-card);
+	line-height: 0;
+}
+
+.message-image-link:focus-visible {
+	outline: 2px solid var(--primary);
+	outline-offset: 2px;
+}
+
+.message-image {
+	display: block;
+	width: auto;
+	height: auto;
+	max-width: min(360px, 100%);
+	max-height: 280px;
+	object-fit: contain;
 }
 
 .composer {
