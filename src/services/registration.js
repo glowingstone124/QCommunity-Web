@@ -10,7 +10,12 @@ async function request(path, options = {}) {
 	})
 	const body = await response.json().catch(() => ({}))
 	if (!response.ok) {
-		throw new Error(body.message || "请求失败，请稍后再试")
+		const error = new Error(body.message || "请求失败，请稍后再试")
+		error.status = response.status
+		error.code = body.code || ""
+		error.field = body.field || ""
+		error.data = body
+		throw error
 	}
 	return body
 }

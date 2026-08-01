@@ -78,7 +78,7 @@
 						<p>测试通过后，请返回 QQ 群输入相应的 `.approve-register &lt;参数&gt;` 完成绑定验证。</p>
 					</div>
 
-					<p v-if="message" class="message">{{ message }}</p>
+					<p v-if="message" class="message" role="alert">{{ message }}</p>
 
 					<button type="submit" class="primary-button" :disabled="isLoading || !canStartVerification">
 						<span v-if="isLoading" class="spinner"></span>
@@ -220,6 +220,36 @@ function validateQQ() {
 	return /^\d{5,12}$/.test(qq.value)
 }
 
+function validateMinecraftUsername() {
+	return /^[A-Za-z0-9_]{3,16}$/.test(username.value)
+}
+
+function formatQuizSessionError(error) {
+	const data = error?.data || {}
+	const code = error?.code || data.code
+	const baseMessage = data.message || error?.message || "暂时无法创建答题会话，请稍后重试。"
+
+	if (code !== "quiz_session_capacity_reached") return baseMessage
+
+	const details = []
+	if (Number.isInteger(data.activeSessions) && Number.isInteger(data.limit)) {
+		details.push(`当前有效会话：${data.activeSessions} / ${data.limit}。`)
+	}
+	if (Number.isFinite(data.sessionTtlSeconds) && data.sessionTtlSeconds > 0) {
+		const ttlMinutes = Math.ceil(data.sessionTtlSeconds / 60)
+		details.push(`单个会话最长保留 ${ttlMinutes} 分钟，请稍后重试。`)
+	}
+
+	return [baseMessage, ...details].join(" ")
+}
+
+function handleQuizSessionError(error) {
+	message.value = formatQuizSessionError(error)
+	const field = error?.field || error?.data?.field
+	if (field === "name") step.value = 1
+	if (field === "uid") step.value = 2
+}
+
 async function validateUsername() {
 	const url = `https://api.qoriginal.vip/qo/download/registry?name=${username.value}`
 	const res = await fetch(url).then(r => r.json()).catch(() => null)
@@ -257,6 +287,10 @@ async function handleNext() {
 	message.value = ""
 
 	if (step.value === 1) {
+		if (!isDevMode && !validateMinecraftUsername()) {
+			message.value = "Minecraft 用户名须为 3–16 位，只能包含英文字母、数字和下划线。"
+			return
+		}
 		if (!isDevMode && await validateUsername(username.value)) {
 			message.value = "用户名已被占用"
 			return
@@ -307,7 +341,7 @@ async function beginQuiz() {
 		quiz_seq.value = 0
 		startQuestionCountdown()
 	} catch (error) {
-		message.value = error.message
+		handleQuizSessionError(error)
 	} finally {
 		isLoading.value = false
 	}
