@@ -3,6 +3,7 @@ import {computed, nextTick, onBeforeUnmount, onMounted, ref, watch} from 'vue'
 import {useI18n} from 'vue-i18n'
 import {loadNewsFeed} from '@/utils/newsFeed'
 import {homeCampaign, regularHome} from '@/data/home'
+import {collapseSchedule} from '@/data/collapse.js'
 import XiaohongshuIcon from '@iconify-vue/simple-icons/xiaohongshu';
 import BilibiliIcon from '@iconify-vue/simple-icons/bilibili';
 const {locale, t} = useI18n()
@@ -387,12 +388,12 @@ function toSocialMedias(target) {
 							<span></span><span></span><span></span>
 						</div>
 						<div class="choice-prompt-copy">
-							<span>{{ locale === 'zh' ? '《陷落》阵营意向登记' : 'COLLAPSE FACTION REGISTRATION' }}</span>
-							<strong>{{ locale === 'zh' ? '选择你希望守护的城市' : 'Choose the city you hope to defend' }}</strong>
-							<p>{{ locale === 'zh' ? '7 月 29 日将在尽量尊重意向的前提下均衡分配正式阵营。' : 'Final teams will be balanced and assigned on July 29.' }}</p>
+							<span>{{ locale === 'zh' ? '《陷落》正式版' : 'COLLAPSE FULL RELEASE' }}</span>
+							<strong>{{ locale === 'zh' ? `${collapseSchedule.startDateShortText.zh} 正式开启` : `Full release launches ${collapseSchedule.startDateShortText.en}` }}</strong>
+							<p>{{ locale === 'zh' ? '三座城市、十五枚密钥，一场至多 144 小时的阵营生存对抗。' : 'Three cities, fifteen keys, and up to 144 hours of faction survival.' }}</p>
 						</div>
 						<router-link class="choice-prompt-action" to="/collapse">
-							{{ locale === 'zh' ? '立即选择' : 'Choose now' }}
+							{{ locale === 'zh' ? '了解正式版' : 'Explore release' }}
 							<span aria-hidden="true">→</span>
 						</router-link>
 					</div>
@@ -417,7 +418,7 @@ function toSocialMedias(target) {
 					</div>
 					<div class="news-body">
 						<div v-if="featuredNews.id === '2026collapse'" class="collapse-signal">
-							{{ locale === 'zh' ? 'DOC. STEINBECK // 实验进行中' : 'DR. STEINBECK // EXPERIMENT IN PROGRESS' }}
+							{{ locale === 'zh' ? 'DOC. STEINBECK // 正式版即将开启' : 'DR. STEINBECK // FULL RELEASE INCOMING' }}
 						</div>
 						<div class="news-meta">
 							<span>{{ featuredNews.type }}</span>

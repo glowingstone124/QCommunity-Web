@@ -1,16 +1,20 @@
 ---
 id: 2026collapse
-date: 2026-07-16
-type_zh: 活动情报
-type_en: Event Intel
-title_zh: Doc. Steinbeck 博士的《陷落》实验
-title_en: Dr. Steinbeck's Collapse Experiment
-description_zh: 疯狂的 Doc. Steinbeck 博士封锁了三座城市。
-description_en: The mad Dr. Steinbeck has sealed off three cities.
+date: 2026-08-01
+type_zh: 正式版预告
+type_en: Full Release Preview
+title_zh: 《陷落》正式版：Doc. Steinbeck 博士的城市实验
+title_en: Collapse Full Release: Dr. Steinbeck's Experiment
+description_zh: 《陷落》正式版将于 2026 年 10 月 1 日正式开启。
+description_en: The full release of Collapse launches on October 1, 2026.
 to: /news/2026collapse
 ---
 ::: zh
-## 《陷落》：Doc. Steinbeck 博士的城市实验
+## 《陷落》正式版：Doc. Steinbeck 博士的城市实验
+
+## 正式版上线预告
+
+《陷落》正式版将于 2026 年 10 月 1 日正式开启。具体开始时间及正式阵营安排将另行公布，请以官网后续公告为准。
 
 三座城市，十五枚密钥，至多 144 小时的围城之战。
 
@@ -125,30 +129,30 @@ C 阵营主要活动于锡城及其周边，主题色为绿色。
 - 己方密钥被夺取、自毁或转化。
 - 违规放置密钥或恶意利用漏洞。
 
-伤害得分存在短时间上限，防止对刷。
+正式版提高了战斗、密钥目标、资源采集与探索行为的正向得分，同时降低常规死亡和密钥损失的扣分。正常参与会推动全场积分总量持续上涨，但伤害得分仍存在短时间上限，防止对刷。
 
 得分表格如下：
 
 | 项目 | 积分变化 | 说明 |
 | --- | ---: | --- |
-| 对敌方玩家造成实际伤害 | +1 / 点伤害 | 同一攻击者对同一目标每 30 秒最多结算 35 分。 |
-| 击杀敌方玩家 | +80 | 仅在部署阶段结束后结算。 |
-| 助攻击杀敌方玩家 | +30 | 击杀前 30 秒内造成过伤害，且不是最终击杀者。 |
-| 放置状态密钥持续得分 | +15 / 个 / 10 分钟 | 每个仍处于放置状态的己方密钥独立计分。 |
-| 成功夺取敌方密钥 | +150 | 原密钥拥有阵营同时扣 100 分。 |
-| 成功转化敌方密钥 | +500 | 将夺取的敌方密钥带回己方区域并放置；原始阵营同时扣 400 分。 |
-| 成功自毁敌方密钥 | +250 | 自毁倒计时完成后结算；原始阵营同时扣 250 分。 |
-| 挖掘钻石矿或深层钻石矿 | +15 | 仅自然挖掘触发。 |
-| 挖掘绿宝石矿或深层绿宝石矿 | +20 | 仅自然挖掘触发。 |
-| 挖掘红石矿或深层红石矿 | +5 | 仅自然挖掘触发。 |
-| 挖掘深层煤炭矿 | +8 | 仅自然挖掘触发。 |
-| 挖掘远古残骸 | +60 | 仅自然挖掘触发。 |
-| 鞘翅高速飞行 | +10 / 30 秒 | 在己方区域中心 100 格外，速度超过 100 km/h 时结算。 |
-| 阵营玩家死亡 | -50 | 每次死亡结算。 |
-| 持有密钥时死亡 | 额外 -100 | 与死亡扣分叠加。 |
-| 己方放置密钥被夺取 | -100 | 敌方成功夺取时结算。 |
-| 己方原始密钥被自毁 | -250 | 敌方自毁成功时结算。 |
-| 己方原始密钥被转化 | -400 | 敌方成功带回并放置时结算。 |
+| 对敌方玩家造成实际伤害 | +2 / 点伤害 | 同一攻击者对同一目标每 30 秒最多结算 50 分。 |
+| 击杀敌方玩家 | +120 | 仅在部署阶段结束后结算。 |
+| 助攻击杀敌方玩家 | +50 | 击杀前 30 秒内造成过伤害，且不是最终击杀者。 |
+| 放置状态密钥持续得分 | +25 / 个 / 10 分钟 | 每个仍处于放置状态的己方密钥独立计分。 |
+| 成功夺取敌方密钥 | +250 | 原密钥拥有阵营同时扣 50 分。 |
+| 成功转化敌方密钥 | +800 | 将夺取的敌方密钥带回己方区域并放置；原始阵营同时扣 200 分。 |
+| 成功自毁敌方密钥 | +450 | 自毁倒计时完成后结算；原始阵营同时扣 150 分。 |
+| 挖掘钻石矿或深层钻石矿 | +25 | 仅自然挖掘触发。 |
+| 挖掘绿宝石矿或深层绿宝石矿 | +30 | 仅自然挖掘触发。 |
+| 挖掘红石矿或深层红石矿 | +8 | 仅自然挖掘触发。 |
+| 挖掘深层煤炭矿 | +12 | 仅自然挖掘触发。 |
+| 挖掘远古残骸 | +100 | 仅自然挖掘触发。 |
+| 鞘翅高速飞行 | +20 / 30 秒 | 在己方区域中心 100 格外，速度超过 100 km/h 时结算。 |
+| 阵营玩家死亡 | -20 | 每次死亡结算。 |
+| 持有密钥时死亡 | 额外 -40 | 与死亡扣分叠加。 |
+| 己方放置密钥被夺取 | -50 | 敌方成功夺取时结算。 |
+| 己方原始密钥被自毁 | -150 | 敌方自毁成功时结算。 |
+| 己方原始密钥被转化 | -200 | 敌方成功带回并放置时结算。 |
 
 ## 用战果武装下一场胜利
 
@@ -222,6 +226,8 @@ A 阵营拥有两个固定传送站，用于连接旧主城与芙岛。传送站
 
 活动期间死亡不掉落关闭，游戏难度固定为困难。跳过黑夜需要所有在线玩家睡觉。
 
+禁止召唤、复活、运输、引导或利用凋灵（Wither）、末影龙等具备大范围地形破坏能力的生物。不得借助此类生物的爆炸、冲撞或方块破坏能力进攻阵营区域、破坏建筑或密钥防线；若意外遭遇，应立即撤离并联系管理员处理。
+
 禁止外挂、矿透、X-Ray 材质包、自动瞄准、飞行作弊、复制物品、利用漏洞、恶意卡服、恶意堆积实体，以及通过断线重连规避死亡或密钥风险。
 
 集结你的队友，选定你的城市，藏好你们的密钥。
@@ -233,7 +239,11 @@ A 阵营拥有两个固定传送站，用于连接旧主城与芙岛。传送站
 :::
 
 ::: en
-## Collapse: Dr. Steinbeck's Experiment in Urban Survival
+## Collapse Full Release: Dr. Steinbeck's Experiment in Urban Survival
+
+## Full Release Announcement
+
+The full release of Collapse launches on October 1, 2026. The exact start time and final faction arrangement will be announced separately. Please refer to future updates on the official website.
 
 Three cities. Fifteen keys. Up to 144 hours under siege.
 
@@ -348,28 +358,28 @@ Main point penalties include:
 - A friendly key being captured, self-destructed, or converted.
 - Illegal key placement or deliberate exploit abuse.
 
-Damage scoring has a short-term cap to prevent point farming.
+The full release increases rewards for combat, key objectives, resource gathering, and exploration while reducing penalties for ordinary deaths and key losses. Normal participation should steadily increase the total score across the event, although damage scoring still has a short-term cap to prevent point farming.
 
 | Action | Point change | Details |
 | --- | ---: | --- |
-| Deal actual damage to an enemy player | +1 / damage point | The same attacker can score at most 35 points against the same target every 30 seconds. |
-| Kill an enemy player | +80 | Scored only after the deployment phase. |
-| Assist in killing an enemy player | +30 | You must have dealt damage in the 30 seconds before the kill and not landed the final blow. |
-| Passive score from a deployed key | +15 / key / 10 min | Each friendly key that remains deployed scores independently. |
-| Capture an enemy key | +150 | The key's original faction also loses 100 points. |
-| Convert an enemy key | +500 | Escort the captured key into friendly territory and deploy it; the original faction also loses 400 points. |
-| Self-destruct an enemy key | +250 | Awarded when the countdown completes; the original faction also loses 250 points. |
-| Mine diamond ore or deepslate diamond ore | +15 | Triggered only by natural mining. |
-| Mine emerald ore or deepslate emerald ore | +20 | Triggered only by natural mining. |
-| Mine redstone ore or deepslate redstone ore | +5 | Triggered only by natural mining. |
-| Mine deepslate coal ore | +8 | Triggered only by natural mining. |
-| Mine ancient debris | +60 | Triggered only by natural mining. |
-| High-speed elytra flight | +10 / 30 sec | Scored when more than 100 blocks from the center of friendly territory and traveling faster than 100 km/h. |
-| Faction member dies | -50 | Applied on every death. |
-| Die while carrying a key | Additional -100 | Stacks with the normal death penalty. |
-| Friendly deployed key is captured | -100 | Applied when the enemy completes the capture. |
-| Friendly original key is self-destructed | -250 | Applied when the enemy's self-destruct completes. |
-| Friendly original key is converted | -400 | Applied when the enemy returns and deploys it. |
+| Deal actual damage to an enemy player | +2 / damage point | The same attacker can score at most 50 points against the same target every 30 seconds. |
+| Kill an enemy player | +120 | Scored only after the deployment phase. |
+| Assist in killing an enemy player | +50 | You must have dealt damage in the 30 seconds before the kill and not landed the final blow. |
+| Passive score from a deployed key | +25 / key / 10 min | Each friendly key that remains deployed scores independently. |
+| Capture an enemy key | +250 | The key's original faction also loses 50 points. |
+| Convert an enemy key | +800 | Escort the captured key into friendly territory and deploy it; the original faction also loses 200 points. |
+| Self-destruct an enemy key | +450 | Awarded when the countdown completes; the original faction also loses 150 points. |
+| Mine diamond ore or deepslate diamond ore | +25 | Triggered only by natural mining. |
+| Mine emerald ore or deepslate emerald ore | +30 | Triggered only by natural mining. |
+| Mine redstone ore or deepslate redstone ore | +8 | Triggered only by natural mining. |
+| Mine deepslate coal ore | +12 | Triggered only by natural mining. |
+| Mine ancient debris | +100 | Triggered only by natural mining. |
+| High-speed elytra flight | +20 / 30 sec | Scored when more than 100 blocks from the center of friendly territory and traveling faster than 100 km/h. |
+| Faction member dies | -20 | Applied on every death. |
+| Die while carrying a key | Additional -40 | Stacks with the normal death penalty. |
+| Friendly deployed key is captured | -50 | Applied when the enemy completes the capture. |
+| Friendly original key is self-destructed | -150 | Applied when the enemy's self-destruct completes. |
+| Friendly original key is converted | -200 | Applied when the enemy returns and deploys it. |
 
 ## Turn Victory into Your Next Advantage
 
@@ -442,6 +452,8 @@ If the tie still cannot be broken, the event enters a 30-minute overtime. During
 ## Before You Deploy
 
 Keep inventory is disabled throughout the event, game difficulty is locked to Hard, and every online player must sleep to skip the night.
+
+Summoning, respawning, transporting, luring, or exploiting Withers, Ender Dragons, or any other creature capable of large-scale terrain destruction is prohibited. Players may not use their explosions, charges, or block-breaking abilities to attack faction territory, damage structures, or breach key defenses. If such a creature is encountered unexpectedly, leave the area and contact an administrator immediately.
 
 Cheats, ore scanners, X-Ray resource packs, aim assistance, flight hacks, item duplication, exploit abuse, intentional server lag, malicious entity stacking, and disconnecting to evade death or key-related danger are prohibited.
 

@@ -3,6 +3,7 @@ import {computed, onBeforeUnmount, onMounted, ref} from 'vue'
 import {useI18n} from 'vue-i18n'
 import {useRouter} from 'vue-router'
 import FallenLiveStatus from '@/components/fallen/FallenLiveStatus.vue'
+import {collapseSchedule} from '@/data/collapse.js'
 import {getFallenActivityStatus, getFallenTeamSelection, selectFallenTeam} from '@/services/fallen.js'
 
 const {locale} = useI18n()
@@ -61,9 +62,9 @@ const pending = computed(() => teams.find((team) => team.id === pendingTeam.valu
 const text = computed(() => locale.value === 'en' ? {
 	eyebrow: 'FACTION REGISTRATION',
 	title: 'Choose your desired team.',
-	intro: 'Register one faction preference. Final teams will be balanced and assigned on July 29.',
+	intro: 'Register one faction preference. The final faction arrangement will be announced separately.',
 	locked: selection.value?.finalized ? 'FACTION ASSIGNED' : 'PREFERENCE REGISTERED',
-	selected: selection.value?.finalized ? 'Your final faction is assigned. Join the server and prepare for deployment.' : 'Your preference is registered. Final assignment will be published on July 29.',
+	selected: selection.value?.finalized ? 'Your final faction is assigned. Join the server and prepare for deployment.' : `Your preference is registered. The full release of Collapse launches on ${collapseSchedule.startDateShortText.en}; the final faction arrangement will be announced separately.`,
 	choose: 'Register as preference',
 	confirmTitle: 'Confirm faction preference',
 	confirmBody: `${pending.value?.name.en || 'This faction'} will be registered as your preference and cannot be changed. The final faction may be adjusted to keep all three teams balanced. Continue?`,
@@ -74,9 +75,9 @@ const text = computed(() => locale.value === 'en' ? {
 } : {
 	eyebrow: '阵营登记',
 	title: '选择你的阵营',
-	intro: '登记一个阵营意向。7 月 29 日系统将在尽量尊重意向的前提下均衡分配正式阵营。',
+	intro: '登记一个阵营意向。正式阵营安排将另行公布。',
 	locked: selection.value?.finalized ? '正式阵营已确定' : '阵营意向已登记',
-	selected: selection.value?.finalized ? '你的正式阵营已经确定。进入服务器，准备部署。' : '你的阵营意向已经登记，正式结果将在 7 月 29 日公布。',
+	selected: selection.value?.finalized ? '你的正式阵营已经确定。进入服务器，准备部署。' : `你的阵营意向已经登记。《陷落》正式版将于 ${collapseSchedule.startDateShortText.zh} 开启，正式阵营安排将另行公布。`,
 	choose: '登记为首选阵营',
 	confirmTitle: '确认阵营意向',
 	confirmBody: `确认后会将${pending.value?.name.zh || '该阵营'}登记为你的首选且无法修改。为保证三方人数均衡，正式阵营可能调整。是否继续？`,
@@ -84,6 +85,16 @@ const text = computed(() => locale.value === 'en' ? {
 	confirm: '确认加入',
 	login: '登录后选择',
 	rules: '查看完整规则',
+})
+
+const scheduleText = computed(() => locale.value === 'en' ? {
+	label: 'FULL RELEASE',
+	title: 'The experiment begins',
+	detail: 'The full release of Collapse launches on the date below. The exact start time and final faction arrangement will be announced separately.',
+} : {
+	label: '正式版预告',
+	title: '《陷落》正式版即将开启',
+	detail: '三座城市、十五枚密钥，一场至多 144 小时的阵营生存对抗。具体开始时间及正式阵营安排将另行公布。',
 })
 
 const heroText = computed(() => activityActive.value
@@ -237,7 +248,18 @@ onBeforeUnmount(() => {
 
 		<FallenLiveStatus v-if="activityActive" :status="activityStatus" :locale="locale" />
 
-		<Transition v-else name="selection-stage" mode="out-in">
+		<section v-if="!activityActive" class="schedule-notice" aria-labelledby="collapse-schedule-title">
+			<div>
+				<p>{{ scheduleText.label }}</p>
+				<h2 id="collapse-schedule-title">{{ scheduleText.title }}</h2>
+				<span>{{ scheduleText.detail }}</span>
+			</div>
+			<time :datetime="collapseSchedule.startDate">
+				{{ collapseSchedule.startDateText[locale] || collapseSchedule.startDateText.zh }}
+			</time>
+		</section>
+
+		<Transition v-if="!activityActive" name="selection-stage" mode="out-in">
 			<div v-if="loading || !activityChecked" key="loading" class="loading-state" role="status">
 				<span></span><span></span><span></span>
 			</div>
@@ -347,14 +369,20 @@ onBeforeUnmount(() => {
 	pointer-events: none;
 }
 
-.fallen-hero, .team-grid, .locked-panel, .error-banner { position: relative; z-index: 1; }
-.fallen-hero { max-width: 1680px; margin: 0 auto clamp(2rem, 5vw, 4.5rem); display: flex; align-items: end; justify-content: space-between; gap: 2rem; }
+.fallen-hero, .schedule-notice, .team-grid, .locked-panel, .error-banner { position: relative; z-index: 1; }
+.fallen-hero { max-width: 1680px; margin: 0 auto clamp(1.4rem, 3vw, 2.4rem); display: flex; align-items: end; justify-content: space-between; gap: 2rem; }
 .eyebrow, .modal-code { margin: 0 0 1rem; color: #d36649; font: 700 .75rem/1.2 'Space Mono', monospace; letter-spacing: .18em; }
 .fallen-hero h1 { max-width: 900px; margin: 0; font-size: clamp(2.6rem, 6vw, 6.3rem); font-weight: 430; line-height: .98; letter-spacing: -.045em; }
 .intro { max-width: 720px; margin: 1.4rem 0 0; color: #aaa9a4; font-size: clamp(1rem, 1.6vw, 1.22rem); line-height: 1.65; }
 .dev-banner { width: fit-content; margin: 1.15rem 0 0; padding: .65rem .8rem; border: 1px solid rgba(211,102,73,.55); background: rgba(211,102,73,.1); color: #e6a18e; font: 700 .7rem/1.5 'Space Mono', monospace; letter-spacing: .06em; }
 .rules-link { flex: none; color: #dad8d1; text-decoration: none; border-bottom: 1px solid #595854; padding: .7rem 0; font-weight: 650; }
 .rules-link:hover { color: #fff; border-color: #d36649; }
+
+.schedule-notice { max-width: 1680px; margin: 0 auto clamp(2rem, 5vw, 4.5rem); padding: clamp(1.15rem, 2.4vw, 1.8rem); box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; gap: 2rem; border: 1px solid #704434; border-left: 5px solid #d36649; background: linear-gradient(100deg, rgba(91,42,29,.3), rgba(17,21,24,.95) 48%); }
+.schedule-notice p { margin: 0 0 .4rem; color: #dc7c62; font: 700 .68rem/1.4 'Space Mono', monospace; letter-spacing: .16em; }
+.schedule-notice h2 { margin: 0; color: #f0eee8; font-size: clamp(1.2rem, 2.2vw, 1.8rem); font-weight: 620; }
+.schedule-notice span { display: block; max-width: 780px; margin-top: .45rem; color: #aaa9a4; line-height: 1.55; }
+.schedule-notice time { flex: none; color: #f0eee8; font: 500 clamp(1.2rem, 3vw, 2.4rem)/1.1 'Space Mono', monospace; letter-spacing: -.035em; }
 
 .team-grid { max-width: 1680px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: #343638; border: 1px solid #343638; }
 .team-card { min-width: 0; background: #111518; display: flex; flex-direction: column; opacity: 0; animation: team-card-in 620ms cubic-bezier(.16,1,.3,1) calc(var(--team-index) * 90ms) forwards; transition: transform .35s cubic-bezier(.16,1,.3,1), background .25s ease, opacity .28s ease, filter .28s ease, box-shadow .35s ease; }
@@ -488,6 +516,6 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 900px) { .team-grid { grid-template-columns: 1fr; gap: 1px; }.team-card { display: grid; grid-template-columns: minmax(280px, 1.15fr) 1fr; }.team-image { height: 100%; min-height: 260px; aspect-ratio: auto; }.fallen-hero { align-items: start; flex-direction: column; }.team-card:hover { transform: none; } }
-@media (max-width: 580px) { .fallen-page { padding-top: 2.3rem; }.team-card { display: flex; }.team-image { min-height: 0; aspect-ratio: 16/9; }.rules-link { align-self: flex-start; }.locked-overlay { background: linear-gradient(0deg, rgba(7,9,11,.98), rgba(7,9,11,.25)); }.modal-actions { grid-template-columns: 1fr; }.fallen-hero h1 { font-size: 2.8rem; } }
+@media (max-width: 580px) { .fallen-page { padding-top: 2.3rem; }.schedule-notice { align-items: flex-start; flex-direction: column; gap: 1rem; }.schedule-notice time { font-size: 1.35rem; }.team-card { display: flex; }.team-image { min-height: 0; aspect-ratio: 16/9; }.rules-link { align-self: flex-start; }.locked-overlay { background: linear-gradient(0deg, rgba(7,9,11,.98), rgba(7,9,11,.25)); }.modal-actions { grid-template-columns: 1fr; }.fallen-hero h1 { font-size: 2.8rem; } }
 @media (prefers-reduced-motion: reduce) { .team-card, .team-image img, .loading-state span, .selection-stage-enter-active, .selection-stage-leave-active, .confirm-pop-enter-active, .confirm-pop-leave-active, .confirm-modal, .locked-panel.is-celebrating, .locked-panel.is-celebrating *, .impact-fx * { transition: none; animation: none; }.team-card { opacity: 1; }.impact-fx { display: none; } }
 </style>

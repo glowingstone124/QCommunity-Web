@@ -1,4 +1,6 @@
 <script setup>
+import {collapseSchedule} from '@/data/collapse.js'
+
 defineProps({
 	isFrozen: {
 		type: [Boolean, null],
@@ -73,7 +75,7 @@ function formatDate(timestamp) {
 				<p class="stat-value faction-value">
 					{{ fallenSelection ? teamNames[fallenSelection.team] : '尚未选择' }}
 				</p>
-				<small v-if="fallenSelection && !fallenSelection.finalized">7 月 29 日均衡分配后确定</small>
+				<small v-if="fallenSelection && !fallenSelection.finalized">活动 {{ collapseSchedule.startDateShortText.zh }} 开始，正式阵营安排待公布</small>
 			</div>
 		</div>
 		<div class="section">
