@@ -5,8 +5,8 @@ type_zh: 正式版预告
 type_en: Full Release Preview
 title_zh: 《陷落》正式版：Doc. Steinbeck 博士的城市实验
 title_en: Collapse Full Release: Dr. Steinbeck's Experiment
-description_zh: 《陷落》正式版将于 2026 年 10 月 1 日正式开启。
-description_en: The full release of Collapse launches on October 1, 2026.
+description_zh: 《陷落》正式版将于 2026 年 10 月 1 日 14:00（北京时间）正式开启。
+description_en: The full release of Collapse launches at 14:00 China Standard Time on October 1, 2026.
 to: /news/2026collapse
 ---
 ::: zh
@@ -14,7 +14,7 @@ to: /news/2026collapse
 
 ## 正式版上线预告
 
-《陷落》正式版将于 2026 年 10 月 1 日正式开启。具体开始时间及正式阵营安排将另行公布，请以官网后续公告为准。
+《陷落》正式版将于 2026 年 10 月 1 日 14:00（北京时间，Asia/Shanghai）正式开启。正式阵营安排请以后续官网公告为准。
 
 三座城市，十五枚密钥，至多 144 小时的围城之战。
 
@@ -50,6 +50,19 @@ C 阵营主要活动于锡城及其周边，主题色为绿色。
 
 玩家只能在本阵营区域内自然复活。若有效床点或复活点不可用，系统会在本阵营区域内寻找安全位置复活。
 
+## 博士为你准备的标准答案
+
+Doc. Steinbeck 不愿意让装备差距污染他的实验数据。第一次踏入围城，或再次从死亡中醒来时，每名受试者都会发现这些东西已经整齐地放在身上：
+
+- 一整套下界合金护甲，不会损坏，也无法由玩家自行卸下或替换。
+- 一柄锋利 III、击退 I 的下界合金剑，不会损坏。
+- 一把效率 II 的钻石镐，不会损坏；工程路线会让它变得更危险。
+- 末影珍珠 ×16，可以正常使用，并会在每次复活时重新补满。
+
+它们不会随尸体散落，也不能被丢弃、藏进箱子或交给其他人。每一件受保护物品上都烙着同一句话：“实验室财产 · 不可丢弃”。博士并不关心你是否喜欢这些装备——他只要求它们始终留在实验对象身上。
+
+当然，天空也是实验场的一部分。玩家可以为阵营支付 400 积分，用鞘翅换下胸前的下界合金；若决定重新回到地面，换回胸甲时会返还 200 积分。每次成功选择后，实验室会锁定装备 15 分钟。为了不让天空彻底失控，每个阵营同时最多只能拥有 2 名鞘翅玩家。鞘翅同样带有实验室标记，不会损坏，也不能被手动卸下或丢弃。
+
 ## 十五枚密钥，十五条命脉
 
 密钥是《陷落》的核心，也是每座城市仍未熄灭的证明。每个阵营开局拥有 5 个密钥：它们既维系阵营的存活，也会持续带来积分。失去最后一枚密钥，灭亡的倒计时便会开始。
@@ -83,6 +96,40 @@ C 阵营主要活动于锡城及其周边，主题色为绿色。
 
 部署阶段结束后，密钥正式激活。未放置的初始密钥会作为物品发放给该阵营在线成员；若无人在线，则进入阵营公共密钥池，等待成员上线领取。
 
+## 三条道路，一次选择
+
+“人的选择只有在无法反悔时，才真正具有研究价值。”——Doc. Steinbeck 博士
+
+活动开始后，实验室终端会向每名玩家展示 A、B、C 三条个人强化路线。你可以观察，可以讨论，也可以等到局势明朗后再决定；但一旦完成确认，路线便会永久锁定，再也没有回头路。
+
+节点 I 随活动开始开放。部署阶段结束 12 小时后，节点 II 解锁；再经过 12 小时，也就是部署结束 24 小时后，节点 III 解锁。若你迟迟没有选择，已经到达的解锁时间不会消失——确认路线后，实验室会立即补上当时已经开放的节点。
+
+实验室容器界面会展示三条路线、当前节点和下一次解锁倒计时。使用 `/fallen menu`，或不带参数使用 `/fallen upgrade`、`/fallen gear`，都可以唤出终端。最终选择必须在界面中再次确认，博士会给你一次犹豫的机会，也只有一次。
+
+### A 路径：生存
+
+活下去，拖住敌人，再把同伴从死亡边缘拉回来。
+
+- 节点 I：最大生命值增加 4 点。
+- 节点 II：持续获得抗性提升 I。
+- 节点 III：获得最多 3 瓶瞬间治疗喷溅药水，可以治疗自己或队友。药水属于实验室财产，死亡不掉落且不能主动丢弃；少于 3 瓶时，每 1 分钟补充 1 瓶。
+
+### B 路径：工程
+
+城墙、炸药和精确到秒的行动——工程师不等待缺口出现，他们制造缺口。
+
+- 节点 I：把标准钻石镐替换为不可损坏的下界合金镐，附有效率 IV。
+- 节点 II：获得爆炸抗性 I，爆炸伤害降低 20%；同时获得实验室 TNT。TNT 少于 64 个时，每 1 分钟补充 8 个，最多补至 64 个。实验室 TNT 死亡不掉落、不能主动丢弃或存入容器，但可以正常放置和引爆。
+- 节点 III：夺取密钥所需时间由 6 秒缩短为 4 秒，干扰敌方传送站所需时间由 8 秒缩短为 5 秒。传送站修复仍需 15 秒。
+
+### C 路径：机动
+
+比追兵更快，比指南针更早抵达。你不需要守住每一条路，只需要永远出现在正确的地方。
+
+- 节点 I：移动速度提高 10%，饥饿消耗降低 20%。
+- 节点 II：使用鞘翅时滑翔速度提高 30%；同时获得实验室烟花。烟花少于 64 枚时，每 20 秒补充 8 枚，最多补至 64 枚。实验室烟花死亡不掉落、不能主动丢弃或存入容器。
+- 节点 III：持有密钥指南针时，触发精确坐标揭露的距离由 20 格扩大到 35 格。揭露持续时间、冷却和敌方警报机制不变。
+
 ## 夺取密钥：带回荣耀，或让它化为灰烬
 
 敌方玩家站在放置状态密钥区域内并连续停留 6 秒，即可夺取该密钥。夺取过程中会显示进度条。中途离开区域会重置进度。
@@ -104,6 +151,8 @@ C 阵营主要活动于锡城及其周边，主题色为绿色。
 指南针只会指向放置状态密钥，不会指向物品状态密钥。每个阵营同时最多拥有 3 个有效指南针。
 
 当指南针持有者距离目标密钥小于 20 格时，该密钥坐标会被精确揭露给持有者阵营，持续 3 分钟。被定位阵营会收到高危警报。
+
+选择 C 路径并解锁节点 III 的玩家，可以在距离目标小于 35 格时触发相同的精确揭露。
 
 如果指南针锁定的密钥被夺取、转化、摧毁或作废，指南针会自毁，不会自动切换到下一个目标。
 
@@ -156,7 +205,7 @@ C 阵营主要活动于锡城及其周边，主题色为绿色。
 
 ## 用战果武装下一场胜利
 
-玩家可以使用 `/shop` 查看当前可购买物品，并使用 `/shop <id> [amount]` 购买。
+积分不是纪念品，而是下一次出征的弹药。玩家可以使用 `/shop` 查看当前可购买物品，并使用 `/shop <id> [amount]` 购买。护甲切换和个人升级路径则可以直接在 `/fallen menu` 的实验室终端中完成——博士已经把选择摆在你面前，不必背下一长串指令。
 
 商店会根据玩家阵营自动隐藏不可购买的选项。例如 A 阵营不能购买指向 A 阵营密钥的指南针。
 
@@ -176,8 +225,16 @@ C 阵营主要活动于锡城及其周边，主题色为绿色。
 | 12 | 防爆增益 | 900 | 购买者在 120 秒内只承受原本 40% 的方块与实体爆炸伤害。 |
 | 13 | 复活保护 | 900 | 阵营级增益，持续 30 分钟；该阵营成员在己方区域复活时，保护时间由 8 秒延长至 10 秒。主动攻击仍会立刻取消保护。 |
 | 14 | 密钥警戒 | 700 | 需要站在己方一枚放置密钥 30 格内使用，并绑定最近的密钥。持续 30 分钟；敌方进入该密钥 30 格范围时通知所属阵营，同一密钥最多每分钟提醒一次。 |
+| 15 | 粉色加速挽具 | 700 | 供乐魂穿戴；穿戴后飞行速度增加 0.15。 |
+| 16 | 鞘翅升级 | 400 | 将不可变动的下界合金胸甲换成鞘翅；每阵营同时最多 2 名鞘翅玩家。换回胸甲返还 200 分，两种切换成功后均进入 15 分钟冷却。 |
 
 商城不出售或创建传送站。旧主城与芙岛之间的传送站是地图预设设施，玩家只能进入站点区域触发，不能自行选择或设置传送位置。
+
+## 比警报更早抵达的声音
+
+“有些谈判，需要一枚速度足够快的句号。”——Doc. Steinbeck 博士
+
+1 个下界合金锭可以无序合成 64 枚合金弹头。手持弹头右键，会消耗 1 枚并以约 400 m/s 的初速度平直射出，不受重力影响；近距离命中可造成约 10 点伤害，实际结果仍会受到距离、护甲和其他减伤效果影响。射出的弹头无法回收——博士不接受撤回的结论。
 
 ## 旧主城与芙岛的生命线
 
@@ -226,6 +283,8 @@ A 阵营拥有两个固定传送站，用于连接旧主城与芙岛。传送站
 
 活动期间死亡不掉落关闭，游戏难度固定为困难。跳过黑夜需要所有在线玩家睡觉。
 
+但即使是围城，也需要一段没有脚步声的夜晚。活动进行期间，每日 01:00–07:00（北京时间）实施宵禁：钟声越过 01:00 时，所有在线玩家会被断开；在博士重新打开大门之前，任何人都无法进入。07:00 起，城市恢复开放，战争继续。
+
 禁止召唤、复活、运输、引导或利用凋灵（Wither）、末影龙等具备大范围地形破坏能力的生物。不得借助此类生物的爆炸、冲撞或方块破坏能力进攻阵营区域、破坏建筑或密钥防线；若意外遭遇，应立即撤离并联系管理员处理。
 
 禁止外挂、矿透、X-Ray 材质包、自动瞄准、飞行作弊、复制物品、利用漏洞、恶意卡服、恶意堆积实体，以及通过断线重连规避死亡或密钥风险。
@@ -243,7 +302,7 @@ A 阵营拥有两个固定传送站，用于连接旧主城与芙岛。传送站
 
 ## Full Release Announcement
 
-The full release of Collapse launches on October 1, 2026. The exact start time and final faction arrangement will be announced separately. Please refer to future updates on the official website.
+The full release of Collapse launches at 14:00 China Standard Time (Asia/Shanghai) on October 1, 2026. Please refer to future official announcements for final faction assignments.
 
 Three cities. Fifteen keys. Up to 144 hours under siege.
 
@@ -279,6 +338,19 @@ Each city offers a different home-field advantage. Choose your faction—and you
 
 Players can respawn naturally only inside their faction's territory. If a valid bed or respawn point is unavailable, the system will find a safe position within that territory.
 
+## The Doctor's Standard Answer
+
+Dr. Steinbeck refuses to let differences in equipment contaminate his data. The first time a subject enters the siege—and every time they awaken after death—they will find the following equipment already waiting for them:
+
+- A full suit of netherite armor that never breaks and cannot be manually removed or replaced.
+- An unbreakable netherite sword with Sharpness III and Knockback I.
+- An unbreakable Efficiency II diamond pickaxe; the Engineering path can turn it into something far more dangerous.
+- 16 usable ender pearls, replenished after every respawn.
+
+None of it scatters with the body. It cannot be discarded, hidden in a container, or handed away. Every protected item bears the same inscription: “Laboratory Property · Do Not Drop.” The doctor does not care whether you like his equipment. He only requires that it remain attached to the subject.
+
+The sky, naturally, is part of the experiment. A player may spend 400 faction points to replace the netherite chestplate with an elytra. Returning to the ground restores the chestplate and refunds 200 points. Every successful choice locks the equipment for 15 minutes, and each faction may have no more than 2 elytra players at once. The elytra bears the same laboratory mark: it never breaks and cannot be dropped or manually removed.
+
 ## Fifteen Keys, Fifteen Lifelines
 
 Keys are the heart of Collapse, and proof that a city is still alive. Each faction begins with 5 keys. They keep the faction in the game and continuously generate points. Lose your final key, and the countdown to elimination begins.
@@ -312,6 +384,40 @@ During deployment:
 
 When deployment ends, the keys activate. Any undeployed starting key will be issued as an item to an online member of its faction. If no member is online, it enters the faction's shared key pool until someone logs in to claim it.
 
+## Three Paths. One Choice.
+
+“A choice becomes scientifically meaningful only when it cannot be undone.” —Dr. Steinbeck
+
+Once the event begins, the laboratory terminal presents every player with three personal upgrade paths: A, B, and C. You may study them, argue with your allies, or wait for the battlefield to reveal what it needs—but once confirmed, the chosen path is permanently locked.
+
+Node I opens with the event. Node II unlocks 12 hours after deployment ends; another 12 hours later—24 hours after deployment—Node III opens. Waiting to choose does not erase progress from the global clock. Once a late choice is confirmed, the laboratory immediately grants every node whose time has already arrived.
+
+The laboratory inventory interface displays all three paths, the current node, and the countdown to the next unlock. Open it with `/fallen menu`, or by using `/fallen upgrade` or `/fallen gear` without arguments. The final path must be confirmed a second time inside the interface. The doctor permits one moment of hesitation—and only one.
+
+### Path A: Survival
+
+Outlast the enemy, hold the line, and pull an ally back from the edge of death.
+
+- Node I: +4 maximum health.
+- Node II: permanent Resistance I.
+- Node III: carry up to 3 splash potions of Instant Health for healing yourself or teammates. They are protected laboratory property, never drop on death, and cannot be deliberately dropped. When fewer than 3 remain, 1 potion is replenished every minute.
+
+### Path B: Engineering
+
+Walls, explosives, and operations measured to the second. Engineers do not wait for an opening; they manufacture one.
+
+- Node I: replaces the standard diamond pickaxe with an unbreakable Efficiency IV netherite pickaxe.
+- Node II: grants Blast Resistance I, reducing explosion damage by 20%, plus laboratory TNT. When the protected TNT supply is below 64, it replenishes by 8 every minute, up to 64. It never drops on death and cannot be deliberately dropped or stored in a container, but it may be placed and detonated normally.
+- Node III: reduces key capture time from 6 seconds to 4 seconds and enemy station disruption time from 8 seconds to 5 seconds. Repairing a station still takes 15 seconds.
+
+### Path C: Mobility
+
+Move faster than the pursuit and arrive before the compass settles. You do not need to hold every road—only to appear in the right place.
+
+- Node I: +10% movement speed and 20% lower hunger consumption.
+- Node II: +30% elytra gliding speed, plus protected laboratory firework rockets. When the supply is below 64, it replenishes by 8 every 20 seconds, up to 64. These rockets never drop on death and cannot be deliberately dropped or stored in a container.
+- Node III: increases the key compass's exact-coordinate reveal radius from 20 blocks to 35 blocks. Reveal duration, cooldown, and the enemy alert remain unchanged.
+
 ## Capture a Key: Bring Home Glory, or Burn It to Ash
 
 An enemy player can capture a deployed key by remaining inside its area for 6 uninterrupted seconds. A progress bar is displayed during the attempt; leaving the area resets all progress.
@@ -333,6 +439,8 @@ Factions can spend points on a key compass. It locks onto one random deployed ke
 The compass tracks only deployed keys, never item keys. A faction may have no more than 3 active compasses at once.
 
 When the compass holder comes within 20 blocks of the target, the key's exact coordinates are revealed to their faction for 3 minutes. The targeted faction receives a high-risk alert.
+
+A player with Path C Node III triggers the same precise reveal from within 35 blocks instead.
 
 If the tracked key is captured, converted, destroyed, or invalidated, the compass destroys itself instead of switching to another target.
 
@@ -383,7 +491,7 @@ The full release increases rewards for combat, key objectives, resource gatherin
 
 ## Turn Victory into Your Next Advantage
 
-Use `/shop` to view currently available items and `/shop <id> [amount]` to make a purchase.
+Points are not souvenirs. They are ammunition for the next expedition. Use `/shop` to view currently available items and `/shop <id> [amount]` to make a purchase. Armor switching and personal path selection are available directly through the `/fallen menu` laboratory terminal—the doctor has laid out the choices so no one needs to memorize a wall of commands.
 
 The shop automatically hides options unavailable to your faction. For example, Faction A cannot buy a compass that tracks Faction A keys.
 
@@ -403,8 +511,16 @@ At most 16 units of the same entry may be purchased at once. Key-reconnaissance 
 | 12 | Blast Protection | 900 | For 120 seconds, the buyer takes only 40% of normal block- and entity-explosion damage. |
 | 13 | Respawn Protection | 900 | A faction-wide 30-minute upgrade. Members respawning in friendly territory receive 10 seconds of protection instead of 8. Attacking still cancels it immediately. |
 | 14 | Key Alarm | 700 | Must be activated within 30 blocks of a friendly deployed key and binds to the nearest one. For 30 minutes, the faction is alerted when an enemy enters a 30-block radius; each key can alert at most once per minute. |
+| 15 | Pink Acceleration Harness | 700 | Worn by a happy ghast; increases its flying speed by 0.15. |
+| 16 | Elytra Upgrade | 400 | Replaces the immutable netherite chestplate with an elytra; at most 2 players per faction may be assigned to elytra. Switching back refunds 200 points, and either successful switch starts a 15-minute cooldown. |
 
 The shop does not sell or create teleport stations. The Old Spawn–Fu Island stations are fixed map facilities: players activate them only by entering their areas and cannot choose or create custom teleport locations.
+
+## A Sound Faster Than the Alarm
+
+“Some negotiations require a sufficiently fast full stop.” —Dr. Steinbeck
+
+One netherite ingot shapelessly crafts 64 alloy bullets. Right-clicking while holding one consumes a bullet and sends it forward in a flat, gravity-free trajectory at an initial speed of approximately 400 m/s. A close-range hit deals approximately 10 points of damage, although distance, armor, and other damage reduction still shape the final result. Fired bullets cannot be recovered. The doctor does not accept retracted conclusions.
 
 ## The Lifeline Between Old Spawn and Fu Island
 
@@ -452,6 +568,8 @@ If the tie still cannot be broken, the event enters a 30-minute overtime. During
 ## Before You Deploy
 
 Keep inventory is disabled throughout the event, game difficulty is locked to Hard, and every online player must sleep to skip the night.
+
+Even a city under siege needs a few hours without footsteps. A daily curfew is enforced from 01:00 through 07:00 China Standard Time. When the clock crosses 01:00, every online player is disconnected, and no one may enter until the doctor opens the gates again. At 07:00, the cities reopen—and the war resumes.
 
 Summoning, respawning, transporting, luring, or exploiting Withers, Ender Dragons, or any other creature capable of large-scale terrain destruction is prohibited. Players may not use their explosions, charges, or block-breaking abilities to attack faction territory, damage structures, or breach key defenses. If such a creature is encountered unexpectedly, leave the area and contact an administrator immediately.
 
