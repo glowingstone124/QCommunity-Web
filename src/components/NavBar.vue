@@ -4,10 +4,12 @@
 	<header class="app-header">
 		<div class="header-content">
 			<button type="button" class="logo-section" @click="goHome">
-				<span class="logo-mark" aria-hidden="true">
-					<span class="logo-mark-main"></span>
-					<span class="logo-mark-sub"></span>
-				</span>
+				<img
+					class="logo-mark"
+					src="/images/qhub_icon_square_4096.png"
+					alt=""
+					aria-hidden="true"
+				/>
 				<span class="logo-text">QHub</span>
 			</button>
 
@@ -405,18 +407,11 @@ onBeforeUnmount(() => {
 }
 
 .logo-mark {
-	width: 30px;
+	width: 36px;
 	height: 36px;
-	position: relative;
+	display: block;
+	object-fit: contain;
 	flex: 0 0 auto;
-}
-
-.logo-mark-main,
-.logo-mark-sub {
-	position: absolute;
-	border: 2px solid currentColor;
-	transform: skewY(10deg);
-	background: transparent;
 }
 .background-blur {
 	z-index: 39;
@@ -437,17 +432,6 @@ onBeforeUnmount(() => {
 	background: #03050A66;
 	opacity: 1;
 }
-.logo-mark-main {
-	inset: 1px 8px 8px 2px;
-}
-
-.logo-mark-sub {
-	width: 12px;
-	height: 14px;
-	right: 1px;
-	bottom: 1px;
-}
-
 .logo-text {
 	font-size: 1.08rem;
 	font-weight: 800;
@@ -764,7 +748,7 @@ onBeforeUnmount(() => {
 	}
 
 	.logo-mark {
-		width: 26px;
+		width: 31px;
 		height: 31px;
 	}
 
@@ -819,7 +803,7 @@ onBeforeUnmount(() => {
 	}
 
 	.logo-mark {
-		width: 23px;
+		width: 28px;
 		height: 28px;
 	}
 

@@ -26,6 +26,8 @@ to: /news/2026collapse
 
 守住自己的密钥，夺走敌人的希望。若 144 小时内只剩一个阵营存活，它将立即加冕；若多座城市坚持到最后，则由积分、密钥与战绩决定谁有资格见证黎明。
 
+活动采用两种时钟：活动现实时间负责开服日期、每日宵禁、飞行积分的小时/每日额度和 144 小时总截止；有效游戏时间只在服务器开放时推进，负责部署、战斗、复活以及所有密钥、刷新和自毁计时。宵禁和服务器停机期间不会发生无人在线的自毁或淘汰。
+
 “请不必紧张，各位受试者。你们只需要证明一件事：当世界开始陷落时，谁最值得活到最后？”——Doc. Steinbeck 博士
 
 ## 选择你的城市
@@ -57,7 +59,7 @@ Doc. Steinbeck 不愿意让装备差距污染他的实验数据。第一次踏�
 - 一整套下界合金护甲，不会损坏，也无法由玩家自行卸下或替换。
 - 一柄锋利 III、击退 I 的下界合金剑，不会损坏。
 - 一把效率 II 的钻石镐，不会损坏；工程路线会让它变得更危险。
-- 末影珍珠 ×16，可以正常使用，并会在每次复活时重新补满。
+- 末影珍珠 ×16，可以正常使用，但死亡不会补满，故意死亡无法刷新补给。
 
 它们不会随尸体散落，也不能被丢弃、藏进箱子或交给其他人。每一件受保护物品上都烙着同一句话：“实验室财产 · 不可丢弃”。博士并不关心你是否喜欢这些装备——他只要求它们始终留在实验对象身上。
 
@@ -74,6 +76,14 @@ Doc. Steinbeck 不愿意让装备差距污染他的实验数据。第一次踏�
 - 放置状态：固定在世界中，可以提供积分，也可以被敌方夺取。
 - 物品状态：存在于玩家背包或掉落物中，可以携带、护送、放置或启动自毁。
 
+### 什么才是“有效密钥”
+
+- 处于有效期内的己方放置密钥始终有效。
+- 尚未被夺取的初始/刷新物品密钥，只有在所属阵营成员背包中或所属阵营公共密钥池中才有效。
+- 敌人成功夺取后，原控制阵营立即失去该有效密钥；敌方携带期间，它也不属于任何阵营的有效密钥。只有带回并重新放置后，才计入新的控制阵营。
+- 掉落在地、正在自毁、刚被夺取但尚未重新放置、已销毁，以及只剩最后 10 分钟有效期的刷新密钥均无效。
+- 原控制阵营在濒危倒计时结束前夺回密钥会立即取消自毁，但必须在己方区域重新放置，才能解除濒危。
+
 密钥必须放在己方区域内，并且周围应当可被正常玩家接近。把密钥卡进不可进入空间、窒息空间、基岩下方或明显不可交互位置，会被管理员裁定违规。
 
 ### 刷新密钥：绝境中的第二次机会
@@ -81,6 +91,8 @@ Doc. Steinbeck 不愿意让装备差距污染他的实验数据。第一次踏�
 博士声称，一次机会无法产生足够可靠的实验数据。活动进行期间，系统每 24 小时会为每个仍然存活的阵营增加 1 枚刷新密钥。
 
 刷新密钥的有效期为 2 小时。需要特别注意：在有效期的最后 10 分钟内，它不再计入阵营的有效密钥数量。请在时间耗尽前规划好防守与下一步行动——不要让最后十分钟成为城市覆灭的倒计时。
+
+刷新密钥以物品状态生成，不会自动放置。有效期从系统生成时立即开始，不能通过延迟领取或留在公共池中单独暂停，也不会因转交、掉落或重启而重置；过期后会从放置、背包、公共池和掉落状态中彻底删除。刷新密钥可以在有效期尚余 10 分钟以上时解除濒危，也可以被敌人夺取并临时转化，但仍会在原定时间失效，不能变成永久密钥或用于自毁得分。最后 10 分钟虽然不再维持阵营存活，但已放置的刷新密钥仍会产生持续积分，直到实际过期。
 
 ## 开战前的两小时
 
@@ -93,6 +105,7 @@ Doc. Steinbeck 不愿意让装备差距污染他的实验数据。第一次踏�
 - 密钥不能被摧毁。
 - 各阵营应尽快选择地点放置初始密钥。
 - 可以建设防御、交通、观察点和基地设施。
+- 玩家间伤害关闭；部署阶段不能击杀其他玩家，也不会产生飞行积分。
 
 部署阶段结束后，密钥正式激活。未放置的初始密钥会作为物品发放给该阵营在线成员；若无人在线，则进入阵营公共密钥池，等待成员上线领取。
 
@@ -119,7 +132,7 @@ Doc. Steinbeck 不愿意让装备差距污染他的实验数据。第一次踏�
 城墙、炸药和精确到秒的行动——工程师不等待缺口出现，他们制造缺口。
 
 - 节点 I：把标准钻石镐替换为不可损坏的下界合金镐，附有效率 IV。
-- 节点 II：获得爆炸抗性 I，爆炸伤害降低 20%；同时获得实验室 TNT。TNT 少于 64 个时，每 1 分钟补充 8 个，最多补至 64 个。实验室 TNT 死亡不掉落、不能主动丢弃或存入容器，但可以正常放置和引爆。
+- 节点 II：获得爆炸抗性 I，爆炸伤害降低 20%；同时获得实验室 TNT。TNT 少于 64 个时，每 1 分钟补充 8 个，最多补至 64 个。实验室 TNT 死亡不掉落、不能主动丢弃或存入容器；每个阵营同时最多存在 128 个未引爆实验室 TNT，放置者下线时清除其未引爆 TNT，宵禁开始时清除全部未引爆实验室 TNT。
 - 节点 III：夺取密钥所需时间由 6 秒缩短为 4 秒，干扰敌方传送站所需时间由 8 秒缩短为 5 秒。传送站修复仍需 15 秒。
 
 ### C 路径：机动
@@ -132,7 +145,7 @@ Doc. Steinbeck 不愿意让装备差距污染他的实验数据。第一次踏�
 
 ## 夺取密钥：带回荣耀，或让它化为灰烬
 
-敌方玩家站在放置状态密钥区域内并连续停留 6 秒，即可夺取该密钥。夺取过程中会显示进度条。中途离开区域会重置进度。
+敌方玩家站在放置状态密钥区域内并连续停留 6 秒，即可夺取该密钥。夺取过程中会显示进度条。中途离开区域或受到任意实际伤害都会重置进度。多人同时夺取时各自独立计时，最先完成者成功；隐身不会绕过区域判定或密钥警报。
 
 密钥被夺取后，原放置密钥消失，夺取者获得一个物品状态密钥，并为其阵营获得夺取积分。
 
@@ -140,7 +153,7 @@ Doc. Steinbeck 不愿意让装备差距污染他的实验数据。第一次踏�
 
 第一种是护送回己方区域并放置。成功后，该密钥会转化为己方密钥，己方获得较高积分，原阵营永久失去该密钥。
 
-第二种是启动自毁。玩家手持密钥按丢弃键会进入 5 秒确认，再次丢弃才会启动 10 分钟自毁倒计时。倒计时期间密钥仍然绑定在玩家身上，玩家死亡时密钥会掉落。倒计时完成后密钥被摧毁，持有者阵营获得较少积分。
+第二种是启动自毁。玩家手持密钥按丢弃键会进入 5 秒确认，再次丢弃才会启动 8 分钟有效游戏时间的自毁倒计时。倒计时期间密钥仍然绑定在玩家身上，玩家死亡时密钥会掉落。倒计时完成后密钥被摧毁，持有者阵营获得较少积分。濒危倒计时仍为 10 分钟；同一 tick 内先结算自毁，再判定淘汰。
 
 ## 猎手的指南针
 
@@ -169,7 +182,7 @@ Doc. Steinbeck 不愿意让装备差距污染他的实验数据。第一次踏�
 - 成功将敌方密钥带回并转化。
 - 成功自毁敌方密钥。
 - 挖掘钻石、绿宝石、红石、深层煤炭和远古残骸。
-- 使用鞘翅高速飞行。
+- 完成符合条件的探索飞行。
 
 主要扣分包括：
 
@@ -196,7 +209,7 @@ Doc. Steinbeck 不愿意让装备差距污染他的实验数据。第一次踏�
 | 挖掘红石矿或深层红石矿 | +8 | 仅自然挖掘触发。 |
 | 挖掘深层煤炭矿 | +12 | 仅自然挖掘触发。 |
 | 挖掘远古残骸 | +100 | 仅自然挖掘触发。 |
-| 鞘翅高速飞行 | +20 / 30 秒 | 在己方区域中心 100 格外，速度超过 100 km/h 时结算。 |
+| 探索飞行 | +20 / 合格航段 | 必须连续滑翔 30 秒、净位移至少 300 格，并发现此前未探索区块或从外部进入敌方区域。每人每个现实自然小时最多 300 分、每个北京时间自然日最多 2400 分；盘旋、原路折返后净位移不足和部署阶段均不计分。 |
 | 阵营玩家死亡 | -20 | 每次死亡结算。 |
 | 持有密钥时死亡 | 额外 -40 | 与死亡扣分叠加。 |
 | 己方放置密钥被夺取 | -50 | 敌方成功夺取时结算。 |
@@ -236,6 +249,8 @@ Doc. Steinbeck 不愿意让装备差距污染他的实验数据。第一次踏�
 
 1 个下界合金锭可以无序合成 64 枚合金弹头。手持弹头右键，会消耗 1 枚并以约 400 m/s 的初速度平直射出，不受重力影响；近距离命中可造成约 10 点伤害，实际结果仍会受到距离、护甲和其他减伤效果影响。射出的弹头无法回收——博士不接受撤回的结论。
 
+合金弹头使用专属蓝白电火花与暴击粒子弹道；发射时播放高音三叉戟和重生锚充能组合音，命中时触发闪光、电火花、烟花爆裂与紫水晶低音反馈，可与普通箭矢明确区分。
+
 ## 旧主城与芙岛的生命线
 
 A 阵营拥有两个固定传送站，用于连接旧主城与芙岛。传送站区域为 `6×3×6`，边界使用蓝色粒子描边。站点位置由地图预设，玩家不能创建、移动或自定义传送目的地。
@@ -261,9 +276,23 @@ A 阵营拥有两个固定传送站，用于连接旧主城与芙岛。传送站
 
 玩家死亡次数越多，复活等待时间越长。死亡会扣除阵营积分，持有密钥时死亡会额外扣分。
 
+第 1–5 次死亡立即复活，第 6–10 次等待 30 秒，第 11–30 次等待 90 秒，第 31–70 次等待 180 秒；第 71 次起按 `180 + 30 × ln(n - 69)` 秒四舍五入。床可以设在其他区域，但只有己方区域内且通过安全检查的床点有效；否则强制使用己方安全随机点。安全点避开敌方密钥 30 格、在线敌人 24 格、液体、火焰、仙人掌、岩浆块、营火、细雪、虚空和窒息位置。
+
+同阵营伤害关闭。队友可以拆除己方普通建筑和防御，但不能修改固定传送站或放置密钥的实际区域。密钥区域内始终禁止放置和破坏方块。
+
 复活后会获得短暂保护。若玩家主动攻击敌人，保护会立即取消。复活保护不能用于夺取密钥。
 
 若某阵营没有任何有效密钥，会进入 10 分钟濒危状态。若 10 分钟内没有恢复有效密钥，该阵营出局。出局后，该阵营玩家转为旁观者，剩余密钥失效，积分冻结。
+
+### 离线、传送与物品优先级
+
+- 战斗状态持续到最后一次敌对伤害后的 10 秒。战斗状态断线按死亡处理：正常物品掉在断线位置、死亡次数和扣分照常计算，重连后执行对应复活等待。
+- 未被夺取的己方初始/刷新密钥在持有者正常下线时进入公共池；被夺取、自毁中或战斗状态携带的密钥立即生成不可销毁的受保护掉落物。
+- 密钥不能进入箱子、末影箱、潜影盒、装备栏、合成栏，也不能经漏斗、投掷器或实体转移。携带密钥时禁止 `/spawn`、传送请求、插件传送、传送门和维度切换。
+- 允许队友通过正常丢弃和拾取交接密钥；交接不会重置或暂停刷新有效期、自毁倒计时及其他状态。
+- 密钥掉落物不会被熔岩、仙人掌、虚空、爆炸或实体清理插件销毁；系统会按持久化位置修复异常消失的密钥。
+- 死亡不掉落关闭，但密钥规则优先：密钥必定掉落，指南针销毁，实验室初始装备保留。鞘翅切换、升级路线和实验室补给冷却不会因死亡或重连重置。
+- 阵营积分下限为 0。购买按服务器事件顺序执行原子扣款；同 tick 多人同时购买时，后执行且余额不足的请求失败且不发货。
 
 ## 成为最后一座不曾陷落的城市
 
@@ -277,13 +306,13 @@ A 阵营拥有两个固定传送站，用于连接旧主城与芙岛。传送站
 4. 击杀数。
 5. 死亡数更少者。
 
-若仍然无法分出胜负，则进入 30 分钟加时。加时期间所有放置密钥坐标公开，密钥持续积分停止，指南针免费。
+若仍然无法分出胜负，则进入 30 分钟加时。加时期间所有放置密钥坐标公开，密钥持续积分停止，指南针免费，但每阵营同时最多 3 个有效指南针的上限不变。
 
 ## 出征之前
 
 活动期间死亡不掉落关闭，游戏难度固定为困难。跳过黑夜需要所有在线玩家睡觉。
 
-但即使是围城，也需要一段没有脚步声的夜晚。活动进行期间，每日 01:00–07:00（北京时间）实施宵禁：钟声越过 01:00 时，所有在线玩家会被断开；在博士重新打开大门之前，任何人都无法进入。07:00 起，城市恢复开放，战争继续。
+但即使是围城，也需要一段没有脚步声的夜晚。活动进行期间，每日 01:00–07:00（北京时间）实施宵禁：钟声越过 01:00 时，所有在线玩家会被断开并清理未引爆实验室 TNT；在博士重新打开大门之前，任何人都无法进入。自毁、濒危、刷新有效期和其他战斗/密钥计时全部暂停，07:00 起继续推进。144 小时总活动截止仍使用现实时间。
 
 禁止召唤、复活、运输、引导或利用凋灵（Wither）、末影龙等具备大范围地形破坏能力的生物。不得借助此类生物的爆炸、冲撞或方块破坏能力进攻阵营区域、破坏建筑或密钥防线；若意外遭遇，应立即撤离并联系管理员处理。
 
@@ -313,6 +342,8 @@ No one knows when he completed the lockdown, or where he concealed the laborator
 When the defenses light up and the compass needle begins to turn, every expedition can change the fate of an entire city. Collapse is a multi-day faction survival event. Join Faction A (Old Spawn and Fu Island), Faction B (Spawn), or Faction C (Tin City), then build fortifications, scout hostile territory, capture keys, and earn points through combat, resource gathering, and teamwork—while the doctor records everything from somewhere beyond your sight.
 
 Protect your keys and steal the enemy's last hope. If only one faction remains before the 144-hour limit, it wins immediately. If multiple cities survive, points, keys, and combat records will decide who lives to see the dawn.
+
+Collapse uses two clocks. Real event time governs the launch date, daily curfew, hourly/daily flight limits, and the 144-hour deadline. Effective game time advances only while the server is open and governs deployment, combat, respawns, keys, refreshes, and self-destruction. No unattended key destruction or elimination occurs during curfew or server downtime.
 
 “Please, remain calm, test subjects. You need only prove one thing: when the world begins to collapse, who deserves to survive until the end?” —Dr. Steinbeck
 
@@ -345,7 +376,7 @@ Dr. Steinbeck refuses to let differences in equipment contaminate his data. The 
 - A full suit of netherite armor that never breaks and cannot be manually removed or replaced.
 - An unbreakable netherite sword with Sharpness III and Knockback I.
 - An unbreakable Efficiency II diamond pickaxe; the Engineering path can turn it into something far more dangerous.
-- 16 usable ender pearls, replenished after every respawn.
+- 16 usable ender pearls. Death does not refill them, so deliberate deaths cannot refresh the supply.
 
 None of it scatters with the body. It cannot be discarded, hidden in a container, or handed away. Every protected item bears the same inscription: “Laboratory Property · Do Not Drop.” The doctor does not care whether you like his equipment. He only requires that it remain attached to the subject.
 
@@ -362,6 +393,14 @@ Keys have two main states:
 - Deployed: fixed in the world, generating points but vulnerable to enemy capture.
 - Item: carried in an inventory or dropped in the world; it can be escorted, deployed, or set to self-destruct.
 
+### What Counts as a Valid Key?
+
+- A deployed friendly key counts while it remains within its validity period.
+- An uncaptured Initial or Refresh item key counts only while carried by a member of its owning faction or stored in that faction's shared key pool.
+- Capture immediately removes the key from its former faction's valid count. While carried by an enemy, it belongs to no faction's valid count; it counts for its new controller only after redeployment.
+- Dropped, self-destructing, captured-but-not-redeployed, destroyed, and Refresh keys in their final 10 minutes are invalid.
+- Recovery by the displaced faction cancels self-destruction, but the key must be redeployed in friendly territory before it ends the critical state.
+
 Keys must be deployed within their faction's territory and remain normally accessible to players. Hiding one inside an inaccessible or suffocating space, beneath bedrock, or in any clearly uninteractable location will be ruled a violation by the administrators.
 
 ### Refresh Keys: A Second Chance at the Brink
@@ -369,6 +408,8 @@ Keys must be deployed within their faction's territory and remain normally acces
 The doctor insists that a single chance cannot produce sufficiently reliable data. Every 24 hours, the system adds 1 Refresh Key to each faction that is still alive.
 
 A Refresh Key remains valid for 2 hours. During the final 10 minutes of that period, however, it no longer counts toward the faction's number of valid keys. Plan your defense and your next move before time runs out—do not let those final ten minutes become your city's countdown to destruction.
+
+A Refresh Key is generated as an item and is never deployed automatically. Its lifetime starts when the system creates it. Delayed claiming, the shared pool, transfers, drops, and restarts never reset it. Expiry removes every deployed, carried, pooled, or dropped instance. A Refresh Key can end a critical state while more than 10 minutes remain. An enemy may capture and temporarily convert it, but it still expires on its original schedule and cannot earn self-destruct points or become permanent. During its final 10 minutes it no longer sustains faction survival, but a deployed Refresh Key continues passive scoring until actual expiry.
 
 ## The Two Hours Before War
 
@@ -381,6 +422,7 @@ During deployment:
 - Keys cannot be destroyed.
 - Each faction should deploy its starting keys as soon as possible.
 - Defenses, transport routes, observation posts, and base infrastructure may be built.
+- Player-versus-player damage is disabled, and deployment awards no flight points.
 
 When deployment ends, the keys activate. Any undeployed starting key will be issued as an item to an online member of its faction. If no member is online, it enters the faction's shared key pool until someone logs in to claim it.
 
@@ -407,7 +449,7 @@ Outlast the enemy, hold the line, and pull an ally back from the edge of death.
 Walls, explosives, and operations measured to the second. Engineers do not wait for an opening; they manufacture one.
 
 - Node I: replaces the standard diamond pickaxe with an unbreakable Efficiency IV netherite pickaxe.
-- Node II: grants Blast Resistance I, reducing explosion damage by 20%, plus laboratory TNT. When the protected TNT supply is below 64, it replenishes by 8 every minute, up to 64. It never drops on death and cannot be deliberately dropped or stored in a container, but it may be placed and detonated normally.
+- Node II: grants Blast Resistance I, reducing explosion damage by 20%, plus laboratory TNT. When the protected TNT supply is below 64, it replenishes by 8 every minute, up to 64. A faction may have at most 128 unprimed laboratory TNT blocks placed at once. A player's unprimed blocks are removed when that player disconnects, and all unprimed laboratory TNT is removed at curfew.
 - Node III: reduces key capture time from 6 seconds to 4 seconds and enemy station disruption time from 8 seconds to 5 seconds. Repairing a station still takes 15 seconds.
 
 ### Path C: Mobility
@@ -420,7 +462,7 @@ Move faster than the pursuit and arrive before the compass settles. You do not n
 
 ## Capture a Key: Bring Home Glory, or Burn It to Ash
 
-An enemy player can capture a deployed key by remaining inside its area for 6 uninterrupted seconds. A progress bar is displayed during the attempt; leaving the area resets all progress.
+An enemy player can capture a deployed key by remaining inside its area for 6 uninterrupted seconds. Leaving the area or taking actual damage resets progress. Concurrent captors keep separate timers and the first to finish wins. Invisibility bypasses neither region detection nor key alarms.
 
 Once captured, the deployed key disappears. The captor receives it as an item, and their faction earns capture points.
 
@@ -428,7 +470,7 @@ Capture is only the beginning. The stolen key now faces one of two fates.
 
 The first is to escort it into your own territory and deploy it. The key converts to your faction, your side receives the larger point reward, and its original faction loses it permanently.
 
-The second is self-destruction. While holding the key, press the drop key once to begin a 5-second confirmation window, then press it again to start a 10-minute self-destruct countdown. The key remains bound to its carrier during the countdown and drops if the carrier dies. When the timer expires, the key is destroyed and the carrier's faction receives a smaller point reward.
+The second is self-destruction. Press the drop key once to begin a 5-second confirmation window, then again to start an 8-minute effective-game-time countdown. The key remains bound to its carrier and drops if the carrier dies. The critical-state timer remains 10 minutes; within one tick, self-destruction scores before elimination is evaluated.
 
 ## The Hunter's Compass
 
@@ -457,7 +499,7 @@ Main sources of points include:
 - Returning and converting an enemy key.
 - Successfully self-destructing an enemy key.
 - Mining diamonds, emeralds, redstone, deepslate coal, and ancient debris.
-- High-speed elytra flight.
+- Qualified exploration flights.
 
 Main point penalties include:
 
@@ -482,7 +524,7 @@ The full release increases rewards for combat, key objectives, resource gatherin
 | Mine redstone ore or deepslate redstone ore | +8 | Triggered only by natural mining. |
 | Mine deepslate coal ore | +12 | Triggered only by natural mining. |
 | Mine ancient debris | +100 | Triggered only by natural mining. |
-| High-speed elytra flight | +20 / 30 sec | Scored when more than 100 blocks from the center of friendly territory and traveling faster than 100 km/h. |
+| Exploration flight | +20 / qualified leg | Requires 30 continuous seconds of gliding, at least 300 blocks of net displacement, and either a previously unexplored chunk or entry into enemy territory. Capped at 300 points per real clock hour and 2,400 per Asia/Shanghai calendar day per player. Circling, insufficient net displacement, and deployment do not score. |
 | Faction member dies | -20 | Applied on every death. |
 | Die while carrying a key | Additional -40 | Stacks with the normal death penalty. |
 | Friendly deployed key is captured | -50 | Applied when the enemy completes the capture. |
@@ -522,6 +564,8 @@ The shop does not sell or create teleport stations. The Old Spawn–Fu Island st
 
 One netherite ingot shapelessly crafts 64 alloy bullets. Right-clicking while holding one consumes a bullet and sends it forward in a flat, gravity-free trajectory at an initial speed of approximately 400 m/s. A close-range hit deals approximately 10 points of damage, although distance, armor, and other damage reduction still shape the final result. Fired bullets cannot be recovered. The doctor does not accept retracted conclusions.
 
+Alloy bullets have a dedicated blue-white electric/critical trail, a layered trident-and-respawn-anchor launch sound, and a flash, electric spark, firework blast, and low amethyst impact cue that clearly distinguishes them from ordinary arrows.
+
 ## The Lifeline Between Old Spawn and Fu Island
 
 Faction A has two fixed teleport stations connecting Old Spawn and Fu Island. Each station occupies a `6×3×6` area outlined with blue particles. Their locations and destinations are fixed by the map; players cannot create, move, or customize them.
@@ -547,9 +591,23 @@ An enemy can jam a station for 10 minutes by remaining inside it for 8 uninterru
 
 Respawn time increases as a player accumulates deaths. Every death costs faction points, with an additional penalty for dying while carrying a key.
 
+Deaths 1–5 respawn immediately; 6–10 wait 30 seconds; 11–30 wait 90 seconds; 31–70 wait 180 seconds; from death 71 onward, the rounded wait is `180 + 30 × ln(n - 69)` seconds. Beds outside friendly territory may be set but are never valid natural respawn points. Safe fallback spawns avoid enemy keys within 30 blocks, online enemies within 24 blocks, liquids, fire, cactus, magma, campfires, powder snow, voids, and suffocation spaces.
+
+Friendly fire is disabled. Teammates may dismantle ordinary friendly structures and defenses, but not fixed stations or the live key volume. Blocks may never be placed or broken inside a deployed key's actual region.
+
 Players receive brief protection after respawning. Attacking an enemy immediately removes it, and respawn protection cannot be used to capture a key.
 
 If a faction has no valid keys, it enters a 10-minute critical state. If it does not recover a valid key before the timer expires, the faction is eliminated. Its members become spectators, its remaining keys are invalidated, and its score is frozen.
+
+### Disconnects, Teleports, and Item Priority
+
+- Combat status lasts 10 seconds after the latest hostile damage. Disconnecting in combat counts as death: ordinary items drop, death count and penalties apply, and the player serves the normal respawn wait on return.
+- An uncaptured friendly Initial/Refresh key moves to the shared pool on a normal disconnect. Captured, self-destructing, or combat-carried keys become protected world drops immediately.
+- Keys cannot enter containers, Ender Chests, shulker boxes, armor/crafting slots, hoppers, droppers, or other entities. A carrier cannot use `/spawn`, teleport requests, plugin teleports, portals, or dimension travel.
+- Teammates may hand off a key through ordinary dropping and pickup. A handoff never resets or pauses Refresh lifetime, self-destruction, or any other state.
+- Key drops resist lava, cactus, void, explosions, and entity cleaners; persistent reconciliation restores an unexpectedly removed key.
+- Keep Inventory is off, but key rules take priority: keys drop, key compasses are destroyed, and protected laboratory loadout items remain. Gear switching, upgrade paths, and supply cooldowns survive death and reconnects.
+- Faction score has a floor of zero. Purchases atomically re-read and deduct the balance in server event order; a later same-tick purchase fails without delivery when funds have run out.
 
 ## Be the Last City Standing
 
@@ -563,13 +621,13 @@ If multiple factions remain when the 144-hour limit expires, the winner is deter
 4. Kills.
 5. Fewest deaths.
 
-If the tie still cannot be broken, the event enters a 30-minute overtime. During overtime, the coordinates of every deployed key become public, passive key scoring stops, and compasses are free.
+If the tie still cannot be broken, the event enters a 30-minute overtime. During overtime, the coordinates of every deployed key become public, passive key scoring stops, and compasses are free. The limit of three active compasses per faction still applies.
 
 ## Before You Deploy
 
 Keep inventory is disabled throughout the event, game difficulty is locked to Hard, and every online player must sleep to skip the night.
 
-Even a city under siege needs a few hours without footsteps. A daily curfew is enforced from 01:00 through 07:00 China Standard Time. When the clock crosses 01:00, every online player is disconnected, and no one may enter until the doctor opens the gates again. At 07:00, the cities reopen—and the war resumes.
+Even a city under siege needs a few hours without footsteps. A daily curfew is enforced from 01:00 through 07:00 China Standard Time. At 01:00 every online player is disconnected and all unprimed laboratory TNT is cleared. Self-destruction, critical-state, Refresh lifetime, and other combat/key timers pause until 07:00. The overall 144-hour deadline still follows real time.
 
 Summoning, respawning, transporting, luring, or exploiting Withers, Ender Dragons, or any other creature capable of large-scale terrain destruction is prohibited. Players may not use their explosions, charges, or block-breaking abilities to attack faction territory, damage structures, or breach key defenses. If such a creature is encountered unexpectedly, leave the area and contact an administrator immediately.
 
