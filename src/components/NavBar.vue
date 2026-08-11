@@ -158,6 +158,11 @@ const navCategories = computed(() => [
 				description: t('mainPage_description.dashboard'),
 			},
 			{
+				path: '/rankings',
+				label: t('mainPage.rankings'),
+				description: t('mainPage_description.rankings'),
+			},
+			{
 				path: '/transport',
 				label: t('mainPage.transport'),
 				description: t('mainPage_description.transport'),

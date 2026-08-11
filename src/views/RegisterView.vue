@@ -58,7 +58,7 @@
 							type="button"
 							class="verification-option"
 							:class="{ selected: selectedVerificationMethod === method.id }"
-							:disabled="!method.available"
+							:disabled="!method.available || (minecraftSessionId && selectedVerificationMethod !== method.id)"
 							@click="selectedVerificationMethod = method.id"
 						>
 							<strong>{{ method.displayName }}</strong>
@@ -76,6 +76,16 @@
 						</p>
 						<p v-else>正在从服务端读取题目数量与通过分数……</p>
 						<p>测试通过后，请返回 QQ 群输入相应的 `.approve-register &lt;参数&gt;` 完成绑定验证。</p>
+					</div>
+
+					<div v-if="step === 4 && selectedVerificationMethod === 'minecraft'" class="minecraft-intro">
+						<p>创建测试请求后，请使用上述 Minecraft 用户名连接测试服务器：</p>
+						<p class="server-address">{{ minecraftServerAddress }}</p>
+						<p>进入服务器后会自动领取本次请求。请勿关闭此页面；完成所有测试室后，页面会自动注册账户。</p>
+						<p v-if="minecraftSessionId" class="minecraft-state">
+							当前状态：{{ minecraftStateLabel }}
+						</p>
+						<small v-if="minecraftSessionId && minecraftExpiryText">请求有效期至 {{ minecraftExpiryText }}</small>
 					</div>
 
 					<p v-if="message" class="message" role="alert">{{ message }}</p>
@@ -124,7 +134,7 @@
 			</Transition>
 
 			<div class="panel-actions" v-if="step === 4 && quiz_seq === -1">
-				<p class="configuration-status">请选择一种账户验证方式。Minecraft 世界测试仅预留接口，开放时间以公告为准。</p>
+				<p class="configuration-status">请选择一种账户验证方式；验证结果与当前 Minecraft 用户名和 QQ 号绑定，且只能使用一次。</p>
 			</div>
 
 			<div class="terms">
@@ -150,7 +160,9 @@ import {computed, onBeforeUnmount, onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
 import {
 	getRegistrationVerificationMethods,
+	getMinecraftRegistrationStatus,
 	registerAccount,
+	startMinecraftRegistration,
 	startRegistrationQuiz,
 	submitRegistrationQuiz,
 } from "/src/services/registration";
@@ -176,9 +188,15 @@ const quizQuestions = ref([])
 const quizAnswers = ref([])
 const quizResult = ref(null)
 const verificationToken = ref("")
+const minecraftSessionId = ref("")
+const minecraftState = ref("")
+const minecraftExpiresAt = ref(0)
+const minecraftPassed = ref(null)
 const router = useRouter()
 const isDevMode = import.meta.env.DEV
 let countdownTimer = null
+let minecraftPollingTimer = null
+let minecraftStatusInFlight = false
 
 const stepItems = [
 	{ id: 1, label: "用户名" },
@@ -198,11 +216,40 @@ const currentStepDescription = computed(() => {
 	if (step.value === 1) return "用于服务器白名单、玩家资料和社区身份展示。"
 	if (step.value === 2) return "用于 QQ 群内验证和后续账户绑定。"
 	if (step.value === 3) return "请设置一个至少 8 位的登录密码。"
-	return "请选择网页答题，或查看预留的 Minecraft 世界测试方式。"
+	return "请选择当前已开放的验证方式；Chamber 世界测试暂未开放。"
+})
+
+const selectedMinecraftMethod = computed(() =>
+	verificationMethods.value.find(method => method.id === "minecraft")
+)
+
+const minecraftServerAddress = computed(() =>
+	selectedMinecraftMethod.value?.serverAddress || "qoriginal.vip"
+)
+
+const minecraftStateLabel = computed(() => {
+	if (minecraftState.value === "pending") return "等待进入测试服务器"
+	if (minecraftState.value === "claimed") return "测试进行中"
+	if (minecraftState.value === "completed" && minecraftPassed.value) return "测试通过，正在注册"
+	if (minecraftState.value === "completed") return "测试未通过"
+	return "正在创建测试请求"
+})
+
+const minecraftExpiryText = computed(() => {
+	if (!minecraftExpiresAt.value) return ""
+	return new Date(minecraftExpiresAt.value).toLocaleTimeString("zh-CN", {
+		hour: "2-digit",
+		minute: "2-digit",
+		second: "2-digit",
+	})
 })
 
 const primaryActionLabel = computed(() => {
 	if (step.value <= 3) return isDevMode ? "下一步（开发模式跳过校验）" : "下一步"
+	if (selectedVerificationMethod.value === "minecraft") {
+		if (minecraftSessionId.value) return "等待世界测试完成"
+		return isLoading.value ? "正在创建测试请求" : "创建世界测试请求"
+	}
 	return isLoading.value ? "正在创建答题会话" : "我已知悉上述内容，参与测试"
 })
 
@@ -211,6 +258,7 @@ const canStartVerification = computed(() => {
 	if (verificationMethodsLoading.value) return false
 	const selected = verificationMethods.value.find(method => method.id === selectedVerificationMethod.value)
 	if (!selected?.available) return false
+	if (selected.id === "minecraft") return !minecraftSessionId.value
 	return selected.id !== "quiz" ||
 		(Number.isInteger(quizQuestionCount.value) && Number.isInteger(quizPassingScore.value))
 })
@@ -313,8 +361,16 @@ async function handleNext() {
 		}
 		step.value++
 	} else if (step.value === 4) {
-		await beginQuiz()
+		await beginVerification()
 	}
+}
+
+async function beginVerification() {
+	if (selectedVerificationMethod.value === "minecraft") {
+		await beginMinecraftTest()
+		return
+	}
+	await beginQuiz()
 }
 
 async function beginQuiz() {
@@ -344,6 +400,74 @@ async function beginQuiz() {
 		handleQuizSessionError(error)
 	} finally {
 		isLoading.value = false
+	}
+}
+
+async function beginMinecraftTest() {
+	if (minecraftSessionId.value || isLoading.value) return
+	isLoading.value = true
+	message.value = ""
+	verificationToken.value = ""
+	try {
+		const session = await startMinecraftRegistration(username.value, Number(qq.value))
+		if (!session.sessionId || session.state !== "pending") {
+			throw new Error("服务端未返回有效的 Minecraft 测试会话。")
+		}
+		minecraftSessionId.value = session.sessionId
+		minecraftState.value = session.state
+		minecraftExpiresAt.value = Number(session.expiresAt || 0)
+		minecraftPassed.value = null
+		startMinecraftPolling()
+	} catch (error) {
+		message.value = error.message
+		minecraftSessionId.value = ""
+		minecraftState.value = ""
+	} finally {
+		isLoading.value = false
+	}
+}
+
+function clearMinecraftPolling() {
+	if (minecraftPollingTimer) clearInterval(minecraftPollingTimer)
+	minecraftPollingTimer = null
+}
+
+function startMinecraftPolling() {
+	clearMinecraftPolling()
+	minecraftPollingTimer = setInterval(() => void syncMinecraftStatus(), 2000)
+}
+
+async function syncMinecraftStatus() {
+	if (!minecraftSessionId.value || minecraftStatusInFlight) return
+	minecraftStatusInFlight = true
+	try {
+		const result = await getMinecraftRegistrationStatus(
+			minecraftSessionId.value,
+			username.value,
+			Number(qq.value),
+		)
+		minecraftState.value = result.state || minecraftState.value
+		minecraftExpiresAt.value = Number(result.expiresAt || minecraftExpiresAt.value)
+		if (result.state !== "completed") return
+
+		clearMinecraftPolling()
+		minecraftPassed.value = result.passed === true
+		if (!minecraftPassed.value || !result.verificationToken) {
+			message.value = "Minecraft 世界测试未通过，请重新创建测试请求后再试。"
+			minecraftSessionId.value = ""
+			return
+		}
+		verificationToken.value = result.verificationToken
+		await submitForm()
+	} catch (error) {
+		if (error.status === 410) {
+			clearMinecraftPolling()
+			minecraftSessionId.value = ""
+			minecraftState.value = ""
+		}
+		message.value = error.message
+	} finally {
+		minecraftStatusInFlight = false
 	}
 }
 
@@ -426,6 +550,7 @@ async function submitForm() {
 			Number(qq.value),
 			password.value,
 			verificationToken.value,
+			selectedVerificationMethod.value,
 		)
 		if (result.code === 0) {
 			isDialogVisible.value = true
@@ -446,6 +571,7 @@ function closeDialog() {
 
 onBeforeUnmount(() => {
 	clearCountdown()
+	clearMinecraftPolling()
 })
 
 onMounted(loadVerificationMethods)
@@ -752,6 +878,7 @@ button {
 }
 
 .quiz-intro,
+.minecraft-intro,
 .quiz-window {
 	overflow-y: auto;
 	max-height: min(42vh, 420px);
@@ -760,6 +887,18 @@ button {
 	color: var(--text-main);
 	background: var(--background-secondary);
 	line-height: 1.7;
+}
+
+.server-address {
+	font-family: "SpaceMono", monospace;
+	font-size: 1.05rem;
+	font-weight: 800;
+	user-select: all;
+}
+
+.minecraft-state {
+	color: var(--primary);
+	font-weight: 700;
 }
 
 .quiz-window h3 {

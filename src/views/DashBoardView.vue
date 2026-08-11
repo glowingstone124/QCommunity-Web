@@ -167,7 +167,9 @@ async function fetchData() {
 
 		onlineCount.value = Number(result.onlinecount || 0)
 		totalCount.value = Number(result.totalcount || 0)
-		mspt.value = Number(result.mspt || 0)
+		// Prefer the plugin's non-destructive three-second rolling average. Older
+		// servers only expose `mspt`, so keep it as a compatibility fallback.
+		mspt.value = Number(result.mspt_3s ?? result.mspt ?? 0)
 		players.value = Array.isArray(result.players) ? result.players : []
 		syncPlayerAvatars(players.value)
 		lastUpdatedAt.value = new Date()

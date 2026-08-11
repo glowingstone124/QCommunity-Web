@@ -13,6 +13,7 @@ const MiscView = () => import('@/views/MiscView.vue')
 const NewsView = () => import('@/views/NewsView.vue')
 const NotFoundView = () => import('@/views/NotFoundView.vue')
 const QueryView = () => import('@/views/QueryView.vue')
+const RankingsView = () => import('@/views/RankingsView.vue')
 const RegisterView = () => import('@/views/RegisterView.vue')
 const SponsorsView = () => import('@/views/SponsorsView.vue')
 const TransportView = () => import('@/views/TransportView.vue')
@@ -53,6 +54,12 @@ const routes = [
 		name: 'dashboard',
 		component: DashboardView,
 		meta: { pageTitle: '仪表板', showNavBar: true },
+	},
+	{
+		path: '/rankings',
+		name: 'rankings',
+		component: RankingsView,
+		meta: { pageTitle: '榜单', showNavBar: true },
 	},
 	{
 		path: '/news/:id?',

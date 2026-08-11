@@ -38,14 +38,28 @@ export function submitRegistrationQuiz(sessionId, name, uid, answers) {
 	})
 }
 
-export function registerAccount(name, uid, password, verificationToken) {
+export function startMinecraftRegistration(name, uid) {
+	return request("/qo/registration/minecraft/session", {
+		method: "POST",
+		body: JSON.stringify({name, uid}),
+	})
+}
+
+export function getMinecraftRegistrationStatus(sessionId, name, uid) {
+	return request("/qo/registration/minecraft/status", {
+		method: "POST",
+		body: JSON.stringify({sessionId, name, uid}),
+	})
+}
+
+export function registerAccount(name, uid, password, verificationToken, verificationMethod = "quiz") {
 	return request("/qo/upload/registry", {
 		method: "POST",
 		body: JSON.stringify({
 			name,
 			uid,
 			password,
-			verificationMethod: "quiz",
+			verificationMethod,
 			verificationToken,
 		}),
 	})
