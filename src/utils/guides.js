@@ -1,4 +1,6 @@
 import { guideItems } from '@/data/guides.js'
+import { marked } from 'marked'
+import DOMPurify from 'dompurify'
 
 const GUIDE_SOURCE_BASE = '/content/guides'
 
@@ -212,10 +214,11 @@ export async function loadGuideMarkdown(id) {
 		}
 
 		const markdown = await response.text()
+		const rawHtml = marked.parse(markdown)
 
 		return {
 			...guide,
-			html: markdownToGuideHtml(markdown),
+			html: DOMPurify.sanitize(rawHtml),
 		}
 	} catch (error) {
 		console.error(error)
