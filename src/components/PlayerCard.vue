@@ -10,6 +10,7 @@ interface Props {
 	qq?: string
 	found?: boolean
 	playtime?: number
+	lastLogin?: number | string | null
 }
 
 const props = defineProps<Props>()
@@ -34,10 +35,32 @@ const playtimeText = computed(() => {
 	return rest ? `${hours} 小时 ${rest} 分钟` : `${hours} 小时`
 })
 
+const lastLoginText = computed(() => {
+	const rawTimestamp = Number(props.lastLogin)
+	if (!Number.isFinite(rawTimestamp) || rawTimestamp <= 0) return '暂无记录'
+
+	const timestamp = rawTimestamp < 1_000_000_000_000 ? rawTimestamp * 1000 : rawTimestamp
+	const date = new Date(timestamp)
+	if (Number.isNaN(date.getTime())) return '暂无记录'
+
+	const formatted = new Intl.DateTimeFormat('zh-CN', {
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+		hour: '2-digit',
+		minute: '2-digit',
+		second: '2-digit',
+		hour12: false,
+	}).format(date)
+
+	return props.online ? `当前在线 · ${formatted} 上线` : formatted
+})
+
 const infoItems = computed(() => [
 	{ label: '玩家 ID', value: props.username || '未知' },
 	{ label: 'UID', value: props.qq || '未公开' },
 	{ label: '累计游玩', value: playtimeText.value },
+	{ label: '最后上线', value: lastLoginText.value },
 	{ label: '账户状态', value: props.banned ? '已冻结' : '正常' },
 ])
 </script>

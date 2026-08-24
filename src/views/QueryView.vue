@@ -14,6 +14,7 @@ const searched = ref(false)
 const loading = ref(false)
 const errorMessage = ref('')
 const playtime = ref(0)
+const lastLogin = ref(null)
 const affiliated = ref(false)
 const host = ref('')
 
@@ -28,6 +29,7 @@ function resetResult() {
 	affiliated.value = false
 	host.value = ''
 	playtime.value = 0
+	lastLogin.value = null
 	errorMessage.value = ''
 }
 
@@ -67,6 +69,7 @@ async function getPlayer(id) {
 		online.value = data.online === true
 		banned.value = data.frozen === true
 		playtime.value = data.playtime || 0
+		lastLogin.value = data.last_login ?? null
 		await getAvatar(id)
 	} catch (error) {
 		console.error('Error fetching query:', error)
@@ -160,6 +163,7 @@ function submitSearch() {
 					:found="found"
 					:avatar="avatarUrl"
 					:playtime="playtime"
+					:last-login="lastLogin"
 				/>
 			</section>
 		</section>
