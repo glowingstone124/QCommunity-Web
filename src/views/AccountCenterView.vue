@@ -21,6 +21,7 @@ const currentSetting = ref(0)
 const username = ref('')
 const uid = ref(0)
 const playtime = ref(0)
+const statistics = ref({})
 const logins = ref([])
 const iplist = ref([])
 const ipAddr = ref('')
@@ -50,6 +51,7 @@ function queryAccountData() {
 			username.value = data.username
 			uid.value = data.uid
 			playtime.value = data.playtime
+			statistics.value = data.statistics || {}
 			logins.value = data.logins
 			queryAccountStatus()
 		})
@@ -217,6 +219,7 @@ function logout() {
 	username.value = ''
 	uid.value = 0
 	playtime.value = 0
+	statistics.value = {}
 	logins.value = []
 	iplist.value = []
 	fallenSelection.value = null
@@ -268,6 +271,7 @@ watch(ipAddr, validateIP)
 					:username="username"
 					:uid="uid"
 					:playtime="playtime"
+					:statistics="statistics"
 					:logins="logins"
 					:is-frozen="isFrozen"
 					:status-hint="statusHint"

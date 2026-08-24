@@ -11,6 +11,7 @@ interface Props {
 	found?: boolean
 	playtime?: number
 	lastLogin?: number | string | null
+	statistics?: Record<string, number | string | null | undefined>
 }
 
 const props = defineProps<Props>()
@@ -56,6 +57,39 @@ const lastLoginText = computed(() => {
 	return props.online ? `当前在线 · ${formatted} 上线` : formatted
 })
 
+function statisticValue(key: string) {
+	const value = Number(props.statistics?.[key] ?? 0)
+	return Number.isFinite(value) && value > 0 ? value : 0
+}
+
+function formatDistance(centimeters: number) {
+	const meters = centimeters / 100
+	if (meters < 1_000) return `${Math.round(meters).toLocaleString()} 米`
+	return `${(meters / 1_000).toLocaleString('zh-CN', { maximumFractionDigits: 2 })} 千米`
+}
+
+function formatDamage(rawDamage: number) {
+	const damage = rawDamage / 10
+	return `${damage.toLocaleString('zh-CN', { maximumFractionDigits: 1 })} 点`
+}
+
+function formatDuration(ticks: number) {
+	const seconds = Math.floor(ticks / 20)
+	if (seconds < 60) return `${seconds} 秒`
+	const minutes = Math.floor(seconds / 60)
+	const hours = Math.floor(minutes / 60)
+	return hours ? `${hours} 小时 ${minutes % 60} 分钟` : `${minutes} 分钟`
+}
+
+const gameStatisticItems = computed(() => [
+	{ label: '移动距离', value: formatDistance(statisticValue('distance_cm')) },
+	{ label: '造成伤害', value: formatDamage(statisticValue('damage_dealt')) },
+	{ label: '怪物击杀', value: statisticValue('mob_kills').toLocaleString() },
+	{ label: '挖掘方块', value: statisticValue('blocks_mined').toLocaleString() },
+	{ label: '放置方块', value: statisticValue('blocks_placed').toLocaleString() },
+	{ label: '鞘翅飞行', value: formatDuration(statisticValue('elytra_flight_ticks')) },
+])
+
 const infoItems = computed(() => [
 	{ label: '玩家 ID', value: props.username || '未知' },
 	{ label: 'UID', value: props.qq || '未公开' },
@@ -90,11 +124,22 @@ const infoItems = computed(() => [
 			<div class="detail-panel">
 				<div class="section-heading">
 					<h3>玩家信息</h3>
-					<p>注册资料与服务器状态</p>
+					<p>注册资料、服务器状态与游戏统计</p>
 				</div>
 
 				<div class="info-grid">
 					<div v-for="item in infoItems" :key="item.label" class="info-item">
+						<span>{{ item.label }}</span>
+						<strong>{{ item.value }}</strong>
+					</div>
+				</div>
+
+				<div class="section-heading game-statistics-heading">
+					<h3>游戏统计</h3>
+				</div>
+
+				<div class="info-grid">
+					<div v-for="item in gameStatisticItems" :key="item.label" class="info-item">
 						<span>{{ item.label }}</span>
 						<strong>{{ item.value }}</strong>
 					</div>

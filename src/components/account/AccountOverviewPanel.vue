@@ -1,7 +1,8 @@
 <script setup>
+import { computed } from 'vue'
 import {collapseSchedule} from '@/data/collapse.js'
 
-defineProps({
+const props = defineProps({
 	isFrozen: {
 		type: [Boolean, null],
 		default: null,
@@ -13,6 +14,10 @@ defineProps({
 	playtime: {
 		type: Number,
 		default: 0,
+	},
+	statistics: {
+		type: Object,
+		default: () => ({}),
 	},
 	statusHint: {
 		type: String,
@@ -42,6 +47,38 @@ function formatDate(timestamp) {
 	const date = new Date(timestamp)
 	return date.toLocaleString()
 }
+
+function statisticValue(key) {
+	const value = Number(props.statistics?.[key] ?? 0)
+	return Number.isFinite(value) && value > 0 ? value : 0
+}
+
+function formatDistance(centimeters) {
+	const meters = centimeters / 100
+	if (meters < 1_000) return `${Math.round(meters).toLocaleString()} 米`
+	return `${(meters / 1_000).toLocaleString('zh-CN', { maximumFractionDigits: 2 })} 千米`
+}
+
+function formatDamage(rawDamage) {
+	return `${(rawDamage / 10).toLocaleString('zh-CN', { maximumFractionDigits: 1 })} 点`
+}
+
+function formatDuration(ticks) {
+	const seconds = Math.floor(ticks / 20)
+	if (seconds < 60) return `${seconds} 秒`
+	const minutes = Math.floor(seconds / 60)
+	const hours = Math.floor(minutes / 60)
+	return hours ? `${hours} 小时 ${minutes % 60} 分钟` : `${minutes} 分钟`
+}
+
+const gameStatisticItems = computed(() => [
+	{ label: '移动距离', value: formatDistance(statisticValue('distance_cm')) },
+	{ label: '造成伤害', value: formatDamage(statisticValue('damage_dealt')) },
+	{ label: '怪物击杀', value: statisticValue('mob_kills').toLocaleString() },
+	{ label: '挖掘方块', value: statisticValue('blocks_mined').toLocaleString() },
+	{ label: '放置方块', value: statisticValue('blocks_placed').toLocaleString() },
+	{ label: '鞘翅飞行', value: formatDuration(statisticValue('elytra_flight_ticks')) },
+])
 </script>
 
 <template>
@@ -76,6 +113,10 @@ function formatDate(timestamp) {
 					{{ fallenSelection ? teamNames[fallenSelection.team] : '尚未选择' }}
 				</p>
 				<small v-if="fallenSelection && !fallenSelection.finalized">活动 {{ collapseSchedule.startDateShortText.zh }} 开始，正式阵营安排待公布</small>
+			</div>
+			<div v-for="item in gameStatisticItems" :key="item.label" class="stat-card">
+				<p class="stat-label">{{ item.label }}</p>
+				<p class="stat-value">{{ item.value }}</p>
 			</div>
 		</div>
 		<div class="section">
