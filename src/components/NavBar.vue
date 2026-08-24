@@ -373,7 +373,8 @@ onBeforeUnmount(() => {
 	min-height: var(--app-header-height);
 	position: relative;
 	z-index: 40;
-	background: color-mix(in srgb, var(--background) 92%, transparent);
+	background: color-mix(in srgb, var(--background) 88%, transparent);
+	backdrop-filter: blur(14px) saturate(130%);
 	border-bottom: 1px solid var(--split);
 }
 
@@ -422,18 +423,16 @@ onBeforeUnmount(() => {
 	z-index: 39;
 	position: fixed;
 	inset: 0;
-	backdrop-filter: blur(0px);
+	backdrop-filter: blur(8px);
 	background: transparent;
 	opacity: 0;
 	pointer-events: none;
 	transition:
 		opacity 180ms ease,
-		backdrop-filter 180ms ease,
 		background-color 180ms ease;
 }
 
 .background-blur.active {
-	backdrop-filter: blur(10px);
 	background: #03050A66;
 	opacity: 1;
 }
@@ -466,14 +465,14 @@ onBeforeUnmount(() => {
 	overflow: hidden;
 	transform-origin: top center;
 	will-change: opacity, transform;
-	transition: height 180ms ease;
+	transition: height 180ms var(--ease-out);
 }
 
 .mega-shell-enter-active,
 .mega-shell-leave-active {
 	transition:
-		opacity 180ms ease,
-		transform 180ms ease;
+		opacity 160ms var(--ease-out),
+		transform 180ms var(--ease-out);
 }
 
 .mega-shell-enter-from,
@@ -491,8 +490,8 @@ onBeforeUnmount(() => {
 .mega-content-enter-active,
 .mega-content-leave-active {
 	transition:
-		opacity 120ms ease,
-		transform 120ms ease;
+		opacity 120ms var(--ease-out),
+		transform 140ms var(--ease-out);
 }
 
 .mega-content-enter-from {

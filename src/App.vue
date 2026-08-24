@@ -111,17 +111,17 @@ input, textarea, article, .article-content, .markdown-body, [data-selectable] {
 
 .route-fade-enter-active,
 .route-fade-leave-active {
-	transition: opacity var(--motion-fast) var(--ease-standard), transform var(--motion-fast) var(--ease-standard);
+	transition: opacity var(--motion-fast) var(--ease-out), transform var(--motion-fast) var(--ease-out);
 }
 
 .route-fade-enter-from {
 	opacity: 0;
-	transform: translateY(8px);
+	transform: translateY(6px);
 }
 
 .route-fade-leave-to {
 	opacity: 0;
-	transform: translateY(-4px);
+	transform: translateY(-2px);
 }
 
 @media (prefers-reduced-motion: reduce) {

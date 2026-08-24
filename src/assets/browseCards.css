@@ -1,10 +1,10 @@
 .gallery {
     display: grid;
-    gap: 16px;
+    gap: 1.25rem;
     width: 100%;
     max-width: 100%;
     overflow: visible;
-    padding: 8px 0 0;
+    padding: 0.25rem 0 0;
     max-height: none;
 }
 
@@ -12,34 +12,43 @@
     position: relative;
     border-radius: 0;
     overflow: hidden;
-    flex-wrap: wrap;
-    width: 250px;
-    max-height: 350px;
+    width: min(100%, 250px);
+    aspect-ratio: 5 / 7;
     border: 1px solid var(--border-soft);
-    transition: border-color 0.2s ease;
-    background-color: var(--glass-soft);
-    justify-content: center;
-    display: flex;
-}
-
-.card:hover {
-    border-color: var(--primary);
+    background: var(--glass-soft);
+    box-shadow: 0 1px 0 color-mix(in srgb, var(--background) 55%, transparent) inset;
+    isolation: isolate;
+    transition: transform var(--motion-fast) var(--ease-out), border-color var(--motion-fast) ease, box-shadow var(--motion-fast) ease;
 }
 
 .card img {
     width: 100%;
-    height: auto;
+    height: 100%;
     display: block;
     object-fit: cover;
+}
+
+.card-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background:
+        linear-gradient(135deg, color-mix(in srgb, var(--primary) 12%, transparent), transparent 55%),
+        var(--surface-soft);
+    color: color-mix(in srgb, var(--text-secondary) 72%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
 }
 
 .name-bar {
     position: absolute;
     bottom: 0;
     width: 100%;
-    background: color-mix(in srgb, var(--background) 84%, transparent);
-    padding: 10px;
-    padding-left: 50px;
+    background: linear-gradient(to top, color-mix(in srgb, var(--background) 96%, transparent), color-mix(in srgb, var(--background) 72%, transparent));
+    backdrop-filter: blur(12px) saturate(120%);
+    padding: 0.85rem 1rem;
     color: var(--text-main);
     font-family: "Bahnschrift", sans-serif;
     border-top: 1px solid var(--border-soft);
@@ -47,7 +56,8 @@
 
 .name-bar h3 {
     margin: 0;
-    font-size: 0.95rem;
+    font-size: 1rem;
+    letter-spacing: -0.01em;
 }
 
 .overlay {
@@ -56,9 +66,11 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: color-mix(in srgb, var(--background) 90%, transparent);
+    background: color-mix(in srgb, var(--background) 87%, transparent);
+    backdrop-filter: blur(8px) saturate(120%);
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transform: translateY(8px);
+    transition: opacity var(--motion-fast) ease, transform var(--motion-fast) var(--ease-out);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -68,10 +80,6 @@
     font-family: "Bahnschrift", sans-serif;
 }
 
-.card:hover .overlay {
-    opacity: 1;
-}
-
 .link{
     text-decoration: none;
     color: var(--button-primary-text);
@@ -79,6 +87,7 @@
     margin: 5px 10px;
     padding: 10px;
     border: 1px solid var(--primary);
+    border-radius: 0;
 }
 
 .overlay p {
@@ -98,22 +107,42 @@
     margin: 0;
 }
 .card-group {
-    margin-bottom: 2rem;
+    margin-bottom: 1.25rem;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 0.9rem;
     min-width: 0;
 }
 
 .group-title {
     font-size: 1.5rem;
     color: var(--title-color);
-    margin: 1rem 0;
+    margin: 0;
 }
 
 @media (max-width: 640px) {
     .card {
-        width: min(100%, 260px);
+        width: min(100%, 220px);
+    }
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .card:hover {
+        border-color: color-mix(in srgb, var(--primary) 68%, var(--border-soft));
+        box-shadow: 0 14px 32px color-mix(in srgb, var(--text-main) 16%, transparent), 0 1px 0 color-mix(in srgb, var(--background) 55%, transparent) inset;
+        transform: translateY(-3px);
+    }
+
+    .card:hover .overlay {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card,
+    .overlay {
+        transition: none;
     }
 }
 

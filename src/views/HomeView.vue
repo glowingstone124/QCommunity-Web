@@ -639,8 +639,7 @@ function toSocialMedias(target) {
 .choice-prompt-copy > span { color: #d36649; font: 700 .68rem/1.3 'Space Mono', monospace; letter-spacing: .12em; }
 .choice-prompt-copy strong { color: var(--title-color); font-size: clamp(1rem, 1.6vw, 1.25rem); line-height: 1.25; }
 .choice-prompt-copy p { margin: 0; color: var(--text-secondary); font-size: .86rem; line-height: 1.45; }
-.choice-prompt-action { display: inline-flex; align-items: center; justify-content: space-between; gap: 1.2rem; min-width: 110px; padding: .85rem 1rem; background: #b85238; border: 1px solid #c86449; color: #fff; font-size: .9rem; font-weight: 760; text-decoration: none; transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease; }
-.choice-prompt-action:hover { transform: translateX(4px); background: #cf6246; box-shadow: -8px 0 24px rgba(184,82,56,.22); }
+.choice-prompt-action { display: inline-flex; align-items: center; justify-content: space-between; gap: 1.2rem; min-width: 110px; padding: .85rem 1rem; background: #b85238; border: 1px solid #c86449; color: #fff; font-size: .9rem; font-weight: 760; text-decoration: none; transition: transform 160ms var(--ease-out), background-color 160ms ease, box-shadow 160ms ease; }
 
 @keyframes collapse-prompt-in {
 	from { opacity: 0; transform: translateY(22px); clip-path: inset(0 100% 0 0); }
@@ -668,9 +667,6 @@ function toSocialMedias(target) {
 	animation: scroll-cue-in 520ms ease 620ms both;
 }
 
-.scroll-cue:hover {
-	color: var(--primary);
-}
 
 .scroll-cue-line {
 	position: relative;
@@ -727,15 +723,16 @@ function toSocialMedias(target) {
 	overflow: hidden;
 	break-inside: avoid;
 	page-break-inside: avoid;
-	transition: transform 220ms ease, border-color 220ms ease, background-color 220ms ease;
+	box-shadow: 0 1px 0 color-mix(in srgb, var(--background) 54%, transparent) inset;
+	transition: transform 180ms var(--ease-out), border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
 }
 
 .reveal-item {
 	opacity: 0;
 	transform: translateY(24px);
 	transition:
-		opacity 560ms ease calc(var(--reveal-order, 0) * 55ms),
-		transform 560ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--reveal-order, 0) * 55ms),
+		opacity 420ms ease calc(var(--reveal-order, 0) * 55ms),
+		transform 420ms var(--ease-out) calc(var(--reveal-order, 0) * 55ms),
 		border-color 220ms ease,
 		background-color 220ms ease;
 }
@@ -779,10 +776,6 @@ function toSocialMedias(target) {
 	mask-image: linear-gradient(90deg, black, transparent 92%);
 }
 
-.news-item--collapse:hover {
-	border-color: #ff765e;
-	background: linear-gradient(135deg, color-mix(in srgb, #3b100d 90%, var(--background)) 0%, color-mix(in srgb, #0d111b 94%, var(--background)) 72%);
-}
 
 .news-item--collapse .news-body {
 	position: relative;
@@ -840,16 +833,6 @@ function toSocialMedias(target) {
 	transition: opacity 180ms ease, transform 520ms ease;
 }
 
-.news-item:hover {
-	transform: translateY(-6px);
-	border-color: color-mix(in srgb, var(--primary) 42%, transparent);
-	background: color-mix(in srgb, var(--background) 50%, transparent);
-}
-
-.news-item:hover::after {
-	opacity: 1;
-	transform: translateX(100%);
-}
 
 .news-item--text-only {
 	grid-template-columns: 1fr;
@@ -950,12 +933,7 @@ function toSocialMedias(target) {
 	font-size: 0.92rem;
 	font-weight: 700;
 	text-decoration: none;
-	transition: color 180ms ease, transform 180ms ease;
-}
-
-.news-link:hover {
-	color: var(--primary-dark);
-	transform: translateX(6px);
+	transition: color 160ms ease, transform 160ms var(--ease-out);
 }
 
 .news-link-arrow {
@@ -963,7 +941,7 @@ function toSocialMedias(target) {
 	width: 28px;
 	height: 1px;
 	background: currentColor;
-	transition: width 180ms ease;
+	transition: transform 160ms var(--ease-out);
 }
 
 .news-link-arrow::after {
@@ -978,8 +956,16 @@ function toSocialMedias(target) {
 	transform: translateY(-50%) rotate(45deg);
 }
 
-.news-link:hover .news-link-arrow {
-	width: 42px;
+.news-link-arrow { transform-origin: left center; }
+
+@media (hover: hover) and (pointer: fine) {
+	.choice-prompt-action:hover { transform: translateX(3px); background-color: #cf6246; box-shadow: -8px 0 24px rgba(184,82,56,.22); }
+	.scroll-cue:hover { color: var(--primary); }
+	.news-item:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--primary) 42%, transparent); background: color-mix(in srgb, var(--background) 50%, transparent); box-shadow: 0 16px 42px color-mix(in srgb, var(--text-main) 10%, transparent); }
+	.news-item--collapse:hover { border-color: #ff765e; background: linear-gradient(135deg, color-mix(in srgb, #3b100d 90%, var(--background)) 0%, color-mix(in srgb, #0d111b 94%, var(--background)) 72%); }
+	.news-item:hover::after { opacity: 1; transform: translateX(100%); }
+	.news-link:hover { color: var(--primary-dark); transform: translateX(4px); }
+	.news-link:hover .news-link-arrow { transform: scaleX(1.45); }
 }
 
 .home {

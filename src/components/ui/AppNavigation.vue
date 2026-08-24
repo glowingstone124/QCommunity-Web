@@ -137,8 +137,7 @@ const emit = defineEmits(['activate', 'clear', 'select'])
 	transition:
 		background-color 160ms ease,
 		color 160ms ease,
-		padding 160ms ease,
-		transform 160ms ease;
+		transform 160ms var(--ease-out);
 }
 
 .app-navigation.is-vertical .app-navigation-item {
@@ -179,7 +178,7 @@ const emit = defineEmits(['activate', 'clear', 'select'])
 	position: absolute;
 	background: var(--navigation-accent);
 	transform-origin: center;
-	transition: transform 160ms ease;
+	transition: transform 160ms var(--ease-out);
 }
 
 .app-navigation.is-horizontal .app-navigation-indicator {
@@ -198,35 +197,51 @@ const emit = defineEmits(['activate', 'clear', 'select'])
 	transform: scaleY(0);
 }
 
-.app-navigation.is-panel .app-navigation-item:hover,
 .app-navigation.is-panel .app-navigation-item:focus-visible,
 .app-navigation.is-panel .app-navigation-item.is-active {
-	padding-left: calc(var(--navigation-pad-x) + var(--navigation-active-indent));
 	background: var(--navigation-accent);
 	color: var(--background);
 	outline: none;
 }
 
-.app-navigation.is-header .app-navigation-item:hover,
 .app-navigation.is-header .app-navigation-item:focus-visible,
 .app-navigation.is-header .app-navigation-item.is-active,
-.app-navigation.is-compact .app-navigation-item:hover,
 .app-navigation.is-compact .app-navigation-item:focus-visible,
 .app-navigation.is-compact .app-navigation-item.is-active {
 	background: var(--navigation-hover-bg);
 	outline: none;
 }
 
-.app-navigation.is-compact .app-navigation-item:hover,
 .app-navigation.is-compact .app-navigation-item:focus-visible {
 	border-color: var(--navigation-accent);
-	transform: translateX(3px);
+	transform: translateX(2px);
 }
 
-.app-navigation-item:hover .app-navigation-indicator,
 .app-navigation-item:focus-visible .app-navigation-indicator,
 .app-navigation-item.is-active .app-navigation-indicator {
 	transform: scale(1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.app-navigation.is-panel .app-navigation-item:hover {
+		background: var(--navigation-accent);
+		color: var(--background);
+	}
+
+	.app-navigation.is-header .app-navigation-item:hover,
+	.app-navigation.is-compact .app-navigation-item:hover {
+		background: var(--navigation-hover-bg);
+		outline: none;
+	}
+
+	.app-navigation.is-compact .app-navigation-item:hover {
+		border-color: var(--navigation-accent);
+		transform: translateX(2px);
+	}
+
+	.app-navigation-item:hover .app-navigation-indicator {
+		transform: scale(1);
+	}
 }
 
 @media (max-width: 960px) {
@@ -259,7 +274,6 @@ const emit = defineEmits(['activate', 'clear', 'select'])
 		padding: 0.82rem 0.9rem;
 	}
 
-	.app-navigation.is-panel .app-navigation-item:hover,
 	.app-navigation.is-panel .app-navigation-item:focus-visible,
 	.app-navigation.is-panel .app-navigation-item.is-active {
 		padding-left: 1.15rem;

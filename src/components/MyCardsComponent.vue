@@ -15,6 +15,7 @@ function apply(cardId: number) {
 }
 
 const cards = ref([])
+const loading = ref(true)
 const rarityMap = {
 	1: { name: "普通", style: "common" },
 	2: { name: "稀有", style: "uncommon" },
@@ -40,6 +41,8 @@ onMounted(async () => {
 		cards.value = infoResponses.map(res => res.data)
 	} catch (error) {
 		console.error("获取卡片信息失败", error)
+	} finally {
+		loading.value = false
 	}
 })
 const groupedCards = computed(() => {
@@ -56,21 +59,24 @@ const groupedCards = computed(() => {
 </script>
 
 <template>
-  <div class="gallery">
+  <div v-if="loading" class="card-loading" role="status" aria-label="正在加载卡片">
+    <span v-for="index in 6" :key="index" class="card-loading-item"></span>
+  </div>
+  <div v-else class="gallery">
     <div
         v-for="(group, special) in groupedCards"
         :key="special"
         class="card-group"
     >
-      <span>
+      <div class="card-group-heading">
        <img
 		   v-if="getSpecialImage(special)"
 		   :src="getSpecialImage(special)"
 		   :alt="special"
 		   style="height: 80px; vertical-align: middle;"
 	   /><h2 class="group-title" v-else>{{ special }}</h2>
-      </span>
-      <span class="card-list">
+      </div>
+      <div class="card-list">
       <div class="card" v-for="card in group" :key="card.id">
         <img :src="card.file_url" :alt="card.name" />
         <div class="name-bar">
@@ -87,7 +93,7 @@ const groupedCards = computed(() => {
           <button class="apply" @click="apply(card.id)">应用</button>
         </div>
       </div>
-         </span>
+         </div>
     </div>
   </div>
 </template>
@@ -111,16 +117,15 @@ const groupedCards = computed(() => {
 }
 
 .card-list {
-	display: flex;
-	flex-direction: row;
-	gap: 0.75rem;
-	flex-wrap: wrap;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+	gap: 0.9rem;
 }
 
 :deep(.card-group) {
 	border: 1px solid var(--border-soft);
 	border-radius: 0;
-	padding: 1rem;
+	padding: 1.1rem;
 	background: var(--glass-strong);
 	margin-bottom: 0.85rem;
 }
@@ -131,10 +136,45 @@ const groupedCards = computed(() => {
 	margin: 0 0 0.75rem;
 }
 
-.apply:hover {
-	background-color: var(--success);
-	color: var(--button-primary-text);
-	cursor: pointer;
+.card-group-heading {
+	min-height: 2.2rem;
+	display: flex;
+	align-items: center;
+}
+
+.card-group-heading img {
+	max-width: min(100%, 240px);
+	object-fit: contain;
+}
+
+.card-loading {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+	gap: 0.9rem;
+}
+
+.card-loading-item {
+	aspect-ratio: 5 / 7;
+	border: 1px solid var(--border-soft);
+	background: linear-gradient(135deg, var(--surface-soft), color-mix(in srgb, var(--primary) 7%, var(--glass-soft)));
+	animation: card-loading-pulse 1.1s var(--ease-in-out) infinite alternate;
+}
+
+@keyframes card-loading-pulse {
+	from { opacity: 0.52; }
+	to { opacity: 0.88; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.card-loading-item { animation: none; opacity: 0.7; }
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.apply:hover {
+		background-color: var(--success);
+		color: var(--button-primary-text);
+		cursor: pointer;
+	}
 }
 
 </style>

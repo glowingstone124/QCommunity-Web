@@ -10,6 +10,9 @@
   --background-secondary: #F8FAFC;
   --page-background: var(--background-secondary);
   --card-background: #F1F5F9;
+  --glass-strong: var(--background);
+  --glass-soft: var(--background-secondary);
+  --surface-soft: color-mix(in srgb, var(--text-main) 4%, transparent);
   --split: #E5E7EB;
   --text-secondary: #64748B;
   --text-main: #1F2937;
@@ -41,10 +44,12 @@
   --text: var(--text-main);
   --border-soft: color-mix(in srgb, var(--split) 82%, transparent);
   --radius-panel: 18px;
-  --motion-fast: 180ms;
-  --motion-base: 320ms;
-  --motion-slow: 520ms;
-  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-fast: 160ms;
+  --motion-base: 240ms;
+  --motion-slow: 280ms;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-standard: var(--ease-out);
   --measure-readable: 72ch;
 }
 
@@ -53,6 +58,9 @@
   --background-secondary: var(--dark-card);
   --page-background: var(--background);
   --card-background: #090E18;
+  --glass-strong: var(--background-secondary);
+  --glass-soft: #0D1420;
+  --surface-soft: color-mix(in srgb, var(--dark-text-primary) 7%, transparent);
   --split: var(--dark-border);
   --text-main: var(--dark-text-primary);
   --text-secondary: var(--dark-text-secondary);
@@ -141,7 +149,9 @@ html {
 
 body {
   margin: 0;
-  background: var(--background);
+  background:
+    radial-gradient(circle at 8% -10%, color-mix(in srgb, var(--primary-light) 10%, transparent), transparent 28rem),
+    var(--background);
   color: var(--text-main);
   width: 100%;
   height: 100dvh;
@@ -191,6 +201,11 @@ a {
   color: inherit;
 }
 
+::selection {
+  background: color-mix(in srgb, var(--primary) 24%, transparent);
+  color: var(--title-color);
+}
+
 .page-shell {
   max-width: 100%;
   margin: 0 auto;
@@ -200,13 +215,13 @@ a {
   overflow-x: hidden;
 }
 
-/* Shared, restrained entrance treatment for every routed page. */
+/* Shared, restrained entrance treatment for lower-frequency routed pages. */
 :where(.query-page, .dashboard, .advancement-page, .misc-page, .register-page, .chat, .guides-page, .news-page, .account, .transport-page) > :where(header, section, main, .page-header, .chat-header, .chat-body, .composer) {
-  animation: app-section-in var(--motion-slow) var(--ease-standard) both;
+  animation: app-section-in var(--motion-base) var(--ease-out) both;
 }
 
 :where(.query-page, .dashboard, .advancement-page, .misc-page, .register-page, .chat, .guides-page, .news-page) > :where(header, section, main, .chat-body):nth-child(2) {
-  animation-delay: 70ms;
+  animation-delay: 50ms;
 }
 
 :where(button, a, [role="button"]) {
@@ -214,7 +229,7 @@ a {
 }
 
 @keyframes app-section-in {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
