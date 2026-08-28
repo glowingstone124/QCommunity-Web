@@ -54,7 +54,7 @@ const lastLoginText = computed(() => {
 		hour12: false,
 	}).format(date)
 
-	return props.online ? `当前在线 · ${formatted} 上线` : formatted
+	return props.online ? `当前在线，${formatted} 上线` : formatted
 })
 
 function statisticValue(key: string) {

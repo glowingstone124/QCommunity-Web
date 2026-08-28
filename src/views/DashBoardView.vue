@@ -49,6 +49,14 @@ const msptSamples = computed(() =>
 	msptSamplesRaw.value.map(toMilliseconds)
 )
 
+const msptAverage = computed(() => {
+	if (!msptSamples.value.length) {
+		return msptNumber.value
+	}
+
+	return msptSamples.value.reduce((sum, value) => sum + value, 0) / msptSamples.value.length
+})
+
 const msptChartMax = computed(() =>
 	Math.max(50, msptNumber.value, ...msptSamples.value, 1)
 )
@@ -60,11 +68,19 @@ const msptBars = computed(() => msptSamples.value.map((value, index) => ({
 	className: value >= 50 ? 'warning' : value > 35 ? 'notice' : 'normal',
 })))
 
-const msptPeak = computed(() => Math.max(msptNumber.value, ...msptSamples.value, 0))
+const msptPeak = computed(() =>
+	Math.max(msptNumber.value, ...msptSamples.value, 0)
+)
 
 const msptLoad = computed(() =>
 	Math.min(100, Math.max(0, Math.round((msptNumber.value / 50) * 100)))
 )
+
+function formatMspt(value) {
+	const number = Number(value) || 0
+
+	return number < 1 ? number.toFixed(3) : number.toFixed(2)
+}
 
 const performanceState = computed(() => {
 	if (fetchError.value) {
@@ -110,7 +126,7 @@ const statCards = computed(() => [
 	{
 		key: 'mspt',
 		label: 'MSPT',
-		value: msptNumber.value.toFixed(2),
+		value: formatMspt(msptNumber.value),
 		helper: `${msptLoad.value}% / 50ms`,
 		load: msptLoad.value,
 		loadScale: msptLoad.value / 100,
@@ -284,15 +300,16 @@ onBeforeUnmount(stopPolling)
 			<div class="section-title horizontal">
 				<div>
 					<h2>MSPT 波动</h2>
-					<p>最近 60 次采样 · 单位：毫秒</p>
+					<p>最近 60 次采样，单位：毫秒</p>
 				</div>
 				<div class="chart-current">
-					<strong>{{ msptNumber.toFixed(2) }} ms</strong>
+					<strong>{{ formatMspt(msptNumber) }} ms</strong>
 					<span>当前 3 秒平均</span>
+					<small>60 次平均 {{ formatMspt(msptAverage) }} ms</small>
 				</div>
 			</div>
 
-			<div v-if="msptBars.length" class="mspt-chart" role="img" :aria-label="`MSPT 最近 ${msptBars.length} 次采样，当前 ${msptNumber.toFixed(2)} 毫秒，峰值 ${msptPeak.toFixed(2)} 毫秒`">
+			<div v-if="msptBars.length" class="mspt-chart" role="img" :aria-label="`MSPT 最近 ${msptBars.length} 次采样，当前 ${formatMspt(msptNumber)} 毫秒，平均 ${formatMspt(msptAverage)} 毫秒，峰值 ${formatMspt(msptPeak)} 毫秒`">
 				<div
 					class="mspt-threshold"
 					:style="{ bottom: `${Math.min(100, (50 / msptChartMax) * 100)}%` }"
@@ -306,7 +323,7 @@ onBeforeUnmount(stopPolling)
 						class="mspt-bar"
 						:class="bar.className"
 						:style="{ height: `${bar.height}%` }"
-						:title="`${bar.value.toFixed(2)} ms`"
+						:title="`${formatMspt(bar.value)} ms`"
 					></span>
 				</div>
 			</div>
@@ -314,7 +331,7 @@ onBeforeUnmount(stopPolling)
 
 			<div v-if="msptBars.length" class="chart-footer">
 				<span>0ms</span>
-				<span>峰值 {{ msptPeak.toFixed(2) }}ms</span>
+				<span>峰值 {{ formatMspt(msptPeak) }}ms</span>
 			</div>
 		</section>
 
@@ -415,6 +432,7 @@ onBeforeUnmount(stopPolling)
 	background: var(--page-background);
 	color: var(--text-main);
 	overflow: auto;
+	-webkit-font-smoothing: antialiased;
 }
 
 :global(:root[data-theme='dark'] .dashboard) {
@@ -674,6 +692,11 @@ onBeforeUnmount(stopPolling)
 }
 
 .chart-current span {
+	color: var(--text-secondary);
+	font-size: 0.78rem;
+}
+
+.chart-current small {
 	color: var(--text-secondary);
 	font-size: 0.78rem;
 }

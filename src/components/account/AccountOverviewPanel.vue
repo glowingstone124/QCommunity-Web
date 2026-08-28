@@ -38,9 +38,9 @@ const props = defineProps({
 })
 
 const teamNames = {
-	A: 'A · 旧城同盟',
-	B: 'B · 主城守望',
-	C: 'C · 锡城联合',
+	A: 'A：旧城同盟',
+	B: 'B：主城守望',
+	C: 'C：锡城联合',
 }
 
 function formatDate(timestamp) {
@@ -88,7 +88,7 @@ const gameStatisticItems = computed(() => [
 				<h2 class="panel-title">账户信息</h2>
 				<p class="panel-sub">近况、统计与安全信息一览</p>
 			</div>
-			<span class="pill">绑定 QQ · {{ uid || '—' }}</span>
+			<span class="pill">绑定 QQ：{{ uid || '—' }}</span>
 		</header>
 		<div class="stats">
 			<div class="stat-card">

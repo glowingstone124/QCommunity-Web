@@ -63,7 +63,7 @@
 						>
 							<strong>{{ method.displayName }}</strong>
 							<span>{{ method.description }}</span>
-							<small v-if="method.state === 'reserved'">接口已预留 · 暂未开放</small>
+							<small v-if="method.state === 'reserved'">接口已预留，暂未开放</small>
 							<small v-else-if="method.state === 'unavailable'">当前配置不可用</small>
 						</button>
 						<p v-if="verificationMethodsLoading" class="configuration-status">正在读取服务端验证配置……</p>

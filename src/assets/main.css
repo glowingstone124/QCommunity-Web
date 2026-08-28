@@ -140,6 +140,7 @@
 * {
   font-family: var(--font-sans);
   box-sizing: border-box;
+  font-optical-sizing: auto;
 }
 
 html {
@@ -156,6 +157,8 @@ body {
   width: 100%;
   height: 100dvh;
   overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 #app {
@@ -191,6 +194,7 @@ select {
 :where(h1, h2, h3) {
   color: var(--title-color);
   text-wrap: balance;
+  letter-spacing: -0.018em;
 }
 
 :where(p, li, dd) {
@@ -226,6 +230,11 @@ a {
 
 :where(button, a, [role="button"]) {
   transition-duration: var(--motion-fast);
+  transition-timing-function: var(--ease-out);
+}
+
+:where(button, [role="button"]):active:not(:disabled) {
+  transform: scale(0.985);
 }
 
 @keyframes app-section-in {
@@ -246,5 +255,16 @@ a {
     animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 1ms !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  body {
+    background: var(--background);
+  }
+
+  :where(.app-header, .mega-panel, .panel, .register-panel, .result-panel, .board-card) {
+    backdrop-filter: none !important;
+    background: var(--background) !important;
   }
 }

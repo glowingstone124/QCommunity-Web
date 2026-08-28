@@ -61,7 +61,7 @@ Doc. Steinbeck 不愿意让装备差距污染他的实验数据。第一次踏�
 - 一把效率 II 的钻石镐，不会损坏；工程路线会让它变得更危险。
 - 末影珍珠 ×16，可以正常使用，但死亡不会补满，故意死亡无法刷新补给。
 
-它们不会随尸体散落，也不能被丢弃、藏进箱子或交给其他人。每一件受保护物品上都烙着同一句话：“实验室财产 · 不可丢弃”。博士并不关心你是否喜欢这些装备——他只要求它们始终留在实验对象身上。
+它们不会随尸体散落，也不能被丢弃、藏进箱子或交给其他人。每一件受保护物品上都烙着同一句话：“实验室财产：不可丢弃”。博士并不关心你是否喜欢这些装备——他只要求它们始终留在实验对象身上。
 
 当然，天空也是实验场的一部分。玩家可以为阵营支付 400 积分，用鞘翅换下胸前的下界合金；若决定重新回到地面，换回胸甲时会返还 200 积分。每次成功选择后，实验室会锁定装备 15 分钟。为了不让天空彻底失控，每个阵营同时最多只能拥有 2 名鞘翅玩家。鞘翅同样带有实验室标记，不会损坏，也不能被手动卸下或丢弃。
 
@@ -378,7 +378,7 @@ Dr. Steinbeck refuses to let differences in equipment contaminate his data. The 
 - An unbreakable Efficiency II diamond pickaxe; the Engineering path can turn it into something far more dangerous.
 - 16 usable ender pearls. Death does not refill them, so deliberate deaths cannot refresh the supply.
 
-None of it scatters with the body. It cannot be discarded, hidden in a container, or handed away. Every protected item bears the same inscription: “Laboratory Property · Do Not Drop.” The doctor does not care whether you like his equipment. He only requires that it remain attached to the subject.
+None of it scatters with the body. It cannot be discarded, hidden in a container, or handed away. Every protected item bears the same inscription: “Laboratory Property: Do Not Drop.” The doctor does not care whether you like his equipment. He only requires that it remain attached to the subject.
 
 The sky, naturally, is part of the experiment. A player may spend 400 faction points to replace the netherite chestplate with an elytra. Returning to the ground restores the chestplate and refunds 200 points. Every successful choice locks the equipment for 15 minutes, and each faction may have no more than 2 elytra players at once. The elytra bears the same laboratory mark: it never breaks and cannot be dropped or manually removed.
 

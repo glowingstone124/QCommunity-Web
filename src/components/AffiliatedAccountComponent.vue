@@ -159,7 +159,7 @@ onMounted(fetchAccounts);
 			</div>
 			<div class="summary-item">
 				<span>管理方式</span>
-				<strong>只读 · 可删除</strong>
+				<strong>只读，可删除</strong>
 			</div>
 		</div>
 
@@ -182,7 +182,7 @@ onMounted(fetchAccounts);
 						<div class="avatar">{{ initialOf(account.name) }}</div>
 						<div class="account-copy">
 							<h3 class="account-name">{{ account.name }}</h3>
-							<p class="account-meta">主账号 · {{ account.host || "未绑定" }}</p>
+							<p class="account-meta">主账号：{{ account.host || "未绑定" }}</p>
 						</div>
 						<div class="account-actions">
 							<span class="account-status">只读</span>

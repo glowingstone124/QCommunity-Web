@@ -647,7 +647,7 @@ onBeforeUnmount(() => {
 				<strong v-if="routeLoading">正在地图内计算路线</strong>
 				<strong v-else-if="routeMessage">{{ routeMessage }}</strong>
 				<strong v-else>请选择{{ startStationId ? '终点站' : '起点站' }}</strong>
-				<small v-if="!routeLoading">起点 {{ apiStationName(startStationId) }} · 终点 {{ apiStationName(endStationId) }}</small>
+					<small v-if="!routeLoading">起点 {{ apiStationName(startStationId) }}，终点 {{ apiStationName(endStationId) }}</small>
 			</div>
 		</div>
 
@@ -716,7 +716,7 @@ onBeforeUnmount(() => {
 		<Transition name="station-panel">
 			<aside v-if="selectedStation" class="station-panel" aria-live="polite">
 				<button type="button" class="panel-close" aria-label="关闭站点信息" @click="selectedStation = null">×</button>
-				<span class="station-kicker">站点详情 · STATION</span>
+					<span class="station-kicker">站点详情：STATION</span>
 				<h3>{{ selectedStation.name }}</h3><p>{{ selectedStation.nameEn || '暂无英文站名' }}</p>
 				<dl class="station-facts">
 					<div>
