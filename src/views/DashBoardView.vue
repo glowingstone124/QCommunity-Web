@@ -12,7 +12,8 @@ const servers = [
 const currentServerId = ref(1)
 const onlineCount = ref(0)
 const totalCount = ref(0)
-const mspt = ref(0)
+const msptRaw = ref(0)
+const msptSamplesRaw = ref([])
 const players = ref([])
 const playerAvatars = ref({})
 const isLoading = ref(false)
@@ -34,7 +35,32 @@ const serverLoad = computed(() => {
 	return Math.min(100, Math.round((onlineCount.value / totalCount.value) * 100))
 })
 
-const msptNumber = computed(() => Number(mspt.value) || 0)
+function toMilliseconds(value) {
+	const number = Number(value)
+
+	// The status endpoint already reports MSPT in milliseconds, including
+	// sub-millisecond values such as 0.036.
+	return Number.isFinite(number) ? Math.max(0, number) : 0
+}
+
+const msptNumber = computed(() => toMilliseconds(msptRaw.value))
+
+const msptSamples = computed(() =>
+	msptSamplesRaw.value.map(toMilliseconds)
+)
+
+const msptChartMax = computed(() =>
+	Math.max(50, msptNumber.value, ...msptSamples.value, 1)
+)
+
+const msptBars = computed(() => msptSamples.value.map((value, index) => ({
+	index,
+	value,
+	height: Math.max(2, (value / msptChartMax.value) * 100),
+	className: value >= 50 ? 'warning' : value > 35 ? 'notice' : 'normal',
+})))
+
+const msptPeak = computed(() => Math.max(msptNumber.value, ...msptSamples.value, 0))
 
 const msptLoad = computed(() =>
 	Math.min(100, Math.max(0, Math.round((msptNumber.value / 50) * 100)))
@@ -169,7 +195,9 @@ async function fetchData() {
 		totalCount.value = Number(result.totalcount || 0)
 		// Prefer the plugin's non-destructive three-second rolling average. Older
 		// servers only expose `mspt`, so keep it as a compatibility fallback.
-		mspt.value = Number(result.mspt_3s ?? result.mspt ?? 0)
+		const rawMspt = Number(result.mspt_3s ?? result.mspt ?? 0)
+		msptRaw.value = rawMspt
+		msptSamplesRaw.value = Array.isArray(result.recent60) ? result.recent60 : []
 		players.value = Array.isArray(result.players) ? result.players : []
 		syncPlayerAvatars(players.value)
 		lastUpdatedAt.value = new Date()
@@ -180,6 +208,7 @@ async function fetchData() {
 		}
 
 		fetchError.value = '服务器状态同步失败'
+		msptSamplesRaw.value = []
 		players.value = []
 		playerAvatars.value = {}
 	} finally {
@@ -249,6 +278,44 @@ onBeforeUnmount(stopPolling)
 				<strong>{{ card.value }}</strong>
 				<span class="metric-helper">{{ card.helper }}</span>
 			</article>
+		</section>
+
+		<section class="mspt-history-panel">
+			<div class="section-title horizontal">
+				<div>
+					<h2>MSPT 波动</h2>
+					<p>最近 60 次采样 · 单位：毫秒</p>
+				</div>
+				<div class="chart-current">
+					<strong>{{ msptNumber.toFixed(2) }} ms</strong>
+					<span>当前 3 秒平均</span>
+				</div>
+			</div>
+
+			<div v-if="msptBars.length" class="mspt-chart" role="img" :aria-label="`MSPT 最近 ${msptBars.length} 次采样，当前 ${msptNumber.toFixed(2)} 毫秒，峰值 ${msptPeak.toFixed(2)} 毫秒`">
+				<div
+					class="mspt-threshold"
+					:style="{ bottom: `${Math.min(100, (50 / msptChartMax) * 100)}%` }"
+				>
+					<span>50ms</span>
+				</div>
+				<div class="mspt-bars">
+					<span
+						v-for="bar in msptBars"
+						:key="bar.index"
+						class="mspt-bar"
+						:class="bar.className"
+						:style="{ height: `${bar.height}%` }"
+						:title="`${bar.value.toFixed(2)} ms`"
+					></span>
+				</div>
+			</div>
+			<div v-else class="empty-state">等待历史采样</div>
+
+			<div v-if="msptBars.length" class="chart-footer">
+				<span>0ms</span>
+				<span>峰值 {{ msptPeak.toFixed(2) }}ms</span>
+			</div>
 		</section>
 
 		<section class="activity-layout">
@@ -364,6 +431,7 @@ onBeforeUnmount(stopPolling)
 .dashboard-hero,
 .server-switcher,
 .overview-grid,
+.mspt-history-panel,
 .activity-layout {
 	width: min(1280px, 100%);
 	margin: 0 auto;
@@ -574,6 +642,108 @@ onBeforeUnmount(stopPolling)
 
 .metric-helper {
 	font-size: 0.9rem;
+}
+
+.mspt-history-panel {
+	border: 1px solid var(--dashboard-line);
+	background: color-mix(in srgb, var(--dashboard-surface) 96%, transparent);
+	padding: 1.1rem;
+	margin-bottom: 1rem;
+	box-sizing: border-box;
+}
+
+.mspt-history-panel .section-title.horizontal {
+	margin-bottom: 1.15rem;
+}
+
+.mspt-history-panel .section-title p {
+	margin: 0.35rem 0 0;
+	color: var(--text-secondary);
+	font-size: 0.9rem;
+}
+
+.chart-current {
+	display: grid;
+	gap: 0.15rem;
+	text-align: right;
+}
+
+.chart-current strong {
+	color: var(--title-color);
+	font: 500 1.35rem/1 'SpaceMono', 'Inter', sans-serif;
+}
+
+.chart-current span {
+	color: var(--text-secondary);
+	font-size: 0.78rem;
+}
+
+.mspt-chart {
+	height: 180px;
+	position: relative;
+	border-bottom: 1px solid var(--dashboard-line-strong);
+	background: repeating-linear-gradient(
+		to top,
+		transparent 0,
+		transparent calc(25% - 1px),
+		var(--dashboard-line) 25%
+	);
+}
+
+.mspt-bars {
+	position: absolute;
+	inset: 0 0 0.45rem;
+	display: flex;
+	align-items: flex-end;
+	gap: 2px;
+}
+
+.mspt-bar {
+	flex: 1 1 0;
+	min-width: 2px;
+	background: var(--success);
+	opacity: 0.88;
+	transition: height var(--motion-fast) ease, opacity var(--motion-fast) ease;
+}
+
+.mspt-bar.notice {
+	background: var(--primary);
+}
+
+.mspt-bar.warning {
+	background: var(--warning);
+	box-shadow: 0 0 0 1px color-mix(in srgb, var(--warning) 35%, transparent);
+}
+
+.mspt-bar:hover {
+	opacity: 1;
+}
+
+.mspt-threshold {
+	position: absolute;
+	left: 0;
+	right: 0;
+	z-index: 1;
+	border-top: 1px dashed color-mix(in srgb, var(--warning) 56%, transparent);
+	pointer-events: none;
+}
+
+.mspt-threshold span {
+	position: absolute;
+	right: 0;
+	top: -1.25rem;
+	padding-left: 0.35rem;
+	background: var(--dashboard-surface);
+	color: var(--warning);
+	font: 0.7rem/1 'SpaceMono', 'Inter', sans-serif;
+}
+
+.chart-footer {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 0.55rem;
+	color: var(--text-secondary);
+	font: 0.72rem/1 'SpaceMono', 'Inter', sans-serif;
 }
 
 .activity-layout {
