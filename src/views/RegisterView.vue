@@ -166,6 +166,7 @@ import {
 	startRegistrationQuiz,
 	submitRegistrationQuiz,
 } from "/src/services/registration";
+import { markOnboardingPromptPending } from '@/composables/useOnboardingGuide.js'
 
 const step = ref(1)
 const quiz_seq = ref(-1)
@@ -553,6 +554,7 @@ async function submitForm() {
 			selectedVerificationMethod.value,
 		)
 		if (result.code === 0) {
+			markOnboardingPromptPending()
 			isDialogVisible.value = true
 		} else {
 			message.value = result.message || "注册失败，请检查信息是否已被使用"

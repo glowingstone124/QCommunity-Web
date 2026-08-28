@@ -379,7 +379,7 @@ function toSocialMedias(target) {
 	<div ref="homeRoot" class="home page-shell" :class="{ 'home--campaign': homeCampaign.enabled }">
 		<canvas ref="shaderCanvas" class="shader-background" aria-hidden="true"></canvas>
 		<div class="home-content">
-			<section class="home-hero" aria-labelledby="home-title">
+			<section class="home-hero" aria-labelledby="home-title" data-guide-target="home-hero">
 				<div class="hero-copy">
 					<span class="hero-brand">{{ heroBrand }}</span>
 					<h1 id="home-title">{{ heroTitle }}</h1>
@@ -404,7 +404,7 @@ function toSocialMedias(target) {
 				</a>
 			</section>
 
-			<section id="home-news" class="news-feed" aria-labelledby="news-title">
+			<section id="home-news" class="news-feed" aria-labelledby="news-title" data-guide-target="home-news">
 				<article
 					v-if="featuredNews"
 					class="news-item news-item--featured reveal-item"

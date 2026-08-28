@@ -20,15 +20,31 @@
 			/>
 		</transition>
 	</router-view>
+	<OnboardingGuide />
 </template>
 
 
 <script setup>
 import NavBar from './components/NavBar.vue';
-import {computed, onMounted} from "vue";
+import OnboardingGuide from './components/OnboardingGuide.vue'
+import {computed, onBeforeUnmount, onMounted, watch} from "vue";
 import {useRoute} from "vue-router";
+import {hasPendingOnboardingPrompt, hasSeenOnboarding, useOnboardingGuide} from '@/composables/useOnboardingGuide.js'
 const route = useRoute();
 const showNavBar = computed(() => route.meta.showNavBar !== false);
+const {openPrompt} = useOnboardingGuide()
+let onboardingPromptTimer = 0
+
+function scheduleOnboardingPrompt() {
+	if (onboardingPromptTimer) {
+		window.clearTimeout(onboardingPromptTimer)
+		onboardingPromptTimer = 0
+	}
+
+	if (route.path === '/' && hasPendingOnboardingPrompt() && !hasSeenOnboarding()) {
+		onboardingPromptTimer = window.setTimeout(() => openPrompt(), 650)
+	}
+}
 
 onMounted(() => {
 	if (import.meta.env.PROD) {
@@ -46,7 +62,17 @@ onMounted(() => {
 			}
 		});
 	}
+
+	scheduleOnboardingPrompt()
 });
+
+watch(() => route.path, scheduleOnboardingPrompt)
+
+onBeforeUnmount(() => {
+	if (onboardingPromptTimer) {
+		window.clearTimeout(onboardingPromptTimer)
+	}
+})
 </script>
 
 <style>
@@ -78,6 +104,15 @@ input, textarea, article, .article-content, .markdown-body, [data-selectable] {
 
 ::-webkit-scrollbar-thumb:hover {
 	background-color: color-mix(in srgb, var(--text-main) 58%, transparent);
+}
+
+:root[data-theme="dark"] ::-webkit-scrollbar-track {
+	background-color: var(--background);
+}
+
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb {
+	background-color: var(--dark-border);
+	border-color: var(--background);
 }
 
 * {

@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import debounce from 'lodash/debounce'
 import PlayerInfoCard from '@/components/PlayerCard.vue'
+import { fetchAvatar } from '@/services/avatar.js'
 
 const inputId = ref('')
 const queryId = ref('')
@@ -37,9 +38,13 @@ function resetResult() {
 
 async function getAvatar(name) {
 	try {
-		const response = await fetch(`https://api.glowingstone.cn/qo/download/avatar?name=${encodeURIComponent(name)}`)
-		const data = await response.json()
-		avatarUrl.value = data.url || avatarUrl.value
+		const avatar = await fetchAvatar(name)
+		if (avatar?.special === true) {
+			avatarUrl.value = avatar.url || ''
+			return
+		}
+
+		avatarUrl.value = avatar?.url || avatarUrl.value
 	} catch (error) {
 		console.error('Error fetching avatar:', error)
 	}

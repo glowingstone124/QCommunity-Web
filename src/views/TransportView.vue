@@ -853,7 +853,7 @@ label {
   background: #82bf25;
 }
 
-.map-entry-art i { position: absolute; top: 24px; width: 10px; height: 10px; border-radius: 50%; background: white; border: 2px solid #334155; z-index: 1; }
+.map-entry-art i { position: absolute; top: 24px; width: 10px; height: 10px; border-radius: 50%; background: var(--background); border: 2px solid var(--split); z-index: 1; }
 .map-entry-art i:nth-child(1) { left: 0; border-color: #e4002b; }
 .map-entry-art i:nth-child(2) { left: calc(50% - 7px); width: 12px; height: 12px; top: 23px; border-color: #00629b; }
 .map-entry-art i:nth-child(3) { right: 0; border-color: #82bf25; }

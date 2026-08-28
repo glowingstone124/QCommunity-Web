@@ -15,6 +15,7 @@
 
 			<div
 				class="navigation-zone"
+				data-guide-target="navigation"
 				@mouseleave="clearActiveNav"
 				@focusout="clearActiveNav"
 			>
@@ -64,7 +65,7 @@
 				</Transition>
 			</div>
 
-			<div class="user-section">
+			<div class="user-section" data-guide-target="account">
 				<button v-if="!loggedIn" type="button" class="login-alert" @click="goToLogin">
 					<span class="alert-text">点击此处登录</span>
 				</button>
@@ -81,12 +82,14 @@
 
 				<div class="header-actions">
 					<button
+						v-if="isGuideButtonVisible"
 						type="button"
-						class="theme-btn"
-						:title="themeToggleTitle"
-						@click="toggleTheme"
+						class="guide-btn"
+						:title="locale === 'zh' ? '打开新手指引' : 'Open quick start guide'"
+						:aria-label="locale === 'zh' ? '打开新手指引' : 'Open quick start guide'"
+						@click="openGuide"
 					>
-						{{ theme === 'dark' ? '🌙' : '☀️' }}
+						?
 					</button>
 					<button type="button" class="lang-btn" @click="toggleLang">
 						{{ nextLocaleLabel }}
@@ -102,16 +105,17 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useHeaderProfile } from '@/composables/useHeaderProfile.js'
+import { useOnboardingGuide } from '@/composables/useOnboardingGuide.js'
 import AppNavigation from '@/components/ui/AppNavigation.vue'
 
 const router = useRouter()
 const { locale, t } = useI18n()
-const { avatarUrl, loggedIn, playtime, theme, username } = useHeaderProfile()
+const { avatarUrl, loggedIn, playtime, username } = useHeaderProfile()
+const { isGuideButtonVisible, openGuide } = useOnboardingGuide()
 const activeNavKey = ref(null)
 const megaPanelContent = ref(null)
 const isNavHovered = computed(() => activeNavKey.value !== null)
 const nextLocaleLabel = computed(() => t(locale.value === 'zh' ? 'nav.language_english' : 'nav.language_chinese'))
-const themeToggleTitle = computed(() => t(theme.value === 'dark' ? 'nav.theme_light' : 'nav.theme_dark'))
 const megaPanelHeight = ref('auto')
 let resizeObserver = null
 let clearNavTimer = 0
@@ -332,12 +336,6 @@ const toggleLang = () => {
 	localStorage.setItem('locale', locale.value)
 }
 
-const toggleTheme = () => {
-	theme.value = theme.value === 'dark' ? 'light' : 'dark'
-	document.documentElement.dataset.theme = theme.value
-	localStorage.setItem('theme', theme.value)
-}
-
 watch([activeNavCategory, locale, loggedIn, playtime], () => {
 	if (activeNavCategory.value) {
 		scheduleMegaPanelMeasure()
@@ -376,6 +374,11 @@ onBeforeUnmount(() => {
 	background: color-mix(in srgb, var(--background) 88%, transparent);
 	backdrop-filter: blur(14px) saturate(130%);
 	border-bottom: 1px solid var(--split);
+}
+
+:global(:root[data-theme='dark'] .app-header) {
+	background: color-mix(in srgb, var(--background) 94%, transparent);
+	border-bottom-color: #2B3748;
 }
 
 .header-content {
@@ -435,6 +438,10 @@ onBeforeUnmount(() => {
 .background-blur.active {
 	background: #03050A66;
 	opacity: 1;
+}
+
+:global(:root[data-theme='dark'] .background-blur.active) {
+	background: color-mix(in srgb, #02040A 78%, transparent);
 }
 .logo-text {
 	font-size: 1.08rem;
@@ -634,7 +641,9 @@ onBeforeUnmount(() => {
 }
 
 .lang-btn,
-.theme-btn {
+.guide-btn {
+	display: grid;
+	place-items: center;
 	padding: 0 0.8rem;
 	height: var(--header-control-height);
 	min-width: var(--header-control-height);
@@ -642,28 +651,25 @@ onBeforeUnmount(() => {
 	font-size: 0.9rem;
 	cursor: pointer;
 	border-radius: 0;
-}
-
-.lang-btn {
 	background: transparent;
 	color: var(--text-main);
 	border: 1px solid var(--split);
+	transition:
+		border-color 160ms ease,
+		background-color 160ms ease,
+		color 160ms ease,
+		transform 120ms var(--ease-out);
 }
 
-.lang-btn:hover {
+.lang-btn:hover,
+.guide-btn:hover {
 	border-color: var(--text-main);
 	background: var(--background-secondary);
 }
 
-.theme-btn {
-	background: transparent;
-	color: var(--text-main);
-	border: 1px solid var(--split);
-}
-
-.theme-btn:hover {
-	border-color: var(--text-main);
-	background: var(--background-secondary);
+.lang-btn:active,
+.guide-btn:active {
+	transform: scale(0.97);
 }
 
 @media (max-width: 980px) {
@@ -770,7 +776,7 @@ onBeforeUnmount(() => {
 	}
 
 	.lang-btn,
-	.theme-btn {
+	.guide-btn {
 		padding: 0 0.55rem;
 		min-width: var(--header-control-height);
 	}
@@ -822,7 +828,7 @@ onBeforeUnmount(() => {
 	}
 
 	.lang-btn,
-	.theme-btn {
+	.guide-btn {
 		min-width: 36px;
 		padding-inline: 0.4rem;
 		font-size: 0.8rem;

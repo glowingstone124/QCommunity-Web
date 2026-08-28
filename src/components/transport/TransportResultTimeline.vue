@@ -112,7 +112,7 @@ function normalizeColor(color) {
 	width: 1.8rem;
 	height: 1.8rem;
 	min-width: 1.8rem;
-	background-color: white;
+	background-color: var(--background);
 	border-radius: 50%;
 	border: 0.4rem solid var(--primary);
 	z-index: 1;

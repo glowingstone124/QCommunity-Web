@@ -30,17 +30,17 @@
   --button-ghost-bg: transparent;
   --button-ghost-text: #2563EB;
   --button-ghost-hover: #EFF6FF;
-  --dark-bg: #03050A;
-  --dark-card: #070B12;
-  --dark-border: #131A26;
-  --dark-text-primary: #E6EAF2;
-  --dark-text-secondary: #8B96A8;
-  --dark-text-muted: #5C6675;
-  --code-bg: #050812;
-  --code-text: #E5E7EB;
-  --code-keyword: #60A5FA;
-  --code-string: #34D399;
-  --code-comment: #64748B;
+  --dark-bg: #090C12;
+  --dark-card: #111722;
+  --dark-border: #2B3748;
+  --dark-text-primary: #F1F5F9;
+  --dark-text-secondary: #A9B5C5;
+  --dark-text-muted: #78869A;
+  --code-bg: #0C121B;
+  --code-text: #E8EDF5;
+  --code-keyword: #8AC0FF;
+  --code-string: #55DFA0;
+  --code-comment: #8592A5;
   --text: var(--text-main);
   --border-soft: color-mix(in srgb, var(--split) 82%, transparent);
   --radius-panel: 18px;
@@ -54,23 +54,30 @@
 }
 
 :root[data-theme="dark"]{
+  color-scheme: dark;
   --background: var(--dark-bg);
   --background-secondary: var(--dark-card);
   --page-background: var(--background);
-  --card-background: #090E18;
+  --card-background: #161E2A;
   --glass-strong: var(--background-secondary);
-  --glass-soft: #0D1420;
+  --glass-soft: #182331;
   --surface-soft: color-mix(in srgb, var(--dark-text-primary) 7%, transparent);
   --split: var(--dark-border);
+  --primary: #5B9BF6;
+  --primary-dark: #3B82F6;
+  --primary-light: #A3C7FF;
   --text-main: var(--dark-text-primary);
   --text-secondary: var(--dark-text-secondary);
   --title-color: var(--dark-text-primary);
-  --button-secondary-bg: #090E18;
-  --button-secondary-border: #3B82F6;
-  --button-secondary-text: #93C5FD;
-  --button-secondary-hover: var(--code-bg);
-  --button-ghost-text: #93C5FD;
-  --button-ghost-hover: var(--code-bg);
+  --success: #54D88E;
+  --warning: #F6C866;
+  --error: #FF7A7A;
+  --button-secondary-bg: #161E2A;
+  --button-secondary-border: #7BB2FF;
+  --button-secondary-text: #C9E0FF;
+  --button-secondary-hover: #0C1725;
+  --button-ghost-text: #C9E0FF;
+  --button-ghost-hover: #0C1725;
   --text: var(--text-main);
 }
 
@@ -159,6 +166,20 @@ body {
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+:root[data-theme="dark"] body {
+  background:
+    radial-gradient(circle at 8% -10%, color-mix(in srgb, var(--primary) 13%, transparent), transparent 28rem),
+    linear-gradient(180deg, #0E141D 0%, var(--background) 48%, #07090E 100%);
+}
+
+:root[data-theme="dark"] :where(input, textarea, select) {
+  color: var(--text-main);
+}
+
+:root[data-theme="dark"] :where(input, textarea, select)::placeholder {
+  color: var(--dark-text-muted);
 }
 
 #app {
@@ -267,4 +288,13 @@ a {
     backdrop-filter: none !important;
     background: var(--background) !important;
   }
+}
+
+:root[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: var(--dark-border);
+  border-color: var(--background);
 }

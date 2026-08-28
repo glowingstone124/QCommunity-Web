@@ -825,6 +825,50 @@ onBeforeUnmount(() => {
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
 @keyframes route-spin { to { transform: rotate(360deg); } }
 
+:global(:root[data-theme='dark'] .interactive-map) { background: #0A0E14; color: #F1F5F9; }
+:global(:root[data-theme='dark'] .map-search input) { border-color: #33445A; background: rgba(17,23,34,0.96); color: #F1F5F9; }
+:global(:root[data-theme='dark'] .map-search input:focus) { outline-color: rgba(123,178,255,0.28); border-color: #7BB2FF; }
+:global(:root[data-theme='dark'] .search-results) { border-color: #33445A; background: #111722; }
+:global(:root[data-theme='dark'] .search-results button) { border-bottom-color: #273548; background: #111722; color: #F1F5F9; }
+:global(:root[data-theme='dark'] .search-results button:hover) { background: #1A2A40; }
+:global(:root[data-theme='dark'] .search-results span) { color: #A9B5C5; }
+:global(:root[data-theme='dark'] .zoom-controls) { border-color: #33445A; background: rgba(17,23,34,0.96); }
+:global(:root[data-theme='dark'] .zoom-controls button) { border-right-color: #273548; color: #F1F5F9; }
+:global(:root[data-theme='dark'] .zoom-controls button:hover) { background: #1A2A40; color: #C9E0FF; }
+:global(:root[data-theme='dark'] .map-route-status) { border-color: #33445A; background: rgba(17,23,34,0.96); }
+:global(:root[data-theme='dark'] .map-route-status strong) { color: #F1F5F9; }
+:global(:root[data-theme='dark'] .map-route-status small) { color: #A9B5C5; }
+:global(:root[data-theme='dark'] .status-spinner) { border-color: #2B4A70; border-top-color: #7BB2FF; }
+:global(:root[data-theme='dark'] .map-canvas svg) { background: #0A0E14; }
+:global(:root[data-theme='dark'] .misc-node text.outlined) { stroke: #0A0E14; }
+:global(:root[data-theme='dark'] .station-core) { fill: #111722; stroke: #CBD5E1; }
+:global(:root[data-theme='dark'] .station-label) { stroke: rgba(10,14,20,0.96); }
+:global(:root[data-theme='dark'] .station-label text) { fill: #F1F5F9; }
+:global(:root[data-theme='dark'] .station-name-en) { fill: #A9B5C5 !important; }
+:global(:root[data-theme='dark'] .map-station.active .station-core) { fill: #5B4A18; stroke: #FF7A94; }
+:global(:root[data-theme='dark'] .map-station.start-point .station-core) { fill: #123A29; stroke: #54D88E; }
+:global(:root[data-theme='dark'] .map-station.end-point .station-core) { fill: #401D2A; stroke: #FF7A94; }
+:global(:root[data-theme='dark'] .station-panel) { border-color: #33445A; background: rgba(17,23,34,0.98); }
+:global(:root[data-theme='dark'] .panel-close) { border-color: #273548; color: #A9B5C5; }
+:global(:root[data-theme='dark'] .station-kicker) { color: #A3C7FF; }
+:global(:root[data-theme='dark'] .station-panel h3) { color: #F1F5F9; }
+:global(:root[data-theme='dark'] .station-panel p) { color: #A9B5C5; }
+:global(:root[data-theme='dark'] .station-facts div) { background: #182331; border-left-color: #607086; }
+:global(:root[data-theme='dark'] .station-facts dt),
+:global(:root[data-theme='dark'] .station-connections > span) { color: #A9B5C5; }
+:global(:root[data-theme='dark'] .station-facts dd) { color: #F1F5F9; }
+:global(:root[data-theme='dark'] .station-connections li) { border-color: #273548; color: #D5DCE6; }
+:global(:root[data-theme='dark'] .station-actions button) { border-color: #3B82F6; background: #2563EB; }
+:global(:root[data-theme='dark'] .station-actions button + button) { background: #161E2A; color: #C9E0FF; }
+:global(:root[data-theme='dark'] .station-actions button:hover) { background: #3B82F6; }
+:global(:root[data-theme='dark'] .station-actions button:disabled) { border-color: #3A4656; background: #202A37; color: #7F8B9D; }
+:global(:root[data-theme='dark'] .unlinked) { border-top-color: #273548; }
+:global(:root[data-theme='dark'] .station-actions button) { border-color: #3B82F6; background: #2563EB; }
+:global(:root[data-theme='dark'] .station-actions button + button) { background: #111923; color: #BFDBFE; }
+:global(:root[data-theme='dark'] .station-actions button:hover) { background: #3B82F6; }
+:global(:root[data-theme='dark'] .station-actions button:disabled) { border-color: #3A4656; background: #202A37; color: #7F8B9D; }
+:global(:root[data-theme='dark'] .unlinked) { border-top-color: #202D3D; }
+
 @media (max-width: 640px) {
 	.map-toolbar { top: max(0.6rem, env(safe-area-inset-top, 0px)); left: 0.6rem; right: 0.6rem; flex-wrap: wrap; }
 	.map-search { width: 100%; order: 2; }

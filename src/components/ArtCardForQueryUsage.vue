@@ -2,6 +2,7 @@
 import {ref, computed, watch, nextTick} from "vue"
 import axios from "axios"
 import ColorThief from 'colorthief'
+import { fetchAvatarUrl } from '@/services/avatar.js'
 
 const emits = defineEmits<{ ready: []; }>();
 const props = defineProps({
@@ -70,11 +71,7 @@ async function queryAccountData(): Promise<number> {
 
 async function getAvatar(name: string): Promise<string | undefined> {
 	try {
-		const response = await fetch(`https://api.glowingstone.cn/qo/download/avatar?name=${name}`);
-		const data = await response.json();
-		if (data?.url) {
-			return data.url;
-		}
+		return await fetchAvatarUrl(name)
 	} catch (error) {
 		console.error('Error fetching avatar:', error);
 	}
@@ -177,4 +174,3 @@ watch([avatarUrl, backgroundUrl, statistics], () => {
 <style scoped>
 @import url('@/assets/artcard.css');
 </style>
-

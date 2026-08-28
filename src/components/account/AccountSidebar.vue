@@ -43,11 +43,6 @@ const navigationItems = computed(() =>
 				<span class="logout-title">注销登录</span>
 				<span class="logout-desc">清除当前设备上的账户会话</span>
 			</button>
-
-			<div class="tip-card">
-				<p class="tip-title">安全提示</p>
-				<p class="tip-desc">建议定期查看登录历史，发现异常立即修改密码。</p>
-			</div>
 		</div>
 	</aside>
 </template>
@@ -88,6 +83,7 @@ const navigationItems = computed(() =>
 .side :deep(.app-navigation-entry:nth-child(2)) { animation-delay: 110ms; }
 .side :deep(.app-navigation-entry:nth-child(3)) { animation-delay: 150ms; }
 .side :deep(.app-navigation-entry:nth-child(4)) { animation-delay: 190ms; }
+.side :deep(.app-navigation-entry:nth-child(5)) { animation-delay: 230ms; }
 
 .side-sub {
 	margin: 0;
@@ -142,25 +138,6 @@ const navigationItems = computed(() =>
 	opacity: 0.68;
 }
 
-.tip-card {
-	background: transparent;
-	padding: 0.9rem;
-	border-radius: 0;
-	border: 1px solid var(--border-soft);
-}
-
-.tip-title {
-	margin: 0 0 0.35rem;
-	font-weight: 600;
-	color: var(--text-main);
-}
-
-.tip-desc {
-	margin: 0;
-	color: var(--text-secondary);
-	line-height: 1.5;
-}
-
 @keyframes account-side-item-in {
 	from { opacity: 0; transform: translateX(-10px); }
 	to { opacity: 1; transform: translateX(0); }
@@ -195,14 +172,13 @@ const navigationItems = computed(() =>
 	}
 
 	.side-sub,
-	.tip-card,
 	.logout-desc {
 		display: none;
 	}
 
 	.side :deep(.app-navigation.is-panel) {
 		display: grid;
-		grid-template-columns: repeat(4, minmax(112px, 1fr));
+		grid-template-columns: repeat(5, minmax(112px, 1fr));
 		gap: 0.4rem;
 		overflow-x: auto;
 		padding-bottom: 0.2rem;

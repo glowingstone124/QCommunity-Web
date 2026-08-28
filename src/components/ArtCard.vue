@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {ref, computed, onMounted} from "vue"
 import axios from "axios"
+import { fetchAvatarUrl } from '@/services/avatar.js'
 const props = defineProps({
 	scale: {
 		type: [Number],
@@ -48,11 +49,7 @@ async function queryAccountData(): Promise<number> {
 }
 async function getAvatar(name: string): Promise<string | undefined> {
 	try {
-		const response = await fetch(`https://api.glowingstone.cn/qo/download/avatar?name=${name}`);
-		const data = await response.json();
-		if (data?.url) {
-			return data.url;
-		}
+		return await fetchAvatarUrl(name)
 	} catch (error) {
 		console.error('Error fetching avatar:', error);
 	}
@@ -159,4 +156,3 @@ function onImgLoad() {
 <style scoped>
 @import url('@/assets/artcard.css');
 </style>
-

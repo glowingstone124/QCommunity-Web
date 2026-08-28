@@ -84,7 +84,7 @@ const roleClass = (role) => ({
 .hero-copy p { max-width: 38rem; margin: 1.4rem 0 0; color: var(--text-secondary); font-size: clamp(1rem, 2vw, 1.2rem); }
 .hero-actions { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: 1rem; }
 .primary-link, .text-link { display: inline-flex; align-items: center; gap: 0.45rem; font-weight: 700; text-decoration: none; }
-.primary-link { min-height: 44px; padding: 0 1.1rem; border: 1px solid var(--primary); background: var(--primary); color: white; }
+.primary-link { min-height: 44px; padding: 0 1.1rem; border: 1px solid var(--button-primary-bg); background: var(--button-primary-bg); color: white; }
 .primary-link:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
 .text-link { color: var(--text-secondary); }
 .text-link:hover { color: var(--text-main); }

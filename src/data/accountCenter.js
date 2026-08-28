@@ -19,4 +19,9 @@ export const accountTabs = [
 		title: '附属账户',
 		description: '管理绑定账户',
 	},
+	{
+		id: 4,
+		title: '设置',
+		description: '界面偏好',
+	},
 ]

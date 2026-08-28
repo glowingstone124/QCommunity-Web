@@ -1,4 +1,13 @@
 import { onMounted, ref } from 'vue'
+import { fetchAvatar } from '@/services/avatar.js'
+
+const sharedTheme = ref(
+	typeof window !== 'undefined' && localStorage.getItem('theme') === 'dark' ? 'dark' : 'light',
+)
+
+export function useThemePreference() {
+	return sharedTheme
+}
 
 export function useHeaderProfile() {
 	const username = ref(localStorage.getItem('username') || '')
@@ -6,13 +15,17 @@ export function useHeaderProfile() {
 	const loggedIn = ref(false)
 	const playtime = ref(0)
 	const avatarUrl = ref('https://example.com/avatar.jpg')
-	const theme = ref('light')
+	const theme = sharedTheme
 
 	const getAvatar = async (name) => {
 		try {
-			const res = await fetch(`https://api.qoriginal.vip/qo/download/avatar?name=${name}`)
-			const data = await res.json()
-			avatarUrl.value = data.url
+			const avatar = await fetchAvatar(name)
+			if (avatar?.special === true) {
+				avatarUrl.value = avatar.url || ''
+				return
+			}
+
+			avatarUrl.value = avatar?.url || avatarUrl.value
 		} catch (error) {
 			console.error('获取头像失败:', error)
 		}

@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { get } from '@/utils/request'
+import { fetchAvatar } from '@/services/avatar.js'
 
 const POLLING_INTERVAL = 3000
 
@@ -163,8 +164,7 @@ async function getPlayerAvatar(name) {
 	}
 
 	try {
-		const response = await fetch(`https://api.glowingstone.cn/qo/download/avatar?name=${encodeURIComponent(name)}`)
-		const data = await response.json()
+		const data = await fetchAvatar(name)
 		const avatar = data?.url
 			? {
 				url: data.url,
@@ -436,14 +436,14 @@ onBeforeUnmount(stopPolling)
 }
 
 :global(:root[data-theme='dark'] .dashboard) {
-	--dashboard-surface: #070B12;
-	--dashboard-surface-muted: #050812;
-	--dashboard-line: #131A26;
-	--dashboard-line-strong: #1A2433;
-	--dashboard-soft: color-mix(in srgb, #E6EAF2 5%, transparent);
-	--dashboard-blue-soft: color-mix(in srgb, var(--primary) 16%, #070B12);
-	--dashboard-green-soft: color-mix(in srgb, var(--success) 13%, #070B12);
-	--dashboard-yellow-soft: color-mix(in srgb, var(--warning) 15%, #070B12);
+	--dashboard-surface: #101722;
+	--dashboard-surface-muted: #0C1118;
+	--dashboard-line: #29384A;
+	--dashboard-line-strong: #40546D;
+	--dashboard-soft: color-mix(in srgb, var(--dark-text-primary) 7%, transparent);
+	--dashboard-blue-soft: color-mix(in srgb, var(--primary) 16%, #101722);
+	--dashboard-green-soft: color-mix(in srgb, var(--success) 13%, #101722);
+	--dashboard-yellow-soft: color-mix(in srgb, var(--warning) 15%, #101722);
 }
 
 .dashboard-hero,

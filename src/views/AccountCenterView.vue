@@ -7,6 +7,7 @@ import '@pnotify/core/dist/BrightTheme.css'
 import * as PNotifyMobile from '@pnotify/mobile'
 import '@pnotify/mobile/dist/PNotifyMobile.css'
 import AccountOverviewPanel from '@/components/account/AccountOverviewPanel.vue'
+import AccountPreferencesPanel from '@/components/account/AccountPreferencesPanel.vue'
 import AccountSidebar from '@/components/account/AccountSidebar.vue'
 import AccountWhitelistPanel from '@/components/account/AccountWhitelistPanel.vue'
 import AffiliatedAccountComponent from '@/components/AffiliatedAccountComponent.vue'
@@ -246,6 +247,7 @@ watch(currentSetting, (newValue) => {
 			break
 		case 2:
 		case 3:
+		case 4:
 			isImmersive.value = false
 			break
 	}
@@ -308,6 +310,10 @@ watch(ipAddr, validateIP)
 				<section v-if="currentSetting === 3" key="affiliated" class="panel panel-full">
 					<AffiliatedAccountComponent />
 				</section>
+			</transition>
+
+			<transition name="slide-in">
+				<AccountPreferencesPanel v-if="currentSetting === 4" key="preferences" />
 			</transition>
 		</main>
 	</div>

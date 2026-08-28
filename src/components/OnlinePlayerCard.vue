@@ -22,6 +22,7 @@
 
 <script setup lang="ts">
 import { defineProps, ref, onMounted, onBeforeUnmount } from 'vue';
+import { fetchAvatarUrl } from '@/services/avatar.js'
 
 const avatarCache = new Map<string, string>();
 
@@ -48,11 +49,10 @@ async function getAvatar(name: string): Promise<string | undefined> {
 	}
 
 	try {
-		const response = await fetch(`https://api.glowingstone.cn/qo/download/avatar?name=${name}`);
-		const data = await response.json();
-		if (data?.url) {
-			avatarCache.set(name, data.url);
-			return data.url;
+		const url = await fetchAvatarUrl(name)
+		if (url) {
+			avatarCache.set(name, url);
+			return url;
 		}
 	} catch (error) {
 		console.error('Error fetching avatar:', error);
