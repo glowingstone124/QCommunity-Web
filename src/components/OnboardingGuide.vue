@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { useOnboardingGuide } from '@/composables/useOnboardingGuide.js'
 
-const { locale } = useI18n()
+const { locale, t } = useI18n()
 const router = useRouter()
 const { closeGuide, dismissPrompt, isGuideOpen, isPromptOpen, startGuideFromPrompt } =
     useOnboardingGuide()
@@ -14,63 +14,13 @@ const spotlightStyle = ref(null)
 const panelStyle = ref({})
 
 const steps = computed(() => {
-    if (locale.value === 'zh') {
-        return [
-            {
-                title: '欢迎来到 QHub',
-                body: '这里集中放置 Quantum Original 的账号、服务器状态和社区工具。用一分钟了解入口，马上开始使用。',
-                target: null,
-            },
-            {
-                title: '先绑定你的身份',
-                body: '还没有账户就注册，已有账户直接登录。注册需要填写 Minecraft 用户名、QQ 号和至少 8 位密码，并完成当前开放的验证方式。',
-                target: '[data-guide-target="account"]',
-            },
-            {
-                title: '从顶部导航进入功能',
-                body: '社区里可以查询玩家、查看聊天记录；服务器里可以看实时状态、榜单和交通路线；内容里有公告与 Wiki 指南。',
-                target: '[data-guide-target="navigation"]',
-            },
-            {
-                title: '首页查看最新动态',
-                body: '首页下方会展示活动和公告。点击文章卡片即可阅读详情，服务器规则、连接方式和常用指令也都收录在 Wiki 指南中。',
-                target: '[data-guide-target="home-news"]',
-            },
-            {
-                title: '准备好了，开始探索',
-                body: '建议先完成注册，再从玩家查询或服务器指南开始。你之后也可以点击顶部的 ? 随时重新打开这份指引。',
-                target: null,
-            },
-        ]
-    }
-
-    return [
-        {
-            title: 'Welcome to QHub',
-            body: 'Quantum Original accounts, server status, and community tools live here. Take a minute to learn the entry points and get started.',
-            target: null,
-        },
-        {
-            title: 'Set up your identity',
-            body: 'Register if you are new, or sign in if you already have an account. Registration uses your Minecraft username, QQ number, an 8-character password, and an available verification method.',
-            target: '[data-guide-target="account"]',
-        },
-        {
-            title: 'Use the top navigation',
-            body: 'Community includes player lookup and chat history. Server includes live status, leaderboards, and route planning. Content contains news and Wiki guides.',
-            target: '[data-guide-target="navigation"]',
-        },
-        {
-            title: 'Catch the latest updates',
-            body: 'The home page collects current events and announcements. Open a story to read more, or use the Wiki for server rules, connection details, and commands.',
-            target: '[data-guide-target="home-news"]',
-        },
-        {
-            title: 'You are ready to explore',
-            body: 'Register first, then start with player lookup or the server guides. Click the ? button in the header any time you want to replay this tour.',
-            target: null,
-        },
-    ]
+	return [
+		{ title: t('onboardingPage.welcomeTitle'), body: t('onboardingPage.welcomeBody'), target: null },
+		{ title: t('onboardingPage.identityTitle'), body: t('onboardingPage.identityBody'), target: '[data-guide-target="account"]' },
+		{ title: t('onboardingPage.navigationTitle'), body: t('onboardingPage.navigationBody'), target: '[data-guide-target="navigation"]' },
+		{ title: t('onboardingPage.updatesTitle'), body: t('onboardingPage.updatesBody'), target: '[data-guide-target="home-news"]' },
+		{ title: t('onboardingPage.readyTitle'), body: t('onboardingPage.readyBody'), target: null },
+	]
 })
 
 const currentStep = computed(() => steps.value[currentStepIndex.value])
@@ -232,7 +182,7 @@ onBeforeUnmount(() => {
                 <button
                     type="button"
                     class="onboarding-scrim"
-                    :aria-label="locale === 'zh' ? '关闭新手指引提示' : 'Close quick start prompt'"
+					:aria-label="t('onboardingPage.promptClose')"
                     @click="dismissPrompt"
                 ></button>
 
@@ -240,31 +190,15 @@ onBeforeUnmount(() => {
                     class="onboarding-prompt-panel"
                     role="dialog"
                     aria-modal="true"
-                    :aria-labelledby="
-                        locale === 'zh'
-                            ? 'onboarding-prompt-title-zh'
-                            : 'onboarding-prompt-title-en'
-                    "
+					aria-labelledby="onboarding-prompt-title"
                 >
                     <h2
-                        :id="
-                            locale === 'zh'
-                                ? 'onboarding-prompt-title-zh'
-                                : 'onboarding-prompt-title-en'
-                        "
+						id="onboarding-prompt-title"
                     >
-                        {{
-                            locale === 'zh'
-                                ? '要开始 QHub 新手指引吗？'
-                                : 'Start the QHub quick start?'
-                        }}
+						{{ t('onboardingPage.promptTitle') }}
                     </h2>
                     <p>
-                        {{
-                            locale === 'zh'
-                                ? '账号已经注册完成。用几步了解导航、社区工具和服务器信息入口。也可以在账户中心的设置中隐藏顶栏新手指引按钮。'
-                                : 'Your account is ready. Take a short tour of navigation, community tools, and server information. You can hide the header guide button in Account Center settings.'
-                        }}
+						{{ t('onboardingPage.promptBody') }}
                     </p>
                     <div class="onboarding-prompt-actions">
                         <button
@@ -272,14 +206,14 @@ onBeforeUnmount(() => {
                             class="onboarding-prompt-later"
                             @click="dismissPrompt"
                         >
-                            {{ locale === 'zh' ? '稍后再说' : 'Maybe later' }}
+							{{ t('onboardingPage.later') }}
                         </button>
                         <button
                             type="button"
                             class="onboarding-prompt-start"
                             @click="startGuideFromPrompt"
                         >
-                            {{ locale === 'zh' ? '开始指引' : 'Start tour' }}
+							{{ t('onboardingPage.start') }}
                             <span aria-hidden="true">→</span>
                         </button>
                     </div>
@@ -296,7 +230,7 @@ onBeforeUnmount(() => {
                 <button
                     type="button"
                     class="onboarding-scrim"
-                    :aria-label="locale === 'zh' ? '关闭新手指引' : 'Close quick start guide'"
+					:aria-label="t('onboardingPage.close')"
                     @click="closeGuide"
                 ></button>
 
@@ -321,8 +255,8 @@ onBeforeUnmount(() => {
                         <button
                             type="button"
                             class="onboarding-close"
-                            :title="locale === 'zh' ? '关闭指引' : 'Close guide'"
-                            :aria-label="locale === 'zh' ? '关闭指引' : 'Close guide'"
+							:title="t('onboardingPage.close')"
+							:aria-label="t('onboardingPage.close')"
                             @click="closeGuide"
                         >
                             <span aria-hidden="true">×</span>
@@ -354,22 +288,22 @@ onBeforeUnmount(() => {
                             class="onboarding-action onboarding-action--primary"
                             @click="goTo('/register')"
                         >
-                            {{ locale === 'zh' ? '去注册' : 'Register' }}
+							{{ t('onboardingPage.register') }}
                             <span aria-hidden="true">↗</span>
                         </button>
                         <button type="button" class="onboarding-action" @click="goTo('/query')">
-                            {{ locale === 'zh' ? '玩家查询' : 'Player lookup' }}
+							{{ t('onboardingPage.query') }}
                             <span aria-hidden="true">↗</span>
                         </button>
                         <button type="button" class="onboarding-action" @click="goTo('/guides')">
-                            {{ locale === 'zh' ? '查看指南' : 'Open guides' }}
+							{{ t('onboardingPage.guides') }}
                             <span aria-hidden="true">↗</span>
                         </button>
                     </div>
 
                     <footer class="onboarding-footer">
                         <button type="button" class="onboarding-skip" @click="closeGuide">
-                            {{ locale === 'zh' ? '跳过' : 'Skip' }}
+							{{ t('onboardingPage.skip') }}
                         </button>
                         <div class="onboarding-navigation">
                             <button
@@ -379,18 +313,10 @@ onBeforeUnmount(() => {
                                 @click="previousStep"
                             >
                                 <span aria-hidden="true">←</span>
-                                {{ locale === 'zh' ? '上一步' : 'Back' }}
+								{{ t('onboardingPage.back') }}
                             </button>
                             <button type="button" class="onboarding-next" @click="nextStep">
-                                {{
-                                    isLastStep
-                                        ? locale === 'zh'
-                                            ? '开始使用'
-                                            : 'Start exploring'
-                                        : locale === 'zh'
-                                          ? '下一步'
-                                          : 'Next'
-                                }}
+								{{ t(isLastStep ? 'onboardingPage.startExploring' : 'onboardingPage.next') }}
                                 <span aria-hidden="true">→</span>
                             </button>
                         </div>

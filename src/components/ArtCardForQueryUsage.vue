@@ -3,6 +3,7 @@ import {ref, computed, watch, nextTick} from "vue"
 import axios from "axios"
 import ColorThief from 'colorthief'
 import { fetchAvatarUrl } from '@/services/avatar.js'
+import { useI18n } from 'vue-i18n'
 
 const emits = defineEmits<{ ready: []; }>();
 const props = defineProps({
@@ -16,6 +17,7 @@ const props = defineProps({
 		required: true,
 	}
 })
+const { t } = useI18n()
 
 const statistics = ref<{ label: string, value: string }[]>([])
 const uuid = ref("")
@@ -101,11 +103,12 @@ const levelColors = {
 }
 
 const levelDesc = {
-	1: "Common",
-	2: "Uncommon",
-	3: "Rare",
-	4: "Limited",
+	1: 'common',
+	2: 'uncommon',
+	3: 'rare',
+	4: 'limited',
 }
+
 const backgroundUrl = ref("")
 
 const textColor = computed(() => {
@@ -144,7 +147,7 @@ watch([avatarUrl, backgroundUrl, statistics], () => {
 		<div class="background" :style="{ backgroundImage: `url('${backgroundUrl}')` }">
 			<div class="top">
 				<div class="section-1" :style="{backgroundImage: gradient}">
-					<img :src="avatarUrl" alt="avatar" ref="avatarImg" crossorigin="anonymous"
+					<img :src="avatarUrl" :alt="t('playerCard.avatarAlt')" ref="avatarImg" crossorigin="anonymous"
 						 @load="onImgLoad" />
 				</div>
 				<div class="section-4"><h1>{{ username }}</h1></div>
@@ -163,7 +166,7 @@ watch([avatarUrl, backgroundUrl, statistics], () => {
 				</div>
 				<div class="level">
 					<div class="cube" :style="{ background: levelColors[level] }"></div>
-					<h2 :style="{ color: levelColors[level] }">{{ levelDesc[level] }}</h2>
+					<h2 :style="{ color: levelColors[level] }">{{ t(`cardsPage.${levelDesc[level] || 'unknownRarity'}`) }}</h2>
 				</div>
 			</div>
 		</div>

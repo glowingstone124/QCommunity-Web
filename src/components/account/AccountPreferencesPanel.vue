@@ -1,9 +1,11 @@
 <script setup>
 import { useOnboardingGuide } from '@/composables/useOnboardingGuide.js'
 import { useThemePreference } from '@/composables/useHeaderProfile.js'
+import { useI18n } from 'vue-i18n'
 
 const { isGuideButtonVisible, setGuideButtonVisible } = useOnboardingGuide()
 const theme = useThemePreference()
+const { t } = useI18n()
 
 function setTheme(nextTheme) {
     if (nextTheme !== 'light' && nextTheme !== 'dark') return
@@ -18,17 +20,17 @@ function setTheme(nextTheme) {
     <section class="panel preferences-panel">
         <header class="panel-header">
             <div>
-                <h2 class="panel-title">设置</h2>
+				<h2 class="panel-title">{{ t('preferencesPage.title') }}</h2>
             </div>
         </header>
 
         <div class="preference-list">
             <section class="preference-row">
                 <div class="preference-copy">
-                    <h3>默认配色</h3>
-                    <p>选择 QHub 的默认显示配色。</p>
+					<h3>{{ t('preferencesPage.defaultTheme') }}</h3>
+					<p>{{ t('preferencesPage.themeDescription') }}</p>
                 </div>
-                <div class="theme-segmented" role="group" aria-label="默认配色">
+				<div class="theme-segmented" role="group" :aria-label="t('preferencesPage.defaultTheme')">
                     <button
                         type="button"
                         class="theme-option"
@@ -36,7 +38,7 @@ function setTheme(nextTheme) {
                         :aria-pressed="theme === 'light'"
                         @click="setTheme('light')"
                     >
-                        浅色
+						{{ t('preferencesPage.light') }}
                     </button>
                     <button
                         type="button"
@@ -45,18 +47,18 @@ function setTheme(nextTheme) {
                         :aria-pressed="theme === 'dark'"
                         @click="setTheme('dark')"
                     >
-                        深色
+						{{ t('preferencesPage.dark') }}
                     </button>
                 </div>
             </section>
 
             <section class="preference-row">
                 <div class="preference-copy">
-                    <h3>顶栏新手指引按钮</h3>
-                    <p>控制顶栏是否显示新手指引按钮。</p>
+					<h3>{{ t('preferencesPage.guideButton') }}</h3>
+					<p>{{ t('preferencesPage.guideButtonDescription') }}</p>
                 </div>
                 <label class="preference-toggle">
-                    <span>显示按钮</span>
+					<span>{{ t('preferencesPage.showButton') }}</span>
                     <input
                         type="checkbox"
                         :checked="isGuideButtonVisible"

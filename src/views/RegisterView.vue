@@ -1,17 +1,17 @@
 <template>
 	<div class="register-page">
-		<section class="register-copy">
-			<h1>加入 Quantum Original</h1>
-			<p>让我们开始吧！</p>
+	<section class="register-copy">
+			<h1>{{ t('register.title') }}</h1>
+			<p>{{ t('register.intro') }}</p>
 			<div v-if="isDevMode" class="dev-banner">
-				You are currently running a development version of QHub. This page is only for test purpose.
+				{{ t('auth.devBanner') }}
 			</div>
 		</section>
 
 		<section class="register-panel">
 			<header class="panel-header">
 				<div>
-					<span class="step-counter">第 {{ step }} / 4 步</span>
+					<span class="step-counter">{{ t('register.stepCounter', { step }) }}</span>
 					<h2>{{ currentStepTitle }}</h2>
 					<p>{{ currentStepDescription }}</p>
 				</div>
@@ -25,30 +25,30 @@
 					:class="{ active: step === item.id, done: step > item.id }"
 				>
 					<span>{{ item.id }}</span>
-					<strong>{{ item.label }}</strong>
+					<strong>{{ t(item.labelKey) }}</strong>
 				</div>
 			</div>
 
 			<Transition name="step-swap" mode="out-in">
 				<form v-if="quiz_seq === -1" :key="`form-${step}`" class="register-form" @submit.prevent="handleNext">
 					<label v-if="step === 1" class="field">
-						<span>Minecraft 用户名</span>
-						<input v-model="username" type="text" placeholder="Minecraft 用户名" autocomplete="username" required />
+						<span>{{ t('register.usernameLabel') }}</span>
+						<input v-model="username" type="text" :placeholder="t('register.usernameLabel')" autocomplete="username" required />
 					</label>
 
 					<label v-if="step === 2" class="field">
-						<span>QQ 号</span>
-						<input v-model="qq" type="text" placeholder="QQ 号" inputmode="numeric" @input="validateQQ" required />
+						<span>{{ t('register.qqLabel') }}</span>
+						<input v-model="qq" type="text" :placeholder="t('register.qqLabel')" inputmode="numeric" @input="validateQQ" required />
 					</label>
 
 					<label v-if="step === 3" class="field">
-						<span>密码</span>
-						<input v-model="password" type="password" placeholder="设置密码" autocomplete="new-password" minlength="8" required />
+						<span>{{ t('register.passwordLabel') }}</span>
+						<input v-model="password" type="password" :placeholder="t('register.passwordSetup')" autocomplete="new-password" minlength="8" required />
 					</label>
 
 					<label v-if="step === 3" class="field">
-						<span>确认密码</span>
-						<input v-model="confirmPassword" type="password" placeholder="再次输入密码" autocomplete="new-password" minlength="8" required />
+						<span>{{ t('register.confirmPasswordLabel') }}</span>
+						<input v-model="confirmPassword" type="password" :placeholder="t('register.passwordAgain')" autocomplete="new-password" minlength="8" required />
 					</label>
 
 					<div v-if="step === 4" class="verification-options">
@@ -63,29 +63,29 @@
 						>
 							<strong>{{ method.displayName }}</strong>
 							<span>{{ method.description }}</span>
-							<small v-if="method.state === 'reserved'">接口已预留，暂未开放</small>
-							<small v-else-if="method.state === 'unavailable'">当前配置不可用</small>
+							<small v-if="method.state === 'reserved'">{{ t('register.reserved') }}</small>
+							<small v-else-if="method.state === 'unavailable'">{{ t('register.unavailable') }}</small>
 						</button>
-						<p v-if="verificationMethodsLoading" class="configuration-status">正在读取服务端验证配置……</p>
+						<p v-if="verificationMethodsLoading" class="configuration-status">{{ t('register.loadingConfig') }}</p>
 					</div>
 
 					<div v-if="step === 4 && selectedVerificationMethod === 'quiz'" class="quiz-intro">
-						<p>为保证服务器秩序，Quantum Original 只接受初中含在读及以上学历，或具备一定文化常识与文字理解能力的玩家。</p>
+						<p>{{ t('register.quizIntro') }}</p>
 						<p v-if="quizQuestionCount !== null && quizPassingScore !== null">
-							测试共 {{ quizQuestionCount }} 道选择题。答对 {{ quizPassingScore }} 题方为通过。
+							{{ t('register.quizRule', { count: quizQuestionCount, score: quizPassingScore }) }}
 						</p>
-						<p v-else>正在从服务端读取题目数量与通过分数……</p>
-						<p>测试通过后，请返回 QQ 群输入相应的 `.approve-register &lt;参数&gt;` 完成绑定验证。</p>
+						<p v-else>{{ t('register.quizLoading') }}</p>
+						<p>{{ t('register.quizBinding') }}</p>
 					</div>
 
 					<div v-if="step === 4 && selectedVerificationMethod === 'minecraft'" class="minecraft-intro">
-						<p>创建测试请求后，请使用上述 Minecraft 用户名连接测试服务器：</p>
+						<p>{{ t('register.minecraftIntro') }}</p>
 						<p class="server-address">{{ minecraftServerAddress }}</p>
-						<p>进入服务器后会自动领取本次请求。请勿关闭此页面；完成所有测试室后，页面会自动注册账户。</p>
+						<p>{{ t('register.minecraftInstructions') }}</p>
 						<p v-if="minecraftSessionId" class="minecraft-state">
-							当前状态：{{ minecraftStateLabel }}
+							{{ t('register.minecraftStatus', { status: minecraftStateLabel }) }}
 						</p>
-						<small v-if="minecraftSessionId && minecraftExpiryText">请求有效期至 {{ minecraftExpiryText }}</small>
+						<small v-if="minecraftSessionId && minecraftExpiryText">{{ t('register.requestExpires', { time: minecraftExpiryText }) }}</small>
 					</div>
 
 					<p v-if="message" class="message" role="alert">{{ message }}</p>
@@ -104,8 +104,8 @@
 					</div>
 
 					<div class="quiz-meta">
-						<span>剩余 {{ countdown }} 秒</span>
-						<button v-if="quiz_seq === 0" type="button" class="secondary-button" @click="switchPage">跳过等待</button>
+						<span>{{ t('register.remainingSeconds', { countdown }) }}</span>
+						<button v-if="quiz_seq === 0" type="button" class="secondary-button" @click="switchPage">{{ t('register.skipWait') }}</button>
 					</div>
 
 					<div class="options">
@@ -121,34 +121,34 @@
 				</div>
 
 				<div v-else :key="`result-${quiz_seq}`" class="result-panel">
-					<p v-if="isSubmittingQuiz"><span class="spinner"></span>正在由服务端核算答题结果</p>
+					<p v-if="isSubmittingQuiz"><span class="spinner"></span>{{ t('register.checkingQuiz') }}</p>
 					<p v-else-if="message" class="message">{{ message }}</p>
 					<p v-else-if="quizResult && !quizResult.passed" class="message">
-						您的得分为 {{ quizResult.score }} / {{ quizQuestionCount }} 分，自助验证失败，请联系管理员并附上证明材料。
+						{{ t('register.quizFailed', { score: quizResult.score, count: quizQuestionCount }) }}
 					</p>
 					<p v-else-if="quizResult?.passed && !isLoading" class="quiz-success">
-						您的得分为 {{ quizResult.score }} / {{ quizQuestionCount }} 分，自助验证成功，{{ countdown }} 秒后自动为您注册。
+						{{ t('register.quizPassed', { score: quizResult.score, count: quizQuestionCount, countdown }) }}
 					</p>
-					<p v-if="isLoading"><span class="spinner"></span>正在注册</p>
+					<p v-if="isLoading"><span class="spinner"></span>{{ t('register.registering') }}</p>
 				</div>
 			</Transition>
 
 			<div class="panel-actions" v-if="step === 4 && quiz_seq === -1">
-				<p class="configuration-status">请选择一种账户验证方式；验证结果与当前 Minecraft 用户名和 QQ 号绑定，且只能使用一次。</p>
+				<p class="configuration-status">{{ t('register.verificationNotice') }}</p>
 			</div>
 
 			<div class="terms">
-				注册 QO 账号即代表您已经阅读并且同意
-				<a href="https://qoriginal.vip/docs#/things_to_know">用户须知</a>。
+				{{ t('register.termsBefore') }}
+				<a href="https://qoriginal.vip/docs#/things_to_know">{{ t('register.termsLink') }}</a>{{ t('register.termsSuffix') }}
 			</div>
 		</section>
 
 		<div v-if="isDialogVisible" class="dialog-overlay">
 			<div class="dialog">
-				<h2>{{ isDevMode ? '开发模式预览完成' : '注册成功！' }}</h2>
-				<h4 v-if="!isDevMode">欢迎加入 QOriginal！请在 QQ 群中发送确认信息（/approve-register &lt;&gt;）来激活您的账户。</h4>
-				<h4 v-else>本次流程未调用真实注册接口。</h4>
-				<button @click="closeDialog">确认</button>
+				<h2>{{ t(isDevMode ? 'register.devSuccessTitle' : 'register.successTitle') }}</h2>
+				<h4 v-if="!isDevMode">{{ t('register.successMessage') }}</h4>
+				<h4 v-else>{{ t('register.devSuccessMessage') }}</h4>
+				<button @click="closeDialog">{{ t('common.confirm') }}</button>
 			</div>
 		</div>
 	</div>
@@ -158,6 +158,7 @@
 <script setup>
 import {computed, onBeforeUnmount, onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
+import {useI18n} from "vue-i18n";
 import {
 	getRegistrationVerificationMethods,
 	getMinecraftRegistrationStatus,
@@ -194,30 +195,31 @@ const minecraftState = ref("")
 const minecraftExpiresAt = ref(0)
 const minecraftPassed = ref(null)
 const router = useRouter()
+const { t, locale } = useI18n()
 const isDevMode = import.meta.env.DEV
 let countdownTimer = null
 let minecraftPollingTimer = null
 let minecraftStatusInFlight = false
 
 const stepItems = [
-	{ id: 1, label: "用户名" },
-	{ id: 2, label: "QQ" },
-	{ id: 3, label: "密码" },
-	{ id: 4, label: "核验" },
+	{ id: 1, labelKey: "register.stepUsername" },
+	{ id: 2, labelKey: "register.stepQq" },
+	{ id: 3, labelKey: "register.stepPassword" },
+	{ id: 4, labelKey: "register.stepVerify" },
 ]
 
 const currentStepTitle = computed(() => {
-	if (step.value === 1) return "输入 Minecraft 用户名"
-	if (step.value === 2) return "绑定 QQ 号"
-	if (step.value === 3) return "设置登录密码"
-	return "完成自助核验"
+	if (step.value === 1) return t('register.stepUsernameTitle')
+	if (step.value === 2) return t('register.stepQqTitle')
+	if (step.value === 3) return t('register.stepPasswordTitle')
+	return t('register.stepVerifyTitle')
 })
 
 const currentStepDescription = computed(() => {
-	if (step.value === 1) return "用于服务器白名单、玩家资料和社区身份展示。"
-	if (step.value === 2) return "用于 QQ 群内验证和后续账户绑定。"
-	if (step.value === 3) return "请设置一个至少 8 位的登录密码。"
-	return "请选择当前已开放的验证方式；Chamber 世界测试暂未开放。"
+	if (step.value === 1) return t('register.stepUsernameDescription')
+	if (step.value === 2) return t('register.stepQqDescription')
+	if (step.value === 3) return t('register.stepPasswordDescription')
+	return t('register.stepVerifyDescription')
 })
 
 const selectedMinecraftMethod = computed(() =>
@@ -229,16 +231,16 @@ const minecraftServerAddress = computed(() =>
 )
 
 const minecraftStateLabel = computed(() => {
-	if (minecraftState.value === "pending") return "等待进入测试服务器"
-	if (minecraftState.value === "claimed") return "测试进行中"
-	if (minecraftState.value === "completed" && minecraftPassed.value) return "测试通过，正在注册"
-	if (minecraftState.value === "completed") return "测试未通过"
-	return "正在创建测试请求"
+	if (minecraftState.value === "pending") return t('register.statePending')
+	if (minecraftState.value === "claimed") return t('register.stateClaimed')
+	if (minecraftState.value === "completed" && minecraftPassed.value) return t('register.statePassed')
+	if (minecraftState.value === "completed") return t('register.stateFailed')
+	return t('register.stateCreating')
 })
 
 const minecraftExpiryText = computed(() => {
 	if (!minecraftExpiresAt.value) return ""
-	return new Date(minecraftExpiresAt.value).toLocaleTimeString("zh-CN", {
+	return new Date(minecraftExpiresAt.value).toLocaleTimeString(locale.value === 'zh' ? "zh-CN" : "en-US", {
 		hour: "2-digit",
 		minute: "2-digit",
 		second: "2-digit",
@@ -246,12 +248,12 @@ const minecraftExpiryText = computed(() => {
 })
 
 const primaryActionLabel = computed(() => {
-	if (step.value <= 3) return isDevMode ? "下一步（开发模式跳过校验）" : "下一步"
+	if (step.value <= 3) return isDevMode ? t('register.nextDev') : t('register.next')
 	if (selectedVerificationMethod.value === "minecraft") {
-		if (minecraftSessionId.value) return "等待世界测试完成"
-		return isLoading.value ? "正在创建测试请求" : "创建世界测试请求"
+		if (minecraftSessionId.value) return t('register.waitMinecraft')
+		return isLoading.value ? t('register.creatingMinecraft') : t('register.createMinecraft')
 	}
-	return isLoading.value ? "正在创建答题会话" : "我已知悉上述内容，参与测试"
+	return isLoading.value ? t('register.creatingQuiz') : t('register.joinQuiz')
 })
 
 const canStartVerification = computed(() => {
@@ -276,17 +278,17 @@ function validateMinecraftUsername() {
 function formatQuizSessionError(error) {
 	const data = error?.data || {}
 	const code = error?.code || data.code
-	const baseMessage = data.message || error?.message || "暂时无法创建答题会话，请稍后重试。"
+	const baseMessage = data.message || error?.message || t('register.quizSessionUnavailable')
 
 	if (code !== "quiz_session_capacity_reached") return baseMessage
 
 	const details = []
 	if (Number.isInteger(data.activeSessions) && Number.isInteger(data.limit)) {
-		details.push(`当前有效会话：${data.activeSessions} / ${data.limit}。`)
+		details.push(t('register.activeSessions', { active: data.activeSessions, limit: data.limit }))
 	}
 	if (Number.isFinite(data.sessionTtlSeconds) && data.sessionTtlSeconds > 0) {
 		const ttlMinutes = Math.ceil(data.sessionTtlSeconds / 60)
-		details.push(`单个会话最长保留 ${ttlMinutes} 分钟，请稍后重试。`)
+		details.push(t('register.sessionTtl', { minutes: ttlMinutes }))
 	}
 
 	return [baseMessage, ...details].join(" ")
@@ -319,7 +321,7 @@ async function loadVerificationMethods() {
 		selectedVerificationMethod.value =
 			requestedDefault?.id || verificationMethods.value.find(method => method.available)?.id || ""
 		if (!selectedVerificationMethod.value) {
-			message.value = "当前没有可用的账户验证方式，请稍后再试。"
+			message.value = t('register.noVerificationMethod')
 		}
 	} catch (error) {
 		verificationMethods.value = []
@@ -337,27 +339,27 @@ async function handleNext() {
 
 	if (step.value === 1) {
 		if (!isDevMode && !validateMinecraftUsername()) {
-			message.value = "Minecraft 用户名须为 3–16 位，只能包含英文字母、数字和下划线。"
+			message.value = t('register.invalidUsername')
 			return
 		}
 		if (!isDevMode && await validateUsername(username.value)) {
-			message.value = "用户名已被占用"
+			message.value = t('register.usernameTaken')
 			return
 		}
 		step.value++
 	} else if (step.value === 2) {
 		if (!isDevMode && !validateQQ()) {
-			message.value = "请输入正确的 QQ 号"
+			message.value = t('register.invalidQq')
 			return
 		}
 		step.value++
 	} else if (step.value === 3) {
 		if (!isDevMode && password.value.length < 8) {
-			message.value = "密码长度不能少于 8 位"
+			message.value = t('register.shortPassword')
 			return
 		}
 		if (!isDevMode && password.value !== confirmPassword.value) {
-			message.value = "两次输入的密码不一致"
+			message.value = t('register.passwordMismatch')
 			return
 		}
 		step.value++
@@ -380,13 +382,13 @@ async function beginQuiz() {
 	try {
 		const session = await startRegistrationQuiz(username.value, Number(qq.value))
 		if (!Array.isArray(session.questions) || session.questions.length === 0) {
-			throw new Error("服务端未返回有效题目。")
+			throw new Error(t('register.invalidQuiz'))
 		}
 		if (!Number.isInteger(session.questionCount) || !Number.isInteger(session.passingScore)) {
-			throw new Error("服务端未返回有效的题目数量或通过分数。")
+			throw new Error(t('register.invalidQuizConfig'))
 		}
 		if (session.questionCount !== session.questions.length) {
-			throw new Error("服务端返回的题目数量不一致。")
+			throw new Error(t('register.quizCountMismatch'))
 		}
 		quizSessionId.value = session.sessionId
 		quizQuestions.value = session.questions
@@ -412,7 +414,7 @@ async function beginMinecraftTest() {
 	try {
 		const session = await startMinecraftRegistration(username.value, Number(qq.value))
 		if (!session.sessionId || session.state !== "pending") {
-			throw new Error("服务端未返回有效的 Minecraft 测试会话。")
+			throw new Error(t('register.invalidMinecraftSession'))
 		}
 		minecraftSessionId.value = session.sessionId
 		minecraftState.value = session.state
@@ -454,7 +456,7 @@ async function syncMinecraftStatus() {
 		clearMinecraftPolling()
 		minecraftPassed.value = result.passed === true
 		if (!minecraftPassed.value || !result.verificationToken) {
-			message.value = "Minecraft 世界测试未通过，请重新创建测试请求后再试。"
+			message.value = t('register.minecraftFailed')
 			minecraftSessionId.value = ""
 			return
 		}
@@ -557,7 +559,7 @@ async function submitForm() {
 			markOnboardingPromptPending()
 			isDialogVisible.value = true
 		} else {
-			message.value = result.message || "注册失败，请检查信息是否已被使用"
+			message.value = result.message || t('register.registerFailed')
 		}
 	} catch (error) {
 		message.value = error.message

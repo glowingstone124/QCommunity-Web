@@ -27,13 +27,20 @@
 <script setup>
 import NavBar from './components/NavBar.vue';
 import OnboardingGuide from './components/OnboardingGuide.vue'
+import {useI18n} from 'vue-i18n'
 import {computed, onBeforeUnmount, onMounted, watch} from "vue";
 import {useRoute} from "vue-router";
 import {hasPendingOnboardingPrompt, hasSeenOnboarding, useOnboardingGuide} from '@/composables/useOnboardingGuide.js'
 const route = useRoute();
 const showNavBar = computed(() => route.meta.showNavBar !== false);
+const {locale, t} = useI18n()
 const {openPrompt} = useOnboardingGuide()
 let onboardingPromptTimer = 0
+
+function syncDocumentTitle() {
+	const title = route.meta.pageTitleKey ? t(route.meta.pageTitleKey) : ''
+	document.title = title ? `QHub | ${title}` : 'QHub'
+}
 
 function scheduleOnboardingPrompt() {
 	if (onboardingPromptTimer) {
@@ -67,6 +74,7 @@ onMounted(() => {
 });
 
 watch(() => route.path, scheduleOnboardingPrompt)
+watch([() => route.name, locale], syncDocumentTitle, {immediate: true})
 
 onBeforeUnmount(() => {
 	if (onboardingPromptTimer) {

@@ -1,7 +1,9 @@
 <script setup>
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const showDeclaration = ref(false)
+const { t } = useI18n()
 
 const contributors = [
 	{ name: 'glowingstone124', roles: ['QAPI3', 'QPlugin', 'Web'] },
@@ -19,46 +21,48 @@ const roleClass = (role) => ({
 	Web: 'web',
 	赞助: 'sponsor',
 }[role])
+
+const roleLabel = (role) => role === '赞助' ? t('sponsorsPage.sponsor') : role
 </script>
 
 <template>
 	<main class="sponsors-page page-shell">
 		<header class="sponsors-hero">
 			<div class="hero-copy">
-				<h1>致谢</h1>
-				<p>Quantum Original 的每一步，都离不开这些朋友提供的代码、创作与支持。</p>
+				<h1>{{ t('sponsorsPage.title') }}</h1>
+				<p>{{ t('sponsorsPage.description') }}</p>
 			</div>
 			<div class="hero-actions">
-				<a class="primary-link" href="https://afdian.com/a/glowingstone124">支持我们 <span aria-hidden="true">↗</span></a>
-				<router-link class="text-link" to="/"><span aria-hidden="true">←</span> 返回首页</router-link>
+			<a class="primary-link" href="https://afdian.com/a/glowingstone124">{{ t('sponsorsPage.support') }} <span aria-hidden="true">↗</span></a>
+			<router-link class="text-link" to="/"><span aria-hidden="true">←</span> {{ t('sponsorsPage.backHome') }}</router-link>
 			</div>
 		</header>
 
 		<section class="credits" aria-labelledby="credits-title">
 			<div class="section-heading">
 				<div>
-					<h2 id="credits-title">贡献者</h2>
-					<p>感谢你们共同塑造这个社区。</p>
+					<h2 id="credits-title">{{ t('sponsorsPage.contributors') }}</h2>
+					<p>{{ t('sponsorsPage.contributorsDescription') }}</p>
 				</div>
 			</div>
 
 			<a class="artist-row" href="https://space.bilibili.com/152309938">
-				<img src="/images/miaokuli-avatar.jpg" alt="苗库里头像">
+				<img src="/images/miaokuli-avatar.jpg" :alt="t('sponsorsPage.artistAlt')">
 				<span class="artist-copy">
 					<strong>苗库里</strong>
 					<span class="artist-projects">
-						<small>东方系列像素头像</small>
+						<small>{{ t('sponsorsPage.artistProject') }}</small>
 						<small>Pixel Fantasia</small>
 					</span>
 				</span>
-				<span class="visit" aria-hidden="true">访问主页 ↗</span>
+				<span class="visit" aria-hidden="true">{{ t('sponsorsPage.visit') }} ↗</span>
 			</a>
 
 			<div class="contributor-list">
 				<article v-for="(person, index) in contributors" :key="person.name" class="contributor-row" :style="{ '--row-index': index }">
 					<h3>{{ person.name }}</h3>
 					<div class="roles">
-						<span v-for="role in person.roles" :key="role" class="role" :class="roleClass(role)">{{ role }}</span>
+						<span v-for="role in person.roles" :key="role" class="role" :class="roleClass(role)">{{ roleLabel(role) }}</span>
 					</div>
 				</article>
 			</div>
@@ -66,11 +70,11 @@ const roleClass = (role) => ({
 
 		<section class="declaration-section">
 			<button type="button" class="declaration-toggle" :aria-expanded="showDeclaration" aria-controls="contribution-declaration" @click="showDeclaration = !showDeclaration">
-				<span>贡献与赞助声明</span><span aria-hidden="true">{{ showDeclaration ? '−' : '+' }}</span>
+				<span>{{ t('sponsorsPage.declaration') }}</span><span aria-hidden="true">{{ showDeclaration ? '−' : '+' }}</span>
 			</button>
 			<transition name="declaration">
 				<div v-if="showDeclaration" id="contribution-declaration" class="declaration-content" data-selectable>
-					<p>所有捐赠与贡献均为自愿、无偿行为。捐赠资金由 Quantum Original 统一调配，捐赠完成后不予退款；贡献资源将用于 Quantum Original 及其附属项目，并尽力注明来源。捐赠或贡献不会赋予任何游戏特权。</p>
+					<p>{{ t('sponsorsPage.declarationBody') }}</p>
 				</div>
 			</transition>
 		</section>

@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import {collapseSchedule} from '@/data/collapse.js'
 
 const props = defineProps({
@@ -36,16 +37,17 @@ const props = defineProps({
 		default: null,
 	},
 })
+const { t, locale } = useI18n()
 
 const teamNames = {
-	A: 'A：旧城同盟',
-	B: 'B：主城守望',
-	C: 'C：锡城联合',
+	A: 'collapsePage.teamA',
+	B: 'collapsePage.teamB',
+	C: 'collapsePage.teamC',
 }
 
 function formatDate(timestamp) {
 	const date = new Date(timestamp)
-	return date.toLocaleString()
+	return date.toLocaleString(locale.value === 'zh' ? 'zh-CN' : 'en-US')
 }
 
 function statisticValue(key) {
@@ -55,29 +57,31 @@ function statisticValue(key) {
 
 function formatDistance(centimeters) {
 	const meters = centimeters / 100
-	if (meters < 1_000) return `${Math.round(meters).toLocaleString()} 米`
-	return `${(meters / 1_000).toLocaleString('zh-CN', { maximumFractionDigits: 2 })} 千米`
+	if (meters < 1_000) return t('accountOverview.meters', { count: Math.round(meters).toLocaleString(locale.value === 'zh' ? 'zh-CN' : 'en-US') })
+	return t('accountOverview.kilometers', { count: (meters / 1_000).toLocaleString(locale.value === 'zh' ? 'zh-CN' : 'en-US', { maximumFractionDigits: 2 }) })
 }
 
 function formatDamage(rawDamage) {
-	return `${(rawDamage / 10).toLocaleString('zh-CN', { maximumFractionDigits: 1 })} 点`
+	return t('accountOverview.damagePoints', { count: (rawDamage / 10).toLocaleString(locale.value === 'zh' ? 'zh-CN' : 'en-US', { maximumFractionDigits: 1 }) })
 }
 
 function formatDuration(ticks) {
 	const seconds = Math.floor(ticks / 20)
-	if (seconds < 60) return `${seconds} 秒`
+	if (seconds < 60) return t('accountOverview.seconds', { count: seconds })
 	const minutes = Math.floor(seconds / 60)
 	const hours = Math.floor(minutes / 60)
-	return hours ? `${hours} 小时 ${minutes % 60} 分钟` : `${minutes} 分钟`
+	return hours
+		? [t('accountOverview.hours', { count: hours }), t('accountOverview.minutes', { count: minutes % 60 })].join(' ')
+		: t('accountOverview.minutes', { count: minutes })
 }
 
 const gameStatisticItems = computed(() => [
-	{ label: '移动距离', value: formatDistance(statisticValue('distance_cm')) },
-	{ label: '造成伤害', value: formatDamage(statisticValue('damage_dealt')) },
-	{ label: '怪物击杀', value: statisticValue('mob_kills').toLocaleString() },
-	{ label: '挖掘方块', value: statisticValue('blocks_mined').toLocaleString() },
-	{ label: '放置方块', value: statisticValue('blocks_placed').toLocaleString() },
-	{ label: '鞘翅飞行', value: formatDuration(statisticValue('elytra_flight_ticks')) },
+	{ label: t('accountOverview.distance'), value: formatDistance(statisticValue('distance_cm')) },
+	{ label: t('accountOverview.damage'), value: formatDamage(statisticValue('damage_dealt')) },
+	{ label: t('accountOverview.mobKills'), value: statisticValue('mob_kills').toLocaleString() },
+	{ label: t('accountOverview.blocksMined'), value: statisticValue('blocks_mined').toLocaleString() },
+	{ label: t('accountOverview.blocksPlaced'), value: statisticValue('blocks_placed').toLocaleString() },
+	{ label: t('accountOverview.elytraFlight'), value: formatDuration(statisticValue('elytra_flight_ticks')) },
 ])
 </script>
 
@@ -85,34 +89,34 @@ const gameStatisticItems = computed(() => [
 	<section class="panel">
 		<header class="panel-header">
 			<div>
-				<h2 class="panel-title">账户信息</h2>
-				<p class="panel-sub">近况、统计与安全信息一览</p>
+				<h2 class="panel-title">{{ t('accountOverview.title') }}</h2>
+				<p class="panel-sub">{{ t('accountOverview.description') }}</p>
 			</div>
-			<span class="pill">绑定 QQ：{{ uid || '—' }}</span>
+			<span class="pill">{{ t('accountOverview.boundQq', { uid: uid || '—' }) }}</span>
 		</header>
 		<div class="stats">
 			<div class="stat-card">
-				<p class="stat-label">用户名</p>
+				<p class="stat-label">{{ t('accountOverview.username') }}</p>
 				<p class="stat-value">{{ username || '—' }}</p>
 			</div>
 			<div class="stat-card">
-				<p class="stat-label">累计游玩</p>
-				<p class="stat-value"><span class="stat-num">{{ playtime }}</span> 分钟</p>
+				<p class="stat-label">{{ t('accountOverview.playtime') }}</p>
+				<p class="stat-value">{{ t('accountOverview.minutes', { count: playtime }) }}</p>
 			</div>
 			<div class="stat-card">
-				<p class="stat-label">登录次数</p>
+				<p class="stat-label">{{ t('accountOverview.loginCount') }}</p>
 				<p class="stat-value">{{ logins.length }}</p>
 			</div>
 			<div class="stat-card">
-				<p class="stat-label">账号状态</p>
-				<p class="stat-value" :class="isFrozen ? 'status-frozen' : 'status-ok'">{{ statusHint || '检测中' }}</p>
+				<p class="stat-label">{{ t('accountOverview.accountStatus') }}</p>
+				<p class="stat-value" :class="isFrozen ? 'status-frozen' : 'status-ok'">{{ statusHint || t('accountPage.statusChecking') }}</p>
 			</div>
 			<div class="stat-card faction-card">
-				<p class="stat-label">{{ fallenSelection?.finalized ? '当前阵营' : '当前阵营（预计）' }}</p>
+				<p class="stat-label">{{ fallenSelection?.finalized ? t('accountOverview.currentFaction') : t('accountOverview.expectedFaction') }}</p>
 				<p class="stat-value faction-value">
-					{{ fallenSelection ? teamNames[fallenSelection.team] : '尚未选择' }}
+					{{ fallenSelection ? t(teamNames[fallenSelection.team]) : t('accountOverview.notSelected') }}
 				</p>
-				<small v-if="fallenSelection && !fallenSelection.finalized">活动 {{ collapseSchedule.startDateShortText.zh }} 开始，正式阵营安排待公布</small>
+				<small v-if="fallenSelection && !fallenSelection.finalized">{{ t('accountOverview.activityStarts', { date: collapseSchedule.startDateShortText[locale] || collapseSchedule.startDateShortText.zh }) }}</small>
 			</div>
 			<div v-for="item in gameStatisticItems" :key="item.label" class="stat-card">
 				<p class="stat-label">{{ item.label }}</p>
@@ -120,7 +124,7 @@ const gameStatisticItems = computed(() => [
 			</div>
 		</div>
 		<div class="section">
-			<div class="section-title">登录历史</div>
+			<div class="section-title">{{ t('accountOverview.loginHistory') }}</div>
 			<div v-if="logins.length" class="record-grid">
 				<div
 					v-for="(login, index) in logins"
@@ -128,11 +132,11 @@ const gameStatisticItems = computed(() => [
 					class="login-record"
 					:class="{ success: login.success, fail: !login.success }"
 				>
-					<h2>{{ login.success ? '成功' : '失败' }}</h2>
+					<h2>{{ login.success ? t('accountOverview.success') : t('accountOverview.failed') }}</h2>
 					<p>{{ formatDate(login.date) }}</p>
 				</div>
 			</div>
-			<p v-else class="empty">暂无登录记录。</p>
+			<p v-else class="empty">{{ t('accountOverview.noLoginHistory') }}</p>
 		</div>
 	</section>
 </template>

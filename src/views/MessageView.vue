@@ -1,5 +1,8 @@
 <script setup>
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t, locale } = useI18n()
 
 const MESSAGE_DOWNLOAD_URL = 'https://api.glowingstone.cn/qo/msglist/public'
 const POLLING_INTERVAL = 3000
@@ -22,9 +25,9 @@ async function getUsername(sender) {
 	try {
 		const response = await fetch(`https://api.qoriginal.vip/qo/download/name?qq=${sender}`)
 		const data = await response.json()
-		let username = data.username || '未注册'
+		let username = data.username || t('messagesPage.notRegistered')
 		if (data.code === 1) {
-			username = '未注册'
+			username = t('messagesPage.notRegistered')
 		} else {
 			username = data.username
 		}
@@ -32,7 +35,7 @@ async function getUsername(sender) {
 		return username
 	} catch (error) {
 		console.error('Error fetching username:', error)
-		return '未注册'
+		return t('messagesPage.notRegistered')
 	}
 }
 
@@ -57,7 +60,7 @@ async function sendMessage() {
 
 		const data = await response.json()
 		if (data.code === 1) {
-			alert('请重新登录，登录已经过期。')
+			alert(t('messagesPage.relogin'))
 			return
 		}
 		messageInput.value = ''
@@ -113,11 +116,11 @@ function normalizePayload(payload) {
 
 function formatMessageContent(content) {
 	return String(content ?? '')
-		.replace(/\[CQ:image,file=.*?\]/g, '[图片]')
-		.replace(/\[CQ:reply.*?\]/g, '[回复]')
-		.replace(/\[CQ:video.*?\]/g, '[视频]')
+			.replace(/\[CQ:image,file=.*?\]/g, `[${t('messagesPage.image')}]`)
+			.replace(/\[CQ:reply.*?\]/g, `[${t('messagesPage.reply')}]`)
+			.replace(/\[CQ:video.*?\]/g, `[${t('messagesPage.video')}]`)
 		.replace(/\[CQ:at.*?\]/g, '[@]')
-		.replace(/\[CQ:markdown.*?\]/g, '[MD消息]')
+			.replace(/\[CQ:markdown.*?\]/g, `[${t('messagesPage.markdown')}]`)
 }
 
 function normalizeImageUrls(images) {
@@ -157,13 +160,12 @@ async function normalizeMessage(rawMessage) {
 	}
 
 	return {
-		content: formatMessageContent(message.message),
+		content: String(message.message ?? ''),
 		images: normalizeImageUrls(message.images),
 		sender: senderName,
 		senderTooltip,
 		source: messageType,
-		sourceLabel: messageType === 'game' ? '游戏' : messageType === 'system' ? '系统' : '群聊',
-		time: new Date(Number(message.time) || Date.now()).toLocaleString(),
+			time: Number(message.time) || Date.now(),
 	}
 }
 
@@ -188,7 +190,7 @@ async function getMsgList() {
 		}
 	} catch (error) {
 		console.error('Error fetching messages:', error)
-		fetchError.value = '聊天记录加载失败，请稍后重试。'
+		fetchError.value = t('messagesPage.loadFailed')
 		loading.value = false
 	}
 }
@@ -221,6 +223,10 @@ onMounted(() => {
 onBeforeUnmount(() => {
 	stopPolling()
 })
+
+function formatMessageTime(timestamp) {
+	return new Date(timestamp).toLocaleString(locale.value === 'zh' ? 'zh-CN' : 'en-US')
+}
 </script>
 
 
@@ -228,9 +234,9 @@ onBeforeUnmount(() => {
 	<div class="chat">
 		<header class="chat-header">
 			<div>
-				<h1 class="title">聊天记录</h1>
+				<h1 class="title">{{ t('messagesPage.title') }}</h1>
 			</div>
-			<span class="status-pill">{{ loginstat ? '已连接' : '未登录' }}</span>
+			<span class="status-pill">{{ loginstat ? t('messagesPage.connected') : t('messagesPage.loggedOut') }}</span>
 		</header>
 
 		<div class="chat-body">
@@ -239,9 +245,9 @@ onBeforeUnmount(() => {
 				ref="messageContainer"
 				class="message-container"
 			>
-				<div v-if="loading" class="state-panel">正在加载聊天记录...</div>
+				<div v-if="loading" class="state-panel">{{ t('messagesPage.loading') }}</div>
 				<div v-else-if="fetchError" class="state-panel error">{{ fetchError }}</div>
-				<div v-else-if="!messageList.length" class="state-panel">暂无聊天记录。</div>
+				<div v-else-if="!messageList.length" class="state-panel">{{ t('messagesPage.empty') }}</div>
 				<div
 					v-for="(message, index) in messageList"
 					:key="index"
@@ -251,11 +257,11 @@ onBeforeUnmount(() => {
 					<div class="message-header">
 						<div class="sender-block">
 							<span class="sender-name" :title="message.senderTooltip">{{ message.sender }}</span>
-							<span class="source-label">{{ message.sourceLabel }}</span>
+								<span class="source-label">{{ t(`messagesPage.${message.source}`) }}</span>
 						</div>
-						<time class="message-time">{{ message.time }}</time>
+						<time class="message-time">{{ formatMessageTime(message.time) }}</time>
 					</div>
-					<p class="message-content">{{ message.content }}</p>
+						<p class="message-content">{{ formatMessageContent(message.content) }}</p>
 					<div v-if="message.images.length" class="message-images">
 						<a
 							v-for="(imageUrl, imageIndex) in message.images"
@@ -264,11 +270,11 @@ onBeforeUnmount(() => {
 							class="message-image-link"
 							target="_blank"
 							rel="noopener noreferrer"
-							:aria-label="`打开图片 ${imageIndex + 1}`"
+								:aria-label="t('messagesPage.openImage', { index: imageIndex + 1 })"
 						>
 							<img
 								:src="imageUrl"
-								:alt="`聊天图片 ${imageIndex + 1}`"
+									:alt="t('messagesPage.imageAlt', { index: imageIndex + 1 })"
 								class="message-image"
 								loading="lazy"
 								referrerpolicy="no-referrer"
@@ -278,7 +284,7 @@ onBeforeUnmount(() => {
 				</div>
 			</div>
 			<div class="message-container empty" v-else>
-				<p class="notification">您必须先登录或者注册才能聊天。</p>
+					<p class="notification">{{ t('messagesPage.loginRequired') }}</p>
 			</div>
 		</div>
 
@@ -287,7 +293,7 @@ onBeforeUnmount(() => {
 				<input
 					v-model="messageInput"
 					class="message-input"
-					placeholder="请输入消息..."
+						:placeholder="t('messagesPage.placeholder')"
 					@keydown.enter="sendMessage"
 				/>
 				<button
@@ -295,7 +301,7 @@ onBeforeUnmount(() => {
 					class="send-button"
 					:disabled="sendButtonDisabled"
 				>
-					{{ sendButtonDisabled ? '发送中...' : '发送' }}
+						{{ sendButtonDisabled ? t('messagesPage.sending') : t('messagesPage.send') }}
 				</button>
 			</div>
 		</div>

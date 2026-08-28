@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { alert, defaultModules } from '@pnotify/core'
 import '@pnotify/core/dist/PNotify.css'
@@ -18,6 +19,7 @@ import { getFallenTeamSelection } from '@/services/fallen.js'
 defaultModules.set(PNotifyMobile, {})
 
 const router = useRouter()
+const { t } = useI18n()
 const currentSetting = ref(0)
 const username = ref('')
 const uid = ref(0)
@@ -74,21 +76,21 @@ function queryAccountStatus() {
 		return
 	}
 	isFrozen.value = null
-	statusHint.value = '检测中'
+	statusHint.value = t('accountPage.statusChecking')
 	fetch(`https://api.glowingstone.cn/qo/download/registry?name=${encodeURIComponent(username.value)}`)
 		.then((res) => res.json())
 		.then((data) => {
 			if (data.code === 1) {
 				isFrozen.value = null
-				statusHint.value = '未查询到账号'
+				statusHint.value = t('accountPage.statusNotFound')
 				return
 			}
 			isFrozen.value = data.frozen === true
-			statusHint.value = isFrozen.value ? '冻结' : '正常'
+			statusHint.value = isFrozen.value ? t('accountPage.statusFrozen') : t('accountPage.statusNormal')
 		})
 		.catch(() => {
 			isFrozen.value = null
-			statusHint.value = '查询失败'
+			statusHint.value = t('accountPage.statusFailed')
 		})
 }
 
@@ -109,22 +111,22 @@ async function submitIp() {
 		if (!response.ok) throw new Error(`HTTP ${response.status}`)
 		const data = await response.json()
 		if (data.code === 0) {
-			setIpFeedback('IP 已加入登录白名单。', 'success')
+			setIpFeedback(t('accountPage.ipAdded'), 'success')
 			ipAddr.value = ''
 			await queryIpDetails()
 		} else if (data.code === 1) {
-			alert({ text: '登录失效，请重新登录' })
-			setIpFeedback('登录状态已失效，请重新登录。')
+			alert({ text: t('accountPage.loginExpired') })
+			setIpFeedback(t('accountPage.loginExpiredFull'))
 		} else if (data.code === 2) {
-			setIpFeedback('最多只能登记 5 个 IP，请先删除不再使用的地址。')
+			setIpFeedback(t('accountPage.ipLimit'))
 		} else if (data.code === 4) {
-			setIpFeedback('IP 格式不正确，请检查后重试。')
+			setIpFeedback(t('accountPage.invalidIp'))
 		} else {
-			setIpFeedback(data.reason || '添加失败，请稍后重试。')
+			setIpFeedback(data.reason || t('accountPage.addFailed'))
 		}
 	} catch (error) {
 		console.error('添加 IP 失败:', error)
-		setIpFeedback('无法连接到服务器，请稍后重试。')
+		setIpFeedback(t('accountPage.connectFailed'))
 	} finally {
 		isSubmittingIp.value = false
 	}
@@ -145,19 +147,19 @@ async function removeIp(ip) {
 		if (!response.ok) throw new Error(`HTTP ${response.status}`)
 		const data = await response.json()
 		if (data.code === 0) {
-			setIpFeedback('IP 已从白名单移除。', 'success')
+			setIpFeedback(t('accountPage.ipRemoved'), 'success')
 			await queryIpDetails()
 		} else if (data.code === 1) {
-			setIpFeedback('登录状态已失效，请重新登录。')
+			setIpFeedback(t('accountPage.loginExpiredFull'))
 		} else if (data.code === 3) {
-			setIpFeedback('该 IP 已不在白名单中。')
+			setIpFeedback(t('accountPage.ipNotFound'))
 			await queryIpDetails()
 		} else {
-			setIpFeedback(data.reason || '删除失败，请稍后重试。')
+			setIpFeedback(data.reason || t('accountPage.deleteFailed'))
 		}
 	} catch (error) {
 		console.error('删除 IP 失败:', error)
-		setIpFeedback('无法连接到服务器，请稍后重试。')
+		setIpFeedback(t('accountPage.connectFailed'))
 	} finally {
 		deletingIp.value = ''
 	}
@@ -176,7 +178,7 @@ async function queryIpDetails() {
 			: []
 	} catch (error) {
 		console.error('加载 IP 白名单失败:', error)
-		setIpFeedback('白名单加载失败，请稍后重试。')
+		setIpFeedback(t('accountPage.whitelistFailed'))
 	} finally {
 		isLoadingIps.value = false
 	}

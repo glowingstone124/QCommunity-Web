@@ -1,13 +1,15 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { get } from '@/utils/request'
 import { fetchAvatar } from '@/services/avatar.js'
 
 const POLLING_INTERVAL = 3000
+const { t, locale } = useI18n()
 
 const servers = [
-	{ id: 1, name: '生存服', description: '/server survival' },
-	{ id: 4, name: '创造服', description: '/server creative' },
+	{ id: 1, nameKey: 'dashboardPage.serverSurvival', description: '/server survival' },
+	{ id: 4, nameKey: 'dashboardPage.serverCreative', description: '/server creative' },
 ]
 
 const currentServerId = ref(1)
@@ -85,26 +87,26 @@ function formatMspt(value) {
 
 const performanceState = computed(() => {
 	if (fetchError.value) {
-		return { label: '离线', className: 'danger' }
+		return { label: t('dashboardPage.statusOffline'), className: 'danger' }
 	}
 
 	if (msptNumber.value > 50) {
-		return { label: '高负载', className: 'warning' }
+		return { label: t('dashboardPage.statusHighLoad'), className: 'warning' }
 	}
 
 	if (msptNumber.value > 35) {
-		return { label: '繁忙', className: 'notice' }
+		return { label: t('dashboardPage.statusBusy'), className: 'notice' }
 	}
 
-	return { label: '运行正常', className: 'ok' }
+	return { label: t('dashboardPage.statusHealthy'), className: 'ok' }
 })
 
 const lastUpdatedText = computed(() => {
 	if (!lastUpdatedAt.value) {
-		return '等待同步'
+		return t('dashboardPage.waiting')
 	}
 
-	return lastUpdatedAt.value.toLocaleTimeString('zh-CN', {
+	return lastUpdatedAt.value.toLocaleTimeString(locale.value === 'zh' ? 'zh-CN' : 'en-US', {
 		hour: '2-digit',
 		minute: '2-digit',
 		second: '2-digit',
@@ -114,21 +116,21 @@ const lastUpdatedText = computed(() => {
 const statCards = computed(() => [
 	{
 		key: 'online',
-		label: '在线人数',
+			label: t('dashboardPage.onlineCount'),
 		value: onlineCount.value,
-		helper: '当前服务器在线玩家',
+			helper: t('dashboardPage.onlinePlayers'),
 	},
 	{
 		key: 'total',
-		label: '总账户数',
+			label: t('dashboardPage.totalAccounts'),
 		value: totalCount.value,
-		helper: '已记录玩家账户',
+			helper: t('dashboardPage.recordedAccounts'),
 	},
 	{
 		key: 'mspt',
 		label: 'MSPT',
 		value: formatMspt(msptNumber.value),
-		helper: `${msptLoad.value}% / 50ms`,
+			helper: `${msptLoad.value}% / 50ms`,
 		load: msptLoad.value,
 		loadScale: msptLoad.value / 100,
 	},
@@ -223,7 +225,7 @@ async function fetchData() {
 			return
 		}
 
-		fetchError.value = '服务器状态同步失败'
+			fetchError.value = t('dashboardPage.statusSyncFailed')
 		msptSamplesRaw.value = []
 		players.value = []
 		playerAvatars.value = {}
@@ -258,17 +260,17 @@ onBeforeUnmount(stopPolling)
 	<div class="dashboard page-shell">
 		<section class="dashboard-hero">
 			<div class="hero-copy">
-				<h1>服务器仪表板</h1>
+					<h1>{{ t('dashboardPage.title') }}</h1>
 			</div>
 
 			<div class="status-panel" :class="performanceState.className">
 				<span class="status-dot" aria-hidden="true"></span>
 				<span>{{ performanceState.label }}</span>
-				<small>更新于 {{ lastUpdatedText }}</small>
+					<small>{{ t('dashboardPage.updated', { time: lastUpdatedText }) }}</small>
 			</div>
 		</section>
 
-		<section class="server-switcher" aria-label="服务器选择">
+		<section class="server-switcher" :aria-label="t('dashboardPage.serverSelection')">
 			<button
 				v-for="server in servers"
 				:key="server.id"
@@ -277,7 +279,7 @@ onBeforeUnmount(stopPolling)
 				:class="{ active: currentServerId === server.id }"
 				@click="selectServer(server.id)"
 			>
-				<span>{{ server.name }}</span>
+					<span>{{ t(server.nameKey) }}</span>
 				<small>{{ server.description }}</small>
 			</button>
 		</section>
@@ -299,17 +301,17 @@ onBeforeUnmount(stopPolling)
 		<section class="mspt-history-panel">
 			<div class="section-title horizontal">
 				<div>
-					<h2>MSPT 波动</h2>
-					<p>最近 60 次采样，单位：毫秒</p>
+						<h2>{{ t('dashboardPage.msptChart') }}</h2>
+						<p>{{ t('dashboardPage.msptDescription') }}</p>
 				</div>
 				<div class="chart-current">
 					<strong>{{ formatMspt(msptNumber) }} ms</strong>
-					<span>当前 3 秒平均</span>
-					<small>60 次平均 {{ formatMspt(msptAverage) }} ms</small>
+						<span>{{ t('dashboardPage.currentAverage') }}</span>
+						<small>{{ t('dashboardPage.average', { value: formatMspt(msptAverage) }) }}</small>
 				</div>
 			</div>
 
-			<div v-if="msptBars.length" class="mspt-chart" role="img" :aria-label="`MSPT 最近 ${msptBars.length} 次采样，当前 ${formatMspt(msptNumber)} 毫秒，平均 ${formatMspt(msptAverage)} 毫秒，峰值 ${formatMspt(msptPeak)} 毫秒`">
+			<div v-if="msptBars.length" class="mspt-chart" role="img" :aria-label="t('dashboardPage.chartLabel', { count: msptBars.length, current: formatMspt(msptNumber), average: formatMspt(msptAverage), peak: formatMspt(msptPeak) })">
 				<div
 					class="mspt-threshold"
 					:style="{ bottom: `${Math.min(100, (50 / msptChartMax) * 100)}%` }"
@@ -327,23 +329,23 @@ onBeforeUnmount(stopPolling)
 					></span>
 				</div>
 			</div>
-			<div v-else class="empty-state">等待历史采样</div>
+				<div v-else class="empty-state">{{ t('dashboardPage.waitingSamples') }}</div>
 
 			<div v-if="msptBars.length" class="chart-footer">
 				<span>0ms</span>
-				<span>峰值 {{ formatMspt(msptPeak) }}ms</span>
+				<span>{{ t('dashboardPage.peak', { value: formatMspt(msptPeak) }) }}</span>
 			</div>
 		</section>
 
 		<section class="activity-layout">
 			<article class="server-summary">
 				<div class="section-title">
-					<h2>{{ currentServer.name }}</h2>
+						<h2>{{ t(currentServer.nameKey) }}</h2>
 				</div>
 
 				<div class="load-meter">
 					<div class="load-meter-header">
-						<span>账户活跃度</span>
+							<span>{{ t('dashboardPage.activity') }}</span>
 						<strong>{{ serverLoad }}%</strong>
 					</div>
 					<div class="load-track" aria-hidden="true">
@@ -353,16 +355,16 @@ onBeforeUnmount(stopPolling)
 
 				<div class="summary-list">
 					<div>
-						<span>轮询间隔</span>
-						<strong>{{ POLLING_INTERVAL / 1000 }} 秒</strong>
+							<span>{{ t('dashboardPage.pollInterval') }}</span>
+							<strong>{{ t('dashboardPage.seconds', { count: POLLING_INTERVAL / 1000 }) }}</strong>
 					</div>
 					<div>
-						<span>同步状态</span>
-						<strong>{{ isLoading ? '同步中' : fetchError || '已同步' }}</strong>
+							<span>{{ t('dashboardPage.syncStatus') }}</span>
+							<strong>{{ isLoading ? t('common.syncing') : fetchError || t('dashboardPage.synced') }}</strong>
 					</div>
 					<div>
-						<span>当前玩家</span>
-						<strong>{{ players.length }} 人</strong>
+							<span>{{ t('dashboardPage.currentPlayers') }}</span>
+							<strong>{{ t('dashboardPage.people', { count: players.length }) }}</strong>
 					</div>
 				</div>
 			</article>
@@ -370,18 +372,18 @@ onBeforeUnmount(stopPolling)
 			<article class="players-panel">
 				<div class="section-title horizontal">
 					<div>
-						<h2>在线玩家</h2>
-						<p>{{ onlineCount ? '当前服务器活动玩家列表' : '当前没有玩家在线' }}</p>
+							<h2>{{ t('dashboardPage.onlinePlayersTitle') }}</h2>
+							<p>{{ onlineCount ? t('dashboardPage.activePlayers') : t('dashboardPage.noPlayersOnline') }}</p>
 					</div>
 					<span class="player-count">{{ onlineCount }}</span>
 				</div>
 
 				<div v-if="fetchError" class="empty-state error">{{ fetchError }}</div>
-				<div v-else-if="!players.length" class="empty-state">暂无在线玩家</div>
+					<div v-else-if="!players.length" class="empty-state">{{ t('dashboardPage.noOnlinePlayers') }}</div>
 				<div v-else class="player-list">
 					<div class="player-list-head" aria-hidden="true">
-						<span>玩家</span>
-						<span>状态</span>
+						<span>{{ t('dashboardPage.player') }}</span>
+						<span>{{ t('dashboardPage.status') }}</span>
 					</div>
 					<div
 						v-for="player in players"
@@ -394,7 +396,7 @@ onBeforeUnmount(stopPolling)
 								class="player-avatar"
 								:class="{ special: playerAvatars[player.name]?.special }"
 								:src="playerAvatars[player.name].url"
-								:alt="`${player.name} 的头像`"
+								:alt="t('dashboardPage.avatarAlt', { name: player.name })"
 								loading="lazy"
 							/>
 							<span v-else class="player-avatar placeholder">{{ player.name?.slice(0, 1) || '?' }}</span>
@@ -406,7 +408,7 @@ onBeforeUnmount(stopPolling)
 						<div class="player-meta">
 							<span class="health-value">HP {{ formatHealth(player.health) }}</span>
 							<!--<span class="coordinate-value">{{ formatCoordinate(player.x) }}, {{ formatCoordinate(player.y) }}, {{ formatCoordinate(player.z) }}</span>-->
-							<span class="coordinate-value">位置信息禁用</span>
+								<span class="coordinate-value">{{ t('dashboardPage.coordinatesDisabled') }}</span>
 						</div>
 					</div>
 				</div>

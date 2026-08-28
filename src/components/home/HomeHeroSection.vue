@@ -1,4 +1,8 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 defineProps({
 	stats: {
 		type: Array,
@@ -10,8 +14,8 @@ defineProps({
 <template>
 	<section class="hero">
 		<div class="hero-copy">
-			<h1 class="hero-title">欢迎回来</h1>
-			<p class="hero-sub">集中管理账号、功能与服务入口。选择模块即可开始。</p>
+			<h1 class="hero-title">{{ t('homeWidgets.welcome') }}</h1>
+			<p class="hero-sub">{{ t('homeWidgets.description') }}</p>
 			<div class="hero-actions">
 				<router-link to="/register" class="action primary">
 					{{ $t('mainPage.register') }}

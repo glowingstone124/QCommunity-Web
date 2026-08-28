@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
 	ipAddr: { type: String, default: '' },
@@ -11,6 +12,7 @@ const props = defineProps({
 	feedback: { type: String, default: '' },
 	feedbackType: { type: String, default: '' },
 })
+const { t } = useI18n()
 
 const emit = defineEmits(['submit', 'remove', 'refresh', 'update:ipAddr'])
 const ipLimit = 5
@@ -28,12 +30,12 @@ function confirmRemove(ip) {
 	<section class="panel">
 		<header class="panel-header">
 			<div>
-				<h2 class="panel-title">海外 IP 白名单</h2>
-				<p class="panel-sub">登记可信地址后，即可从海外网络登录服务器。</p>
+			<h2 class="panel-title">{{ t('whitelistPage.title') }}</h2>
+			<p class="panel-sub">{{ t('whitelistPage.description') }}</p>
 			</div>
-			<div class="capacity" aria-label="IP 白名单容量">
+			<div class="capacity" :aria-label="t('whitelistPage.capacity')">
 				<div class="capacity-copy">
-					<span>已使用</span>
+					<span>{{ t('whitelistPage.used') }}</span>
 					<strong>{{ iplist.length }} / {{ ipLimit }}</strong>
 				</div>
 				<div class="capacity-track"><span :style="{ width: `${capacityPercent}%` }"></span></div>
@@ -44,31 +46,31 @@ function confirmRemove(ip) {
 			<section class="section add-section">
 				<div class="section-head">
 					<div>
-						<h3>登记新地址</h3>
-						<p>支持 IPv4 与 IPv6，每个账户最多保存 5 个地址。</p>
+						<h3>{{ t('whitelistPage.register') }}</h3>
+						<p>{{ t('whitelistPage.registerDescription') }}</p>
 					</div>
-					<span class="slot-count">剩余 {{ remainingSlots }} 个</span>
+					<span class="slot-count">{{ t('whitelistPage.remaining', { count: remainingSlots }) }}</span>
 				</div>
 				<form class="form-row" @submit.prevent="emit('submit')">
 					<label class="ip-field">
-						<span class="sr-only">IP 地址</span>
+						<span class="sr-only">{{ t('whitelistPage.ipAddress') }}</span>
 						<input
 							:value="props.ipAddr"
 							type="text"
 							inputmode="text"
 							autocomplete="off"
 							spellcheck="false"
-							placeholder="例如 203.0.113.8 或 2001:db8::1"
+							:placeholder="t('whitelistPage.ipPlaceholder')"
 							@input="emit('update:ipAddr', $event.target.value)"
 						/>
 					</label>
 					<button class="primary-button" type="submit" :disabled="!isValidIp || isSubmitting || remainingSlots === 0">
 						<font-awesome-icon :icon="['far', 'square-plus']" aria-hidden="true" />
-						<span>{{ isSubmitting ? '提交中' : '添加 IP' }}</span>
+						<span>{{ isSubmitting ? t('whitelistPage.submitting') : t('whitelistPage.add') }}</span>
 					</button>
 				</form>
 				<p class="helper" :class="{ invalid: ipAddr && !isValidIp }">
-					{{ ipAddr && !isValidIp ? '请输入完整且无空格的 IPv4 或 IPv6 地址。' : '仅接受 IP 地址，不支持域名或带作用域的 IPv6。' }}
+					{{ ipAddr && !isValidIp ? t('whitelistPage.invalidIp') : t('whitelistPage.ipOnly') }}
 				</p>
 				<p v-if="feedback" class="feedback" :class="feedbackType" role="status">{{ feedback }}</p>
 			</section>
@@ -76,45 +78,45 @@ function confirmRemove(ip) {
 			<section class="section list-section">
 				<div class="section-head list-head">
 					<div>
-						<h3>已登记地址</h3>
-						<p>删除后，该地址将立即失去海外登录权限。</p>
+						<h3>{{ t('whitelistPage.registered') }}</h3>
+						<p>{{ t('whitelistPage.registeredDescription') }}</p>
 					</div>
 					<button class="secondary-button" type="button" :disabled="isLoading" @click="emit('refresh')">
-						{{ isLoading ? '刷新中' : '刷新列表' }}
+						{{ isLoading ? t('common.refreshing') : t('whitelistPage.refreshList') }}
 					</button>
 				</div>
 
-				<div v-if="isLoading && !iplist.length" class="empty-state">正在加载白名单...</div>
+				<div v-if="isLoading && !iplist.length" class="empty-state">{{ t('whitelistPage.loading') }}</div>
 				<TransitionGroup v-else-if="iplist.length" name="ip-list" tag="div" class="ip-list">
 					<div v-for="(ip, index) in iplist" :key="ip" class="ip-row" :class="{ 'is-confirming': confirmingIp === ip }">
 						<span class="ip-index">{{ String(index + 1).padStart(2, '0') }}</span>
 						<div class="ip-copy">
 							<code>{{ ip }}</code>
-							<span><font-awesome-icon :icon="['far', 'circle-check']" aria-hidden="true" /> 已启用</span>
+							<span><font-awesome-icon :icon="['far', 'circle-check']" aria-hidden="true" /> {{ t('whitelistPage.enabled') }}</span>
 						</div>
 						<button
 							v-if="confirmingIp !== ip"
 							type="button"
 							class="icon-button danger"
 							:disabled="Boolean(deletingIp)"
-							:aria-label="`删除 IP ${ip}`"
-							:title="`删除 ${ip}`"
+							:aria-label="t('whitelistPage.deleteIp', { ip })"
+							:title="t('whitelistPage.deleteIpTitle', { ip })"
 							@click="confirmingIp = ip"
 						>
 							<font-awesome-icon :icon="['far', 'trash-can']" aria-hidden="true" />
 						</button>
 						<div v-else class="remove-confirm">
-							<span>确认移除？</span>
-							<button type="button" :disabled="Boolean(deletingIp)" @click="confirmingIp = ''">取消</button>
+							<span>{{ t('whitelistPage.removeConfirm') }}</span>
+							<button type="button" :disabled="Boolean(deletingIp)" @click="confirmingIp = ''">{{ t('common.cancel') }}</button>
 							<button type="button" class="confirm-danger" :disabled="Boolean(deletingIp)" @click="confirmRemove(ip)">
-								{{ deletingIp === ip ? '移除中' : '移除' }}
+								{{ deletingIp === ip ? t('whitelistPage.removing') : t('whitelistPage.remove') }}
 							</button>
 						</div>
 					</div>
 				</TransitionGroup>
 				<div v-else class="empty-state">
-					<strong>还没有登记地址</strong>
-					<span>添加首个海外 IP 后会显示在这里。</span>
+					<strong>{{ t('whitelistPage.noAddresses') }}</strong>
+					<span>{{ t('whitelistPage.noAddressesDescription') }}</span>
 				</div>
 			</section>
 		</div>

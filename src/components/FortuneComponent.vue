@@ -1,7 +1,9 @@
 <script setup>
 import { computed, ref, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const loginStat = ref(false);
+const { t } = useI18n();
 const hintMessage = ref("");
 const fortuneData = ref(null);
 const isLoading = ref(false);
@@ -11,9 +13,9 @@ const errorMessage = ref("");
 const fortuneItems = computed(() => {
 	if (!fortuneData.value) return [];
 	return [
-		{ key: 'love', label: '感情', data: fortuneData.value.love },
-		{ key: 'career', label: '事业', data: fortuneData.value.career },
-		{ key: 'wealth', label: '财富', data: fortuneData.value.wealth },
+		{ key: 'love', label: t('fortunePage.love'), data: fortuneData.value.love },
+		{ key: 'career', label: t('fortunePage.career'), data: fortuneData.value.career },
+		{ key: 'wealth', label: t('fortunePage.wealth'), data: fortuneData.value.wealth },
 	];
 });
 
@@ -47,7 +49,7 @@ async function validateToken() {
     loginStat.value = true;
     return true;
   } catch (error) {
-    errorMessage.value = "登录状态检查失败，请稍后重试。";
+		errorMessage.value = t('accountPage.connectFailed');
     return false;
   } finally {
     isCheckingLogin.value = false;
@@ -55,7 +57,7 @@ async function validateToken() {
 }
 
 function showLoginPrompt() {
-  hintMessage.value = "请登录查看今日运势";
+	 hintMessage.value = t('fortunePage.loginPrompt');
   loginStat.value = false;
 }
 
@@ -67,7 +69,7 @@ async function fetchFortune() {
       headers: { "token": localStorage.getItem("token") }
     }).then(response => response.json());
   } catch (error) {
-    errorMessage.value = "今日运势获取失败，请稍后重试。";
+		errorMessage.value = t('fortunePage.loadFailed');
   } finally {
     isLoading.value = false;
   }
@@ -84,8 +86,8 @@ const getProgressColor = (amount) => {
 	<section class="fortune-panel">
 		<header class="fortune-header">
 			<div>
-				<h2>今日运势</h2>
-				<p>基于当前账号生成的每日指数。</p>
+				<h2>{{ t('fortunePage.title') }}</h2>
+				<p>{{ t('fortunePage.description') }}</p>
 			</div>
 			<button
 				v-if="loginStat"
@@ -94,29 +96,29 @@ const getProgressColor = (amount) => {
 				type="button"
 				:disabled="isLoading"
 			>
-				{{ isLoading ? "刷新中" : "刷新运势" }}
+				{{ isLoading ? t('common.refreshing') : t('fortunePage.refresh') }}
 			</button>
 		</header>
 
-		<div v-if="isCheckingLogin" class="state-box">正在检查登录状态...</div>
+		<div v-if="isCheckingLogin" class="state-box">{{ t('fortunePage.checkingLogin') }}</div>
 
 		<div v-else-if="!loginStat" class="login-prompt">
 			<div>
-				<h3>需要登录</h3>
+				<h3>{{ t('fortunePage.needLogin') }}</h3>
 				<p>{{ hintMessage }}</p>
 			</div>
-			<router-link to="/login" class="login-button">立即登录</router-link>
+			<router-link to="/login" class="login-button">{{ t('fortunePage.loginNow') }}</router-link>
 		</div>
 
 		<p v-else-if="errorMessage" class="state-box error">{{ errorMessage }}</p>
 
-		<div v-else-if="isLoading" class="state-box">正在获取今日运势...</div>
+		<div v-else-if="isLoading" class="state-box">{{ t('fortunePage.loading') }}</div>
 
 		<div v-else-if="fortuneData" class="fortune-content">
 			<article v-for="item in fortuneItems" :key="item.key" class="category-card">
 				<div class="category-header">
 					<div>
-						<h3>{{ item.label }}运势</h3>
+						<h3>{{ t('fortunePage.fortune', { label: item.label }) }}</h3>
 						<span>{{ item.data.amount }}%</span>
 					</div>
 				</div>

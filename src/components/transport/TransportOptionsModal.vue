@@ -1,5 +1,9 @@
 <script setup>
-defineProps({
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
+const props = defineProps({
 	dimensionOptions: {
 		type: Array,
 		default: () => [],
@@ -24,6 +28,20 @@ defineProps({
 
 const emit = defineEmits(['close', 'preset', 'toggle-dimension', 'toggle-transport'])
 
+function displayTransportTypes(types) {
+	return types.map((type) => {
+		const item = props.transportTypes.find((candidate) => candidate.int_name === type)
+		return item?.nameKey ? t(item.nameKey) : item?.name
+	}).join(', ')
+}
+
+function displayDimensions(dimensions) {
+	return dimensions.map((dimension) => {
+		const item = props.dimensionOptions.find((candidate) => candidate.id === dimension)
+		return item?.nameKey ? t(item.nameKey) : item?.name
+	}).join(', ')
+}
+
 function closeOnOutsideClick(event) {
 	if (event.target.classList.contains('options-popup-overlay')) {
 		emit('close')
@@ -35,22 +53,22 @@ function closeOnOutsideClick(event) {
 	<div v-if="show" class="options-popup-overlay" @click="closeOnOutsideClick">
 		<div class="options-popup">
 			<div class="popup-header">
-				<h2>查询选项</h2>
+				<h2>{{ t('mapPage.optionsTitle') }}</h2>
 				<button class="close-button" @click="emit('close')">&times;</button>
 			</div>
 
 			<div class="popup-content">
 				<div class="options-section">
-					<h3>预设方案</h3>
+					<h3>{{ t('mapPage.presets') }}</h3>
 					<div class="preset-buttons">
-						<button class="preset-button" @click="emit('preset', 'all')">全部方案</button>
-						<button class="preset-button" @click="emit('preset', 'rail')">纯铁路方案</button>
-						<button class="preset-button" @click="emit('preset', 'overworld')">主世界方案</button>
+						<button class="preset-button" @click="emit('preset', 'all')">{{ t('mapPage.allPresets') }}</button>
+						<button class="preset-button" @click="emit('preset', 'rail')">{{ t('mapPage.railPreset') }}</button>
+						<button class="preset-button" @click="emit('preset', 'overworld')">{{ t('mapPage.overworldPreset') }}</button>
 					</div>
 				</div>
 
 				<div class="options-section">
-					<h3>启用交通方式</h3>
+					<h3>{{ t('mapPage.enabledTypes') }}</h3>
 					<div class="transport-checkboxes">
 						<div v-for="type in transportTypes" :key="type.id" class="checkbox-item">
 							<label class="checkbox-label">
@@ -61,14 +79,14 @@ function closeOnOutsideClick(event) {
 									@change="emit('toggle-transport', type.id)"
 								/>
 								<span class="checkbox-custom"></span>
-								<span class="checkbox-text">{{ type.name }}</span>
+								<span class="checkbox-text">{{ type.nameKey ? t(type.nameKey) : type.name }}</span>
 							</label>
 						</div>
 					</div>
 				</div>
 
 				<div class="options-section">
-					<h3>启用维度</h3>
+					<h3>{{ t('transportPage.enabledDimensions') }}</h3>
 					<div class="dimension-checkboxes">
 						<div v-for="dim in dimensionOptions" :key="dim.id" class="checkbox-item">
 							<label class="checkbox-label">
@@ -79,7 +97,7 @@ function closeOnOutsideClick(event) {
 									@change="emit('toggle-dimension', dim.id)"
 								/>
 								<span class="checkbox-custom"></span>
-								<span class="checkbox-text">{{ dim.name }}</span>
+								<span class="checkbox-text">{{ dim.nameKey ? t(dim.nameKey) : dim.name }}</span>
 							</label>
 						</div>
 					</div>
@@ -87,17 +105,17 @@ function closeOnOutsideClick(event) {
 
 				<div class="current-settings">
 					<p v-if="bannedTypes.length > 0">
-						禁用交通方式: {{ bannedTypes.map((t) => transportTypes.find((tt) => tt.int_name === t)?.name).join(', ') }}
+						{{ t('mapPage.disabledTypes', { types: displayTransportTypes(bannedTypes) }) }}
 					</p>
 					<p v-if="bannedDims.length > 0">
-						禁用维度: {{ bannedDims.map((d) => dimensionOptions.find((dd) => dd.id === d)?.name).join(', ') }}
+						{{ t('transportPage.disabledDimensions', { dimensions: displayDimensions(bannedDims) }) }}
 					</p>
-					<p v-if="bannedTypes.length === 0 && bannedDims.length === 0">当前不禁用任何交通方式和维度</p>
+					<p v-if="bannedTypes.length === 0 && bannedDims.length === 0">{{ t('mapPage.noDisabled') }}</p>
 				</div>
 			</div>
 
 			<div class="popup-footer">
-				<button class="apply-button" @click="emit('close')">应用选项</button>
+				<button class="apply-button" @click="emit('close')">{{ t('mapPage.applyOptions') }}</button>
 			</div>
 		</div>
 	</div>

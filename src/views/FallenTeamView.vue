@@ -6,7 +6,7 @@ import FallenLiveStatus from '@/components/fallen/FallenLiveStatus.vue'
 import {collapseSchedule} from '@/data/collapse.js'
 import {getFallenActivityStatus, getFallenTeamSelection, selectFallenTeam} from '@/services/fallen.js'
 
-const {locale} = useI18n()
+const {locale, t} = useI18n()
 const router = useRouter()
 const isDevMode = import.meta.env.DEV
 const loading = ref(true)
@@ -59,56 +59,35 @@ const teams = [
 const currentTeam = computed(() => teams.find((team) => team.id === selection.value?.team) || null)
 const expectedTeam = computed(() => teams.find((team) => team.id === selection.value?.expectedTeam) || null)
 const pending = computed(() => teams.find((team) => team.id === pendingTeam.value) || null)
-const text = computed(() => locale.value === 'en' ? {
-	eyebrow: 'FACTION REGISTRATION',
-	title: 'Choose your desired team.',
-	intro: 'Register one faction preference. The final faction arrangement will be announced separately.',
-	locked: selection.value?.finalized ? 'FACTION ASSIGNED' : 'PREFERENCE REGISTERED',
-	selected: selection.value?.finalized ? 'Your final faction is assigned. Join the server and prepare for deployment.' : `Your preference is registered. The full release of Collapse launches on ${collapseSchedule.startDateShortText.en}; the final faction arrangement will be announced separately.`,
-	choose: 'Register as preference',
-	confirmTitle: 'Confirm faction preference',
-	confirmBody: `${pending.value?.name.en || 'This faction'} will be registered as your preference and cannot be changed. The final faction may be adjusted to keep all three teams balanced. Continue?`,
-	cancel: 'Review again',
-	confirm: 'Confirm faction',
-	login: 'Sign in to choose',
-	rules: 'Read event rules',
-} : {
-	eyebrow: '阵营登记',
-	title: '选择你的阵营',
-	intro: '登记一个阵营意向。正式阵营安排将另行公布。',
-	locked: selection.value?.finalized ? '正式阵营已确定' : '阵营意向已登记',
-	selected: selection.value?.finalized ? '你的正式阵营已经确定。进入服务器，准备部署。' : `你的阵营意向已经登记。《陷落》正式版将于 ${collapseSchedule.startDateShortText.zh} 开启，正式阵营安排将另行公布。`,
-	choose: '登记为首选阵营',
-	confirmTitle: '确认阵营意向',
-	confirmBody: `确认后会将${pending.value?.name.zh || '该阵营'}登记为你的首选且无法修改。为保证三方人数均衡，正式阵营可能调整。是否继续？`,
-	cancel: '再想想',
-	confirm: '确认加入',
-	login: '登录后选择',
-	rules: '查看完整规则',
-})
+const text = computed(() => ({
+	eyebrow: t('collapsePage.factionRegistration'),
+	title: t('collapsePage.chooseFaction'),
+	intro: t('collapsePage.registerPreference'),
+	locked: selection.value?.finalized ? t('collapsePage.factionAssigned') : t('collapsePage.preferenceRegistered'),
+	selected: selection.value?.finalized
+		? t('collapsePage.assignedDescription')
+		: t('collapsePage.preferenceDescription', {date: collapseSchedule.startDateShortText[locale.value] || collapseSchedule.startDateShortText.zh}),
+	choose: t('collapsePage.registerPreferred'),
+	confirmTitle: t('collapsePage.confirmPreference'),
+	confirmBody: t('collapsePage.confirmBody', {team: pending.value ? localized(pending.value.name) : t('collapsePage.factionOptions')}),
+	cancel: t('collapsePage.review'),
+	confirm: t('collapsePage.confirmJoin'),
+	login: t('collapsePage.loginToChoose'),
+	rules: t('collapsePage.rules'),
+}))
 
-const scheduleText = computed(() => locale.value === 'en' ? {
-	label: 'FULL RELEASE',
-	title: 'The experiment begins',
-	detail: 'The full release of Collapse launches on the date below. The exact start time and final faction arrangement will be announced separately.',
-} : {
-	label: '正式版预告',
-	title: '《陷落》正式版即将开启',
-	detail: '三座城市、十五枚密钥，一场至多 144 小时的阵营生存对抗。具体开始时间及正式阵营安排将另行公布。',
-})
+const scheduleText = computed(() => ({
+	label: t('collapsePage.fullReleaseNotice'),
+	title: t('collapsePage.fullReleaseTitle'),
+	detail: t('collapsePage.fullReleaseDescription'),
+}))
 
 const heroText = computed(() => activityActive.value
-	? (locale.value === 'en'
-		? {
-			eyebrow: 'LIVE OPERATIONS',
-			title: 'The city is falling.',
-			intro: 'Live faction rosters and scores reported directly by the survival server.',
-		}
-		: {
-			eyebrow: '实时战况',
-			title: '陷落正在发生',
-			intro: '生存服实时上报的阵营成员与积分。',
-		})
+	? {
+		eyebrow: t('collapsePage.liveOperations'),
+		title: t('collapsePage.liveTitle'),
+		intro: t('collapsePage.liveDescription'),
+	}
 	: text.value)
 
 function localized(value) {
@@ -139,9 +118,7 @@ async function confirmSelection() {
 				finalized: false,
 				selectedAt: Date.now(),
 			}
-			message.value = locale.value === 'en'
-				? 'Development preview only. No request was sent to the server.'
-				: '仅为开发环境预览，本次选择未发送到服务器。'
+				message.value = t('collapsePage.devPreview')
 			triggerCelebration()
 			pendingTeam.value = null
 			return
@@ -240,7 +217,7 @@ onBeforeUnmount(() => {
 				<h1>{{ heroText.title }}</h1>
 				<p class="intro">{{ heroText.intro }}</p>
 				<p v-if="isDevMode && !activityActive" class="dev-banner">
-					DEV PREVIEW // 本地选择只用于预览，不会向服务器提交数据
+					{{ t('collapsePage.devPreview') }}
 				</p>
 			</div>
 			<router-link class="rules-link" to="/news/2026collapse">{{ text.rules }} <span>↗</span></router-link>
@@ -290,16 +267,16 @@ onBeforeUnmount(() => {
 					<p>{{ localized(currentTeam.location) }}</p>
 					<strong>{{ localized(currentTeam.perk) }}</strong>
 					<small v-if="selection.finalized && expectedTeam && expectedTeam.id !== currentTeam.id">
-						{{ locale === 'en' ? `Registered preference: ${localized(expectedTeam.name)}` : `登记意向：${localized(expectedTeam.name)}` }}
+						{{ t('collapsePage.registeredPreference', { team: localized(expectedTeam.name) }) }}
 					</small>
 					<span>{{ message || text.selected }}</span>
 					<button v-if="isDevMode" type="button" class="reset-preview" @click="resetDevPreview">
-						重新点选预览
+						{{ t('collapsePage.resetPreview') }}
 					</button>
 				</div>
 			</section>
 
-			<section v-else key="choices" class="team-grid" aria-label="阵营选项">
+			<section v-else key="choices" class="team-grid" :aria-label="t('collapsePage.factionOptions')">
 				<article
 					v-for="(team, index) in teams"
 					:key="team.id"

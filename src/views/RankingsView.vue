@@ -3,7 +3,7 @@ import {computed, onMounted, ref} from "vue"
 import {useI18n} from "vue-i18n"
 import {getLeaderboards} from "@/services/rankings.js"
 
-const {locale} = useI18n()
+const {locale, t} = useI18n()
 const rankings = ref({place: [], destroy: [], playtime: []})
 const generatedAt = ref(0)
 const loading = ref(true)
@@ -12,26 +12,26 @@ const error = ref("")
 const boards = computed(() => [
 	{
 		id: "destroy",
-		title: locale.value === "zh" ? "挖掘榜" : "Blocks mined",
-		description: locale.value === "zh" ? "累计成功挖掘的方块" : "Successfully mined blocks",
+		title: t("rankingsPage.destroy"),
+		description: t("rankingsPage.destroyDescription"),
 		entries: rankings.value.destroy || [],
 	},
 	{
 		id: "place",
-		title: locale.value === "zh" ? "放置榜" : "Blocks placed",
-		description: locale.value === "zh" ? "累计成功放置的方块" : "Successfully placed blocks",
+		title: t("rankingsPage.place"),
+		description: t("rankingsPage.placeDescription"),
 		entries: rankings.value.place || [],
 	},
 	{
 		id: "playtime",
-		title: locale.value === "zh" ? "在线时长榜" : "Playtime",
-		description: locale.value === "zh" ? "累计有效在线时间" : "Accumulated online time",
+		title: t("rankingsPage.playtime"),
+		description: t("rankingsPage.playtimeDescription"),
 		entries: rankings.value.playtime || [],
 	},
 ])
 
 const updatedText = computed(() => {
-	if (!generatedAt.value) return locale.value === "zh" ? "等待同步" : "Waiting for data"
+	if (!generatedAt.value) return t("rankingsPage.waiting")
 	return new Date(generatedAt.value).toLocaleString(locale.value === "zh" ? "zh-CN" : "en-US")
 })
 
@@ -42,12 +42,11 @@ function formatValue(boardId, value) {
 	const days = Math.floor(minutes / 1440)
 	const hours = Math.floor((minutes % 1440) / 60)
 	const rest = minutes % 60
-	if (locale.value === "zh") {
-		return [days ? `${days} 天` : "", hours ? `${hours} 小时` : "", `${rest} 分钟`]
-			.filter(Boolean)
-			.join(" ")
-	}
-	return [days ? `${days}d` : "", hours ? `${hours}h` : "", `${rest}m`]
+	return [
+		days ? t("rankingsPage.days", {count: days}) : "",
+		hours ? t("rankingsPage.hours", {count: hours}) : "",
+		t("rankingsPage.minutes", {count: rest}),
+	]
 		.filter(Boolean)
 		.join(" ")
 }
@@ -60,7 +59,7 @@ async function loadRankings() {
 		rankings.value = result.rankings || {place: [], destroy: [], playtime: []}
 		generatedAt.value = Number(result.generatedAt || 0)
 	} catch (cause) {
-		error.value = cause.message || (locale.value === "zh" ? "榜单加载失败" : "Failed to load rankings")
+		error.value = cause.message || t("rankingsPage.loadFailed")
 	} finally {
 		loading.value = false
 	}
@@ -73,21 +72,21 @@ onMounted(loadRankings)
 	<main class="rankings-page page-shell">
 		<header class="rankings-hero">
 			<div>
-				<h1>{{ locale === 'zh' ? '服务器榜单' : 'Server leaderboards' }}</h1>
-				<p>{{ locale === 'zh' ? '挖掘、放置与在线时长按累计值排序。' : 'Lifetime mining, placement and playtime totals.' }}</p>
+				<h1>{{ t('rankingsPage.title') }}</h1>
+				<p>{{ t('rankingsPage.description') }}</p>
 			</div>
 			<div class="sync-box">
-				<span>{{ locale === 'zh' ? '数据生成于' : 'Generated at' }}</span>
+				<span>{{ t('rankingsPage.generatedAt') }}</span>
 				<strong>{{ updatedText }}</strong>
 				<button type="button" :disabled="loading" @click="loadRankings">
-					{{ loading ? (locale === 'zh' ? '同步中' : 'Loading') : (locale === 'zh' ? '刷新' : 'Refresh') }}
+					{{ loading ? t('rankingsPage.syncing') : t('rankingsPage.refresh') }}
 				</button>
 			</div>
 		</header>
 
 		<p v-if="error" class="error-state" role="alert">{{ error }}</p>
 		<div v-if="loading && !boards.some(board => board.entries.length)" class="loading-state" role="status">
-			{{ locale === 'zh' ? '正在读取榜单……' : 'Loading leaderboards…' }}
+			{{ t('rankingsPage.loading') }}
 		</div>
 
 		<section v-else class="boards-grid">
@@ -106,7 +105,7 @@ onMounted(loadRankings)
 						<output>{{ formatValue(board.id, entry.value) }}</output>
 					</li>
 				</ol>
-				<p v-else class="empty-state">{{ locale === 'zh' ? '暂无统计数据' : 'No statistics yet' }}</p>
+				<p v-else class="empty-state">{{ t('rankingsPage.empty') }}</p>
 			</article>
 		</section>
 	</main>

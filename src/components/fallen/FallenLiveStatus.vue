@@ -1,5 +1,8 @@
 <script setup>
 import {computed} from 'vue'
+import {useI18n} from 'vue-i18n'
+
+const {t} = useI18n()
 
 const props = defineProps({
 	status: {
@@ -31,9 +34,11 @@ const teamDetails = {
 }
 
 const phaseLabel = computed(() => {
-	const labels = props.locale === 'en'
-		? {DEPLOYMENT: 'Deployment', ACTIVE: 'In progress', OVERTIME: 'Overtime'}
-		: {DEPLOYMENT: '部署阶段', ACTIVE: '活动进行中', OVERTIME: '加时阶段'}
+	const labels = {
+		DEPLOYMENT: t('collapsePage.phaseDeployment'),
+		ACTIVE: t('collapsePage.phaseActive'),
+		OVERTIME: t('collapsePage.phaseOvertime'),
+	}
 	return labels[props.status.phase] || props.status.phase
 })
 
@@ -46,7 +51,7 @@ const remainingTime = computed(() => {
 	const minutes = Math.floor(seconds / 60)
 	seconds %= 60
 	const clock = [hours, minutes, seconds].map((value) => String(value).padStart(2, '0')).join(':')
-	return days > 0 ? `${days}${props.locale === 'en' ? 'd' : '天'} ${clock}` : clock
+	return days > 0 ? `${t('collapsePage.days', {count: days})} ${clock}` : clock
 })
 
 const teams = computed(() => [...(props.status.teams || [])]
@@ -74,18 +79,18 @@ function localized(value) {
 			<div class="live-state">
 				<span class="live-dot" :class="{'is-stale': status.stale}" aria-hidden="true"></span>
 				<div>
-					<strong>{{ status.stale ? (locale === 'en' ? 'CONNECTION STALE' : '数据连接中断') : 'LIVE' }}</strong>
+		<strong>{{ status.stale ? t('collapsePage.connectionStale') : t('collapsePage.live') }}</strong>
 					<small>{{ phaseLabel }}</small>
 				</div>
 			</div>
 			<div class="countdown">
-				<small>{{ locale === 'en' ? 'TIME REMAINING' : '剩余时间' }}</small>
+			<small>{{ t('collapsePage.timeRemaining') }}</small>
 				<strong>{{ remainingTime }}</strong>
 			</div>
 		</header>
 
 		<p v-if="status.stale" class="stale-notice" role="status">
-			{{ locale === 'en' ? 'The server has not reported for more than five seconds. Scores may be outdated.' : '生存服已超过 5 秒未上报，当前分数可能不是最新数据。' }}
+			{{ t('collapsePage.staleNotice') }}
 		</p>
 
 		<div class="live-team-grid">
@@ -104,23 +109,23 @@ function localized(value) {
 					</div>
 					<div class="team-score">
 						<strong>{{ team.score }}</strong>
-						<small>{{ locale === 'en' ? 'PTS' : '积分' }}</small>
+					<small>{{ t('collapsePage.points') }}</small>
 					</div>
 				</header>
 
 				<div class="roster-heading">
-					<span>{{ locale === 'en' ? 'ROSTER' : '阵营成员' }}</span>
-					<span>{{ team.players.filter((player) => player.online).length }} / {{ team.players.length }} {{ locale === 'en' ? 'online' : '在线' }}</span>
+					<span>{{ t('collapsePage.roster') }}</span>
+					<span>{{ team.players.filter((player) => player.online).length }} / {{ team.players.length }} {{ t('collapsePage.online') }}</span>
 				</div>
 				<ul v-if="team.players.length" class="player-list">
 					<li v-for="player in team.players" :key="player.name" :class="{'is-online': player.online}">
 						<span class="player-state" aria-hidden="true"></span>
 						<span>{{ player.name }}</span>
-						<small>{{ player.online ? (locale === 'en' ? 'ONLINE' : '在线') : (locale === 'en' ? 'OFFLINE' : '离线') }}</small>
+						<small>{{ player.online ? t('collapsePage.online') : t('collapsePage.offline') }}</small>
 					</li>
 				</ul>
-				<p v-else class="empty-roster">{{ locale === 'en' ? 'No members assigned' : '暂无阵营成员' }}</p>
-				<div v-if="team.eliminated" class="eliminated-mark">{{ locale === 'en' ? 'ELIMINATED' : '已出局' }}</div>
+				<p v-else class="empty-roster">{{ t('collapsePage.noMembers') }}</p>
+				<div v-if="team.eliminated" class="eliminated-mark">{{ t('collapsePage.eliminated') }}</div>
 			</article>
 		</div>
 	</section>

@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import AppNavigation from '@/components/ui/AppNavigation.vue'
 
 const props = defineProps({
@@ -14,12 +15,13 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['select', 'logout'])
+const { t } = useI18n()
 
 const navigationItems = computed(() =>
 	props.tabs.map((tab) => ({
 		key: tab.id,
-		label: tab.title,
-		description: tab.description,
+		label: tab.titleKey ? t(tab.titleKey) : tab.title,
+		description: tab.descriptionKey ? t(tab.descriptionKey) : tab.description,
 	}))
 )
 </script>
@@ -27,21 +29,21 @@ const navigationItems = computed(() =>
 <template>
 	<aside class="side">
 		<div class="side-header">
-			<h1>账户中心</h1>
-			<p class="side-sub">集中管理账户、登录安全与个性化配置</p>
+			<h1>{{ t('accountPage.title') }}</h1>
+			<p class="side-sub">{{ t('accountPage.sideDescription') }}</p>
 		</div>
 		<AppNavigation
 			:active-key="currentSetting"
 			:items="navigationItems"
-			aria-label="账户中心导航"
+			:aria-label="t('accountPage.navigation')"
 			density="panel"
 			orientation="vertical"
 			@select="emit('select', $event.key)"
 		/>
 		<div class="side-foot">
 			<button type="button" class="logout-button" @click="emit('logout')">
-				<span class="logout-title">注销登录</span>
-				<span class="logout-desc">清除当前设备上的账户会话</span>
+				<span class="logout-title">{{ t('accountPage.logout') }}</span>
+				<span class="logout-desc">{{ t('accountPage.logoutDescription') }}</span>
 			</button>
 		</div>
 	</aside>

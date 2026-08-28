@@ -2,16 +2,16 @@
 	<div class="card" @click="toggleDetails">
 		<span class="header">
 			<div class="info">
-				<img class="avatar" :src="avatar" alt="Player Avatar" />
+					<img class="avatar" :src="avatar" :alt="t('legacyPlayer.avatarAlt')" />
 				<p class="name">{{ player.name }}</p>
 			</div>
 		</span>
 
 		<transition name="details-transition">
 			<div v-show="isExpanded" class="details" ref="detailsRef">
-				<p>Ping: {{ player.ping }}ms</p>
-				<p>Health: {{ player.health }}</p>
-				<p>位置: ({{ player.x }}, {{ player.y }}, {{ player.z }})</p>
+				<p>{{ t('legacyPlayer.ping', { value: player.ping }) }}</p>
+				<p>{{ t('legacyPlayer.health', { value: player.health }) }}</p>
+				<p>{{ t('legacyPlayer.position', { x: player.x, y: player.y, z: player.z }) }}</p>
 			</div>
 		</transition>
 	</div>
@@ -22,6 +22,7 @@
 
 <script setup lang="ts">
 import { defineProps, ref, onMounted, onBeforeUnmount } from 'vue';
+import { useI18n } from 'vue-i18n'
 import { fetchAvatarUrl } from '@/services/avatar.js'
 
 const avatarCache = new Map<string, string>();
@@ -35,6 +36,7 @@ const props = defineProps({
 		required: true,
 	},
 });
+const { t } = useI18n()
 
 function toggleDetails() {
 	isExpanded.value = !isExpanded.value;

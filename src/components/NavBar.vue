@@ -21,7 +21,7 @@
 			>
 				<AppNavigation
 					:active-key="activeNavKey"
-					aria-label="主导航"
+					:aria-label="t('common.mainNavigation')"
 					class="primary-nav"
 					density="header"
 					:items="primaryNavItems"
@@ -54,7 +54,7 @@
 								<AppNavigation
 									class="mega-links"
 									:items="activeMegaItems"
-									aria-label="主导航链接"
+									:aria-label="t('common.mainNavigationLink')"
 									density="compact"
 									orientation="vertical"
 									@select="goTo($event.path, $event)"
@@ -67,7 +67,7 @@
 
 			<div class="user-section" data-guide-target="account">
 				<button v-if="!loggedIn" type="button" class="login-alert" @click="goToLogin">
-					<span class="alert-text">点击此处登录</span>
+					<span class="alert-text">{{ t('common.loginAlert') }}</span>
 				</button>
 
 				<div v-if="loggedIn" class="user-info">
@@ -85,8 +85,8 @@
 						v-if="isGuideButtonVisible"
 						type="button"
 						class="guide-btn"
-						:title="locale === 'zh' ? '打开新手指引' : 'Open quick start guide'"
-						:aria-label="locale === 'zh' ? '打开新手指引' : 'Open quick start guide'"
+						:title="t('onboardingPage.start')"
+						:aria-label="t('onboardingPage.start')"
 						@click="openGuide"
 					>
 						?
@@ -185,8 +185,8 @@ const navCategories = computed(() => [
 		items: [
 			{
 				path: '/collapse',
-				label: locale.value === 'zh' ? '《陷落》阵营选择' : 'Fallen faction selection',
-				description: locale.value === 'zh' ? '为周年活动选择并锁定你的阵营。' : 'Choose and lock your faction for the anniversary event.',
+				label: t('collapsePage.chooseFaction'),
+				description: t('collapsePage.registerPreference'),
 			},
 			{
 				path: '/news',

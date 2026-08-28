@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from "vue"
+import { useI18n } from 'vue-i18n'
 import ArtCard from "@/components/ArtCard.vue"
 import AllCardsComponent from "@/components/AllCardsComponent.vue"
 import MyCardsComponent from "@/components/MyCardsComponent.vue";
 import ChangeAvatarComponent from "@/components/ChangeAvatarComponent.vue";
 
 const selectedIndex = ref<0 | 1>(0)
+const { t } = useI18n()
 
 const selectModule = ref(0)
 
@@ -50,8 +52,8 @@ onBeforeUnmount(() => {
 		<section class="left">
 			<div class="preview-panel">
 				<div class="preview-copy">
-					<h1>您的卡面</h1>
-					<p>左侧始终展示当前名片效果，右侧用于切换卡面和头像资源。</p>
+					<h1>{{ t('cardsPage.previewTitle') }}</h1>
+					<p>{{ t('cardsPage.previewDescription') }}</p>
 				</div>
 				<div class="card-stage">
 					<div class="card-viewport">
@@ -64,15 +66,15 @@ onBeforeUnmount(() => {
 		<section class="right">
 			<header class="workspace-header">
 				<div>
-					<h1 class="workspace-title">个性化</h1>
-					<p class="workspace-sub">管理当前卡面、已获得卡片与头像资源。</p>
+					<h1 class="workspace-title">{{ t('cardsPage.personalization') }}</h1>
+					<p class="workspace-sub">{{ t('cardsPage.personalizationDescription') }}</p>
 				</div>
 				<div class="customizationSelect">
 					<button type="button" class="customizationBtn" :class="{ active: selectModule === 0 }" @click="selectModule = 0">
-						<p>卡面</p>
+						<p>{{ t('cardsPage.card') }}</p>
 					</button>
 					<button type="button" class="customizationBtn" :class="{ active: selectModule === 1 }" @click="selectModule = 1">
-						<p>头像</p>
+						<p>{{ t('cardsPage.avatar') }}</p>
 					</button>
 				</div>
 			</header>
@@ -80,15 +82,15 @@ onBeforeUnmount(() => {
 			<section v-show="selectModule === 0" class="workspace-section customizationFatherContainer">
 				<div class="section-topbar">
 					<div class="section-copy">
-						<h2>卡面库</h2>
-						<p>切换查看全部卡片或你已获得的卡片。</p>
+						<h2>{{ t('cardsPage.library') }}</h2>
+						<p>{{ t('cardsPage.libraryDescription') }}</p>
 					</div>
 					<div class="btn-group">
 						<button :class="{ active: selectedIndex === 0 }" @click="selectedIndex = 0">
-						所有卡片
+						{{ t('cardsPage.allCards') }}
 						</button>
 						<button :class="{ active: selectedIndex === 1 }" @click="selectedIndex = 1">
-						我的卡片
+						{{ t('cardsPage.myCards') }}
 						</button>
 					</div>
 				</div>
@@ -100,8 +102,8 @@ onBeforeUnmount(() => {
 			<section v-show="selectModule === 1" class="workspace-section avatar-panel">
 				<div class="section-topbar">
 					<div class="section-copy">
-						<h2>头像库</h2>
-						<p>选择一个头像并保存，预览会在下次拉取数据后更新。</p>
+						<h2>{{ t('cardsPage.avatarLibrary') }}</h2>
+						<p>{{ t('cardsPage.avatarDescription') }}</p>
 					</div>
 				</div>
 				<div class="avatar-edit">

@@ -2,42 +2,42 @@
 	<section class="cover-tool">
 		<form class="cover-controls" @submit.prevent="renderCover">
 			<label class="field">
-				<span>标题</span>
+				<span>{{ t('coverPage.title') }}</span>
 				<textarea
 					v-model="title"
 					rows="3"
-					placeholder="输入新闻或指南标题"
+					:placeholder="t('coverPage.titlePlaceholder')"
 					@input="renderCover"
 				></textarea>
 			</label>
 
 			<div class="control-grid">
 				<label class="field">
-					<span>种子</span>
-					<input v-model="seed" type="text" placeholder="留空使用标题" @input="renderCover">
+					<span>{{ t('coverPage.seed') }}</span>
+					<input v-model="seed" type="text" :placeholder="t('coverPage.seedPlaceholder')" @input="renderCover">
 				</label>
 
 				<label class="field">
-					<span>主题</span>
+					<span>{{ t('coverPage.theme') }}</span>
 					<select v-model="theme" @change="renderCover">
-						<option value="dark">深色</option>
-						<option value="light">浅色</option>
+						<option value="dark">{{ t('coverPage.dark') }}</option>
+						<option value="light">{{ t('coverPage.light') }}</option>
 					</select>
 				</label>
 
 				<label class="field">
-					<span>布局</span>
+					<span>{{ t('coverPage.layout') }}</span>
 					<select v-model="layout" @change="renderCover">
-						<option value="left">左下</option>
-						<option value="center">居中</option>
-						<option value="right">右下</option>
+						<option value="left">{{ t('coverPage.left') }}</option>
+						<option value="center">{{ t('coverPage.center') }}</option>
+						<option value="right">{{ t('coverPage.right') }}</option>
 					</select>
 				</label>
 			</div>
 
 			<div class="actions">
-				<button type="button" class="button secondary" @click="shuffleSeed">换一张</button>
-				<button type="button" class="button primary" @click="downloadCover">下载 PNG</button>
+				<button type="button" class="button secondary" @click="shuffleSeed">{{ t('coverPage.shuffle') }}</button>
+				<button type="button" class="button primary" @click="downloadCover">{{ t('coverPage.download') }}</button>
 			</div>
 		</form>
 
@@ -49,9 +49,11 @@
 
 <script setup>
 import { nextTick, onMounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const canvasRef = ref(null)
-const title = ref('Quantum Original 官方网站视觉更新')
+const { t } = useI18n()
+const title = ref(t('coverPage.defaultTitle'))
 const seed = ref('')
 const theme = ref('dark')
 const layout = ref('left')

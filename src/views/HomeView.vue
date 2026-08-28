@@ -388,12 +388,12 @@ function toSocialMedias(target) {
 							<span></span><span></span><span></span>
 						</div>
 						<div class="choice-prompt-copy">
-							<span>{{ locale === 'zh' ? '《陷落》正式版' : 'COLLAPSE FULL RELEASE' }}</span>
-							<strong>{{ locale === 'zh' ? `${collapseSchedule.startDateShortText.zh} 正式开启` : `Full release launches ${collapseSchedule.startDateShortText.en}` }}</strong>
-							<p>{{ locale === 'zh' ? '三座城市、十五枚密钥，一场至多 144 小时的阵营生存对抗。' : 'Three cities, fifteen keys, and up to 144 hours of faction survival.' }}</p>
+							<span>{{ t('homeCampaign.fullRelease') }}</span>
+							<strong>{{ t(locale === 'zh' ? 'homeCampaign.launches' : 'homeCampaign.launchesEn', { date: collapseSchedule.startDateShortText[locale] || collapseSchedule.startDateShortText.zh }) }}</strong>
+							<p>{{ t(locale === 'zh' ? 'homeCampaign.description' : 'homeCampaign.descriptionEn') }}</p>
 						</div>
 						<router-link class="choice-prompt-action" to="/collapse">
-							{{ locale === 'zh' ? '了解正式版' : 'Explore release' }}
+							{{ t(locale === 'zh' ? 'homeCampaign.explore' : 'homeCampaign.exploreEn') }}
 							<span aria-hidden="true">→</span>
 						</router-link>
 					</div>
@@ -418,7 +418,7 @@ function toSocialMedias(target) {
 					</div>
 					<div class="news-body">
 						<div v-if="featuredNews.id === '2026collapse'" class="collapse-signal">
-							{{ locale === 'zh' ? 'DOC. STEINBECK // 正式版即将开启' : 'DR. STEINBECK // FULL RELEASE INCOMING' }}
+							{{ t(locale === 'zh' ? 'homeCampaign.collapseLabel' : 'homeCampaign.collapseLabelEn') }}
 						</div>
 						<div class="news-meta">
 							<span>{{ featuredNews.type }}</span>

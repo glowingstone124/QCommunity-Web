@@ -1,5 +1,8 @@
 <script setup>
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const GLASS_COLORS = [
 	{ key: 'white', label: '白色', hex: '#f9fffe', rgb: [249, 255, 254] },
@@ -95,14 +98,14 @@ function calculate() {
 	<section class="beacon-panel">
 		<header class="tool-header">
 			<div>
-				<h2>信标颜色转换</h2>
+				<h2>{{ t('beaconPage.title') }}</h2>
 			</div>
-			<span class="edition-badge">Java only</span>
+			<span class="edition-badge">{{ t('beaconPage.javaOnly') }}</span>
 		</header>
 
 		<div class="control-panel">
 			<label class="field">
-				<span>目标颜色</span>
+				<span>{{ t('beaconPage.targetColor') }}</span>
 				<div class="color-row">
 					<input v-model="targetColor" type="color" class="color-picker" />
 					<input v-model="normalizedColor" type="text" class="text-input" spellcheck="false" />
@@ -110,41 +113,38 @@ function calculate() {
 			</label>
 
 			<label class="field">
-				<span>最大玻璃层数</span>
+				<span>{{ t('beaconPage.maxLayers') }}</span>
 				<select v-model.number="sequenceLength" class="text-input">
-					<option :value="1">1 层</option>
-					<option :value="2">2 层</option>
-					<option :value="3">3 层</option>
-					<option :value="4">4 层</option>
+					<option v-for="count in 4" :key="count" :value="count">{{ t('beaconPage.layers', { count }) }}</option>
 				</select>
 			</label>
 
-			<button type="button" class="primary-button" @click="calculate">计算序列</button>
+			<button type="button" class="primary-button" @click="calculate">{{ t('beaconPage.calculate') }}</button>
 		</div>
 
 		<div class="result-grid">
 			<div class="result-card">
-				<span>近似颜色</span>
+				<span>{{ t('beaconPage.approximate') }}</span>
 				<strong>{{ rgbToHex(result.rgb) }}</strong>
 				<div class="color-preview" :style="{ backgroundColor: rgbToHex(result.rgb) }"></div>
 			</div>
 			<div class="result-card">
-				<span>误差</span>
+				<span>{{ t('beaconPage.error') }}</span>
 				<strong>{{ result.error.toFixed(2) }}</strong>
-				<p>数值越小越接近目标颜色。</p>
+				<p>{{ t('beaconPage.errorHint') }}</p>
 			</div>
 		</div>
 
 		<div class="sequence-panel">
 			<div class="section-head">
-				<h3>玻璃序列</h3>
-				<span>{{ result.colors.length }} 层</span>
+				<h3>{{ t('beaconPage.sequence') }}</h3>
+				<span>{{ t('beaconPage.layers', { count: result.colors.length }) }}</span>
 			</div>
 			<div class="glass-list">
 				<div v-for="(color, index) in result.colors" :key="`${color.key}-${index}`" class="glass-item">
 					<div class="swatch" :style="{ backgroundColor: color.hex }"></div>
 					<div>
-						<strong>{{ index + 1 }}. {{ color.label }}</strong>
+						<strong>{{ index + 1 }}. {{ t(`beaconColors.${color.key}`) }}</strong>
 						<span>{{ color.hex }}</span>
 					</div>
 				</div>

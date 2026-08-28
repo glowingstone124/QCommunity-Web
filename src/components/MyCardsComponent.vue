@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {computed, onMounted, ref} from 'vue'
+import { useI18n } from 'vue-i18n'
 import axios from "axios";
 import {getSpecialImage} from '/src/utils/cards.ts'
 function apply(cardId: number) {
@@ -15,12 +16,13 @@ function apply(cardId: number) {
 }
 
 const cards = ref([])
+const { t } = useI18n()
 const loading = ref(true)
 const rarityMap = {
-	1: { name: "普通", style: "common" },
-	2: { name: "稀有", style: "uncommon" },
-	3: { name: "史诗", style: "rare" },
-	4: { name: "限定", style: "limited" }
+	1: { style: "common" },
+	2: { style: "uncommon" },
+	3: { style: "rare" },
+	4: { style: "limited" }
 }
 onMounted(async () => {
 	try {
@@ -59,7 +61,7 @@ const groupedCards = computed(() => {
 </script>
 
 <template>
-  <div v-if="loading" class="card-loading" role="status" aria-label="正在加载卡片">
+  <div v-if="loading" class="card-loading" role="status" :aria-label="t('cardsPage.loadingAria')">
     <span v-for="index in 6" :key="index" class="card-loading-item"></span>
   </div>
   <div v-else class="gallery">
@@ -88,9 +90,9 @@ const groupedCards = computed(() => {
               class="rarity"
               :class="rarityMap[card.rarity]?.style"
           >
-						<p>{{ rarityMap[card.rarity]?.name || "未知" }}</p>
+						<p>{{ t(`cardsPage.${rarityMap[card.rarity]?.style || 'unknownRarity'}`) }}</p>
           </span>
-          <button class="apply" @click="apply(card.id)">应用</button>
+          <button class="apply" @click="apply(card.id)">{{ t('cardsPage.apply') }}</button>
         </div>
       </div>
          </div>

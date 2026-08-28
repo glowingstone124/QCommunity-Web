@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import {useRouter} from "vue-router";
+import {useI18n} from "vue-i18n";
 let route = useRouter();
+const {t} = useI18n();
 function redirect() {
 	route.push('/');
 }
@@ -8,10 +10,10 @@ function redirect() {
 
 <template>
 	<div class="not-found">
-		<h1>这里似乎什么都没有</h1>
-		<p class="description">链接可能已经失效，或者页面被移动到了新的位置。</p>
+		<h1>{{ t('notFoundPage.title') }}</h1>
+		<p class="description">{{ t('notFoundPage.description') }}</p>
 		<button type="button" class="redirect" @click="redirect">
-			<span class="arrow" aria-hidden="true">←</span><span>回到首页</span>
+			<span class="arrow" aria-hidden="true">←</span><span>{{ t('notFoundPage.home') }}</span>
 		</button>
 	</div>
 </template>

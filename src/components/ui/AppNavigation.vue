@@ -6,7 +6,7 @@ defineProps({
 	},
 	ariaLabel: {
 		type: String,
-		default: '导航',
+		default: '',
 	},
 	density: {
 		type: String,
@@ -31,7 +31,7 @@ const emit = defineEmits(['activate', 'clear', 'select'])
 	<nav
 		class="app-navigation"
 		:class="[`is-${orientation}`, `is-${density}`]"
-		:aria-label="ariaLabel"
+		:aria-label="ariaLabel || $t('common.navigation')"
 		@mouseleave="emit('clear', $event)"
 		@focusout="emit('clear', $event)"
 	>

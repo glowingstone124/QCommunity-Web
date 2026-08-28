@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, Ref } from "vue";
+import { useI18n } from "vue-i18n";
 import AdvancementCard from "@/components/AdvancementComponent.vue";
 
 interface Advancement {
@@ -9,6 +10,7 @@ interface Advancement {
 }
 
 const fullAdvancementList: Ref<Advancement[]> = ref([]);
+const { t } = useI18n();
 const completedAdvancementList: Ref<Advancement[]> = ref([]);
 const pendingAdvancementList: Ref<Advancement[]> = ref([]);
 const username = localStorage.getItem("username");
@@ -54,7 +56,7 @@ const fetchAdvancements = async () => {
 		);
 	} catch (error) {
 		console.error("加载成就失败:", error);
-		loadError.value = "成就数据加载失败，请稍后重试。";
+		loadError.value = t("advancementPage.loadFailed");
 	} finally {
 		isLoading.value = false;
 	}
@@ -84,43 +86,43 @@ onMounted(async () => {
 	<div class="advancement-page" v-if="loginstat">
 		<header class="page-header">
 			<div class="title-block">
-				<h1>成就</h1>
-				<p>当前账号：{{ username }}</p>
+				<h1>{{ t('advancementPage.title') }}</h1>
+				<p>{{ t('advancementPage.currentAccount', { username }) }}</p>
 			</div>
 			<button type="button" class="refresh-button" @click="fetchAdvancements" :disabled="isLoading">
-				{{ isLoading ? "刷新中" : "刷新" }}
+				{{ isLoading ? t('common.refreshing') : t('common.refresh') }}
 			</button>
 		</header>
 
-		<section class="summary-grid" aria-label="成就概览">
+		<section class="summary-grid" :aria-label="t('advancementPage.overview')">
 			<div class="summary-item">
-				<span>已完成</span>
+				<span>{{ t('advancementPage.completed') }}</span>
 				<strong>{{ completedAdvancementList.length }}</strong>
 			</div>
 			<div class="summary-item">
-				<span>未完成</span>
+				<span>{{ t('advancementPage.pending') }}</span>
 				<strong>{{ pendingAdvancementList.length }}</strong>
 			</div>
 			<div class="summary-item">
-				<span>总计</span>
+				<span>{{ t('advancementPage.total') }}</span>
 				<strong>{{ fullAdvancementList.length }}</strong>
 			</div>
 		</section>
 
 		<div class="toolbar">
 			<label class="search-field">
-				<span>搜索成就</span>
-				<input v-model="searchText" type="search" placeholder="输入名称或描述" />
+				<span>{{ t('advancementPage.search') }}</span>
+				<input v-model="searchText" type="search" :placeholder="t('advancementPage.searchPlaceholder')" />
 			</label>
 		</div>
 
 		<p v-if="loadError" class="state-box error">{{ loadError }}</p>
-		<div v-else-if="isLoading" class="state-box">正在加载成就数据...</div>
+		<div v-else-if="isLoading" class="state-box">{{ t('advancementPage.loading') }}</div>
 
 		<div v-else class="achievement-layout">
 			<section class="achievement-section pending-section">
 				<div class="section-head">
-					<h2>未完成</h2>
+					<h2>{{ t('advancementPage.pending') }}</h2>
 					<span>{{ filteredPendingList.length }}</span>
 				</div>
 				<div v-if="filteredPendingList.length" class="card-grid">
@@ -131,12 +133,12 @@ onMounted(async () => {
 						status="pending"
 					/>
 				</div>
-				<p v-else class="state-box">没有匹配的未完成成就。</p>
+				<p v-else class="state-box">{{ t('advancementPage.noPending') }}</p>
 			</section>
 
 			<section class="achievement-section completed-section">
 				<div class="section-head">
-					<h2>已完成</h2>
+					<h2>{{ t('advancementPage.completed') }}</h2>
 					<span>{{ filteredCompletedList.length }}</span>
 				</div>
 				<div v-if="filteredCompletedList.length" class="card-grid">
@@ -147,13 +149,13 @@ onMounted(async () => {
 						status="completed"
 					/>
 				</div>
-				<p v-else class="state-box">没有匹配的已完成成就。</p>
+				<p v-else class="state-box">{{ t('advancementPage.noCompleted') }}</p>
 			</section>
 		</div>
 	</div>
 	<div v-else class="hint-container">
 		<div class="state-box">
-			<h1>{{ isCheckingLogin ? "正在检查登录状态" : "使用此功能之前需要登录。" }}</h1>
+			<h1>{{ isCheckingLogin ? t('advancementPage.checkingLogin') : t('advancementPage.loginRequired') }}</h1>
 		</div>
 	</div>
 </template>

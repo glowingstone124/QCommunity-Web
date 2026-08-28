@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { defaultGuideId, guideItems, guideSections } from '@/data/guides.js'
 import CommandReference from '@/components/guides/CommandReference.vue'
@@ -10,6 +11,20 @@ const router = useRouter()
 const guide = ref(null)
 const isLoading = ref(true)
 const isGuideMenuOpen = ref(false)
+const { t } = useI18n()
+
+const localizedGuideSections = computed(() => guideSections.map((section) => ({
+	...section,
+	title: t(`guidesPage.section${section.key.charAt(0).toUpperCase()}${section.key.slice(1)}`),
+	items: section.items.map((item) => ({
+		...item,
+		title: t(`guidesPage.guideTitles.${item.id}`),
+	})),
+})))
+
+function guideTitle(item) {
+	return item ? t(`guidesPage.guideTitles.${item.id}`) : ''
+}
 
 const activeId = computed(() => route.params.id || defaultGuideId)
 
@@ -87,9 +102,9 @@ watch(
 
 <template>
 	<main class="guides-page page-shell">
-		<aside class="guides-sidebar" aria-label="指南目录">
+		<aside class="guides-sidebar" :aria-label="t('guidesPage.index')">
 			<div class="guides-sidebar-heading">
-				<h1>指南</h1>
+				<h1>{{ t('guidesPage.title') }}</h1>
 				<button
 					type="button"
 					class="guide-menu-toggle"
@@ -97,12 +112,12 @@ watch(
 					aria-controls="guide-nav-list"
 					@click="isGuideMenuOpen = !isGuideMenuOpen"
 				>
-					{{ isGuideMenuOpen ? '收起' : '展开目录' }}
+					{{ isGuideMenuOpen ? t('guidesPage.collapse') : t('guidesPage.expand') }}
 				</button>
 			</div>
 
 			<nav id="guide-nav-list" class="guide-nav" :class="{ 'is-open': isGuideMenuOpen }">
-				<section v-for="section in guideSections" :key="section.key" class="guide-section">
+				<section v-for="section in localizedGuideSections" :key="section.key" class="guide-section">
 					<h2>{{ section.title }}</h2>
 					<button
 						v-for="item in section.items"
@@ -121,16 +136,16 @@ watch(
 		<section class="guide-reader">
 			<div class="guide-toolbar">
 				<div>
-					<strong>{{ activeGuide?.title || '指南' }}</strong>
+					<strong>{{ guideTitle(activeGuide) || t('guidesPage.title') }}</strong>
 				</div>
 
 				<select
-					aria-label="选择指南"
+					:aria-label="t('guidesPage.select')"
 					:value="activeId"
 					@change="goToGuide($event.target.value)"
 				>
 					<optgroup
-						v-for="section in guideSections"
+					v-for="section in localizedGuideSections"
 						:key="section.key"
 						:label="section.title"
 					>
@@ -154,28 +169,28 @@ watch(
 			</article>
 
 			<section v-else-if="!guide" class="guide-empty">
-				<h2>没有找到这篇指南</h2>
-				<p>请选择左侧目录中的其他文章。</p>
+				<h2>{{ t('guidesPage.notFoundTitle') }}</h2>
+				<p>{{ t('guidesPage.notFoundDescription') }}</p>
 			</section>
 
 			<CommandReference v-else-if="isCommandReference" />
 
 			<article v-else class="guide-article">
 				<header class="guide-header">
-					<h1>{{ guide.title }}</h1>
+					<h1>{{ guideTitle(activeGuide) }}</h1>
 				</header>
 
 				<div class="guide-content" v-html="guide.html" @click="openGuideLink"></div>
 
-				<footer class="guide-footer" aria-label="指南翻页">
+				<footer class="guide-footer" :aria-label="t('guidesPage.pagination')">
 					<button
 						type="button"
 						class="guide-pager"
 						:disabled="!previousGuide"
 						@click="previousGuide && goToGuide(previousGuide.id)"
 					>
-						<span>Previous</span>
-						<strong>{{ previousGuide?.title || '已经是第一篇' }}</strong>
+						<span>{{ t('guidesPage.previous') }}</span>
+						<strong>{{ guideTitle(previousGuide) || t('guidesPage.first') }}</strong>
 					</button>
 					<button
 						type="button"
@@ -183,8 +198,8 @@ watch(
 						:disabled="!nextGuide"
 						@click="nextGuide && goToGuide(nextGuide.id)"
 					>
-						<span>Next</span>
-						<strong>{{ nextGuide?.title || '已经是最后一篇' }}</strong>
+						<span>{{ t('guidesPage.next') }}</span>
+						<strong>{{ guideTitle(nextGuide) || t('guidesPage.last') }}</strong>
 					</button>
 				</footer>
 			</article>

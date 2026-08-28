@@ -1,6 +1,9 @@
 <script setup>
 import {ref, computed, onUnmounted, onMounted} from 'vue'
+import { useI18n } from 'vue-i18n'
 import InteractiveTransportMap from '@/components/transport/InteractiveTransportMap.vue'
+
+const { t, locale } = useI18n()
 
 // 站点数据
 const stations = ref([])
@@ -21,20 +24,20 @@ const showOptions = ref(false)
 const showMapPreview = ref(false)
 // 交通方式映射
 const transportTypes = ref([
-  {id: 0, name: '地铁', int_name: 'METRO', disabled: false},
-  {id: 1, name: '捷运', int_name: 'RAPID', disabled: false},
-  {id: 2, name: '蓝冰船', int_name: 'BLUEICE', disabled: false},
-  {id: 3, name: '城铁', int_name: 'CITYMETRO', disabled: false},
-  {id: 4, name: '下界交通', int_name: 'NETHER', disabled: false},
-  {id: 5, name: '珍珠炮', int_name: 'PEARL', disabled: false},
-  {id: 6, name: '飞机', int_name: 'AIRPLANE', disabled: false},
-  {id: 7, name: '船运', int_name: 'BOAT', disabled: false}
+  {id: 0, nameKey: 'transportPage.metro', int_name: 'METRO', disabled: false},
+  {id: 1, nameKey: 'transportPage.rapid', int_name: 'RAPID', disabled: false},
+  {id: 2, nameKey: 'transportPage.blueIce', int_name: 'BLUEICE', disabled: false},
+  {id: 3, nameKey: 'transportPage.cityMetro', int_name: 'CITYMETRO', disabled: false},
+  {id: 4, nameKey: 'transportPage.nether', int_name: 'NETHER', disabled: false},
+  {id: 5, nameKey: 'transportPage.pearl', int_name: 'PEARL', disabled: false},
+  {id: 6, nameKey: 'transportPage.airplane', int_name: 'AIRPLANE', disabled: false},
+  {id: 7, nameKey: 'transportPage.boat', int_name: 'BOAT', disabled: false}
 ])
 // 维度选项
 const dimensionOptions = ref([
-  {id: 'OVERWORLD', name: '主世界', disabled: false},
-  {id: 'NETHER', name: '下界', disabled: false},
-  {id: 'THE_END', name: '末地', disabled: false}
+  {id: 'OVERWORLD', nameKey: 'transportPage.overworld', disabled: false},
+  {id: 'NETHER', nameKey: 'transportPage.netherDimension', disabled: false},
+  {id: 'THE_END', nameKey: 'transportPage.theEnd', disabled: false}
 ])
 
 const fetchAllStations = async () => {
@@ -78,7 +81,7 @@ const selectEndStation = (station, locale) => {
 
 const searchRoute = async () => {
   if (!startStationId.value || !endStationId.value) {
-    alert('请选择始发站和终点站')
+		alert(t('transportPage.selectStations'))
     return
   }
   isLoading.value = true
@@ -97,9 +100,9 @@ const searchRoute = async () => {
       body: JSON.stringify(requestData)
     })
     const data = await response.json()
-    routeResult.value = {message: "共 " + data.totalStops + " 站，用时约 " + data.totalTime + " 秒", data: data}
+    routeResult.value = {message: t('transportPage.routeFound', { stops: data.totalStops, seconds: data.totalTime }), data: data}
     if (data.result === "-1") {
-      routeResult.value = {message: "未找到符合条件的路线"}
+      routeResult.value = {message: t('transportPage.noRoute')}
     } else {
       console.log('路线查询结果:', data)
     }
@@ -226,10 +229,10 @@ const getBannedDims = computed(() => {
 
 const searchButtonLabel = computed(() => {
   if (isLoading.value) {
-    return '正在规划路线'
+    return t('transportPage.planning')
   }
 
-  return getBannedTypes.value.length + getBannedDims.value.length === 0 ? '查询' : '高级查询'
+	return getBannedTypes.value.length + getBannedDims.value.length === 0 ? t('transportPage.query') : t('transportPage.advancedQuery')
 })
 
 const stationMap = computed(() => {
@@ -269,15 +272,15 @@ const closeOnOutsideClick = (event) => {
 </script>
 
 <template>
-  <div class="title">
-    <h1>在这里查询交通路线</h1>
-    <h2>含地铁、捷运、蓝冰船、城铁、下界交通、珍珠炮、飞机等</h2>
+	<div class="title">
+	<h1>{{ t('transportPage.title') }}</h1>
+	<h2>{{ t('transportPage.description') }}</h2>
   </div>
 
   <div class="container">
     <div class="query">
       <div class="input-group">
-        <label for="start">始发站：</label>
+		<label for="start">{{ t('transportPage.start') }}</label>
         <div class="input-with-suggestions start-input-container">
           <input
               type="text"
@@ -285,7 +288,7 @@ const closeOnOutsideClick = (event) => {
               v-model="startInput"
               @focus="handleStartFocus"
               @input="showStartSuggestions = true"
-              placeholder="输入站名或英文站名"
+				:placeholder="t('transportPage.stationPlaceholder')"
               class="station-input"
               autocomplete="off"
           />
@@ -294,12 +297,12 @@ const closeOnOutsideClick = (event) => {
             <div
                 v-for="station in filteredStartStations"
                 :key="station.id"
-                @click="selectStartStation(station, $i18n.locale)"
+				@click="selectStartStation(station, locale)"
                 class="suggestion-item"
             >
-              <div class="station-name" v-if="$i18n.locale === 'en'">{{ station.name_en }}</div>
-              <div class="station-name" v-else>{{ station.name }}</div>
-              <div class="station-name-en" v-if="$i18n.locale === 'en'">{{ station.name }}</div>
+				<div class="station-name" v-if="locale === 'en'">{{ station.name_en }}</div>
+				<div class="station-name" v-else>{{ station.name }}</div>
+				<div class="station-name-en" v-if="locale === 'en'">{{ station.name }}</div>
               <div class="station-name-en" v-else>{{ station.name_en }}</div>
             </div>
           </div>
@@ -308,7 +311,7 @@ const closeOnOutsideClick = (event) => {
       </div>
 
       <div class="input-group">
-        <label for="end">终点站：</label>
+		<label for="end">{{ t('transportPage.end') }}</label>
         <div class="input-with-suggestions end-input-container">
           <input
               type="text"
@@ -316,7 +319,7 @@ const closeOnOutsideClick = (event) => {
               v-model="endInput"
               @focus="handleEndFocus"
               @input="showEndSuggestions = true"
-              placeholder="输入站名或英文站名"
+				:placeholder="t('transportPage.stationPlaceholder')"
               class="station-input"
               autocomplete="off"
           />
@@ -325,12 +328,12 @@ const closeOnOutsideClick = (event) => {
             <div
                 v-for="station in filteredEndStations"
                 :key="station.id"
-                @click="selectEndStation(station, $i18n.locale)"
+				@click="selectEndStation(station, locale)"
                 class="suggestion-item"
             >
-              <div class="station-name" v-if="$i18n.locale === 'en'">{{ station.name_en }}</div>
+				<div class="station-name" v-if="locale === 'en'">{{ station.name_en }}</div>
               <div class="station-name" v-else>{{ station.name }}</div>
-              <div class="station-name-en" v-if="$i18n.locale === 'en'">{{ station.name }}</div>
+				<div class="station-name-en" v-if="locale === 'en'">{{ station.name }}</div>
               <div class="station-name-en" v-else>{{ station.name_en }}</div>
             </div>
           </div>
@@ -353,13 +356,13 @@ const closeOnOutsideClick = (event) => {
             class="options-button"
             :disabled="isLoading"
         >
-          高级选项
+			{{ t('transportPage.advanced') }}
         </button>
       </div>
-      <button type="button" class="transport-map-button" aria-label="在应用内查看交通地图" @click="showMap">
+	<button type="button" class="transport-map-button" :aria-label="t('transportPage.mapButton')" @click="showMap">
         <span class="map-entry-copy">
-          <strong>打开交互式交通图</strong>
-          <small>缩放、拖动并查看站点信息</small>
+			<strong>{{ t('transportPage.openMap') }}</strong>
+			<small>{{ t('transportPage.mapDescription') }}</small>
         </span>
         <span class="map-entry-art" aria-hidden="true">
           <i></i><i></i><i></i>
@@ -372,8 +375,8 @@ const closeOnOutsideClick = (event) => {
       <div v-if="isLoading" key="loading" class="loading-state" aria-live="polite" aria-busy="true">
         <div class="loading-copy">
           <span class="loading-spinner" aria-hidden="true"></span>
-          <h3>正在生成换乘方案</h3>
-          <p>系统正在比对线路颜色、停靠站点和已禁用交通方式，请稍候片刻。</p>
+			<h3>{{ t('transportPage.planning') }}</h3>
+			<p>{{ t('transportPage.planningDescription') }}</p>
         </div>
 
         <div class="loading-skeleton" aria-hidden="true">
@@ -384,7 +387,7 @@ const closeOnOutsideClick = (event) => {
       </div>
 
       <div v-else-if="routeResult" key="route-result" class="route-result-content">
-        <h3>查询结果：</h3>
+		<h3>{{ t('mapPage.searchResult') }}</h3>
         <p v-if="routeResult.message">{{ routeResult.message }}</p>
         <p v-if="routeResult.error" class="error">{{ routeResult.error }}</p>
         <div v-if="routeResult.data" class="result-main route-timeline">
@@ -396,11 +399,11 @@ const closeOnOutsideClick = (event) => {
           >
             <div class="timeline-row node-row" v-if="seg===0">
               <div class="timeline-node" aria-hidden="true"></div>
-              <span class="node_stations">{{ getStationName(segment.stationIds[0], $i18n.locale) }}</span>
+				<span class="node_stations">{{ getStationName(segment.stationIds[0], locale) }}</span>
             </div>
             <div class="timeline-row line-row">
               <div class="timeline-line" aria-hidden="true"></div>
-              <h3 class="line_name">{{ $i18n.locale === 'en' ? segment.name_en : segment.lineName }}</h3>
+				<h3 class="line_name">{{ locale === 'en' ? segment.name_en : segment.lineName }}</h3>
             </div>
             <div
                 v-for="(stationId, seq) in segment.stationIds"
@@ -410,19 +413,19 @@ const closeOnOutsideClick = (event) => {
             >
               <div v-if="seq === segment.stationIds.length - 1" class="timeline-row node-row">
                 <div class="timeline-node" aria-hidden="true"></div>
-                <span class="node_stations">{{ getStationName(stationId, $i18n.locale) }}</span>
+					<span class="node_stations">{{ getStationName(stationId, locale) }}</span>
               </div>
               <div v-else-if="seq !== 0" class="timeline-row station-row">
                 <div class="timeline-line" aria-hidden="true"></div>
-                <span class="small_stations">{{ getStationName(stationId, $i18n.locale) }}</span>
+					<span class="small_stations">{{ getStationName(stationId, locale) }}</span>
               </div>
             </div>
           </div>
         </div>
       </div>
       <div v-else key="placeholder" class="placeholder">
-        <p>查询结果将显示在这里</p>
-        <p>请选择始发站和终点站后点击查询按钮</p>
+		<p>{{ t('mapPage.resultPlaceholder') }}</p>
+		<p>{{ t('mapPage.resultHint') }}</p>
       </div>
       </Transition>
     </div>
@@ -432,39 +435,39 @@ const closeOnOutsideClick = (event) => {
   <div v-if="showOptions" class="options-popup-overlay" @click="closeOnOutsideClick">
     <div class="options-popup">
       <div class="popup-header">
-        <h2>查询选项</h2>
-        <button class="close-button" @click="closeOptions">&times;</button>
+		<h2>{{ t('mapPage.optionsTitle') }}</h2>
+		<button class="close-button" :aria-label="t('mapPage.close')" @click="closeOptions">&times;</button>
       </div>
 
       <div class="popup-content">
         <!-- 预设方案 -->
         <div class="options-section">
-          <h3>预设方案</h3>
+			<h3>{{ t('mapPage.presets') }}</h3>
           <div class="preset-buttons">
             <button
                 class="preset-button"
                 @click="applyPreset('all')"
             >
-              全部方案
+				{{ t('mapPage.allPresets') }}
             </button>
             <button
                 class="preset-button"
                 @click="applyPreset('rail')"
             >
-              纯铁路方案
+				{{ t('mapPage.railPreset') }}
             </button>
             <button
                 class="preset-button"
                 @click="applyPreset('overworld')"
             >
-              主世界方案
+				{{ t('mapPage.overworldPreset') }}
             </button>
           </div>
         </div>
 
         <!-- 启用交通方式 -->
         <div class="options-section">
-          <h3>启用交通方式</h3>
+			<h3>{{ t('mapPage.enabledTypes') }}</h3>
           <div class="transport-checkboxes">
             <div v-for="type in transportTypes" :key="type.id" class="checkbox-item">
               <label class="checkbox-label">
@@ -475,7 +478,7 @@ const closeOnOutsideClick = (event) => {
                     class="checkbox-input"
                 />
                 <span class="checkbox-custom"></span>
-                <span class="checkbox-text">{{ type.name }}</span>
+				<span class="checkbox-text">{{ t(type.nameKey) }}</span>
               </label>
             </div>
           </div>
@@ -483,7 +486,7 @@ const closeOnOutsideClick = (event) => {
 
         <!-- 启用维度 -->
         <div class="options-section">
-          <h3>启用维度</h3>
+			<h3>{{ t('transportPage.enabledDimensions') }}</h3>
           <div class="dimension-checkboxes">
             <div v-for="dim in dimensionOptions" :key="dim.id" class="checkbox-item">
               <label class="checkbox-label">
@@ -494,7 +497,7 @@ const closeOnOutsideClick = (event) => {
                     class="checkbox-input"
                 />
                 <span class="checkbox-custom"></span>
-                <span class="checkbox-text">{{ dim.name }}</span>
+				<span class="checkbox-text">{{ t(dim.nameKey) }}</span>
               </label>
             </div>
           </div>
@@ -503,19 +506,19 @@ const closeOnOutsideClick = (event) => {
         <!-- 当前禁用状态提示 -->
         <div class="current-settings">
           <p v-if="getBannedTypes.length > 0">
-            禁用交通方式: {{ getBannedTypes.map(t => transportTypes.find(tt => tt.int_name === t)?.name).join(', ') }}
+			{{ t('mapPage.disabledTypes', { types: getBannedTypes.map(type => t(transportTypes.find(tt => tt.int_name === type)?.nameKey)).join(', ') }) }}
           </p>
           <p v-if="getBannedDims.length > 0">
-            禁用维度: {{ getBannedDims.map(d => dimensionOptions.find(dd => dd.id === d)?.name).join(', ') }}
+			{{ t('mapPage.disabledDimensions', { dimensions: getBannedDims.map(dimension => t(dimensionOptions.find(dd => dd.id === dimension)?.nameKey)).join(', ') }) }}
           </p>
           <p v-if="getBannedTypes.length === 0 && getBannedDims.length === 0">
-            当前不禁用任何交通方式和维度
+			{{ t('mapPage.noDisabled') }}
           </p>
         </div>
       </div>
 
       <div class="popup-footer">
-        <button class="apply-button" @click="closeOptions">应用选项</button>
+		<button class="apply-button" @click="closeOptions">{{ t('mapPage.applyOptions') }}</button>
       </div>
     </div>
   </div>
@@ -533,10 +536,10 @@ const closeOnOutsideClick = (event) => {
       <div class="map-preview-shell">
         <header class="map-preview-header">
           <div>
-            <span>TRANSPORT NETWORK</span>
-            <h2 id="map-preview-title">交通线路地图</h2>
+			<span>{{ t('mapPage.network') }}</span>
+		<h2 id="map-preview-title">{{ t('mapPage.mapTitle') }}</h2>
           </div>
-          <button type="button" class="map-close-button" aria-label="关闭地图" title="关闭地图" @click="closeMap">&times;</button>
+		<button type="button" class="map-close-button" :aria-label="t('mapPage.closeMap')" :title="t('mapPage.closeMap')" @click="closeMap">&times;</button>
         </header>
         <div class="map-preview-viewport">
           <InteractiveTransportMap

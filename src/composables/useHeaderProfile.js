@@ -35,7 +35,7 @@ export function useHeaderProfile() {
 		theme.value = document.documentElement.dataset.theme || 'light'
 
 		if (!username.value) {
-			username.value = '未登录'
+			username.value = ''
 			getAvatar('steve')
 			return
 		}
@@ -49,7 +49,7 @@ export function useHeaderProfile() {
 			const data = await res.json()
 			if (data.error === 3 || data.error === 1) {
 				loggedIn.value = false
-				username.value = '未登录'
+				username.value = ''
 				getAvatar('steve')
 				return
 			}
@@ -60,7 +60,7 @@ export function useHeaderProfile() {
 			getAvatar(data.username)
 		} catch (error) {
 			console.error('获取账户信息失败:', error)
-			username.value = '未登录'
+			username.value = ''
 			getAvatar('steve')
 		}
 	}

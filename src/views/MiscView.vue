@@ -2,8 +2,8 @@
 	<div class="misc-page">
 		<header class="page-header">
 			<div>
-				<h1>小功能</h1>
-				<p>轻量工具与账号相关的小组件。</p>
+				<h1>{{ t('miscPage.title') }}</h1>
+				<p>{{ t('miscPage.description') }}</p>
 			</div>
 		</header>
 
@@ -12,7 +12,7 @@
 			:active-key="activeKey"
 			orientation="horizontal"
 			density="panel"
-			aria-label="小功能导航"
+			:aria-label="t('miscPage.nav_label')"
 			@select="switchComponent"
 		/>
 
@@ -24,29 +24,31 @@
 
 <script setup>
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import BeaconColorComponent from "@/components/BeaconColorComponent.vue";
 import FortuneComponent from "@/components/FortuneComponent.vue";
 import AppNavigation from "@/components/ui/AppNavigation.vue";
 
 const activeKey = ref('fortune')
+const { t } = useI18n()
 
-const menuItems = [
+const menuItems = computed(() => [
 	{
 		key: 'fortune',
-		label: '今日运势',
-		description: '查看账号今日指数',
+		label: t('miscPage.fortune'),
+		description: t('miscPage.fortune_description'),
 		component: FortuneComponent,
 	},
 	{
 		key: 'beacon-color',
-		label: '信标颜色',
-		description: 'Java 光束颜色序列',
+		label: t('miscPage.beacon_color'),
+		description: t('miscPage.beacon_color_description'),
 		component: BeaconColorComponent,
 	},
-]
+])
 
 const activeComponent = computed(() => {
-	return menuItems.find((item) => item.key === activeKey.value)?.component || FortuneComponent
+	return menuItems.value.find((item) => item.key === activeKey.value)?.component || FortuneComponent
 })
 
 const switchComponent = (item) => {

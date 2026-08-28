@@ -1,27 +1,27 @@
 export const accountTabs = [
 	{
 		id: 0,
-		title: '账户信息',
-		description: '概览与登录历史',
+		titleKey: 'accountPage.tabInfo',
+		descriptionKey: 'accountPage.tabInfoDescription',
 	},
 	{
 		id: 1,
-		title: 'IP过白',
-		description: '海外登录白名单',
+		titleKey: 'accountPage.tabWhitelist',
+		descriptionKey: 'accountPage.tabWhitelistDescription',
 	},
 	{
 		id: 2,
-		title: '个性化',
-		description: '名片与展示外观',
+		titleKey: 'accountPage.tabCards',
+		descriptionKey: 'accountPage.tabCardsDescription',
 	},
 	{
 		id: 3,
-		title: '附属账户',
-		description: '管理绑定账户',
+		titleKey: 'accountPage.tabAffiliated',
+		descriptionKey: 'accountPage.tabAffiliatedDescription',
 	},
 	{
 		id: 4,
-		title: '设置',
-		description: '界面偏好',
+		titleKey: 'accountPage.tabPreferences',
+		descriptionKey: 'accountPage.tabPreferencesDescription',
 	},
 ]

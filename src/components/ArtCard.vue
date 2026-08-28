@@ -2,6 +2,7 @@
 import {ref, computed, onMounted} from "vue"
 import axios from "axios"
 import { fetchAvatarUrl } from '@/services/avatar.js'
+import { useI18n } from 'vue-i18n'
 const props = defineProps({
 	scale: {
 		type: [Number],
@@ -9,6 +10,7 @@ const props = defineProps({
 		default: 1.0
 	}
 })
+const { t } = useI18n()
 import ColorThief from 'colorthief'
 const gradient = ref("")
 const avatarImg = ref<HTMLImageElement | null>(null)
@@ -67,10 +69,10 @@ const levelDic = {
 const collection = ref("")
 
 const levelDesc = {
-	1: "Common",
-	2: "Uncommon",
-	3: "Rare",
-	4: "Limited",
+	1: "common",
+	2: "uncommon",
+	3: "rare",
+	4: "limited",
 }
 const backgroundUrl = ref("")
 
@@ -126,7 +128,7 @@ function onImgLoad() {
 		<div class="background" :style="{ backgroundImage: `url('${backgroundUrl}')` }">
 			<div class="top">
 				<div class="section-1" :style="{backgroundImage: gradient}">
-					<img :src="avatarUrl" alt="avatar" ref="avatarImg" crossorigin="anonymous"
+					<img :src="avatarUrl" :alt="t('playerCard.avatarAlt')" ref="avatarImg" crossorigin="anonymous"
 					@load="onImgLoad" />
 				</div>
 				<div class="section-4"><h1>{{ username }}</h1></div>
@@ -145,7 +147,7 @@ function onImgLoad() {
 				</div>
 				<div class="level" :class="levelDic[level]">
 					<div class="cube"></div>
-					<h2>{{ levelDesc[level] }}</h2>
+					<h2>{{ t(`cardsPage.${levelDesc[level] || 'unknownRarity'}`) }}</h2>
 				</div>
 			</div>
 		</div>

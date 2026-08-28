@@ -1,5 +1,8 @@
 <script setup>
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const commands = [
 	{
@@ -319,16 +322,39 @@ const query = ref('/')
 const activeCommandName = ref(commands[0].name)
 const selectedArgs = ref({})
 
+function commandKey(command) {
+	return command.name.replace(/^\//, '')
+}
+
+function localizeCommand(command) {
+	const key = commandKey(command)
+	return {
+		...command,
+		category: t(`commandPage.categories.${key}`),
+		description: t(`commandPage.descriptions.${key}`),
+		args: command.args.map((arg) => ({
+			...arg,
+			label: t(`commandPage.argumentLabels.${arg.key}`),
+			options: arg.options?.map((option) => ({
+				...option,
+				description: t(`commandPage.options.${key}.${arg.key}.${option.value}`),
+			})),
+		})),
+	}
+}
+
+const localizedCommands = computed(() => commands.map(localizeCommand))
+
 const normalizedQuery = computed(() => query.value.trim().toLowerCase())
 
 const filteredCommands = computed(() => {
 	const term = normalizedQuery.value.replace(/^\//, '')
 
 	if (!term) {
-		return commands
+		return localizedCommands.value
 	}
 
-	return commands.filter((command) => {
+	return localizedCommands.value.filter((command) => {
 		const haystack = [
 			command.name,
 			command.category,
@@ -343,14 +369,14 @@ const filteredCommands = computed(() => {
 })
 
 const activeCommand = computed(() =>
-	commands.find((command) => command.name === activeCommandName.value) || filteredCommands.value[0] || commands[0]
+	localizedCommands.value.find((command) => command.name === activeCommandName.value) || filteredCommands.value[0] || localizedCommands.value[0]
 )
 
 const completionOptions = computed(() => {
 	const term = normalizedQuery.value
 
 	if (!term || term === '/') {
-		return commands.slice(0, 10).map((command) => ({
+		return localizedCommands.value.slice(0, 10).map((command) => ({
 			type: 'command',
 			value: command.name,
 			label: command.name,
@@ -371,7 +397,7 @@ const completionOptions = computed(() => {
 
 	const parts = term.split(/\s+/)
 	const commandName = parts[0]
-	const command = commands.find((item) => item.name === commandName || item.name.slice(1) === commandName)
+	const command = localizedCommands.value.find((item) => item.name === commandName || item.name.slice(1) === commandName)
 	const argIndex = Math.max(0, parts.length - 2)
 	const arg = command ? visibleArgs(command)[argIndex] : null
 	const partial = parts[parts.length - 1] || ''
@@ -471,24 +497,24 @@ function suggestionsForArg(arg) {
 		return arg.suggestions.map((value) => ({
 			value,
 			label: value,
-			description: `填入 ${arg.label}`,
+			description: t('commandPage.fill', { label: arg.label }),
 		}))
 	}
 
 	if (arg.dynamic === 'onlinePlayerNames') {
 		return [
-			{ value: '<player>', label: '<player>', description: '游戏内会补全在线玩家名' },
+			{ value: '<player>', label: '<player>', description: t('commandPage.onlinePlayerHint') },
 		]
 	}
 
 	if (arg.dynamic === 'fakePlayerNames') {
 		return [
-			{ value: '<fakePlayer>', label: '<fakePlayer>', description: '游戏内会补全当前假人名' },
+			{ value: '<fakePlayer>', label: '<fakePlayer>', description: t('commandPage.fakePlayerHint') },
 		]
 	}
 
 	return [
-		{ value: `<${arg.placeholder || arg.label}>`, label: `<${arg.placeholder || arg.label}>`, description: `填入 ${arg.label}` },
+		{ value: `<${arg.placeholder || arg.label}>`, label: `<${arg.placeholder || arg.label}>`, description: t('commandPage.fill', { label: arg.label }) },
 	]
 }
 
@@ -504,13 +530,13 @@ async function copyCommand() {
 <template>
 	<section class="command-reference">
 		<header class="command-header">
-			<h1>指令一览</h1>
-			<p>输入指令、关键词或参数，使用补全候选快速定位可用命令。</p>
+			<h1>{{ t('commandPage.title') }}</h1>
+			<p>{{ t('commandPage.description') }}</p>
 		</header>
 
 		<div class="command-console">
 			<label class="command-search">
-				<span>Command</span>
+				<span>{{ t('commandPage.command') }}</span>
 				<input
 					v-model="query"
 					type="text"
@@ -520,7 +546,7 @@ async function copyCommand() {
 				>
 			</label>
 
-			<div class="completion-list" aria-label="补全候选">
+			<div class="completion-list" :aria-label="t('commandPage.completion')">
 				<button
 					v-for="option in completionOptions"
 					:key="`${option.type}:${option.value}`"
@@ -535,7 +561,7 @@ async function copyCommand() {
 		</div>
 
 		<div class="command-layout">
-			<nav class="command-list" aria-label="指令列表">
+			<nav class="command-list" :aria-label="t('commandPage.list')">
 				<button
 					v-for="command in filteredCommands"
 					:key="command.name"
@@ -558,7 +584,7 @@ async function copyCommand() {
 				</div>
 
 				<div class="usage-block">
-					<span>Usage</span>
+					<span>{{ t('commandPage.usage') }}</span>
 					<code>{{ activeCommand.usage }}</code>
 				</div>
 
@@ -566,7 +592,7 @@ async function copyCommand() {
 					<section v-for="arg in visibleArgs(activeCommand)" :key="arg.key" class="arg-section">
 						<h3>
 							{{ arg.label }}
-							<span v-if="!arg.required">可选</span>
+							<span v-if="!arg.required">{{ t('commandPage.optional') }}</span>
 						</h3>
 						<div class="arg-options">
 							<button
@@ -585,9 +611,9 @@ async function copyCommand() {
 				</div>
 
 				<div class="command-output">
-					<span>Generated</span>
+					<span>{{ t('commandPage.generated') }}</span>
 					<code>{{ composedCommand }}</code>
-					<button type="button" @click="copyCommand">复制</button>
+					<button type="button" @click="copyCommand">{{ t('commandPage.copy') }}</button>
 				</div>
 			</article>
 		</div>

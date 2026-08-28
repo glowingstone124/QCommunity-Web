@@ -1,6 +1,9 @@
 <script setup>
 import { computed, onBeforeUnmount, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import mapData from '@/data/transportMap.json'
+
+const { t } = useI18n()
 
 const props = defineProps({
 	stations: { type: Array, default: () => [] },
@@ -90,7 +93,7 @@ const lineNamesByColor = graphNodes.reduce((lookup, node) => {
 	if (!type.includes('line-badge')) return lookup
 	const payload = nodePayload(node)
 	const color = normalizedColor(payload.color?.[2])
-	const name = payload.num !== undefined ? `${payload.num}号线` : payload.names?.[0]
+	const name = payload.num !== undefined ? String(payload.num) : payload.names?.[0]
 	if (!color || !name) return lookup
 	const names = lookup.get(color) || []
 	if (!names.includes(name)) names.push(name)
@@ -99,30 +102,31 @@ const lineNamesByColor = graphNodes.reduce((lookup, node) => {
 }, new Map())
 
 const stationTypeNames = {
-	'shmetro-basic': '普通站',
-	'shmetro-int': '换乘站',
-	'suzhourt-basic': '普通站',
-	'suzhourt-int': '换乘站',
-	'guangdong-intercity-rwy': '城际铁路站',
+	'shmetro-basic': 'mapPage.stationTypes.basic',
+	'shmetro-int': 'mapPage.stationTypes.interchange',
+	'suzhourt-basic': 'mapPage.stationTypes.basic',
+	'suzhourt-int': 'mapPage.stationTypes.interchange',
+	'guangdong-intercity-rwy': 'mapPage.stationTypes.intercity',
 }
 
 const transportStyleNames = {
-	'single-color': '轨道交通',
-	'mtr-light-rail': '捷运线路',
-	'river': '水路',
-	'bjsubway-dotted': '暂未建成线路',
-	'sh-sub-rwy': '城际铁路',
-	'gzmtr-virtual-int': '站外换乘',
-	'mtr-paid-area': '站内换乘',
-	'mtr-unpaid-area': '站外换乘',
-	'chengdurt-outside-fare-gates': '出闸换乘',
+	'single-color': 'mapPage.stationTypes.rail',
+	'mtr-light-rail': 'mapPage.stationTypes.rapid',
+	'river': 'mapPage.stationTypes.water',
+	'bjsubway-dotted': 'mapPage.stationTypes.unbuilt',
+	'sh-sub-rwy': 'mapPage.stationTypes.intercityRail',
+	'gzmtr-virtual-int': 'mapPage.stationTypes.outsideTransfer',
+	'mtr-paid-area': 'mapPage.stationTypes.insideTransfer',
+	'mtr-unpaid-area': 'mapPage.stationTypes.outsideTransfer',
+	'chengdurt-outside-fare-gates': 'mapPage.stationTypes.fareGateTransfer',
 }
 
 function connectionName(style, color) {
 	const exactColor = normalizedColor(color)
 	const matchedColor = [...lineNamesByColor.keys()].find((candidate) => colorsMatch(candidate, exactColor))
 	const lineNames = lineNamesByColor.get(exactColor) || lineNamesByColor.get(matchedColor)
-	return lineNames?.join(' / ') || transportStyleNames[style] || '交通连接'
+	const localizedLineNames = lineNames?.map((name) => /^\d+$/.test(String(name)) ? t('mapPage.line', { number: name }) : name)
+	return localizedLineNames?.join(' / ') || (transportStyleNames[style] ? t(transportStyleNames[style]) : t('mapPage.stationTypes.default'))
 }
 
 function stationConnections(key, stationPayload) {
@@ -216,7 +220,7 @@ const stations = computed(() => graphNodes
 			nameEn: names[1] || '',
 			apiStation,
 			label: stationLabelLayout(type, payload, names),
-			typeName: stationTypeNames[type] || '交通站点',
+			typeName: t(stationTypeNames[type] || 'transportPage.stationTypes.default'),
 			connections: stationConnections(node.key, payload),
 		}
 	})
@@ -236,7 +240,7 @@ const filteredStations = computed(() => {
 })
 
 function apiStationName(id) {
-	return props.stations.find((station) => String(station.id) === String(id))?.name || id || '未选择'
+	return props.stations.find((station) => String(station.id) === String(id))?.name || id || t('mapPage.notSelected')
 }
 
 const activeStationIds = computed(() => new Set([
@@ -626,33 +630,33 @@ onBeforeUnmount(() => {
 	<div :class="['interactive-map', { 'is-interacting': isInteracting }]">
 		<div class="map-toolbar">
 			<label class="map-search">
-				<span class="sr-only">搜索站点</span>
-				<input v-model="query" type="search" placeholder="搜索站点" autocomplete="off" />
+				<span class="sr-only">{{ t('mapPage.mapSearch') }}</span>
+				<input v-model="query" type="search" :placeholder="t('mapPage.mapSearch')" autocomplete="off" />
 				<div v-if="filteredStations.length" class="search-results">
 					<button v-for="station in filteredStations" :key="station.key" type="button" @click="chooseStation(station, true)">
 						<strong>{{ station.name }}</strong><span>{{ station.nameEn }}</span>
 					</button>
 				</div>
 			</label>
-			<div class="zoom-controls" aria-label="地图缩放控件">
-				<button type="button" aria-label="缩小" title="缩小" @click="zoomOut">−</button>
+			<div class="zoom-controls" :aria-label="t('mapPage.mapZoomControls')">
+				<button type="button" :aria-label="t('mapPage.zoomOut')" :title="t('mapPage.zoomOut')" @click="zoomOut">−</button>
 				<span>{{ Math.round(scale * 100) }}%</span>
-				<button type="button" aria-label="放大" title="放大" @click="zoomIn">+</button>
-				<button type="button" class="reset-button" @click="resetMap">复位</button>
+				<button type="button" :aria-label="t('mapPage.zoomIn')" :title="t('mapPage.zoomIn')" @click="zoomIn">+</button>
+				<button type="button" class="reset-button" @click="resetMap">{{ t('mapPage.resetMap') }}</button>
 			</div>
 		</div>
 		<div v-if="routeLoading || routeMessage || startStationId || endStationId" class="map-route-status" aria-live="polite">
 			<span v-if="routeLoading" class="status-spinner"></span>
 			<div>
-				<strong v-if="routeLoading">正在地图内计算路线</strong>
+					<strong v-if="routeLoading">{{ t('mapPage.mapCalculating') }}</strong>
 				<strong v-else-if="routeMessage">{{ routeMessage }}</strong>
-				<strong v-else>请选择{{ startStationId ? '终点站' : '起点站' }}</strong>
-					<small v-if="!routeLoading">起点 {{ apiStationName(startStationId) }}，终点 {{ apiStationName(endStationId) }}</small>
+					<strong v-else>{{ t(startStationId ? 'mapPage.chooseEnd' : 'mapPage.chooseStart') }}</strong>
+						<small v-if="!routeLoading">{{ t('mapPage.startAndEnd', { start: apiStationName(startStationId), end: apiStationName(endStationId) }) }}</small>
 			</div>
 		</div>
 
 		<div ref="viewport" class="map-canvas" @wheel="handleWheel" @pointerdown="handlePointerDown" @pointermove="handlePointerMove" @pointerup="handlePointerUp" @pointercancel="handlePointerUp">
-			<svg class="map-stage" :viewBox="viewBox" role="img" aria-label="Quantum Original 交互式交通线路图">
+				<svg class="map-stage" :viewBox="viewBox" role="img" :aria-label="t('mapPage.mapImageAlt')">
 				<g class="map-content">
 					<g class="line-layer">
 						<g v-for="edge in visibleEdges" :key="edge.key" :class="['route-edge', { 'is-dimmed': !isActiveEdge(edge) }]">
@@ -671,8 +675,8 @@ onBeforeUnmount(() => {
 							<template v-if="node.type === 'shmetro-num-line-badge'">
 								<rect :width="badgeWidth(node)" height="22.67" :fill="colorOf(node.payload)" />
 								<text :x="badgeWidth(node) / 2" y="18.5" text-anchor="middle" :fill="node.payload.color?.[3] || '#fff'" font-size="20" font-weight="700">{{ node.payload.num }}</text>
-								<text :x="badgeWidth(node) + 2" y="11.5" font-size="12.5" font-weight="700">号线</text>
-								<text :x="badgeWidth(node) + 3" y="21" font-size="7">Line {{ node.payload.num }}</text>
+							<text :x="badgeWidth(node) + 2" y="11.5" font-size="12.5" font-weight="700">{{ t('mapPage.line', { number: node.payload.num }) }}</text>
+							<text :x="badgeWidth(node) + 3" y="21" font-size="7">{{ t('mapPage.lineEn', { number: node.payload.num }) }}</text>
 							</template>
 							<template v-else>
 								<rect :width="badgeWidth(node)" :height="node.type.startsWith('bjsubway') ? 16 : 21" :rx="node.type.startsWith('bjsubway') ? 2 : 0" :fill="colorOf(node.payload)" />
@@ -688,7 +692,7 @@ onBeforeUnmount(() => {
 						</g>
 					</g>
 
-					<g v-for="station in visibleStations" :key="station.key" :class="['map-station', station.type, { active: isActiveStation(station), 'start-point': station.apiStation && String(startStationId) === String(station.apiStation.id), 'end-point': station.apiStation && String(endStationId) === String(station.apiStation.id), 'route-dimmed': hasActiveRoute && !isActiveStation(station), selected: selectedStation?.key === station.key, linked: station.apiStation, interactive: station.name }]" :transform="`translate(${station.x} ${station.y})`" :role="station.name ? 'button' : undefined" :tabindex="station.name ? 0 : undefined" :aria-label="station.name ? `查看${station.name}站详情` : undefined" @click.stop="chooseStation(station)" @keydown="handleStationKeydown($event, station)">
+					<g v-for="station in visibleStations" :key="station.key" :class="['map-station', station.type, { active: isActiveStation(station), 'start-point': station.apiStation && String(startStationId) === String(station.apiStation.id), 'end-point': station.apiStation && String(endStationId) === String(station.apiStation.id), 'route-dimmed': hasActiveRoute && !isActiveStation(station), selected: selectedStation?.key === station.key, linked: station.apiStation, interactive: station.name }]" :transform="`translate(${station.x} ${station.y})`" :role="station.name ? 'button' : undefined" :tabindex="station.name ? 0 : undefined" :aria-label="station.name ? `${station.name} ${t('mapPage.stationDetails')}` : undefined" @click.stop="chooseStation(station)" @keydown="handleStationKeydown($event, station)">
 						<circle class="station-hit" r="12" />
 						<circle v-if="station.type === 'shmetro-basic'" class="station-core sh-basic" r="5" />
 						<g v-else-if="station.type === 'shmetro-int'" :transform="`rotate(${station.payload.rotate || 0})`">
@@ -715,21 +719,21 @@ onBeforeUnmount(() => {
 
 		<Transition name="station-panel">
 			<aside v-if="selectedStation" class="station-panel" aria-live="polite">
-				<button type="button" class="panel-close" aria-label="关闭站点信息" @click="selectedStation = null">×</button>
-					<span class="station-kicker">站点详情：STATION</span>
-				<h3>{{ selectedStation.name }}</h3><p>{{ selectedStation.nameEn || '暂无英文站名' }}</p>
+					<button type="button" class="panel-close" :aria-label="t('mapPage.closeStation')" @click="selectedStation = null">×</button>
+						<span class="station-kicker">{{ t('mapPage.stationDetails') }}</span>
+					<h3>{{ selectedStation.name }}</h3><p>{{ selectedStation.nameEn || t('mapPage.noEnglishName') }}</p>
 				<dl class="station-facts">
 					<div>
-						<dt>站点编号</dt>
-						<dd>{{ selectedStation.apiStation?.id || '暂未录入' }}</dd>
+						<dt>{{ t('mapPage.stationId') }}</dt>
+						<dd>{{ selectedStation.apiStation?.id || t('mapPage.notRecorded') }}</dd>
 					</div>
 					<div>
-						<dt>站点类型</dt>
+						<dt>{{ t('mapPage.stationType') }}</dt>
 						<dd>{{ selectedStation.typeName }}</dd>
 					</div>
 				</dl>
 				<div v-if="stationConnectionsForDisplay(selectedStation).length" class="station-connections">
-					<span>交通连接</span>
+						<span>{{ t('mapPage.connections') }}</span>
 					<ul>
 						<li v-for="connection in stationConnectionsForDisplay(selectedStation)" :key="`${connection.style}-${connection.color}`">
 							<i :style="{ backgroundColor: connection.color }"></i>{{ connection.name }}
@@ -737,10 +741,10 @@ onBeforeUnmount(() => {
 					</ul>
 				</div>
 				<div v-if="selectedStation.apiStation" class="station-actions">
-					<button type="button" :disabled="routeLoading || String(startStationId) === String(selectedStation.apiStation.id)" @click="emit('set-start', selectedStation.apiStation)">{{ String(startStationId) === String(selectedStation.apiStation.id) ? '当前起点' : '设为始发站' }}</button>
-					<button type="button" :disabled="routeLoading || String(endStationId) === String(selectedStation.apiStation.id)" @click="emit('set-end', selectedStation.apiStation)">{{ String(endStationId) === String(selectedStation.apiStation.id) ? '当前终点' : '设为终点站' }}</button>
+						<button type="button" :disabled="routeLoading || String(startStationId) === String(selectedStation.apiStation.id)" @click="emit('set-start', selectedStation.apiStation)">{{ String(startStationId) === String(selectedStation.apiStation.id) ? t('mapPage.currentStart') : t('mapPage.setStart') }}</button>
+						<button type="button" :disabled="routeLoading || String(endStationId) === String(selectedStation.apiStation.id)" @click="emit('set-end', selectedStation.apiStation)">{{ String(endStationId) === String(selectedStation.apiStation.id) ? t('mapPage.currentEnd') : t('mapPage.setEnd') }}</button>
 				</div>
-				<p v-else class="unlinked">该站暂未录入路线查询数据库。</p>
+					<p v-else class="unlinked">{{ t('mapPage.notLinked') }}</p>
 			</aside>
 		</Transition>
 	</div>

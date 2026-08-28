@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {computed, ref, onMounted} from "vue";
+import { useI18n } from 'vue-i18n';
 
 interface AffiliatedAccount {
 	name: string;
@@ -12,6 +13,8 @@ const token = localStorage.getItem("token");
 const newAccountName = ref("");
 const newAccountPassword = ref("");
 const currentHint = ref("");
+const hintType = ref("");
+const { t } = useI18n();
 const isLoading = ref(true);
 const isSubmitting = ref(false);
 const deletingAccount = ref("");
@@ -47,7 +50,7 @@ const fetchAccounts = async () => {
 		accounts.value = data;
 	} catch (err) {
 		console.error("获取附属账户失败:", err);
-		loadError.value = "附属账户列表加载失败，请稍后重试。";
+		loadError.value = t('affiliatedPage.loadFailed');
 	} finally {
 		isLoading.value = false;
 	}
@@ -55,7 +58,8 @@ const fetchAccounts = async () => {
 
 const createAccount = async () => {
 	if (!canSubmit.value) {
-		currentHint.value = "请填写完整信息。";
+		currentHint.value = t('affiliatedPage.fillAll');
+		hintType.value = 'error';
 		return;
 	}
 	isSubmitting.value = true;
@@ -78,16 +82,19 @@ const createAccount = async () => {
 		if (!response.ok) throw new Error(`HTTP ${response.status}`);
 		const result = await response.json();
 		if (result.result === true) {
-			currentHint.value = "附属账户已创建。";
+		currentHint.value = t('affiliatedPage.created');
+			hintType.value = 'success';
 			newAccountName.value = "";
 			newAccountPassword.value = "";
 			await fetchAccounts();
 		} else {
-			currentHint.value = "创建失败：请检查是否重名，或是否已经达到数量上限。";
+			currentHint.value = t('affiliatedPage.createFailed');
+			hintType.value = 'error';
 		}
 	} catch (err) {
 		console.error("创建附属账户失败:", err);
-		currentHint.value = "创建失败：服务器暂时无法处理请求。";
+		currentHint.value = t('affiliatedPage.createServerFailed');
+		hintType.value = 'error';
 	} finally {
 		isSubmitting.value = false;
 	}
@@ -96,6 +103,7 @@ const createAccount = async () => {
 const requestDelete = (name: string) => {
 	pendingDelete.value = name;
 	currentHint.value = "";
+	hintType.value = "";
 };
 
 const cancelDelete = () => {
@@ -117,15 +125,18 @@ const deleteAccount = async (name: string) => {
 		if (!response.ok) throw new Error(`HTTP ${response.status}`);
 		const result = await response.json();
 		if (result.result === true) {
-			currentHint.value = `附属账户 ${name} 已删除。`;
+			currentHint.value = t('affiliatedPage.deleted', { name });
+			hintType.value = 'success';
 			pendingDelete.value = "";
 			await fetchAccounts();
 		} else {
-			currentHint.value = "删除失败：账户不存在或不属于当前主账号。";
+			currentHint.value = t('affiliatedPage.deleteFailed');
+			hintType.value = 'error';
 		}
 	} catch (err) {
 		console.error("删除附属账户失败:", err);
-		currentHint.value = "删除失败：服务器暂时无法处理请求。";
+		currentHint.value = t('affiliatedPage.deleteServerFailed');
+		hintType.value = 'error';
 	} finally {
 		deletingAccount.value = "";
 	}
@@ -137,10 +148,10 @@ onMounted(fetchAccounts);
 	<div class="affiliated">
 		<header class="page-header">
 			<div>
-				<h1 class="headline">附属账户</h1>
-				<p class="subhead">创建和移除绑定账户。账号信息创建后不可修改。</p>
+				<h1 class="headline">{{ t('affiliatedPage.title') }}</h1>
+				<p class="subhead">{{ t('affiliatedPage.description') }}</p>
 			</div>
-			<div class="header-meter" aria-label="附属账户容量">
+			<div class="header-meter" :aria-label="t('affiliatedPage.capacity')">
 				<span>{{ accounts.length }}/{{ accountLimit }}</span>
 				<div class="meter-track">
 					<div class="meter-fill" :style="{ width: `${Math.min(accounts.length / accountLimit, 1) * 100}%` }"></div>
@@ -150,16 +161,16 @@ onMounted(fetchAccounts);
 
 		<div class="summary-grid">
 			<div class="summary-item">
-				<span>已注册</span>
+				<span>{{ t('affiliatedPage.registered') }}</span>
 				<strong>{{ accounts.length }}</strong>
 			</div>
 			<div class="summary-item">
-				<span>剩余额度</span>
+				<span>{{ t('affiliatedPage.remaining') }}</span>
 				<strong>{{ accountSlots }}</strong>
 			</div>
 			<div class="summary-item">
-				<span>管理方式</span>
-				<strong>只读，可删除</strong>
+				<span>{{ t('affiliatedPage.management') }}</span>
+				<strong>{{ t('affiliatedPage.readOnlyDeletable') }}</strong>
 			</div>
 		</div>
 
@@ -167,79 +178,80 @@ onMounted(fetchAccounts);
 			<section class="panel">
 				<div class="section-head">
 					<div>
-						<div class="section-title">已注册的账户</div>
-						<p class="section-sub">这些账户可使用主账号授权的访问能力。</p>
+						<div class="section-title">{{ t('affiliatedPage.registeredAccounts') }}</div>
+						<p class="section-sub">{{ t('affiliatedPage.registeredDescription') }}</p>
 					</div>
 					<button type="button" class="ghost-button" @click="fetchAccounts" :disabled="isLoading">
-						{{ isLoading ? "刷新中" : "刷新" }}
+
+						{{ isLoading ? t('common.refreshing') : t('common.refresh') }}
 					</button>
 				</div>
 
-				<div v-if="isLoading" class="state-box">正在加载附属账户...</div>
+				<div v-if="isLoading" class="state-box">{{ t('affiliatedPage.loading') }}</div>
 				<p v-else-if="loadError" class="state-box error">{{ loadError }}</p>
 				<TransitionGroup v-else-if="accounts.length" name="account-list" tag="div" class="account-grid">
 					<div v-for="account in accounts" :key="account.name" class="account-card" :class="{ 'is-confirming': pendingDelete === account.name }">
 						<div class="avatar">{{ initialOf(account.name) }}</div>
 						<div class="account-copy">
 							<h3 class="account-name">{{ account.name }}</h3>
-							<p class="account-meta">主账号：{{ account.host || "未绑定" }}</p>
+							<p class="account-meta">{{ t('affiliatedPage.mainAccount', { host: account.host || t('affiliatedPage.unbound') }) }}</p>
 						</div>
 						<div class="account-actions">
-							<span class="account-status">只读</span>
+							<span class="account-status">{{ t('affiliatedPage.readOnly') }}</span>
 							<button
 								type="button"
 								class="icon-button"
 								:disabled="deletingAccount !== ''"
-								:aria-label="`删除附属账户 ${account.name}`"
-								:title="`删除 ${account.name}`"
+								:aria-label="t('affiliatedPage.deleteAccount', { name: account.name })"
+								:title="t('affiliatedPage.deleteTitle', { name: account.name })"
 								@click="requestDelete(account.name)"
 							>
 								<font-awesome-icon :icon="['far', 'trash-can']" aria-hidden="true" />
 							</button>
 						</div>
 						<div v-if="pendingDelete === account.name" class="delete-confirm">
-							<p>确定删除该账户？删除后无法恢复。</p>
+							<p>{{ t('affiliatedPage.deleteConfirm') }}</p>
 							<div>
-								<button type="button" class="confirm-cancel" :disabled="deletingAccount !== ''" @click="cancelDelete">取消</button>
+								<button type="button" class="confirm-cancel" :disabled="deletingAccount !== ''" @click="cancelDelete">{{ t('common.cancel') }}</button>
 								<button type="button" class="confirm-delete" :disabled="deletingAccount !== ''" @click="deleteAccount(account.name)">
-									{{ deletingAccount === account.name ? "删除中" : "确认删除" }}
+									{{ deletingAccount === account.name ? t('common.deleting') : t('common.delete') }}
 								</button>
 							</div>
 						</div>
 						<div v-else class="account-foot">
-							<span>密码仅可在创建时设置</span>
+							<span>{{ t('affiliatedPage.passwordNotice') }}</span>
 						</div>
 					</div>
 				</TransitionGroup>
 				<div v-else class="state-box">
-					<strong>暂无附属账户</strong>
-					<span>创建后会显示在这里，用于快速识别和管理。</span>
+					<strong>{{ t('affiliatedPage.noAccounts') }}</strong>
+					<span>{{ t('affiliatedPage.noAccountsDescription') }}</span>
 				</div>
 			</section>
 
 			<section class="panel">
 				<div class="section-head">
 					<div>
-						<div class="section-title">注册新的附属账户</div>
+						<div class="section-title">{{ t('affiliatedPage.newAccount') }}</div>
 					</div>
 				</div>
 				<div class="new-account-form">
 					<label class="field">
-						<span class="field-label">用户名</span>
+						<span class="field-label">{{ t('affiliatedPage.username') }}</span>
 						<input
 							v-model="newAccountName"
 							type="text"
-							placeholder="输入用户名"
+							:placeholder="t('affiliatedPage.usernamePlaceholder')"
 							class="text-input"
 							autocomplete="username"
 						/>
 					</label>
 					<label class="field">
-						<span class="field-label">密码</span>
+						<span class="field-label">{{ t('affiliatedPage.password') }}</span>
 						<input
 							v-model="newAccountPassword"
 							type="password"
-							placeholder="设置登录密码"
+							:placeholder="t('affiliatedPage.passwordPlaceholder')"
 							class="text-input"
 							autocomplete="new-password"
 						/>
@@ -247,19 +259,19 @@ onMounted(fetchAccounts);
 
 					<div class="form-actions">
 						<button type="button" @click="createAccount" class="filled-button" :disabled="!canSubmit">
-							{{ isSubmitting ? "创建中" : "创建账户" }}
+							{{ isSubmitting ? t('affiliatedPage.creating') : t('affiliatedPage.create') }}
 						</button>
-						<span class="quota-text">还可创建 {{ accountSlots }} 个</span>
+						<span class="quota-text">{{ t('affiliatedPage.canCreate', { count: accountSlots }) }}</span>
 					</div>
 
 					<p class="supporting-text">
-						使用该功能则证明您阅读并且认可
-						<a href="https://qoriginal.vip/guides/affiliatedaccount" class="link-text">使用须知</a>
+						{{ t('affiliatedPage.termsBefore') }}
+						<a href="https://qoriginal.vip/guides/affiliatedaccount" class="link-text">{{ t('affiliatedPage.termsLink') }}</a>
 					</p>
 
 					<p
 						v-if="currentHint !== ''"
-						:class="['inline-hint', currentHint.includes('已创建') || currentHint.includes('已删除') ? 'hint-success' : 'hint-error']"
+						:class="['inline-hint', hintType === 'success' ? 'hint-success' : 'hint-error']"
 					>
 						{{ currentHint }}
 					</p>

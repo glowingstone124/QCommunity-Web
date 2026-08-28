@@ -9,11 +9,11 @@
 		</div>
 
 		<div v-if="cardImage" class="card-preview">
-			<img :src="cardImage" :alt="`${username} 的用户卡片`" />
+			<img :src="cardImage" :alt="t('avatarPage.cardAlt', { name: username })" />
 		</div>
 		<div v-else class="card-loading" role="status">
 			<span class="spinner" aria-hidden="true"></span>
-			<p>正在生成 {{ username }} 的用户卡片…</p>
+			<p>{{ t('avatarPage.generatingCard', { name: username }) }}</p>
 		</div>
 	</main>
 </template>
@@ -21,10 +21,12 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import ArtCardForQueryUsage from '@/components/ArtCardForQueryUsage.vue';
 import html2canvas from 'html2canvas';
 
 const props = defineProps<{ username?: string }>();
+const { t } = useI18n();
 const username = props.username || 'glowingstone124';
 const cardImage = ref<string | null>(null);
 

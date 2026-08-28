@@ -45,7 +45,7 @@ function hideAssetLoader() {
 
 router.beforeEach((to, from, next) => {
     const pageStore = usePageStore()
-    pageStore.setPage(to.meta.pageTitle || '')
+    pageStore.setPage(to.meta.pageTitleKey ? i18n.global.t(to.meta.pageTitleKey) : '')
     next()
 })
 

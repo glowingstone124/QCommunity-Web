@@ -1,10 +1,12 @@
 <script setup>
 import { computed, ref } from 'vue'
 import debounce from 'lodash/debounce'
+import { useI18n } from 'vue-i18n'
 import PlayerInfoCard from '@/components/PlayerCard.vue'
 import { fetchAvatar } from '@/services/avatar.js'
 
 const inputId = ref('')
+const { t } = useI18n()
 const queryId = ref('')
 const avatarUrl = ref('https://crafthead.net/avatar/8667ba71b85a4004af54457a9734eed7')
 const qq = ref('')
@@ -81,7 +83,7 @@ async function getPlayer(id) {
 		await getAvatar(id)
 	} catch (error) {
 		console.error('Error fetching query:', error)
-		errorMessage.value = '查询失败，请稍后重试。'
+		errorMessage.value = t('queryPage.loadFailed')
 	} finally {
 		loading.value = false
 	}
@@ -108,56 +110,56 @@ function submitSearch() {
 		<section class="query-shell">
 			<div class="query-panel">
 				<div class="panel-heading">
-					<h1>玩家查询</h1>
-					<p>输入玩家 ID，查看账户状态、在线情况、累计游玩时间与卡面信息。</p>
+					<h1>{{ t('queryPage.title') }}</h1>
+					<p>{{ t('queryPage.description') }}</p>
 				</div>
 
 				<form class="search-form" @submit.prevent="submitSearch">
 					<label class="search-field">
-						<span>玩家 ID</span>
+						<span>{{ t('queryPage.playerId') }}</span>
 						<input
 							v-model="inputId"
 							type="text"
-							placeholder="例如：glowingstone124"
+							:placeholder="t('queryPage.placeholder')"
 							autocomplete="off"
 							@input="handleSearch"
 						/>
 					</label>
 					<button type="submit" class="search-btn" :disabled="!canSearch">
-						{{ loading ? '查询中' : '查询' }}
+						{{ loading ? t('queryPage.searching') : t('queryPage.search') }}
 					</button>
 				</form>
 			</div>
 
 			<section class="result-panel">
 				<div v-if="!searched" class="empty-state">
-					<h2>等待查询</h2>
-					<p>输入一个玩家 ID 后，结果会显示在这里。</p>
+					<h2>{{ t('queryPage.waitingTitle') }}</h2>
+					<p>{{ t('queryPage.waitingDescription') }}</p>
 				</div>
 
 				<div v-else-if="loading" class="empty-state">
-					<h2>正在查询</h2>
-					<p>正在拉取玩家注册信息。</p>
+					<h2>{{ t('queryPage.loadingTitle') }}</h2>
+					<p>{{ t('queryPage.loadingDescription') }}</p>
 				</div>
 
 				<div v-else-if="errorMessage" class="empty-state error">
-					<h2>查询失败</h2>
+					<h2>{{ t('queryPage.failedTitle') }}</h2>
 					<p>{{ errorMessage }}</p>
 				</div>
 
 				<div v-else-if="!found" class="empty-state">
-					<h2>未找到玩家</h2>
-					<p>没有查询到 “{{ queryId }}” 的注册信息。</p>
+					<h2>{{ t('queryPage.notFoundTitle') }}</h2>
+					<p>{{ t('queryPage.notFound', { id: queryId }) }}</p>
 				</div>
 
 				<div v-else-if="affiliated" class="affiliated-result">
 					<div class="result-heading">
-						<span class="result-label">附属账户</span>
+						<span class="result-label">{{ t('queryPage.affiliated') }}</span>
 						<h2>{{ queryId }}</h2>
-						<p>该账户绑定到主账户 {{ host || '未知' }}。</p>
+						<p>{{ t('queryPage.affiliatedDescription', { host: host || t('queryPage.unknown') }) }}</p>
 					</div>
 					<div class="affiliated-row">
-						<span>主账户</span>
+						<span>{{ t('queryPage.mainAccount') }}</span>
 						<strong>{{ host || '—' }}</strong>
 					</div>
 				</div>

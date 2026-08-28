@@ -1,5 +1,6 @@
 <script setup>
 import {ref, onMounted} from 'vue';
+import { useI18n } from 'vue-i18n'
 import {post} from "@/utils/request.js";
 
 const username = ref(localStorage.getItem('username') || "");
@@ -7,6 +8,7 @@ const token = ref(localStorage.getItem('token') || "");
 const password = ref('');
 const loginstat = ref(false);
 const playtime = ref(0);
+const { t } = useI18n()
 onMounted(() => {
 	if (username) {
 		fetch("https://api.qoriginal.vip/qo/authorization/account", {
@@ -46,32 +48,32 @@ function login() {
 			localStorage.setItem("token", result.token);
 			loginstat.value = true;
 		} else {
-			alert("登录失败，请检查用户名和密码！");
+			alert(t('legacyPersonal.loginFailed'));
 		}
 	}).catch(error => {
 		console.error('登录请求发生错误:', error.message);
-		alert("登录请求发生错误，请稍后再试。");
+		alert(t('legacyPersonal.loginRequestFailed'));
 	});
 }
 </script>
 
 <template>
 	<div class="personal">
-		<h1 class="username">{{ loginstat ? username : "登录" }}</h1>
+		<h1 class="username">{{ loginstat ? username : t('legacyPersonal.login') }}</h1>
 		<p v-if="loginstat">
-			您已经游玩了<span style="font-size: 2rem">{{ playtime }}</span>分钟
+			{{ t('legacyPersonal.played', { count: playtime }) }}
 		</p>
 		<span v-if="loginstat"
 			  style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-            <a class="link" @click="accountcenter">账户中心</a>
-            <a class="link" @click="logout">退出登录</a>
+            <a class="link" @click="accountcenter">{{ t('legacyPersonal.account') }}</a>
+            <a class="link" @click="logout">{{ t('legacyPersonal.logout') }}</a>
         </span>
 		<span v-else style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
             <form @submit.prevent="login" autocomplete="off" class="login-container">
-                <input type="text" v-model="username" placeholder="用户名" required/>
-                <input type="password" v-model="password" placeholder="密码" required/>
-				<a href="/register">还没有账号？注册一个!</a>
-                <button type="submit">登录</button>
+                <input type="text" v-model="username" :placeholder="t('legacyPersonal.username')" required/>
+                <input type="password" v-model="password" :placeholder="t('legacyPersonal.password')" required/>
+				<a href="/register">{{ t('legacyPersonal.noAccount') }}</a>
+                <button type="submit">{{ t('legacyPersonal.login') }}</button>
             </form>
         </span>
 	</div>

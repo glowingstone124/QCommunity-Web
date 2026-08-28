@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
 interface Advancement {
 	id: number;
 	name: string;
@@ -9,11 +11,13 @@ defineProps<{
 	advancement: Advancement;
 	status?: "completed" | "pending";
 }>();
+
+const { t } = useI18n()
 </script>
 
 <template>
 	<article class="card" :class="status">
-		<div class="card-status">{{ status === "completed" ? "已完成" : "未完成" }}</div>
+		<div class="card-status">{{ status === "completed" ? t('advancementPage.completed') : t('advancementPage.pending') }}</div>
 		<div class="card-copy">
 			<h2>{{ advancement.name }}</h2>
 			<p>{{ advancement.description }}</p>

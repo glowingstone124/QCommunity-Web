@@ -136,7 +136,7 @@ watch(
 			<article v-else class="article-shell" :class="{ 'article-shell--collapse': isCollapseArticle }">
 				<header class="article-header">
 					<div v-if="isCollapseArticle" class="collapse-article-label">
-						{{ locale === 'zh' ? 'DOC. STEINBECK // 长期实验档案' : 'DR. STEINBECK // LONG-TERM EXPERIMENT FILE' }}
+						{{ t('newsPage.collapseLabel') }}
 					</div>
 					<div class="article-meta">
 						<span>{{ localizedArticle.type }}</span>

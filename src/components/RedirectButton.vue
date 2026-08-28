@@ -7,7 +7,8 @@
 
 <script setup>
 import { useRouter } from "vue-router";
-import { ref, toRefs, defineProps } from "vue";
+import { computed } from "vue";
+import { useI18n } from 'vue-i18n'
 
 defineProps({
 	textColor: {
@@ -16,7 +17,8 @@ defineProps({
 	}
 });
 
-const label = ref("回到首页");
+const { t } = useI18n()
+const label = computed(() => t('common.backHome'))
 
 const router = useRouter();
 

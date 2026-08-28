@@ -1,6 +1,6 @@
 <template>
 	<h1>
-		点击来更换一个新的头像
+		{{ t('avatarPage.choose') }}
 	</h1>
 	<div class="avatar-list">
 		<div
@@ -13,12 +13,13 @@
 			<img :src="avatar.url" :alt="avatar.id" class="avatar-image" />
 		</div>
 	</div>
-	<button class="save-avatar-btn" @click="saveAvatar">保存头像</button>
+	<button class="save-avatar-btn" @click="saveAvatar">{{ t('avatarPage.save') }}</button>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue"
 import axios from "axios"
+import { useI18n } from 'vue-i18n'
 
 interface Avatar {
 	id: string
@@ -26,6 +27,7 @@ interface Avatar {
 }
 
 const avatars = ref<Avatar[]>([])
+const { t } = useI18n()
 const selectedAvatarId = ref<string | null>(null)
 
 function selectAvatar(id: string) {
@@ -33,7 +35,7 @@ function selectAvatar(id: string) {
 }
 async function saveAvatar() {
 	if (!selectedAvatarId.value) {
-		alert("请先选择一个头像！");
+		alert(t('avatarPage.selectFirst'));
 		return;
 	}
 	try {
@@ -46,10 +48,10 @@ async function saveAvatar() {
 				},
 			}
 		);
-		alert("头像保存成功！");
+		alert(t('avatarPage.saved'));
 	} catch (error) {
 		console.error("保存头像失败", error);
-		alert("保存头像失败，请稍后重试。");
+		alert(t('avatarPage.saveFailed'));
 	}
 }
 

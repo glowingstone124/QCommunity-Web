@@ -3,10 +3,10 @@
 		<canvas ref="shaderCanvas" class="shader-background" aria-hidden="true"></canvas>
 		<section class="login-copy">
 			<h1>Quantum Original</h1>
-			<p>登录账户来获得完整的QO体验！</p>
+			<p>{{ $t('auth.loginCopy') }}</p>
 		</section>
 
-		<section class="login-container" aria-label="登录表单">
+		<section class="login-container" :aria-label="$t('auth.loginForm')">
 			<header class="header">
 				<h1>{{ $t("loginPage.welcome_back") }}</h1>
 				<p>{{ $t("loginPage.login") }}</p>
@@ -21,7 +21,7 @@
 					<input
 						v-model="username"
 						type="text"
-						placeholder="用户名"
+						:placeholder="$t('auth.usernamePlaceholder')"
 						autocomplete="username"
 						required
 					>
@@ -35,7 +35,7 @@
 					<input
 						v-model="password"
 						type="password"
-						placeholder="密码"
+						:placeholder="$t('auth.passwordPlaceholder')"
 						autocomplete="current-password"
 						required
 					>
@@ -51,8 +51,8 @@
 				</div>
 
 				<p class="register-hint">
-					还没有账户？
-					<router-link to="/register">前往注册</router-link>
+					{{ $t('auth.noAccount') }}
+					<router-link to="/register">{{ $t('auth.goRegister') }}</router-link>
 				</p>
 			</form>
 		</section>
@@ -62,9 +62,11 @@
 <script setup>
 import {onBeforeUnmount, onMounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
+import {useI18n} from 'vue-i18n'
 import {post} from '/src/utils/request.js'
 
 const router = useRouter()
+const {t} = useI18n()
 const username = ref('')
 const password = ref('')
 const errorMessage = ref('')
@@ -350,10 +352,10 @@ const login = async () => {
 				: '/'
 			router.push(redirect).then(() => window.location.reload())
 		} else {
-			errorMessage.value = '用户名或密码错误，请重试'
+			errorMessage.value = t('loginPage.err_user')
 		}
 	} catch (error) {
-		errorMessage.value = '网络连接错误，请稍后再试'
+		errorMessage.value = t('loginPage.err_network')
 		console.error('登录失败:', error)
 	} finally {
 		loading.value = false

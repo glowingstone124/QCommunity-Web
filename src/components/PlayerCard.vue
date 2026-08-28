@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import ArtCardForQueryUsage from '@/components/ArtCardForQueryUsage.vue'
 
 interface Props {
@@ -15,10 +16,11 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+const { t, locale } = useI18n()
 
 const statusText = computed(() => {
-	if (props.banned) return '已冻结'
-	return props.online ? '在线' : '离线'
+	if (props.banned) return t('playerCard.frozen')
+	return props.online ? t('playerCard.online') : t('playerCard.offline')
 })
 
 const statusClass = computed(() => ({
@@ -29,22 +31,24 @@ const statusClass = computed(() => ({
 
 const playtimeText = computed(() => {
 	const minutes = Number(props.playtime || 0)
-	if (minutes <= 0) return '暂无记录'
-	if (minutes < 60) return `${minutes} 分钟`
+	if (minutes <= 0) return t('playerCard.noRecord')
+	if (minutes < 60) return t('accountOverview.minutes', { count: minutes })
 	const hours = Math.floor(minutes / 60)
 	const rest = minutes % 60
-	return rest ? `${hours} 小时 ${rest} 分钟` : `${hours} 小时`
+	return rest
+		? [t('accountOverview.hours', { count: hours }), t('accountOverview.minutes', { count: rest })].join(' ')
+		: t('accountOverview.hours', { count: hours })
 })
 
 const lastLoginText = computed(() => {
 	const rawTimestamp = Number(props.lastLogin)
-	if (!Number.isFinite(rawTimestamp) || rawTimestamp <= 0) return '暂无记录'
+	if (!Number.isFinite(rawTimestamp) || rawTimestamp <= 0) return t('playerCard.noRecord')
 
 	const timestamp = rawTimestamp < 1_000_000_000_000 ? rawTimestamp * 1000 : rawTimestamp
 	const date = new Date(timestamp)
-	if (Number.isNaN(date.getTime())) return '暂无记录'
+	if (Number.isNaN(date.getTime())) return t('playerCard.noRecord')
 
-	const formatted = new Intl.DateTimeFormat('zh-CN', {
+	const formatted = new Intl.DateTimeFormat(locale.value === 'zh' ? 'zh-CN' : 'en-US', {
 		year: 'numeric',
 		month: '2-digit',
 		day: '2-digit',
@@ -54,7 +58,7 @@ const lastLoginText = computed(() => {
 		hour12: false,
 	}).format(date)
 
-	return props.online ? `当前在线，${formatted} 上线` : formatted
+	return props.online ? t('playerCard.currentlyOnline', { time: formatted }) : formatted
 })
 
 function statisticValue(key: string) {
@@ -64,38 +68,40 @@ function statisticValue(key: string) {
 
 function formatDistance(centimeters: number) {
 	const meters = centimeters / 100
-	if (meters < 1_000) return `${Math.round(meters).toLocaleString()} 米`
-	return `${(meters / 1_000).toLocaleString('zh-CN', { maximumFractionDigits: 2 })} 千米`
+	if (meters < 1_000) return t('accountOverview.meters', { count: Math.round(meters).toLocaleString(locale.value === 'zh' ? 'zh-CN' : 'en-US') })
+	return t('accountOverview.kilometers', { count: (meters / 1_000).toLocaleString(locale.value === 'zh' ? 'zh-CN' : 'en-US', { maximumFractionDigits: 2 }) })
 }
 
 function formatDamage(rawDamage: number) {
 	const damage = rawDamage / 10
-	return `${damage.toLocaleString('zh-CN', { maximumFractionDigits: 1 })} 点`
+	return t('accountOverview.damagePoints', { count: damage.toLocaleString(locale.value === 'zh' ? 'zh-CN' : 'en-US', { maximumFractionDigits: 1 }) })
 }
 
 function formatDuration(ticks: number) {
 	const seconds = Math.floor(ticks / 20)
-	if (seconds < 60) return `${seconds} 秒`
+	if (seconds < 60) return t('accountOverview.seconds', { count: seconds })
 	const minutes = Math.floor(seconds / 60)
 	const hours = Math.floor(minutes / 60)
-	return hours ? `${hours} 小时 ${minutes % 60} 分钟` : `${minutes} 分钟`
+	return hours
+		? [t('accountOverview.hours', { count: hours }), t('accountOverview.minutes', { count: minutes % 60 })].join(' ')
+		: t('accountOverview.minutes', { count: minutes })
 }
 
 const gameStatisticItems = computed(() => [
-	{ label: '移动距离', value: formatDistance(statisticValue('distance_cm')) },
-	{ label: '造成伤害', value: formatDamage(statisticValue('damage_dealt')) },
-	{ label: '怪物击杀', value: statisticValue('mob_kills').toLocaleString() },
-	{ label: '挖掘方块', value: statisticValue('blocks_mined').toLocaleString() },
-	{ label: '放置方块', value: statisticValue('blocks_placed').toLocaleString() },
-	{ label: '鞘翅飞行', value: formatDuration(statisticValue('elytra_flight_ticks')) },
+	{ label: t('accountOverview.distance'), value: formatDistance(statisticValue('distance_cm')) },
+	{ label: t('accountOverview.damage'), value: formatDamage(statisticValue('damage_dealt')) },
+	{ label: t('accountOverview.mobKills'), value: statisticValue('mob_kills').toLocaleString() },
+	{ label: t('accountOverview.blocksMined'), value: statisticValue('blocks_mined').toLocaleString() },
+	{ label: t('accountOverview.blocksPlaced'), value: statisticValue('blocks_placed').toLocaleString() },
+	{ label: t('accountOverview.elytraFlight'), value: formatDuration(statisticValue('elytra_flight_ticks')) },
 ])
 
 const infoItems = computed(() => [
-	{ label: '玩家 ID', value: props.username || '未知' },
-	{ label: 'UID', value: props.qq || '未公开' },
-	{ label: '累计游玩', value: playtimeText.value },
-	{ label: '最后上线', value: lastLoginText.value },
-	{ label: '账户状态', value: props.banned ? '已冻结' : '正常' },
+	{ label: t('playerCard.playerId'), value: props.username || t('common.unknown') },
+	{ label: t('playerCard.uid'), value: props.qq || t('playerCard.private') },
+	{ label: t('accountOverview.playtime'), value: playtimeText.value },
+	{ label: t('playerCard.lastOnline'), value: lastLoginText.value },
+	{ label: t('playerCard.accountStatus'), value: props.banned ? t('playerCard.frozen') : t('playerCard.normal') },
 ])
 </script>
 
@@ -104,7 +110,7 @@ const infoItems = computed(() => [
 		<header class="profile-header">
 			<img
 				:src="avatar"
-				alt="玩家头像"
+				:alt="t('playerCard.avatarAlt')"
 				class="avatar"
 				crossorigin="anonymous"
 			/>
@@ -123,8 +129,8 @@ const infoItems = computed(() => [
 
 			<div class="detail-panel">
 				<div class="section-heading">
-					<h3>玩家信息</h3>
-					<p>注册资料、服务器状态与游戏统计</p>
+					<h3>{{ t('playerCard.info') }}</h3>
+					<p>{{ t('playerCard.infoDescription') }}</p>
 				</div>
 
 				<div class="info-grid">
@@ -135,7 +141,7 @@ const infoItems = computed(() => [
 				</div>
 
 				<div class="section-heading game-statistics-heading">
-					<h3>游戏统计</h3>
+					<h3>{{ t('playerCard.statistics') }}</h3>
 				</div>
 
 				<div class="info-grid">
