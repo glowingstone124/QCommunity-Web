@@ -428,8 +428,30 @@ function initShaderBackground() {
 	}
 }
 
+let scrollTicking = false
+function handleScroll() {
+	if (!scrollTicking) {
+		window.requestAnimationFrame(() => {
+			const scrollContainer = homeRoot.value?.closest('.app-main') || document.documentElement
+			const scrollY = scrollContainer ? scrollContainer.scrollTop : (window.scrollY || 0)
+			const threshold = Math.max(window.innerHeight * 0.55, 200)
+			const progress = Math.min(Math.max(scrollY / threshold, 0), 1)
+			if (homeRoot.value) {
+				homeRoot.value.style.setProperty('--feed-scroll-progress', progress.toFixed(3))
+			}
+			scrollTicking = false
+		})
+		scrollTicking = true
+	}
+}
+
 onMounted(async () => {
 	initShaderBackground()
+	const scrollContainer = homeRoot.value?.closest('.app-main') || window
+	scrollContainer.addEventListener('scroll', handleScroll, { passive: true })
+	window.addEventListener('scroll', handleScroll, { passive: true })
+	handleScroll()
+
 	if (!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
 		revealObserver = new IntersectionObserver((entries) => {
 			entries.forEach((entry) => {
@@ -447,6 +469,9 @@ onMounted(async () => {
 watch(newsItems, observeRevealItems)
 
 onBeforeUnmount(() => {
+	const scrollContainer = homeRoot.value?.closest('.app-main') || window
+	scrollContainer.removeEventListener('scroll', handleScroll)
+	window.removeEventListener('scroll', handleScroll)
 	window.clearInterval(newsRefreshTimer)
 	revealObserver?.disconnect()
 	cleanupShader()
@@ -473,6 +498,7 @@ function toSocialMedias(target) {
 <template>
 	<div ref="homeRoot" class="home page-shell" :class="{ 'home--campaign': homeCampaign.enabled }">
 		<canvas ref="shaderCanvas" class="shader-background" aria-hidden="true"></canvas>
+		<div class="shader-scroll-overlay" aria-hidden="true"></div>
 		<div class="home-content">
 			<section class="home-hero" aria-labelledby="home-title" data-guide-target="home-hero">
 				<div class="hero-copy">
@@ -1091,15 +1117,36 @@ function toSocialMedias(target) {
 
 .shader-background {
 	position: fixed;
-	inset: 0;
-	width: 100%;
-	height: 100dvh;
+	inset: -20px;
+	width: calc(100% + 40px);
+	height: calc(100dvh + 40px);
 	pointer-events: none;
 	opacity: 1;
 	image-rendering: -webkit-optimize-contrast;
 	image-rendering: crisp-edges;
 	image-rendering: pixelated;
+	will-change: filter, transform;
+	filter: blur(calc(var(--feed-scroll-progress, 0) * 16px))
+	        brightness(calc(1 - var(--feed-scroll-progress, 0) * 0.35));
+	transform: scale(calc(1 + var(--feed-scroll-progress, 0) * 0.03));
+	transition: filter 120ms ease-out, transform 120ms ease-out;
 	animation: shader-in 900ms ease both;
+}
+
+.shader-scroll-overlay {
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	z-index: 0;
+	opacity: var(--feed-scroll-progress, 0);
+	background: color-mix(in srgb, var(--background) 68%, #040810 32%);
+	backdrop-filter: blur(calc(var(--feed-scroll-progress, 0) * 10px));
+	will-change: opacity, backdrop-filter;
+	transition: opacity 120ms ease-out;
+}
+
+:global(:root[data-theme='dark'] .shader-scroll-overlay) {
+	background: color-mix(in srgb, var(--background) 65%, #000000 35%);
 }
 
 @keyframes shader-in {
