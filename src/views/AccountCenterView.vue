@@ -11,6 +11,7 @@ import AccountOverviewPanel from '@/components/account/AccountOverviewPanel.vue'
 import AccountPreferencesPanel from '@/components/account/AccountPreferencesPanel.vue'
 import AccountSidebar from '@/components/account/AccountSidebar.vue'
 import AccountWhitelistPanel from '@/components/account/AccountWhitelistPanel.vue'
+import AccountKotshiPanel from '@/components/account/AccountKotshiPanel.vue'
 import AffiliatedAccountComponent from '@/components/AffiliatedAccountComponent.vue'
 import PlayerCardsListComponent from '@/components/PlayerCardsListComponent.vue'
 import { accountTabs } from '@/data/accountCenter'
@@ -38,6 +39,15 @@ const isImmersive = ref(true)
 const isFrozen = ref(null)
 const statusHint = ref('')
 const fallenSelection = ref(null)
+const kotshiQueryEnabled = ref(true)
+const kotshiQuerySettingLoaded = ref(false)
+const kotshiQuerySettingSaving = ref(false)
+const kotshiQuota = ref(null)
+const kotshiUsage = ref(null)
+const kotshiRecentUsage = ref([])
+const isLoadingKotshi = ref(false)
+const kotshiFeedback = ref('')
+const kotshiFeedbackType = ref('')
 
 function selectTab(tabId) {
 	currentSetting.value = tabId
@@ -56,9 +66,68 @@ function queryAccountData() {
 			playtime.value = data.playtime
 			statistics.value = data.statistics || {}
 			logins.value = data.logins
+			if (typeof data.kotshi_query_enabled === 'boolean') {
+				kotshiQueryEnabled.value = data.kotshi_query_enabled
+				kotshiQuerySettingLoaded.value = true
+			}
 			queryAccountStatus()
 		})
 	queryFallenTeam()
+}
+
+function setKotshiFeedback(message, type = 'error') {
+	kotshiFeedback.value = message
+	kotshiFeedbackType.value = type
+}
+
+async function queryKotshiData() {
+	if (isLoadingKotshi.value) return
+	isLoadingKotshi.value = true
+	kotshiFeedback.value = ''
+	try {
+		const response = await fetch('https://api.qoriginal.vip/qo/authorization/account/kotshi', {
+			headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` },
+		})
+		const data = await response.json()
+		if (!response.ok) throw new Error(data?.message || t('kotshiPage.loadFailed'))
+		kotshiQueryEnabled.value = data.kotshi_query_enabled !== false
+		kotshiQuerySettingLoaded.value = true
+		kotshiQuota.value = data.quota || null
+		kotshiUsage.value = data.usage || null
+		kotshiRecentUsage.value = Array.isArray(data.recent_usage) ? data.recent_usage : []
+	} catch (error) {
+		console.error('加载 Kotshi 信息失败:', error)
+		setKotshiFeedback(error.message || t('kotshiPage.loadFailed'))
+	} finally {
+		isLoadingKotshi.value = false
+	}
+}
+
+async function updateKotshiQueryEnabled(enabled) {
+	if (!kotshiQuerySettingLoaded.value || kotshiQuerySettingSaving.value) return
+	const previous = kotshiQueryEnabled.value
+	kotshiQueryEnabled.value = enabled
+	kotshiQuerySettingSaving.value = true
+	kotshiFeedback.value = ''
+	try {
+		const response = await fetch('https://api.qoriginal.vip/qo/authorization/account/kotshi', {
+			method: 'PATCH',
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ kotshi_query_enabled: enabled }),
+		})
+		const data = await response.json()
+		if (!response.ok) throw new Error(data?.message || t('preferencesPage.saveFailed'))
+		kotshiQueryEnabled.value = data.kotshi_query_enabled !== false
+		setKotshiFeedback(t('preferencesPage.saved'), 'success')
+	} catch (error) {
+		kotshiQueryEnabled.value = previous
+		setKotshiFeedback(error.message || t('preferencesPage.saveFailed'))
+	} finally {
+		kotshiQuerySettingSaving.value = false
+	}
 }
 
 async function queryFallenTeam() {
@@ -249,8 +318,15 @@ watch(currentSetting, (newValue) => {
 			break
 		case 2:
 		case 3:
+			isImmersive.value = false
+			break
 		case 4:
 			isImmersive.value = false
+			queryKotshiData()
+			break
+		case 5:
+			isImmersive.value = false
+			queryKotshiData()
 			break
 	}
 })
@@ -315,7 +391,30 @@ watch(ipAddr, validateIP)
 			</transition>
 
 			<transition name="slide-in">
-				<AccountPreferencesPanel v-if="currentSetting === 4" key="preferences" />
+				<AccountPreferencesPanel
+					v-if="currentSetting === 4"
+					key="preferences"
+					:kotshi-query-enabled="kotshiQueryEnabled"
+					:kotshi-query-setting-loaded="kotshiQuerySettingLoaded"
+					:kotshi-query-setting-saving="kotshiQuerySettingSaving"
+					:kotshi-query-setting-feedback="kotshiFeedback"
+					:kotshi-query-setting-feedback-type="kotshiFeedbackType"
+					@update:kotshi-query-enabled="updateKotshiQueryEnabled"
+				/>
+			</transition>
+
+			<transition name="slide-in">
+				<AccountKotshiPanel
+					v-if="currentSetting === 5"
+					key="kotshi"
+					:quota="kotshiQuota"
+					:usage="kotshiUsage"
+					:recent-usage="kotshiRecentUsage"
+					:is-loading="isLoadingKotshi"
+					:feedback="kotshiFeedback"
+					:feedback-type="kotshiFeedbackType"
+					@refresh="queryKotshiData"
+				/>
 			</transition>
 		</main>
 	</div>

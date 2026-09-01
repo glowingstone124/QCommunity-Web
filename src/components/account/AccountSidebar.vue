@@ -86,6 +86,7 @@ const navigationItems = computed(() =>
 .side :deep(.app-navigation-entry:nth-child(3)) { animation-delay: 150ms; }
 .side :deep(.app-navigation-entry:nth-child(4)) { animation-delay: 190ms; }
 .side :deep(.app-navigation-entry:nth-child(5)) { animation-delay: 230ms; }
+.side :deep(.app-navigation-entry:nth-child(6)) { animation-delay: 270ms; }
 
 .side-sub {
 	margin: 0;
@@ -180,7 +181,7 @@ const navigationItems = computed(() =>
 
 	.side :deep(.app-navigation.is-panel) {
 		display: grid;
-		grid-template-columns: repeat(5, minmax(112px, 1fr));
+		grid-template-columns: repeat(6, minmax(112px, 1fr));
 		gap: 0.4rem;
 		overflow-x: auto;
 		padding-bottom: 0.2rem;

@@ -5,6 +5,14 @@ import { useI18n } from 'vue-i18n'
 
 const { isGuideButtonVisible, setGuideButtonVisible } = useOnboardingGuide()
 const theme = useThemePreference()
+const props = defineProps({
+    kotshiQueryEnabled: { type: Boolean, default: true },
+    kotshiQuerySettingLoaded: { type: Boolean, default: false },
+    kotshiQuerySettingSaving: { type: Boolean, default: false },
+    kotshiQuerySettingFeedback: { type: String, default: '' },
+    kotshiQuerySettingFeedbackType: { type: String, default: '' },
+})
+const emit = defineEmits(['update:kotshiQueryEnabled'])
 const { t } = useI18n()
 
 function setTheme(nextTheme) {
@@ -17,57 +25,106 @@ function setTheme(nextTheme) {
 </script>
 
 <template>
-    <section class="panel preferences-panel">
-        <header class="panel-header">
-            <div>
+	<section class="panel preferences-panel">
+		<header class="panel-header">
+			<div>
 				<h2 class="panel-title">{{ t('preferencesPage.title') }}</h2>
-            </div>
-        </header>
+			</div>
+		</header>
 
-        <div class="preference-list">
-            <section class="preference-row">
-                <div class="preference-copy">
-					<h3>{{ t('preferencesPage.defaultTheme') }}</h3>
-					<p>{{ t('preferencesPage.themeDescription') }}</p>
-                </div>
-				<div class="theme-segmented" role="group" :aria-label="t('preferencesPage.defaultTheme')">
-                    <button
-                        type="button"
-                        class="theme-option"
-                        :class="{ 'is-active': theme === 'light' }"
-                        :aria-pressed="theme === 'light'"
-                        @click="setTheme('light')"
-                    >
-						{{ t('preferencesPage.light') }}
-                    </button>
-                    <button
-                        type="button"
-                        class="theme-option"
-                        :class="{ 'is-active': theme === 'dark' }"
-                        :aria-pressed="theme === 'dark'"
-                        @click="setTheme('dark')"
-                    >
-						{{ t('preferencesPage.dark') }}
-                    </button>
-                </div>
-            </section>
+		<p
+			v-if="props.kotshiQuerySettingFeedback"
+			class="feedback"
+			:class="props.kotshiQuerySettingFeedbackType"
+			role="status"
+		>
+			{{ props.kotshiQuerySettingFeedback }}
+		</p>
 
-            <section class="preference-row">
-                <div class="preference-copy">
-					<h3>{{ t('preferencesPage.guideButton') }}</h3>
-					<p>{{ t('preferencesPage.guideButtonDescription') }}</p>
-                </div>
-                <label class="preference-toggle">
-					<span>{{ t('preferencesPage.showButton') }}</span>
-                    <input
-                        type="checkbox"
-                        :checked="isGuideButtonVisible"
-                        @change="setGuideButtonVisible($event.target.checked)"
-                    />
-                </label>
-            </section>
-        </div>
-    </section>
+		<div class="preference-groups">
+			<section class="preference-group">
+				<header class="preference-group-header">
+					<h3>{{ t('preferencesPage.appearanceGroup') }}</h3>
+					<p>{{ t('preferencesPage.appearanceGroupDescription') }}</p>
+				</header>
+				<div class="preference-list">
+					<section class="preference-row">
+						<div class="preference-copy">
+							<h3>{{ t('preferencesPage.defaultTheme') }}</h3>
+							<p>{{ t('preferencesPage.themeDescription') }}</p>
+						</div>
+						<div class="theme-segmented" role="group" :aria-label="t('preferencesPage.defaultTheme')">
+							<button
+								type="button"
+								class="theme-option"
+								:class="{ 'is-active': theme === 'light' }"
+								:aria-pressed="theme === 'light'"
+								@click="setTheme('light')"
+							>
+								{{ t('preferencesPage.light') }}
+							</button>
+							<button
+								type="button"
+								class="theme-option"
+								:class="{ 'is-active': theme === 'dark' }"
+								:aria-pressed="theme === 'dark'"
+								@click="setTheme('dark')"
+							>
+								{{ t('preferencesPage.dark') }}
+							</button>
+						</div>
+					</section>
+				</div>
+			</section>
+
+			<section class="preference-group">
+				<header class="preference-group-header">
+					<h3>{{ t('preferencesPage.guidanceGroup') }}</h3>
+					<p>{{ t('preferencesPage.guidanceGroupDescription') }}</p>
+				</header>
+				<div class="preference-list">
+					<section class="preference-row">
+						<div class="preference-copy">
+							<h3>{{ t('preferencesPage.guideButton') }}</h3>
+							<p>{{ t('preferencesPage.guideButtonDescription') }}</p>
+						</div>
+						<label class="preference-toggle">
+							<span>{{ t('preferencesPage.showButton') }}</span>
+							<input
+								type="checkbox"
+								:checked="isGuideButtonVisible"
+								@change="setGuideButtonVisible($event.target.checked)"
+							/>
+						</label>
+					</section>
+				</div>
+			</section>
+
+			<section class="preference-group">
+				<header class="preference-group-header">
+					<h3>{{ t('preferencesPage.privacyGroup') }}</h3>
+					<p>{{ t('preferencesPage.privacyGroupDescription') }}</p>
+				</header>
+				<div class="preference-list">
+					<section class="preference-row">
+						<div class="preference-copy">
+							<h3>{{ t('preferencesPage.kotshiQuery') }}</h3>
+							<p>{{ t('preferencesPage.kotshiQueryDescription') }}</p>
+						</div>
+						<label class="preference-toggle">
+							<span>{{ props.kotshiQuerySettingSaving ? t('preferencesPage.saving') : (props.kotshiQueryEnabled ? t('preferencesPage.enabled') : t('preferencesPage.disabled')) }}</span>
+							<input
+								type="checkbox"
+								:checked="props.kotshiQueryEnabled"
+								:disabled="!props.kotshiQuerySettingLoaded || props.kotshiQuerySettingSaving"
+								@change="emit('update:kotshiQueryEnabled', $event.target.checked)"
+							/>
+						</label>
+					</section>
+				</div>
+			</section>
+		</div>
+	</section>
 </template>
 
 <style scoped>
@@ -83,12 +140,16 @@ function setTheme(nextTheme) {
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-soft);
 }
 
 .panel-title {
     margin: 0;
     color: var(--title-color);
-    font-size: 1.45rem;
+    font-size: 1.7rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
     line-height: 1.2;
 }
 
@@ -97,10 +158,54 @@ function setTheme(nextTheme) {
     color: var(--text-secondary);
 }
 
+.feedback {
+    margin: 1rem 0 0;
+    padding: 0.7rem 0.75rem;
+    border-left: 3px solid var(--error);
+    background: color-mix(in srgb, var(--error) 7%, transparent);
+    color: var(--error);
+}
+
+.feedback.success {
+    border-color: var(--success);
+    background: color-mix(in srgb, var(--success) 7%, transparent);
+    color: var(--success);
+}
+
 .preference-list {
     display: grid;
-    margin-top: 1.5rem;
+    margin-top: 0.85rem;
     border-top: 1px solid var(--border-soft);
+}
+
+.preference-groups {
+    display: grid;
+    gap: 1.75rem;
+    margin-top: 1.5rem;
+}
+
+.preference-group-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.preference-group-header h3 {
+    margin: 0;
+    color: var(--primary);
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.13em;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+.preference-group-header p {
+    margin: 0.3rem 0 0;
+    color: var(--text-secondary);
+    font-size: 0.86rem;
+    line-height: 1.45;
 }
 
 .preference-row {
@@ -119,8 +224,10 @@ function setTheme(nextTheme) {
 .preference-copy h3 {
     margin: 0;
     color: var(--text-main);
-    font-size: 1rem;
+    font-size: 1.04rem;
     font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1.3;
 }
 
 .preference-copy p {

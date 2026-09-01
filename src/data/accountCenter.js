@@ -24,4 +24,9 @@ export const accountTabs = [
 		titleKey: 'accountPage.tabPreferences',
 		descriptionKey: 'accountPage.tabPreferencesDescription',
 	},
+	{
+		id: 5,
+		titleKey: 'accountPage.tabKotshi',
+		descriptionKey: 'accountPage.tabKotshiDescription',
+	},
 ]
