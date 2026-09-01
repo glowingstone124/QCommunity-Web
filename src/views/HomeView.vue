@@ -131,6 +131,22 @@ function initShaderBackground() {
 		uniform float u_theme;
 		varying vec2 v_uv;
 
+		// 4x4 Bayer Dither Matrix for retro pixel art shading
+		float getBayer4(vec2 coord) {
+			vec2 b = mod(coord, 4.0);
+			float x = floor(b.x);
+			float y = floor(b.y);
+			if (y == 0.0) {
+				return (x == 0.0 ? 0.0 : x == 1.0 ? 8.0 : x == 2.0 ? 2.0 : 10.0) / 16.0;
+			} else if (y == 1.0) {
+				return (x == 0.0 ? 12.0 : x == 1.0 ? 4.0 : x == 2.0 ? 14.0 : 6.0) / 16.0;
+			} else if (y == 2.0) {
+				return (x == 0.0 ? 3.0 : x == 1.0 ? 11.0 : x == 2.0 ? 1.0 : 9.0) / 16.0;
+			} else {
+				return (x == 0.0 ? 15.0 : x == 1.0 ? 7.0 : x == 2.0 ? 13.0 : 5.0) / 16.0;
+			}
+		}
+
 		float hash(vec2 p) {
 			return fract(sin(dot(p, vec2(120.1, 311.7))) * 758.5453123);
 		}
@@ -170,7 +186,12 @@ function initShaderBackground() {
 		}
 
 		void main() {
-			vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+			// Pixel art block size (larger retro pixels)
+			float pixelSize = 10.0;
+			vec2 pixelCoord = floor(gl_FragCoord.xy / pixelSize);
+			vec2 snappedCoord = (pixelCoord + 0.5) * pixelSize;
+
+			vec2 uv = snappedCoord / u_resolution.xy;
 			vec2 p = uv - 0.5;
 			p.x *= u_resolution.x / u_resolution.y;
 			float t = u_time;
@@ -188,18 +209,92 @@ function initShaderBackground() {
 			smoke = smoke / 0.75;
 
 			float haze = fbm(q * 0.78 + vec2(-t * 0.018, t * 0.014));
-			float plume = smoothstep(0.24, 0.92, smoke);
-			float softBody = smoothstep(0.16, 0.86, haze * 0.55 + smoke * 0.45);
-			float filament = 1.0 - smoothstep(0.02, 0.12, abs(smoke - 0.56));
-			float density = softBody * 0.74 + plume * 0.24 + filament * 0.08;
+			float rawDensity = haze * 0.40 + smoke * 0.60;
 
-			float edgeFalloff = 0.86 + 0.14 * smoothstep(1.4, 0.1, length(p));
-			vec3 ink = vec3(0.01, 0.018, 0.035);
-			vec3 blue = vec3(0.025, 0.08, 0.20);
-			vec3 cyan = vec3(0.06, 0.14, 0.22);
-			vec3 color = mix(ink, blue, smoke);
-			color = mix(color, cyan, filament * 0.08);
-			float alpha = density * edgeFalloff * mix(0.64, 0.24, u_theme);
+			// Boost contrast curve for punchy pixel clusters
+			float shapedDensity = smoothstep(0.10, 0.88, rawDensity);
+			shapedDensity = pow(shapedDensity, 1.15);
+
+			// Apply Bayer matrix ordered dithering
+			float dither = (getBayer4(pixelCoord) - 0.5) * 0.22;
+			float dithered = clamp(shapedDensity + dither, 0.0, 1.0);
+
+			// Quantize into 6 discrete color palette steps
+			float level = floor(dithered * 6.0) / 6.0;
+
+			float edgeFalloff = 0.88 + 0.12 * smoothstep(1.4, 0.1, length(p));
+
+			// High-Contrast Retro Pixel Palette: Dark mode (deep space & midnight tones)
+			vec3 c0_dark = vec3(0.003, 0.006, 0.015); // Deep Void
+			vec3 c1_dark = vec3(0.008, 0.024, 0.070); // Deep Indigo
+			vec3 c2_dark = vec3(0.018, 0.060, 0.160); // Midnight Cobalt
+			vec3 c3_dark = vec3(0.035, 0.120, 0.320); // Quantum Blue
+			vec3 c4_dark = vec3(0.070, 0.240, 0.520); // Cyber Azure
+			vec3 c5_dark = vec3(0.140, 0.400, 0.700); // Electric Azure Accent
+
+			// Soothing & Non-glaring Pixel Palette: Light mode (gentle, eye-friendly pastel sky & soft slate tones)
+			vec3 c0_light = vec3(0.90, 0.93, 0.96); // Soft Cloud Haze
+			vec3 c1_light = vec3(0.83, 0.88, 0.93); // Light Sky Tint
+			vec3 c2_light = vec3(0.76, 0.83, 0.90); // Muted Ice Blue
+			vec3 c3_light = vec3(0.68, 0.77, 0.86); // Soft Periwinkle
+			vec3 c4_light = vec3(0.60, 0.70, 0.81); // Calm Slate Blue
+			vec3 c5_light = vec3(0.52, 0.63, 0.76); // Gentle Denim Accent
+
+			vec3 c0 = mix(c0_light, c0_dark, u_theme);
+			vec3 c1 = mix(c1_light, c1_dark, u_theme);
+			vec3 c2 = mix(c2_light, c2_dark, u_theme);
+			vec3 c3 = mix(c3_light, c3_dark, u_theme);
+			vec3 c4 = mix(c4_light, c4_dark, u_theme);
+			vec3 c5 = mix(c5_light, c5_dark, u_theme);
+
+			vec3 color = c0;
+			float alpha = 0.0;
+
+			if (level < 0.166) {
+				color = c0;
+				alpha = mix(0.55, 0.68, level * 6.0);
+			} else if (level < 0.333) {
+				color = c1;
+				alpha = mix(0.68, 0.78, (level - 0.166) * 6.0);
+			} else if (level < 0.500) {
+				color = c2;
+				alpha = mix(0.78, 0.86, (level - 0.333) * 6.0);
+			} else if (level < 0.666) {
+				color = c3;
+				alpha = mix(0.86, 0.92, (level - 0.500) * 6.0);
+			} else if (level < 0.833) {
+				color = c4;
+				alpha = mix(0.92, 0.96, (level - 0.666) * 6.0);
+			} else {
+				color = c5;
+				alpha = 0.98;
+			}
+
+			// Floating quantum pixel motes / sparkles
+			vec2 starGrid = floor((pixelCoord + vec2(t * 1.2, -t * 1.8)) / 9.0);
+			float starSeed = hash(starGrid * 5.43);
+			if (starSeed > 0.968) {
+				vec2 localGrid = mod(pixelCoord + vec2(t * 1.2, -t * 1.8), 9.0);
+				if (floor(localGrid.x) == 4.0 && floor(localGrid.y) == 4.0) {
+					float pulse = sin(t * 3.5 + starSeed * 50.0) * 0.5 + 0.5;
+					if (pulse > 0.4) {
+						vec3 sparkColor = mix(c4, c5, pulse);
+						color = mix(color, sparkColor, pulse);
+					}
+				}
+			}
+
+			// Soft subtle pixel grid texture (gentle in light mode, crisp in dark mode)
+			vec2 frac = fract(gl_FragCoord.xy / pixelSize);
+			float gridFactor = mix(0.96, 0.88, u_theme);
+			float grid = (frac.x < 0.06 || frac.y < 0.06) ? gridFactor : 1.0;
+			color *= grid;
+
+			// Reading zone mask to gently soften background right under the hero title
+			float textZone = smoothstep(0.0, 0.90, length(vec2(p.x + 0.25, p.y * 1.4)));
+			alpha *= mix(0.82, 1.0, textZone);
+
+			alpha *= edgeFalloff * mix(0.88, 0.95, u_theme);
 
 			gl_FragColor = vec4(color, alpha);
 		}
@@ -572,10 +667,12 @@ function toSocialMedias(target) {
 
 .hero-brand {
 	width: fit-content;
-	color: var(--primary-light);
+	color: var(--primary);
 	font-size: clamp(1.15rem, 2.2vw, 1.9rem);
 	font-weight: 700;
 	line-height: 1;
+	letter-spacing: 0.02em;
+	text-shadow: 0 1px 16px color-mix(in srgb, var(--background) 90%, transparent);
 	animation: hero-brand-in 520ms cubic-bezier(0.22, 1, 0.36, 1) 80ms both;
 }
 
@@ -583,17 +680,29 @@ function toSocialMedias(target) {
 	margin: 0;
 	color: var(--title-color);
 	font-size: clamp(2.2rem, 5.8vw, 5rem);
-	font-weight: 520;
+	font-weight: 650;
 	line-height: 0.98;
 	max-width: min(100%, 20ch);
 	overflow-wrap: normal;
 	word-break: normal;
 	text-wrap: balance;
+	text-shadow: 0 2px 24px color-mix(in srgb, var(--background) 95%, transparent),
+	             0 1px 4px color-mix(in srgb, var(--background) 80%, transparent);
 	animation: hero-title-in 720ms cubic-bezier(0.16, 1, 0.3, 1) 150ms both;
 }
 
 .home--campaign .hero-brand {
+	color: var(--primary);
+}
+
+:global(:root[data-theme='dark'] .home-hero h1) {
+	text-shadow: 0 2px 28px rgba(0, 0, 0, 0.95),
+	             0 1px 6px rgba(0, 0, 0, 0.85);
+}
+
+:global(:root[data-theme='dark'] .hero-brand) {
 	color: #93c5fd;
+	text-shadow: 0 1px 16px rgba(0, 0, 0, 0.9);
 }
 
 .home--campaign .home-hero h1 {
@@ -987,6 +1096,9 @@ function toSocialMedias(target) {
 	height: 100dvh;
 	pointer-events: none;
 	opacity: 1;
+	image-rendering: -webkit-optimize-contrast;
+	image-rendering: crisp-edges;
+	image-rendering: pixelated;
 	animation: shader-in 900ms ease both;
 }
 
