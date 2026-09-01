@@ -519,10 +519,31 @@ function toSocialMedias(target) {
 						</router-link>
 					</div>
 				</div>
-				<a class="scroll-cue" href="#home-news" :aria-label="t('homePage.scroll_to_feed')">
+				<a class="scroll-cue" href="#home-ai" :aria-label="t('homePage.scroll_to_feed')">
 					<span>{{ t('homePage.scroll_to_feed') }}</span>
 					<span class="scroll-cue-line" aria-hidden="true"></span>
 				</a>
+			</section>
+
+			<section id="home-ai" class="ai-banner reveal-item" aria-labelledby="ai-banner-title">
+				<div class="ai-banner-copy">
+					<h2 id="ai-banner-title">{{ t('homePage.ai_banner_title') }}</h2>
+					<p>{{ t('homePage.ai_banner_description') }}</p>
+					<a
+						class="ai-banner-action"
+						href="https://ai.qoriginal.vip"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						<span>{{ t('homePage.ai_banner_cta') }}</span>
+						<span class="ai-banner-action-arrow" aria-hidden="true">&#8599;</span>
+					</a>
+				</div>
+				<div class="ai-banner-visual" aria-hidden="true">
+					<div class="ai-banner-mark">
+						<img src="/images/qhub_icon_square_4096.png" alt="">
+					</div>
+				</div>
 			</section>
 
 			<section id="home-news" class="news-feed" aria-labelledby="news-title" data-guide-target="home-news">
@@ -819,6 +840,123 @@ function toSocialMedias(target) {
 	content: none;
 }
 
+.ai-banner {
+	position: relative;
+	display: grid;
+	grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.92fr);
+	align-items: stretch;
+	min-height: clamp(320px, 38vh, 460px);
+	border: 1px solid color-mix(in srgb, var(--primary) 38%, var(--split));
+	background: color-mix(in srgb, var(--background) 72%, var(--primary) 8%);
+	box-shadow:
+		0 1px 0 color-mix(in srgb, var(--background) 62%, transparent) inset,
+		0 24px 70px color-mix(in srgb, var(--primary) 13%, transparent);
+	isolation: isolate;
+	overflow: hidden;
+}
+
+.ai-banner::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	background:
+		linear-gradient(90deg, color-mix(in srgb, var(--primary) 8%, transparent), transparent 48%),
+		linear-gradient(180deg, transparent 0 70%, color-mix(in srgb, var(--primary) 8%, transparent));
+	opacity: 0.9;
+}
+
+.ai-banner-copy {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
+	min-width: 0;
+	padding: clamp(1.8rem, 5vw, 4.5rem);
+}
+
+.ai-banner h2 {
+	max-width: 16ch;
+	margin: 0;
+	color: var(--title-color);
+	font-size: clamp(2rem, 4.5vw, 4.1rem);
+	font-weight: 700;
+	line-height: 1.02;
+	text-wrap: balance;
+}
+
+.ai-banner-copy p {
+	max-width: 54ch;
+	margin: 1.15rem 0 0;
+	color: var(--text-secondary);
+	font-size: clamp(0.96rem, 1.35vw, 1.12rem);
+	line-height: 1.65;
+}
+
+.ai-banner-action {
+	display: inline-flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1.6rem;
+	min-width: 160px;
+	margin-top: 1.7rem;
+	padding: 0.86rem 1rem;
+	border: 1px solid var(--primary);
+	background: var(--primary);
+	color: var(--button-primary-text);
+	font-size: 0.92rem;
+	font-weight: 700;
+	line-height: 1.2;
+	text-decoration: none;
+	transition: transform 180ms var(--ease-out), background-color 180ms ease, box-shadow 180ms ease;
+}
+
+.ai-banner-action-arrow {
+	font-size: 1.2rem;
+	line-height: 0.8;
+	transition: transform 180ms var(--ease-out);
+}
+
+.ai-banner-visual {
+	position: relative;
+	display: grid;
+	place-items: center;
+	min-width: 0;
+	min-height: 300px;
+	border-left: 1px solid color-mix(in srgb, var(--primary) 22%, transparent);
+	overflow: hidden;
+}
+
+.ai-banner-mark {
+	position: relative;
+	display: grid;
+	place-items: center;
+	width: clamp(116px, 13vw, 180px);
+	aspect-ratio: 1;
+	border: 1px solid color-mix(in srgb, var(--primary-light) 48%, transparent);
+	background: color-mix(in srgb, var(--background) 82%, var(--primary));
+	box-shadow:
+		0 0 0 10px color-mix(in srgb, var(--primary) 7%, transparent),
+		0 0 50px color-mix(in srgb, var(--primary) 23%, transparent);
+}
+
+.ai-banner-mark::after {
+	content: "";
+	position: absolute;
+	inset: 10px;
+	border: 1px solid color-mix(in srgb, var(--primary-light) 24%, transparent);
+}
+
+.ai-banner-mark img {
+	position: relative;
+	z-index: 1;
+	width: 62%;
+	height: 62%;
+	object-fit: contain;
+	filter: drop-shadow(0 0 14px color-mix(in srgb, var(--primary-light) 28%, transparent));
+}
+
 .news-feed {
 	width: 100%;
 	padding: 0;
@@ -1096,6 +1234,8 @@ function toSocialMedias(target) {
 @media (hover: hover) and (pointer: fine) {
 	.choice-prompt-action:hover { transform: translateX(3px); background-color: #cf6246; box-shadow: -8px 0 24px rgba(184,82,56,.22); }
 	.scroll-cue:hover { color: var(--primary); }
+	.ai-banner-action:hover { transform: translateX(4px); background-color: var(--button-primary-hover); box-shadow: -10px 0 28px color-mix(in srgb, var(--primary) 24%, transparent); }
+	.ai-banner-action:hover .ai-banner-action-arrow { transform: translate(2px, -2px); }
 	.news-item:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--primary) 42%, transparent); background: color-mix(in srgb, var(--background) 50%, transparent); box-shadow: 0 16px 42px color-mix(in srgb, var(--text-main) 10%, transparent); }
 	.news-item--collapse:hover { border-color: #ff765e; background: linear-gradient(135deg, color-mix(in srgb, #3b100d 90%, var(--background)) 0%, color-mix(in srgb, #0d111b 94%, var(--background)) 72%); }
 	.news-item:hover::after { opacity: 1; transform: translateX(100%); }
@@ -1205,6 +1345,10 @@ function toSocialMedias(target) {
 		aspect-ratio: 16 / 9;
 		min-height: 0;
 	}
+
+	.ai-banner {
+		grid-template-columns: minmax(0, 1fr) minmax(260px, 0.82fr);
+	}
 }
 
 @media (max-width: 640px) {
@@ -1242,6 +1386,34 @@ function toSocialMedias(target) {
 		padding: .85rem;
 	}
 
+	.ai-banner {
+		grid-template-columns: 1fr;
+	}
+
+	.ai-banner-copy {
+		padding: 1.5rem;
+	}
+
+	.ai-banner h2 {
+		max-width: 100%;
+		font-size: 2.25rem;
+	}
+
+	.ai-banner-copy p {
+		margin-top: 0.9rem;
+	}
+
+	.ai-banner-action {
+		width: 100%;
+		box-sizing: border-box;
+		margin-top: 1.35rem;
+	}
+
+	.ai-banner-visual {
+		min-height: 235px;
+		border-top: 1px solid color-mix(in srgb, var(--primary) 22%, transparent);
+		border-left: 0;
+	}
 	.choice-prompt-action {
 		grid-column: 1 / -1;
 		width: 100%;
@@ -1278,10 +1450,10 @@ function toSocialMedias(target) {
 
 	.hero-brand,
 	.home-hero h1,
-	.collapse-choice-prompt,
-	.choice-prompt-signal span,
-	.scroll-cue,
-	.scroll-cue-line {
+		.collapse-choice-prompt,
+		.choice-prompt-signal span,
+		.scroll-cue,
+		.scroll-cue-line {
 		animation: none;
 	}
 

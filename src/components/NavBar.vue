@@ -208,6 +208,13 @@ const navCategories = computed(() => [
 			: t('nav.explore_title_guest'),
 		items: loggedIn.value ? [
 			{
+				path: 'https://ai.qoriginal.vip',
+				external: true,
+				target: '_blank',
+				label: t('nav.ai_service'),
+				description: t('nav.ai_service_description'),
+			},
+			{
 				path: '/advancements',
 				label: t('mainPage.advancements'),
 				description: t('mainPage_description.advancements'),
@@ -218,6 +225,13 @@ const navCategories = computed(() => [
 				description: t('mainPage_description.miscs'),
 			},
 		] : [
+			{
+				path: 'https://ai.qoriginal.vip',
+				external: true,
+				target: '_blank',
+				label: t('nav.ai_service'),
+				description: t('nav.ai_service_description'),
+			},
 			{
 				path: '/login',
 				label: t('nav.sign_in'),
