@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { get } from '@/utils/request'
+import { fetchServerStatus, subscribeServerStatus } from '@/services/serverStatus.js'
 import { fetchAvatar } from '@/services/avatar.js'
 
 const POLLING_INTERVAL = 3000
@@ -22,8 +22,9 @@ const playerAvatars = ref({})
 const isLoading = ref(false)
 const lastUpdatedAt = ref(null)
 const fetchError = ref('')
-let pollingInterval = 0
-let activeRequestId = 0
+let statusSubscription = null
+let fallbackPollingTimer = 0
+let errorCount = 0
 const avatarCache = new Map()
 
 const currentServer = computed(() =>
@@ -198,62 +199,79 @@ function selectServer(serverId) {
 	currentServerId.value = serverId
 }
 
-async function fetchData() {
-	const requestId = ++activeRequestId
-	isLoading.value = true
+function applyStatusResult(result) {
+	onlineCount.value = Number(result.onlinecount || 0)
+	totalCount.value = Number(result.totalcount || 0)
+	// Prefer the plugin's non-destructive three-second rolling average. Older
+	// servers only expose `mspt`, so keep it as a compatibility fallback.
+	const rawMspt = Number(result.mspt_3s ?? result.mspt ?? 0)
+	msptRaw.value = rawMspt
+	msptSamplesRaw.value = Array.isArray(result.recent60) ? result.recent60 : []
+	players.value = Array.isArray(result.players) ? result.players : []
+	syncPlayerAvatars(players.value)
+	lastUpdatedAt.value = new Date()
+	fetchError.value = ''
+	isLoading.value = false
+	errorCount = 0
+}
 
-	try {
-		const result = await get(`https://api.glowingstone.cn/qo/download/status?id=${currentServerId.value}`)
-
-		if (requestId !== activeRequestId) {
-			return
-		}
-
-		onlineCount.value = Number(result.onlinecount || 0)
-		totalCount.value = Number(result.totalcount || 0)
-		// Prefer the plugin's non-destructive three-second rolling average. Older
-		// servers only expose `mspt`, so keep it as a compatibility fallback.
-		const rawMspt = Number(result.mspt_3s ?? result.mspt ?? 0)
-		msptRaw.value = rawMspt
-		msptSamplesRaw.value = Array.isArray(result.recent60) ? result.recent60 : []
-		players.value = Array.isArray(result.players) ? result.players : []
-		syncPlayerAvatars(players.value)
-		lastUpdatedAt.value = new Date()
-		fetchError.value = ''
-	} catch (error) {
-		if (requestId !== activeRequestId) {
-			return
-		}
-
-			fetchError.value = t('dashboardPage.statusSyncFailed')
-		msptSamplesRaw.value = []
-		players.value = []
-		playerAvatars.value = {}
-	} finally {
-		if (requestId === activeRequestId) {
-			isLoading.value = false
-		}
+function handleStreamError() {
+	errorCount++
+	if (!lastUpdatedAt.value || errorCount >= 3) {
+		fetchError.value = t('dashboardPage.statusSyncFailed')
+	}
+	if (errorCount >= 3 && !fallbackPollingTimer) {
+		fallbackPollingTimer = window.setInterval(async () => {
+			try {
+				const result = await fetchServerStatus(currentServerId.value)
+				applyStatusResult(result)
+			} catch (_) {
+				// Retain current UI state on transient network error
+			}
+		}, POLLING_INTERVAL)
 	}
 }
 
-function startPolling() {
-	fetchData()
-	pollingInterval = window.setInterval(fetchData, POLLING_INTERVAL)
+function startStatusStream() {
+	stopStatusStream()
+	isLoading.value = true
+
+	statusSubscription = subscribeServerStatus(currentServerId.value, {
+		onOpen: () => {
+			if (fallbackPollingTimer) {
+				window.clearInterval(fallbackPollingTimer)
+				fallbackPollingTimer = 0
+			}
+		},
+		onMessage: (data) => {
+			applyStatusResult(data)
+		},
+		onError: () => {
+			handleStreamError()
+		},
+	})
 }
 
-function stopPolling() {
-	window.clearInterval(pollingInterval)
-	pollingInterval = 0
+function stopStatusStream() {
+	if (statusSubscription) {
+		statusSubscription.close()
+		statusSubscription = null
+	}
+	if (fallbackPollingTimer) {
+		window.clearInterval(fallbackPollingTimer)
+		fallbackPollingTimer = 0
+	}
+	errorCount = 0
 }
 
 watch(currentServerId, () => {
-	stopPolling()
-	startPolling()
+	stopStatusStream()
+	startStatusStream()
 })
 
-onMounted(startPolling)
+onMounted(startStatusStream)
 
-onBeforeUnmount(stopPolling)
+onBeforeUnmount(stopStatusStream)
 </script>
 
 <template>
