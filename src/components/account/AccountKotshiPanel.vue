@@ -32,6 +32,11 @@ function formatTime(timestamp) {
 function statusLabel(status) {
 	return t(`kotshiPage.status.${String(status || 'unknown').toLowerCase()}`)
 }
+
+function sourceLabel(source) {
+	const channel = String(source || '').toLowerCase()
+	return t(`kotshiPage.channels.${['web', 'qq', 'minecraft'].includes(channel) ? channel : 'other'}`)
+}
 </script>
 
 <template>
@@ -59,17 +64,13 @@ function statusLabel(status) {
 					<div class="quota-track"><span :style="{ width: `${remainingPercent}%` }"></span></div>
 					<p>{{ t('kotshiPage.quotaDescription') }}</p>
 					<small>{{ t('kotshiPage.resetAt', { time: formatTime(quota?.reset_at) }) }}</small>
-					<p>{{ t('kotshiPage.paidCredits') }}: {{ number(quota?.paid_credits) }}</p>
 				</section>
 
-				<section class="summary-card">
-					<div class="card-kicker">{{ t('kotshiPage.usageTitle') }}</div>
-					<div class="usage-big">{{ number(usage?.requests) }}</div>
-					<p>{{ t('kotshiPage.usageDescription') }}</p>
-					<div class="usage-split">
-						<span>{{ t('kotshiPage.completed') }} <strong>{{ number(usage?.completed) }}</strong></span>
-						<span>{{ t('kotshiPage.failed') }} <strong>{{ number(usage?.failed) }}</strong></span>
-					</div>
+				<section class="summary-card paid-card">
+					<div class="card-kicker">{{ t('kotshiPage.paidCredits') }}</div>
+					<div class="quota-value"><strong>{{ number(quota?.paid_credits) }}</strong></div>
+					<p>{{ t('kotshiPage.paidDescription') }}</p>
+					<small>{{ t('kotshiPage.paidRetention') }}</small>
 				</section>
 			</div>
 
@@ -84,12 +85,17 @@ function statusLabel(status) {
 						<strong>{{ number(usage?.total_tokens) }}</strong>
 					</div>
 				</header>
+				<div class="usage-split">
+					<span>{{ t('kotshiPage.usageTitle') }} <strong>{{ number(usage?.requests) }}</strong></span>
+					<span>{{ t('kotshiPage.completed') }} <strong>{{ number(usage?.completed) }}</strong></span>
+					<span>{{ t('kotshiPage.failed') }} <strong>{{ number(usage?.failed) }}</strong></span>
+				</div>
 
 				<div v-if="recentUsage.length" class="usage-list">
 					<div v-for="(record, index) in recentUsage" :key="`${record.created_at}-${index}`" class="usage-row">
 						<span class="usage-index">{{ String(index + 1).padStart(2, '0') }}</span>
 						<div class="usage-copy">
-							<strong>{{ record.mode === 'thinking' ? 'Thinking' : record.mode === 'fast' ? 'Fast' : 'Kotshi' }}</strong>
+							<strong>{{ sourceLabel(record.source) }}</strong>
 							<span>{{ formatTime(record.created_at) }}</span>
 						</div>
 						<span class="usage-status" :class="`is-${String(record.status || '').toLowerCase()}`">{{ statusLabel(record.status) }}</span>
@@ -144,14 +150,13 @@ function statusLabel(status) {
 .summary-card { min-width: 0; padding: 1rem; border: 1px solid var(--border-soft); background: var(--surface-soft); }
 .card-kicker { color: var(--text-secondary); font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
 .quota-value { display: flex; align-items: baseline; gap: 0.35rem; margin-top: 0.6rem; color: var(--text-main); }
-.quota-value strong, .usage-big { font-size: 2rem; line-height: 1; }
+.quota-value strong { font-size: 2rem; line-height: 1; }
 .quota-value span { color: var(--text-secondary); }
 .quota-track { height: 7px; margin-top: 1rem; overflow: hidden; background: var(--background-secondary); border: 1px solid var(--border-soft); }
 .quota-track span { display: block; height: 100%; background: var(--primary); transition: width 180ms ease; }
 .summary-card p { margin: 0.8rem 0 0; color: var(--text-secondary); font-size: 0.88rem; line-height: 1.45; }
 .summary-card small { display: block; margin-top: 0.45rem; color: var(--text-secondary); }
-.usage-big { margin-top: 0.7rem; color: var(--text-main); font-weight: 700; }
-.usage-split { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 0.9rem; color: var(--text-secondary); font-size: 0.84rem; }
+.usage-split { display: flex; flex-wrap: wrap; gap: 1rem; color: var(--text-secondary); font-size: 0.84rem; }
 .usage-split strong { color: var(--text-main); }
 
 .usage-section { display: flex; flex-direction: column; gap: 1rem; padding: 1rem; border: 1px solid var(--border-soft); }
