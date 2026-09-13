@@ -59,6 +59,7 @@ function statusLabel(status) {
 					<div class="quota-track"><span :style="{ width: `${remainingPercent}%` }"></span></div>
 					<p>{{ t('kotshiPage.quotaDescription') }}</p>
 					<small>{{ t('kotshiPage.resetAt', { time: formatTime(quota?.reset_at) }) }}</small>
+					<p>{{ t('kotshiPage.paidCredits') }}: {{ number(quota?.paid_credits) }}</p>
 				</section>
 
 				<section class="summary-card">
@@ -88,7 +89,7 @@ function statusLabel(status) {
 					<div v-for="(record, index) in recentUsage" :key="`${record.created_at}-${index}`" class="usage-row">
 						<span class="usage-index">{{ String(index + 1).padStart(2, '0') }}</span>
 						<div class="usage-copy">
-							<strong>{{ record.model || 'Kotshi' }}</strong>
+							<strong>{{ record.mode === 'thinking' ? 'Thinking' : record.mode === 'fast' ? 'Fast' : 'Kotshi' }}</strong>
 							<span>{{ formatTime(record.created_at) }}</span>
 						</div>
 						<span class="usage-status" :class="`is-${String(record.status || '').toLowerCase()}`">{{ statusLabel(record.status) }}</span>
