@@ -65,7 +65,9 @@
     "now_login": "Login now",
     "error": "Failed to login:",
     "err_user": "Username and password don't match. Please try again.",
-    "err_network": "Network error. Please try later."
+    "err_network": "Network error. Please try later.",
+    "sso_authorizing": "Authorizing and redirecting...",
+    "sso_target": "Authorizing access to service:"
   },
   "homePage": {
     "campaign_brand": "QHub",
