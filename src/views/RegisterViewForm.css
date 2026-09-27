@@ -1,0 +1,219 @@
+.primary-button,
+.dialog button {
+	border: 1px solid var(--primary);
+	background: var(--button-primary-bg);
+	color: var(--button-primary-text);
+}
+
+.primary-button:hover,
+.dialog button:hover {
+	background: var(--button-primary-hover);
+}
+
+.secondary-button,
+.options button {
+	border: 1px solid var(--register-border);
+	background: var(--background-secondary);
+	color: var(--text-main);
+}
+
+.secondary-button:hover,
+.options button:hover {
+	border-color: var(--primary);
+}
+
+.options {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.65rem;
+}
+
+.message,
+.quiz-success,
+.result-panel {
+	border: 1px solid var(--register-border);
+	padding: 0.78rem 0.85rem;
+	font-size: 0.9rem;
+	line-height: 1.5;
+}
+
+.message {
+	color: var(--error);
+	border-color: color-mix(in srgb, var(--error) 45%, var(--register-border));
+	background: color-mix(in srgb, var(--error) 10%, transparent);
+}
+
+.quiz-success {
+	color: var(--success);
+	border-color: color-mix(in srgb, var(--success) 45%, var(--register-border));
+	background: color-mix(in srgb, var(--success) 10%, transparent);
+}
+
+.spinner {
+	border: 3px solid var(--button-primary-text);
+	border-top: 3px solid transparent;
+	border-radius: 50%;
+	width: 1rem;
+	height: 1rem;
+	display: inline-block;
+	animation: spin 1s linear infinite;
+	margin-right: 5px;
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.dialog-overlay {
+	position: fixed;
+	inset: 0;
+	background: color-mix(in srgb, var(--background) 30%, rgba(0, 0, 0, 0.62));
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 20;
+	padding: 1rem;
+	box-sizing: border-box;
+}
+
+.quiz-intro,
+.minecraft-intro,
+.quiz-window {
+	overflow-y: auto;
+	max-height: min(42vh, 420px);
+	border: 1px solid var(--register-border);
+	padding: 1rem;
+	color: var(--text-main);
+	background: var(--background-secondary);
+	line-height: 1.7;
+}
+
+.server-address {
+	font-family: "SpaceMono", monospace;
+	font-size: 1.05rem;
+	font-weight: 800;
+	user-select: all;
+}
+
+.minecraft-state {
+	color: var(--primary);
+	font-weight: 700;
+}
+
+.quiz-window h3 {
+	margin: 0 0 0.75rem;
+	color: var(--title-color);
+}
+
+.quiz-window p,
+.quiz-intro p {
+	margin: 0 0 0.75rem;
+}
+
+.quiz-window p:last-child,
+.quiz-intro p:last-child {
+	margin-bottom: 0;
+}
+
+.quiz-meta {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	color: var(--text-secondary);
+}
+
+.quiz-meta .secondary-button {
+	width: fit-content;
+}
+
+.dialog {
+	background: var(--background);
+	border: 1px solid var(--register-border);
+	padding: 1.25rem;
+	max-width: 520px;
+	width: 100%;
+	color: var(--text-main);
+}
+
+.dialog h2 {
+	margin: 0 0 0.75rem;
+	color: var(--title-color);
+}
+
+.dialog h4 {
+	margin: 0 0 1rem;
+	color: var(--text-secondary);
+	line-height: 1.55;
+}
+
+.terms {
+	margin-top: 1rem;
+	padding-top: 1rem;
+	border-top: 1px solid var(--register-border);
+	color: var(--text-main);
+	line-height: 1.5;
+	font-size: 0.92rem;
+}
+
+a {
+	color: var(--primary);
+	font-weight: 700;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+@media (max-width: 980px) {
+	.register-page {
+		grid-template-columns: 1fr;
+		align-items: start;
+	}
+
+	.register-copy {
+		max-width: none;
+	}
+}
+
+@media (max-width: 640px) {
+	.register-page {
+		padding: 1rem;
+	}
+
+	.register-panel {
+		padding: 1rem;
+	}
+
+	.progress-strip {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.progress-item:nth-child(2n) {
+		border-right: none;
+	}
+
+	.progress-item:nth-child(-n + 2) {
+		border-bottom: 1px solid var(--register-border);
+	}
+
+	.options {
+		grid-template-columns: 1fr;
+	}
+
+	.verification-options {
+		grid-template-columns: 1fr;
+	}
+
+	.quiz-meta {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.quiz-meta .secondary-button {
+		width: 100%;
+	}
+}

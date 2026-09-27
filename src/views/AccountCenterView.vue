@@ -14,6 +14,7 @@ import AccountWhitelistPanel from '@/components/account/AccountWhitelistPanel.vu
 import AccountKotshiPanel from '@/components/account/AccountKotshiPanel.vue'
 import AffiliatedAccountComponent from '@/components/AffiliatedAccountComponent.vue'
 import PlayerCardsListComponent from '@/components/PlayerCardsListComponent.vue'
+import { useIpAddressValidation } from '@/composables/useIpAddressValidation.js'
 import { accountTabs } from '@/data/accountCenter'
 import { getFallenTeamSelection } from '@/services/fallen.js'
 
@@ -29,7 +30,7 @@ const statistics = ref({})
 const logins = ref([])
 const iplist = ref([])
 const ipAddr = ref('')
-const isValidIp = ref(false)
+const { isValidIp } = useIpAddressValidation(ipAddr)
 const isSubmittingIp = ref(false)
 const isLoadingIps = ref(false)
 const deletingIp = ref('')
@@ -253,36 +254,6 @@ async function queryIpDetails() {
 	}
 }
 
-function isValidIpv4(value) {
-	const parts = value.split('.')
-	return parts.length === 4 && parts.every((part) => {
-		if (!/^\d+$/.test(part) || (part.length > 1 && part.startsWith('0'))) return false
-		const octet = Number(part)
-		return octet >= 0 && octet <= 255
-	})
-}
-
-function isValidIpv6(value) {
-	if (!value.includes(':') || value.includes('%') || !/^[0-9a-fA-F:.]+$/.test(value)) return false
-	let candidate = value
-	const lastColon = candidate.lastIndexOf(':')
-	const ipv4Tail = candidate.slice(lastColon + 1)
-	if (ipv4Tail.includes('.')) {
-		if (!isValidIpv4(ipv4Tail)) return false
-		candidate = `${candidate.slice(0, lastColon)}:0:0`
-	}
-	if ((candidate.match(/::/g) || []).length > 1) return false
-	const hasCompression = candidate.includes('::')
-	const groups = candidate.split(':').filter(Boolean)
-	if ((!hasCompression && groups.length !== 8) || (hasCompression && groups.length >= 8)) return false
-	return groups.every((group) => /^[0-9a-fA-F]{1,4}$/.test(group))
-}
-
-function validateIP() {
-	const value = ipAddr.value
-	isValidIp.value = value === value.trim() && value.length <= 45 && (isValidIpv4(value) || isValidIpv6(value))
-}
-
 function logout() {
 	localStorage.removeItem('username')
 	localStorage.removeItem('token')
@@ -331,7 +302,6 @@ watch(currentSetting, (newValue) => {
 	}
 })
 
-watch(ipAddr, validateIP)
 </script>
 
 <template>
@@ -420,152 +390,4 @@ watch(ipAddr, validateIP)
 	</div>
 </template>
 
-<style scoped>
-@import '/src/assets/base.css';
-@import '/src/assets/main.css';
-@import '/src/assets/colors.css';
-
-:global(:root) {
-	--account-bg: var(--page-background);
-	--glass-strong: var(--background);
-	--glass-soft: var(--background);
-	--nav-bg: var(--background);
-	--surface-soft: color-mix(in srgb, var(--text-main) 4%, transparent);
-	--border-soft: color-mix(in srgb, var(--text-main) 14%, transparent);
-	--account-muted-border: color-mix(in srgb, var(--text-main) 9%, transparent);
-}
-
-:global(:root[data-theme='dark']) {
-	--account-bg: var(--page-background);
-	--glass-strong: var(--background-secondary);
-	--glass-soft: var(--background-secondary);
-	--nav-bg: var(--background-secondary);
-	--surface-soft: color-mix(in srgb, var(--dark-text-primary) 7%, transparent);
-	--border-soft: color-mix(in srgb, var(--dark-text-primary) 18%, transparent);
-	--account-muted-border: color-mix(in srgb, var(--dark-text-primary) 10%, transparent);
-}
-
-.account {
-	width: 100%;
-	max-width: none;
-	height: 100%;
-	min-height: 0;
-	display: grid;
-	grid-template-columns: minmax(220px, 296px) minmax(0, 1fr);
-	gap: 1rem;
-	background: var(--account-bg);
-	border-radius: 0;
-	padding: 1rem;
-	position: relative;
-	overflow: hidden;
-	animation: account-page-in 300ms ease both;
-}
-
-.content {
-	min-width: 0;
-	min-height: 0;
-	position: relative;
-	z-index: 1;
-	overflow: auto;
-	border: 1px solid var(--account-muted-border);
-	background: var(--glass-strong);
-	border-radius: 0;
-}
-
-.content.personalization-layout {
-	overflow: hidden;
-}
-
-.content.immersive :deep(.panel) {
-	background: var(--glass-soft);
-}
-
-.panel-full {
-	height: 100%;
-	padding: 1rem;
-	background: var(--glass-strong);
-	border: none;
-	min-height: 0;
-	overflow: hidden;
-	max-width: 1400px;
-	width: 100%;
-	margin: 0 auto;
-	box-sizing: border-box;
-}
-
-@media (min-width: 1600px) {
-	.account {
-		grid-template-columns: 296px minmax(0, 1400px);
-		justify-content: center;
-	}
-}
-
-@media (max-width: 960px) {
-	.account {
-		grid-template-columns: 1fr;
-		padding: 0.85rem;
-		height: 100%;
-		overflow: auto;
-	}
-
-	.content {
-		border-radius: 0;
-	}
-
-	.content.personalization-layout {
-		overflow: visible;
-	}
-
-	.panel-full {
-		height: auto;
-		overflow: visible;
-		max-width: none;
-	}
-}
-
-@media (max-width: 640px) {
-	.account {
-		padding: 0.75rem;
-		gap: 0.75rem;
-	}
-
-	.content {
-		overflow: visible;
-	}
-
-	.panel-full {
-		padding: 0;
-	}
-}
-
-.slide-in-enter-active {
-	transition:
-		opacity 320ms ease,
-		transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.slide-in-enter-from {
-	opacity: 0;
-	transform: translateY(14px);
-}
-
-.slide-in-enter-to {
-	opacity: 1;
-	transform: translateX(0);
-}
-
-.slide-in-leave-active {
-	display: none;
-}
-
-@keyframes account-page-in {
-	from { opacity: 0; }
-	to { opacity: 1; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.account { animation: none; }
-	.slide-in-enter-active { transition: none; }
-	.slide-in-enter-from { opacity: 1; transform: none; }
-}
-</style>
+<style scoped src="./AccountCenterView.css"></style>

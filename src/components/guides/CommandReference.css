@@ -1,0 +1,255 @@
+.command-reference {
+	display: grid;
+	gap: clamp(1rem, 3vw, 1.6rem);
+	width: min(1040px, 100%);
+	padding-bottom: 5rem;
+}
+
+.command-header {
+	display: grid;
+	gap: 0.75rem;
+}
+
+.command-header h1,
+.detail-heading h2,
+.arg-section h3 {
+	margin: 0;
+	color: var(--title-color);
+	letter-spacing: 0;
+}
+
+.command-header h1 {
+	font-size: clamp(2rem, 5vw, 4.2rem);
+	font-weight: 680;
+	line-height: 1.04;
+}
+
+.command-header p,
+.detail-heading p {
+	max-width: 720px;
+	margin: 0;
+	color: var(--text-secondary);
+	font-size: clamp(1rem, 2vw, 1.18rem);
+	line-height: 1.65;
+}
+
+.command-console,
+.command-detail,
+.command-list-item {
+	border: 1px solid color-mix(in srgb, var(--text-main) 12%, transparent);
+	background: var(--background);
+}
+
+.command-console {
+	display: grid;
+	gap: 0.75rem;
+	padding: 1rem;
+}
+
+.command-search {
+	display: grid;
+	gap: 0.45rem;
+}
+
+.command-search span,
+.usage-block span,
+.command-output span,
+.detail-heading span {
+	color: var(--primary);
+	font-size: 0.78rem;
+	font-weight: 780;
+	text-transform: uppercase;
+}
+
+.command-search input {
+	width: 100%;
+	border: 1px solid var(--split);
+	background: var(--code-bg);
+	color: var(--code-text);
+	font-family: var(--font-mono);
+	font-size: clamp(1rem, 2vw, 1.2rem);
+	padding: 0.9rem 1rem;
+	box-sizing: border-box;
+	outline: none;
+}
+
+.command-search input:focus {
+	border-color: var(--primary);
+}
+
+.completion-list {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 0.5rem;
+}
+
+.completion-item,
+.arg-option,
+.command-output button {
+	border: 1px solid var(--split);
+	background: var(--background-secondary);
+	color: var(--text-main);
+	cursor: pointer;
+}
+
+.completion-item {
+	display: grid;
+	gap: 0.22rem;
+	text-align: left;
+	padding: 0.7rem 0.8rem;
+}
+
+.completion-item strong,
+.command-list-item strong,
+.arg-option strong {
+	color: var(--title-color);
+	font-family: var(--font-mono);
+}
+
+.completion-item span,
+.command-list-item small,
+.arg-option span {
+	color: var(--text-secondary);
+	font-size: 0.84rem;
+	line-height: 1.42;
+}
+
+.command-layout {
+	display: grid;
+	grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+	gap: 1rem;
+	align-items: start;
+}
+
+.command-list {
+	display: grid;
+	gap: 0.55rem;
+}
+
+.command-list-item {
+	display: grid;
+	gap: 0.35rem;
+	text-align: left;
+	padding: 0.85rem;
+	cursor: pointer;
+}
+
+.command-list-item span {
+	color: var(--primary);
+	font-size: 0.76rem;
+	font-weight: 760;
+}
+
+.command-list-item:hover,
+.command-list-item:focus-visible,
+.command-list-item.is-active,
+.completion-item:hover,
+.completion-item:focus-visible,
+.arg-option:hover,
+.arg-option:focus-visible,
+.arg-option.is-selected,
+.command-output button:hover,
+.command-output button:focus-visible {
+	border-color: var(--primary);
+	outline: none;
+}
+
+.command-list-item.is-active,
+.arg-option.is-selected {
+	background: color-mix(in srgb, var(--primary) 10%, var(--background));
+}
+
+.command-detail {
+	display: grid;
+	gap: 1.1rem;
+	padding: clamp(1rem, 3vw, 1.4rem);
+}
+
+.detail-heading {
+	display: grid;
+	gap: 0.55rem;
+}
+
+.detail-heading h2 {
+	font-family: var(--font-mono);
+	font-size: clamp(1.7rem, 4vw, 3rem);
+}
+
+.usage-block,
+.command-output {
+	display: grid;
+	gap: 0.55rem;
+}
+
+.usage-block code,
+.command-output code {
+	display: block;
+	overflow: auto;
+	background: var(--code-bg);
+	color: var(--code-text);
+	font-family: var(--font-mono);
+	font-size: 1rem;
+	padding: 0.85rem 1rem;
+}
+
+.arg-builder {
+	display: grid;
+	gap: 0.9rem;
+}
+
+.arg-section {
+	display: grid;
+	gap: 0.65rem;
+}
+
+.arg-section h3 {
+	font-size: 1rem;
+}
+
+.arg-options {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	gap: 0.55rem;
+}
+
+.arg-option {
+	display: grid;
+	gap: 0.28rem;
+	text-align: left;
+	padding: 0.75rem;
+}
+
+.command-output {
+	grid-template-columns: 1fr auto;
+	align-items: end;
+}
+
+.command-output span {
+	grid-column: 1 / -1;
+}
+
+.command-output button {
+	height: 100%;
+	padding: 0 1rem;
+	font-weight: 720;
+}
+
+@media (max-width: 860px) {
+	.command-layout {
+		grid-template-columns: 1fr;
+	}
+
+	.command-list {
+		grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+	}
+}
+
+@media (max-width: 560px) {
+	.command-output {
+		grid-template-columns: 1fr;
+	}
+
+	.command-output button {
+		min-height: 2.75rem;
+	}
+}

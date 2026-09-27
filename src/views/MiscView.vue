@@ -25,9 +25,10 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import BeaconColorComponent from "@/components/BeaconColorComponent.vue";
-import FortuneComponent from "@/components/FortuneComponent.vue";
-import AppNavigation from "@/components/ui/AppNavigation.vue";
+import BeaconColorComponent from '@/components/BeaconColorComponent.vue'
+import CoverGeneratorComponent from '@/components/CoverGeneratorComponent.vue'
+import FortuneComponent from '@/components/FortuneComponent.vue'
+import AppNavigation from '@/components/ui/AppNavigation.vue'
 
 const activeKey = ref('fortune')
 const { t } = useI18n()
@@ -45,10 +46,18 @@ const menuItems = computed(() => [
 		description: t('miscPage.beacon_color_description'),
 		component: BeaconColorComponent,
 	},
+	{
+		key: 'cover-generator',
+		label: t('miscPage.cover_generator'),
+		description: t('miscPage.cover_generator_description'),
+		component: CoverGeneratorComponent,
+	},
 ])
 
 const activeComponent = computed(() => {
-	return menuItems.value.find((item) => item.key === activeKey.value)?.component || FortuneComponent
+	return (
+		menuItems.value.find((item) => item.key === activeKey.value)?.component || FortuneComponent
+	)
 })
 
 const switchComponent = (item) => {

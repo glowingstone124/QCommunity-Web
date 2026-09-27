@@ -1,377 +1,759 @@
 <template>
-	<section class="cover-tool">
-		<form class="cover-controls" @submit.prevent="renderCover">
-			<label class="field">
-				<span>{{ t('coverPage.title') }}</span>
-				<textarea
-					v-model="title"
-					rows="3"
-					:placeholder="t('coverPage.titlePlaceholder')"
-					@input="renderCover"
-				></textarea>
-			</label>
+    <section class="cover-panel">
+        <header class="tool-header">
+            <div>
+                <h2>{{ t('coverPage.heading') }}</h2>
+                <p>{{ t('coverPage.description') }}</p>
+            </div>
+            <span class="local-badge">{{ t('coverPage.localBadge') }}</span>
+        </header>
 
-			<div class="control-grid">
-				<label class="field">
-					<span>{{ t('coverPage.seed') }}</span>
-					<input v-model="seed" type="text" :placeholder="t('coverPage.seedPlaceholder')" @input="renderCover">
-				</label>
+        <div class="generator-grid">
+            <section class="preview-panel" :aria-label="t('coverPage.preview')">
+                <header class="preview-header">
+                    <h3>{{ t('coverPage.preview') }}</h3>
+                    <span>{{ previewDimensions }}</span>
+                </header>
+                <div class="preview-frame">
+                    <canvas
+                        ref="canvasRef"
+                        class="cover-canvas"
+                        :width="DEFAULT_COVER_WIDTH"
+                        :height="DEFAULT_COVER_HEIGHT"
+                        :style="{ aspectRatio: canvasAspectRatio }"
+                        :aria-label="
+                            t('coverPage.previewAlt', {
+                                width: previewWidth,
+                                height: previewHeight,
+                            })
+                        "
+                        role="img"
+                    ></canvas>
+                </div>
+                <p class="preview-caption" aria-live="polite">
+                    {{ t('coverPage.seedCaption', { seed: effectiveSeed }) }}
+                </p>
+                <div v-if="videoPreviewUrl" class="video-preview">
+                    <video
+                        class="video-preview-player"
+                        :src="videoPreviewUrl"
+                        controls
+                        autoplay
+                        loop
+                        muted
+                        playsinline
+                        :aria-label="t('coverPage.videoPreviewAlt')"
+                    ></video>
+                    <div class="video-preview-footer">
+                        <span>{{ videoPreviewFormat.toUpperCase() }}</span>
+                        <button type="button" class="secondary-button" @click="downloadVideo">
+                            {{ t('coverPage.downloadVideo') }}
+                        </button>
+                    </div>
+                </div>
+                <p v-if="renderError || downloadError" class="error-state" role="alert">
+                    {{ renderError || downloadError }}
+                </p>
+                <p v-if="videoError" class="error-state" role="alert">{{ videoError }}</p>
+            </section>
 
-				<label class="field">
-					<span>{{ t('coverPage.theme') }}</span>
-					<select v-model="theme" @change="renderCover">
-						<option value="dark">{{ t('coverPage.dark') }}</option>
-						<option value="light">{{ t('coverPage.light') }}</option>
-					</select>
-				</label>
+            <div class="control-panel">
+                <label class="field">
+                    <span>{{ t('coverPage.titleLabel') }}</span>
+                    <textarea
+                        v-model="title"
+                        rows="3"
+                        maxlength="240"
+                        :aria-invalid="Boolean(titleMarkupError)"
+                        aria-describedby="cover-title-markup-help"
+                        :placeholder="t('coverPage.titleHint')"
+                    ></textarea>
+                </label>
 
-				<label class="field">
-					<span>{{ t('coverPage.layout') }}</span>
-					<select v-model="layout" @change="renderCover">
-						<option value="left">{{ t('coverPage.left') }}</option>
-						<option value="center">{{ t('coverPage.center') }}</option>
-						<option value="right">{{ t('coverPage.right') }}</option>
-					</select>
-				</label>
-			</div>
+                <div class="title-markup-help">
+                    <small id="cover-title-markup-help">{{ t('coverPage.titleMarkupHelp') }}</small>
+                    <button
+                        type="button"
+                        class="title-example-button"
+                        @click="insertRichTitleExample"
+                    >
+                        {{ t('coverPage.titleMarkupExample') }}
+                    </button>
+                </div>
+                <p v-if="titleMarkupError" class="title-markup-error" role="alert">
+                    {{
+                        t('coverPage.titleMarkupError', {
+                            line: titleMarkupError.line,
+                            column: titleMarkupError.column,
+                            message: titleMarkupError.message,
+                        })
+                    }}
+                </p>
 
-			<div class="actions">
-				<button type="button" class="button secondary" @click="shuffleSeed">{{ t('coverPage.shuffle') }}</button>
-				<button type="button" class="button primary" @click="downloadCover">{{ t('coverPage.download') }}</button>
-			</div>
-		</form>
+                <label class="field">
+                    <span>{{ t('coverPage.titleSize') }}</span>
+                    <input
+                        v-model.lazy.number="titleFontSize"
+                        type="number"
+                        :min="MIN_TITLE_FONT_SIZE"
+                        :max="MAX_TITLE_FONT_SIZE"
+                        step="1"
+                    />
+                </label>
 
-		<div class="preview-shell">
-			<canvas ref="canvasRef" class="cover-canvas" width="1600" height="900"></canvas>
-		</div>
-	</section>
+                <label class="field">
+                    <span>{{ t('coverPage.titleColor') }}</span>
+                    <select v-model="titleColorMode">
+                        <option value="auto">{{ t('coverPage.titleColorAuto') }}</option>
+                        <option value="dark">{{ t('coverPage.titleColorDark') }}</option>
+                        <option value="light">{{ t('coverPage.titleColorLight') }}</option>
+                        <option value="custom">{{ t('coverPage.titleColorCustom') }}</option>
+                    </select>
+                </label>
+
+                <label v-if="titleColorMode === 'custom'" class="field">
+                    <span>{{ t('coverPage.customTitleColor') }}</span>
+                    <input v-model="titleColor" type="color" />
+                </label>
+
+                <h3 class="control-section-heading">{{ t('coverPage.backgroundSettings') }}</h3>
+
+                <label class="field">
+                    <span>{{ t('coverPage.seedLabel') }}</span>
+                    <input
+                        v-model="seed"
+                        type="text"
+                        maxlength="80"
+                        spellcheck="false"
+                        :placeholder="t('coverPage.seedHint')"
+                    />
+                </label>
+
+                <fieldset class="style-picker">
+                    <legend>{{ t('coverPage.style') }}</legend>
+                    <div class="style-options">
+                        <label
+                            v-for="coverStyle in COVER_STYLES"
+                            :key="coverStyle"
+                            class="style-option"
+                        >
+                            <input
+                                v-model="style"
+                                type="radio"
+                                name="cover-style"
+                                :value="coverStyle"
+                            />
+                            <span class="style-option-face">
+                                <span
+                                    class="style-swatch"
+                                    :class="`style-swatch--${coverStyle}`"
+                                    aria-hidden="true"
+                                ></span>
+                                <span>{{ t(`coverPage.${coverStyle}`) }}</span>
+                            </span>
+                        </label>
+                    </div>
+                </fieldset>
+
+                <h3 class="control-section-heading">{{ t('coverPage.exportSettings') }}</h3>
+
+                <div class="size-grid">
+                    <label class="field">
+                        <span>{{ t('coverPage.width') }}</span>
+                        <input
+                            v-model.number="width"
+                            type="number"
+                            min="64"
+                            :max="MAX_COVER_DIMENSION"
+                            step="1"
+                        />
+                    </label>
+                    <label class="field">
+                        <span>{{ t('coverPage.height') }}</span>
+                        <input
+                            v-model.number="height"
+                            type="number"
+                            min="64"
+                            :max="MAX_COVER_DIMENSION"
+                            step="1"
+                        />
+                    </label>
+                </div>
+
+                <label class="field">
+                    <span>{{ t('coverPage.format') }}</span>
+                    <select v-model="format">
+                        <option value="webp">{{ t('coverPage.webp') }}</option>
+                        <option value="png">{{ t('coverPage.png') }}</option>
+                    </select>
+                </label>
+
+                <p class="size-hint">{{ t('coverPage.sizeHint') }}</p>
+
+                <h3 class="control-section-heading">{{ t('coverPage.videoSettings') }}</h3>
+
+                <div class="size-grid">
+                    <label class="field">
+                        <span>{{ t('coverPage.videoDuration') }}</span>
+                        <input
+                            v-model.number="videoDuration"
+                            type="number"
+                            min="2"
+                            max="12"
+                            step="0.5"
+                        />
+                    </label>
+                    <label class="field">
+                        <span>{{ t('coverPage.videoFps') }}</span>
+                        <select v-model.number="videoFps">
+                            <option :value="24">24</option>
+                            <option :value="30">30</option>
+                            <option :value="60">60</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="size-grid">
+                    <label class="field">
+                        <span>{{ t('coverPage.lightAngle') }}</span>
+                        <input
+                            v-model.number="lightAngle"
+                            type="number"
+                            min="0"
+                            max="360"
+                            step="1"
+                        />
+                    </label>
+                    <label class="field">
+                        <span>{{ t('coverPage.lightSweep') }}</span>
+                        <input
+                            v-model.number="lightSweep"
+                            type="number"
+                            min="0"
+                            max="360"
+                            step="1"
+                        />
+                    </label>
+                </div>
+
+                <label class="field">
+                    <span>{{ t('coverPage.videoFormat') }}</span>
+                    <select v-model="videoFormat">
+                        <option value="webm">WebM</option>
+                        <option value="mp4">MP4</option>
+                        <option value="mov">MOV</option>
+                    </select>
+                </label>
+
+                <label class="field range-field">
+                    <span>
+                        {{ t('coverPage.wordAnimationSpeed') }}
+                        <output>{{ Number(animationSpeed).toFixed(1) }}×</output>
+                    </span>
+                    <input
+                        v-model.number="animationSpeed"
+                        type="range"
+                        min="0.5"
+                        max="3"
+                        step="0.1"
+                    />
+                </label>
+
+                <p class="size-hint">{{ t('coverPage.videoHint') }}</p>
+
+                <div class="actions">
+                    <button type="button" class="secondary-button" @click="randomizeSeed">
+                        {{ t('coverPage.randomSeed') }}
+                    </button>
+                    <button
+                        type="button"
+                        class="primary-button"
+                        :disabled="!canDownload"
+                        @click="downloadCover"
+                    >
+                        {{ t('coverPage.downloadAction') }}
+                    </button>
+                    <button
+                        type="button"
+                        class="primary-button video-button"
+                        :disabled="!canGenerateVideo || isRecording"
+                        @click="generateVideo"
+                    >
+                        {{ isRecording ? t('coverPage.videoGenerating', { progress: videoPercent }) : t('coverPage.generateVideo') }}
+                    </button>
+                </div>
+                <progress
+                    v-if="isRecording"
+                    class="video-progress"
+                    :value="videoProgress"
+                    max="1"
+                    :aria-label="t('coverPage.videoProgress', { progress: videoPercent })"
+                ></progress>
+            </div>
+        </div>
+    </section>
 </template>
 
 <script setup>
-import { nextTick, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import {
+    COVER_STYLES,
+    MAX_COVER_DIMENSION,
+    createCoverSeed,
+    generateCoverBackground,
+    isValidCoverDimensions,
+} from '@/utils/coverGenerator.js'
+import { drawCoverTitle } from '@/utils/coverTitle.js'
+import { parseCoverTitleMarkup, resolveCoverTitleRuns } from '@/utils/coverTitleMarkup.js'
 
 const canvasRef = ref(null)
+const DEFAULT_COVER_WIDTH = 2560
+const DEFAULT_COVER_HEIGHT = 1440
+const MIN_TITLE_FONT_SIZE = 16
+const MAX_TITLE_FONT_SIZE = 1024
 const { t } = useI18n()
-const title = ref(t('coverPage.defaultTitle'))
-const seed = ref('')
-const theme = ref('dark')
-const layout = ref('left')
+const title = ref('')
+const titleDocument = ref(parseCoverTitleMarkup(''))
+const titleMarkupError = ref(null)
+const titleFontSize = ref(208)
+const titleColorMode = ref('auto')
+const titleColor = ref('#173A59')
+const seed = ref(createCoverSeed())
+const style = ref('blue')
+const width = ref(DEFAULT_COVER_WIDTH)
+const height = ref(DEFAULT_COVER_HEIGHT)
+const format = ref('webp')
+const videoDuration = ref(4)
+const videoFps = ref(24)
+const videoFormat = ref('webm')
+const lightAngle = ref(35)
+const lightSweep = ref(180)
+const animationSpeed = ref(1.5)
+const renderError = ref('')
+const downloadError = ref('')
+const videoError = ref('')
+const isRecording = ref(false)
+const videoProgress = ref(0)
+const videoPreviewUrl = ref('')
+const videoPreviewFormat = ref('webm')
+let backgroundImageData = null
+let backgroundKey = ''
+let renderTimer = null
+let forceBackgroundOnNextRender = false
+let activeVideoRecorder = null
+let activeVideoStream = null
+let videoPreviewObjectUrl = ''
 
-function hashString(value) {
-	let hash = 2166136261
+const effectiveSeed = computed(() => seed.value.trim() || 'cover')
 
-	for (let index = 0; index < value.length; index += 1) {
-		hash ^= value.charCodeAt(index)
-		hash = Math.imul(hash, 16777619)
-	}
-
-	return hash >>> 0
+function getDimensions() {
+    const imageWidth = Number(width.value)
+    const imageHeight = Number(height.value)
+    if (!isValidCoverDimensions(imageWidth, imageHeight)) return null
+    return { width: imageWidth, height: imageHeight }
 }
 
-function createRandom(initialSeed) {
-	let state = initialSeed || 1
-
-	return () => {
-		state += 0x6d2b79f5
-		let value = state
-		value = Math.imul(value ^ (value >>> 15), value | 1)
-		value ^= value + Math.imul(value ^ (value >>> 7), value | 61)
-		return ((value ^ (value >>> 14)) >>> 0) / 4294967296
-	}
+function getTitleFontSize() {
+    const fontSize = Number(titleFontSize.value)
+    return Number.isInteger(fontSize) &&
+        fontSize >= MIN_TITLE_FONT_SIZE &&
+        fontSize <= MAX_TITLE_FONT_SIZE
+        ? fontSize
+        : null
 }
 
-function hsl(h, s, l, alpha = 1) {
-	return `hsla(${Math.round(h)} ${Math.round(s)}% ${Math.round(l)}% / ${alpha})`
+const canDownload = computed(
+    () =>
+        Boolean(getDimensions()) &&
+        getTitleFontSize() !== null &&
+        !renderError.value &&
+        !titleMarkupError.value
+)
+const canGenerateVideo = computed(
+    () =>
+        canDownload.value &&
+        Number.isFinite(Number(videoDuration.value)) &&
+        Number(videoDuration.value) >= 2 &&
+        Number(videoDuration.value) <= 12 &&
+        [24, 30, 60].includes(Number(videoFps.value)) &&
+        ['webm', 'mp4', 'mov'].includes(videoFormat.value) &&
+        Number.isFinite(Number(lightAngle.value)) &&
+        Number(lightAngle.value) >= 0 &&
+        Number(lightAngle.value) <= 360 &&
+        Number.isFinite(Number(lightSweep.value)) &&
+        Number(lightSweep.value) >= 0 &&
+        Number(lightSweep.value) <= 360 &&
+        Number.isFinite(Number(animationSpeed.value)) &&
+        Number(animationSpeed.value) >= 0.5 &&
+        Number(animationSpeed.value) <= 3
+)
+const videoPercent = computed(() => `${Math.round(videoProgress.value * 100)}%`)
+const previewWidth = computed(() => getDimensions()?.width ?? '—')
+const previewHeight = computed(() => getDimensions()?.height ?? '—')
+const previewDimensions = computed(() => `${previewWidth.value} × ${previewHeight.value}`)
+const canvasAspectRatio = computed(() => {
+    const dimensions = getDimensions()
+    return dimensions ? `${dimensions.width} / ${dimensions.height}` : '16 / 9'
+})
+
+function scheduleRender(regenerateBackground = false) {
+    if (regenerateBackground) forceBackgroundOnNextRender = true
+    if (renderTimer !== null) clearTimeout(renderTimer)
+    renderTimer = setTimeout(() => {
+        renderTimer = null
+        const regenerate = forceBackgroundOnNextRender
+        forceBackgroundOnNextRender = false
+        renderCover(regenerate)
+    }, 120)
 }
 
-function wrapText(ctx, text, maxWidth, maxLines) {
-	const source = text.trim() || 'Untitled'
-	const hasSpaces = /\s/.test(source)
-	const tokens = hasSpaces ? source.split(/\s+/) : Array.from(source)
-	const lines = []
-	let line = ''
+function renderCover(regenerateBackground = false) {
+    if (titleMarkupError.value) return
 
-	for (const token of tokens) {
-		const nextLine = hasSpaces
-			? line ? `${line} ${token}` : token
-			: `${line}${token}`
+    const dimensions = getDimensions()
+    if (!dimensions) {
+        renderError.value = t('coverPage.sizeError')
+        return
+    }
+    const fontSize = getTitleFontSize()
+    if (fontSize === null) {
+        renderError.value = t('coverPage.fontSizeError')
+        return
+    }
 
-		if (ctx.measureText(nextLine).width <= maxWidth || !line) {
-			line = nextLine
-			continue
-		}
+    const canvas = canvasRef.value
+    if (!canvas) return
 
-		lines.push(line)
-		line = token
+    try {
+        const { width: imageWidth, height: imageHeight } = dimensions
+        const cacheKey = `${effectiveSeed.value}\u0000${style.value}\u0000${imageWidth}\u0000${imageHeight}`
+        const needsBackground =
+            regenerateBackground || !backgroundImageData || backgroundKey !== cacheKey
+        if (needsBackground) {
+            backgroundImageData = generateCoverBackground(
+                imageWidth,
+                imageHeight,
+                style.value,
+                effectiveSeed.value
+            )
+            backgroundKey = cacheKey
+        }
 
-		if (lines.length === maxLines - 1) {
-			break
-		}
-	}
-
-	if (line && lines.length < maxLines) {
-		lines.push(line)
-	}
-
-	return lines
+        if (canvas.width !== imageWidth) canvas.width = imageWidth
+        if (canvas.height !== imageHeight) canvas.height = imageHeight
+        const context = canvas.getContext('2d', { alpha: false })
+        if (!context) throw new Error(t('coverPage.canvasUnavailable'))
+        context.putImageData(backgroundImageData, 0, 0)
+        drawCoverTitle(context, backgroundImageData, titleDocument.value, {
+            fontSize,
+            colorMode: titleColorMode.value,
+            textColor: titleColor.value,
+            themeStyle: style.value,
+        })
+        renderError.value = ''
+    } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
+        renderError.value = t('coverPage.renderError', { message })
+    }
 }
 
-function drawBackground(ctx, random, palette, isDark) {
-	const width = ctx.canvas.width
-	const height = ctx.canvas.height
-	const base = ctx.createLinearGradient(0, 0, width, height)
-	base.addColorStop(0, palette.baseA)
-	base.addColorStop(0.52, palette.baseB)
-	base.addColorStop(1, palette.baseC)
-	ctx.fillStyle = base
-	ctx.fillRect(0, 0, width, height)
+function drawDynamicLight(context, width, height, angle) {
+    const radians = ((angle - 90) * Math.PI) / 180
+    const distance = Math.hypot(width, height) * 0.62
+    const centerX = width / 2 + Math.cos(radians) * distance
+    const centerY = height / 2 + Math.sin(radians) * distance
+    const radius = Math.hypot(width, height) * 0.9
+    const light = context.createRadialGradient(
+        centerX,
+        centerY,
+        0,
+        centerX,
+        centerY,
+        radius
+    )
+    light.addColorStop(0, 'rgba(255, 255, 255, 0.22)')
+    light.addColorStop(0.28, 'rgba(255, 255, 255, 0.09)')
+    light.addColorStop(0.72, 'rgba(255, 255, 255, 0.015)')
+    light.addColorStop(1, 'rgba(255, 255, 255, 0)')
 
-	ctx.globalCompositeOperation = isDark ? 'screen' : 'multiply'
-	for (let index = 0; index < 22; index += 1) {
-		const x = random() * width
-		const y = random() * height
-		const radius = (0.16 + random() * 0.32) * width
-		const hue = palette.hues[index % palette.hues.length] + random() * 18 - 9
-		const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius)
-		gradient.addColorStop(0, hsl(hue, 78, isDark ? 58 : 54, isDark ? 0.28 : 0.16))
-		gradient.addColorStop(0.56, hsl(hue + 12, 70, isDark ? 38 : 62, isDark ? 0.08 : 0.07))
-		gradient.addColorStop(1, hsl(hue, 70, 45, 0))
-		ctx.fillStyle = gradient
-		ctx.beginPath()
-		ctx.arc(x, y, radius, 0, Math.PI * 2)
-		ctx.fill()
-	}
+    const shadowAngle = radians + Math.PI
+    const shadowX = width / 2 + Math.cos(shadowAngle) * distance * 0.72
+    const shadowY = height / 2 + Math.sin(shadowAngle) * distance * 0.72
+    const shadow = context.createLinearGradient(shadowX, shadowY, centerX, centerY)
+    shadow.addColorStop(0, 'rgba(0, 0, 0, 0.16)')
+    shadow.addColorStop(0.48, 'rgba(0, 0, 0, 0.035)')
+    shadow.addColorStop(1, 'rgba(0, 0, 0, 0)')
 
-	ctx.globalCompositeOperation = 'source-over'
-	ctx.lineWidth = 1
-	for (let index = 0; index < 90; index += 1) {
-		const startX = random() * width
-		const startY = random() * height
-		const length = 120 + random() * 420
-		const angle = random() * Math.PI * 2
-		const hue = palette.hues[index % palette.hues.length]
-		ctx.strokeStyle = hsl(hue, 80, isDark ? 74 : 38, isDark ? 0.13 : 0.1)
-		ctx.beginPath()
-		ctx.moveTo(startX, startY)
-		ctx.lineTo(startX + Math.cos(angle) * length, startY + Math.sin(angle) * length)
-		ctx.stroke()
-	}
-
-	const vignette = ctx.createRadialGradient(width * 0.5, height * 0.5, height * 0.25, width * 0.5, height * 0.5, width * 0.72)
-	vignette.addColorStop(0, 'rgba(0, 0, 0, 0)')
-	vignette.addColorStop(1, isDark ? 'rgba(0, 0, 0, 0.42)' : 'rgba(255, 255, 255, 0.36)')
-	ctx.fillStyle = vignette
-	ctx.fillRect(0, 0, width, height)
-
-	ctx.fillStyle = isDark ? 'rgba(255, 255, 255, 0.035)' : 'rgba(8, 16, 32, 0.028)'
-	for (let index = 0; index < 4800; index += 1) {
-		ctx.fillRect(random() * width, random() * height, 1, 1)
-	}
+    context.save()
+    context.globalCompositeOperation = 'screen'
+    context.fillStyle = light
+    context.fillRect(0, 0, width, height)
+    context.globalCompositeOperation = 'multiply'
+    context.fillStyle = shadow
+    context.fillRect(0, 0, width, height)
+    context.restore()
 }
 
-function drawTitle(ctx, palette, isDark) {
-	const width = ctx.canvas.width
-	const height = ctx.canvas.height
-	const maxTextWidth = layout.value === 'center' ? width * 0.74 : width * 0.58
-	let fontSize = 76
-	let lines = []
-
-	while (fontSize > 38) {
-		ctx.font = `700 ${fontSize}px "Space Grotesk", "PingFang SC", sans-serif`
-		lines = wrapText(ctx, title.value, maxTextWidth, 3)
-
-		if (lines.every((line) => ctx.measureText(line).width <= maxTextWidth)) {
-			break
-		}
-
-		fontSize -= 6
-	}
-
-	const lineHeight = fontSize * 1.08
-	const blockHeight = lines.length * lineHeight
-	const x = layout.value === 'center'
-		? width / 2
-		: layout.value === 'right'
-			? width - 130
-			: 130
-	const y = layout.value === 'center'
-		? height / 2 - blockHeight / 2 + fontSize * 0.76
-		: height - 170 - blockHeight + fontSize
-
-	ctx.textAlign = layout.value === 'center' ? 'center' : layout.value === 'right' ? 'right' : 'left'
-	ctx.textBaseline = 'alphabetic'
-
-	ctx.font = `700 ${fontSize}px "Space Grotesk", "PingFang SC", sans-serif`
-	ctx.fillStyle = isDark ? '#f8fafc' : '#0f172a'
-	lines.forEach((line, index) => {
-		ctx.fillText(line, x, y + index * lineHeight)
-	})
+function getVideoMimeType(formatName) {
+    if (
+        typeof MediaRecorder === 'undefined' ||
+        typeof MediaRecorder.isTypeSupported !== 'function'
+    )
+        return ''
+    const candidates = {
+        webm: ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'],
+        mp4: ['video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/mp4'],
+        mov: ['video/quicktime;codecs=h264', 'video/quicktime'],
+    }[formatName]
+    if (!candidates) return ''
+    return candidates.find((mimeType) => MediaRecorder.isTypeSupported(mimeType)) || ''
 }
 
-function createPalette(hash, isDark) {
-	const hueA = hash % 360
-	const hueB = (hueA + 42 + (hash % 54)) % 360
-	const hueC = (hueA + 180 + (hash % 38)) % 360
-
-	return {
-		hues: [hueA, hueB, hueC],
-		baseA: isDark ? hsl(hueA, 54, 8, 1) : hsl(hueA, 42, 92, 1),
-		baseB: isDark ? hsl(hueB, 48, 13, 1) : hsl(hueB, 54, 86, 1),
-		baseC: isDark ? hsl(hueC, 44, 7, 1) : hsl(hueC, 38, 95, 1),
-	}
+function setVideoPreview(blob, formatName) {
+    if (videoPreviewObjectUrl) URL.revokeObjectURL(videoPreviewObjectUrl)
+    videoPreviewObjectUrl = URL.createObjectURL(blob)
+    videoPreviewUrl.value = videoPreviewObjectUrl
+    videoPreviewFormat.value = formatName
 }
 
-async function renderCover() {
-	await nextTick()
-	const canvas = canvasRef.value
-
-	if (!canvas) {
-		return
-	}
-
-	const ctx = canvas.getContext('2d')
-	const source = `${title.value}|${seed.value || title.value}|${theme.value}|${layout.value}`
-	const hash = hashString(source)
-	const random = createRandom(hash)
-	const isDark = theme.value === 'dark'
-	const palette = createPalette(hash, isDark)
-
-	ctx.clearRect(0, 0, canvas.width, canvas.height)
-	drawBackground(ctx, random, palette, isDark)
-	drawTitle(ctx, palette, isDark)
+function downloadVideo() {
+    if (!videoPreviewUrl.value) return
+    const link = document.createElement('a')
+    link.href = videoPreviewUrl.value
+    link.download = `${safeFileName()}.${videoPreviewFormat.value}`
+    document.body.append(link)
+    link.click()
+    link.remove()
 }
 
-function shuffleSeed() {
-	seed.value = Math.random().toString(36).slice(2, 9)
-	renderCover()
+async function generateVideo() {
+    videoError.value = ''
+    videoProgress.value = 0
+    if (!canGenerateVideo.value) return
+
+    const dimensions = getDimensions()
+    const fontSize = getTitleFontSize()
+    const mimeType = getVideoMimeType(videoFormat.value)
+    if (!dimensions || fontSize === null) return
+
+    if (!mimeType) {
+        videoError.value = t('coverPage.videoUnsupported')
+        return
+    }
+    if (typeof HTMLCanvasElement === 'undefined' || !HTMLCanvasElement.prototype.captureStream) {
+        videoError.value = t('coverPage.videoUnsupported')
+        return
+    }
+
+    renderCover(false)
+    if (renderError.value || !backgroundImageData) return
+
+    const recordingCanvas = document.createElement('canvas')
+    recordingCanvas.width = dimensions.width
+    recordingCanvas.height = dimensions.height
+    const context = recordingCanvas.getContext('2d', { alpha: false })
+    if (!context) {
+        videoError.value = t('coverPage.canvasUnavailable')
+        return
+    }
+
+    const duration = Number(videoDuration.value)
+    const fps = Number(videoFps.value)
+    const frameInterval = 1000 / fps
+    const baseAngle = Number(lightAngle.value)
+    const sweep = Number(lightSweep.value)
+    const stream = recordingCanvas.captureStream(fps)
+    const recorder = new MediaRecorder(stream, { mimeType })
+    const chunks = []
+    activeVideoRecorder = recorder
+    activeVideoStream = stream
+    isRecording.value = true
+
+    const recordingComplete = new Promise((resolve, reject) => {
+        recorder.addEventListener('dataavailable', (event) => {
+            if (event.data?.size) chunks.push(event.data)
+        })
+        recorder.addEventListener('error', () => reject(new Error(t('coverPage.videoRecordError'))), {
+            once: true,
+        })
+        recorder.addEventListener(
+            'stop',
+            () => resolve(new Blob(chunks, { type: mimeType.split(';', 1)[0] })),
+            { once: true }
+        )
+    })
+
+    try {
+        recorder.start()
+        const startedAt = performance.now()
+        let nextFrameAt = startedAt
+        await new Promise((resolve) => {
+            const drawNextFrame = (now) => {
+                const elapsed = Math.min(duration * 1000, Math.max(0, now - startedAt))
+                const progress = duration ? elapsed / (duration * 1000) : 1
+                const angle = baseAngle + Math.sin(progress * Math.PI * 2) * (sweep / 2)
+                context.putImageData(backgroundImageData, 0, 0)
+                drawDynamicLight(context, dimensions.width, dimensions.height, angle)
+                drawCoverTitle(context, backgroundImageData, titleDocument.value, {
+                    fontSize,
+                    colorMode: titleColorMode.value,
+                    textColor: titleColor.value,
+                    themeStyle: style.value,
+                    animationProgress: progress,
+                    wordDuration: 0.44 / Number(animationSpeed.value),
+                    wordStagger: 0.12 / Number(animationSpeed.value),
+                })
+                videoProgress.value = progress
+                if (progress >= 1) {
+                    recorder.stop()
+                    resolve()
+                    return
+                }
+                nextFrameAt += frameInterval
+                window.setTimeout(() => drawNextFrame(performance.now()), Math.max(0, nextFrameAt - performance.now()))
+            }
+            drawNextFrame(startedAt)
+        })
+
+        const blob = await recordingComplete
+        if (!blob.size) throw new Error(t('coverPage.videoRecordError'))
+        setVideoPreview(blob, videoFormat.value)
+    } catch (error) {
+        if (recorder.state !== 'inactive') recorder.stop()
+        const message = error instanceof Error ? error.message : String(error)
+        videoError.value = t('coverPage.videoError', { message })
+    } finally {
+        stream.getTracks().forEach((track) => track.stop())
+        activeVideoRecorder = null
+        activeVideoStream = null
+        isRecording.value = false
+        videoProgress.value = 0
+        renderCover(false)
+    }
 }
 
-function downloadCover() {
-	const canvas = canvasRef.value
-
-	if (!canvas) {
-		return
-	}
-
-	const link = document.createElement('a')
-	const safeTitle = (title.value || 'cover').trim().replace(/[^\w\u4e00-\u9fa5-]+/g, '-').slice(0, 40) || 'cover'
-	link.download = `${safeTitle}.png`
-	link.href = canvas.toDataURL('image/png')
-	link.click()
+function randomizeSeed() {
+    seed.value = createCoverSeed()
 }
 
-onMounted(renderCover)
-watch([title, seed, theme, layout], renderCover)
+function insertRichTitleExample() {
+    title.value = [
+        '<subtitle><solid>KOTSHI AI</solid></subtitle>',
+        '<newline/>',
+        '<title>Build Apps Using</title>',
+        '<newline/>',
+        '<title>Powered by <accent>AI</accent></title>',
+    ].join('\n')
+}
+
+function safeFileName() {
+    const source = title.value.trim() || `cover-${effectiveSeed.value}`
+    return (
+        source
+            .replace(/[\s\\/:*?"<>|]+/g, '-')
+            .replace(/^-+|-+$/g, '')
+            .slice(0, 64) || 'cover'
+    )
+}
+
+async function downloadCover() {
+    downloadError.value = ''
+    if (titleMarkupError.value) return
+    if (!getDimensions()) {
+        renderError.value = t('coverPage.sizeError')
+        return
+    }
+    renderCover(false)
+    if (renderError.value) return
+
+    const canvas = canvasRef.value
+    if (!canvas) return
+
+    const mimeType = format.value === 'png' ? 'image/png' : 'image/webp'
+    let objectUrl = ''
+    try {
+        const blob = await new Promise((resolve, reject) => {
+            canvas.toBlob(
+                (result) =>
+                    result
+                        ? resolve(result)
+                        : reject(new Error('The browser returned an empty image.')),
+                mimeType,
+                format.value === 'webp' ? 0.94 : undefined
+            )
+        })
+        if (blob.type.toLowerCase() !== mimeType) {
+            throw new Error(t('coverPage.formatUnsupported'))
+        }
+
+        const downloadUrl = URL.createObjectURL(blob)
+        objectUrl = downloadUrl
+        const link = document.createElement('a')
+        link.href = downloadUrl
+        link.download = `${safeFileName()}.${format.value}`
+        document.body.append(link)
+        link.click()
+        link.remove()
+        window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000)
+        objectUrl = ''
+        downloadError.value = ''
+    } catch (error) {
+        if (objectUrl) URL.revokeObjectURL(objectUrl)
+        const message = error instanceof Error ? error.message : String(error)
+        downloadError.value = t('coverPage.downloadError', { message })
+    }
+}
+
+watch(
+    [seed, style, width, height],
+    () => {
+        downloadError.value = ''
+        scheduleRender(true)
+    },
+    { flush: 'post' }
+)
+watch(
+    title,
+    () => {
+        downloadError.value = ''
+        try {
+            const document = parseCoverTitleMarkup(title.value)
+            resolveCoverTitleRuns(document)
+            titleDocument.value = document
+            titleMarkupError.value = null
+            scheduleRender(false)
+        } catch (error) {
+            titleMarkupError.value = {
+                line: Number.isInteger(error?.line) ? error.line : 1,
+                column: Number.isInteger(error?.column) ? error.column : 1,
+                message: error instanceof Error ? error.message : String(error),
+            }
+        }
+    },
+    { flush: 'post' }
+)
+watch(
+    [titleFontSize, titleColorMode, titleColor],
+    () => {
+        downloadError.value = ''
+        scheduleRender(false)
+    },
+    { flush: 'post' }
+)
+watch(format, () => {
+    downloadError.value = ''
+})
+watch([videoDuration, videoFps, videoFormat, lightAngle, lightSweep, animationSpeed], () => {
+    videoError.value = ''
+})
+onMounted(() => renderCover(true))
+onBeforeUnmount(() => {
+    if (renderTimer !== null) clearTimeout(renderTimer)
+    if (activeVideoRecorder && activeVideoRecorder.state !== 'inactive') activeVideoRecorder.stop()
+    activeVideoStream?.getTracks().forEach((track) => track.stop())
+    if (videoPreviewObjectUrl) URL.revokeObjectURL(videoPreviewObjectUrl)
+})
 </script>
 
-<style scoped>
-.cover-tool {
-	display: grid;
-	grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
-	gap: 1rem;
-	align-items: start;
-}
-
-.cover-controls,
-.preview-shell {
-	border: 1px solid var(--misc-border, var(--split));
-	background: color-mix(in srgb, var(--background) 82%, transparent);
-}
-
-.cover-controls {
-	display: grid;
-	gap: 1rem;
-	padding: 1rem;
-}
-
-.field {
-	display: grid;
-	gap: 0.45rem;
-	color: var(--text-main);
-}
-
-.field span {
-	color: var(--text-secondary);
-	font-size: 0.86rem;
-	font-weight: 720;
-}
-
-.field input,
-.field textarea,
-.field select {
-	width: 100%;
-	border: 1px solid var(--misc-border, var(--split));
-	background: var(--background);
-	color: var(--text-main);
-	padding: 0.72rem 0.8rem;
-	box-sizing: border-box;
-	resize: vertical;
-	outline: none;
-}
-
-.field input:focus,
-.field textarea:focus,
-.field select:focus {
-	border-color: var(--primary);
-}
-
-.control-grid {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 0.85rem;
-}
-
-.actions {
-	display: flex;
-	gap: 0.75rem;
-	flex-wrap: wrap;
-}
-
-.button {
-	border: 1px solid var(--misc-border, var(--split));
-	padding: 0.72rem 1rem;
-	cursor: pointer;
-	font-weight: 720;
-}
-
-.button.primary {
-	background: var(--button-primary-bg);
-	color: var(--button-primary-text);
-	border-color: var(--button-primary-bg);
-}
-
-.button.secondary {
-	background: transparent;
-	color: var(--text-main);
-}
-
-.button:hover,
-.button:focus-visible {
-	border-color: var(--primary);
-	outline: none;
-}
-
-.preview-shell {
-	padding: 1rem;
-}
-
-.cover-canvas {
-	width: 100%;
-	aspect-ratio: 16 / 9;
-	display: block;
-	background: var(--code-bg);
-}
-
-@media (max-width: 980px) {
-	.cover-tool {
-		grid-template-columns: 1fr;
-	}
-}
-
-@media (max-width: 640px) {
-	.control-grid {
-		grid-template-columns: 1fr;
-	}
-}
-</style>
+<style scoped src="./CoverGeneratorComponent.css"></style>

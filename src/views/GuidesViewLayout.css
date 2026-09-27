@@ -1,0 +1,242 @@
+.guides-page {
+	min-height: 100%;
+	display: grid;
+	grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+	gap: clamp(1.25rem, 3vw, 2.5rem);
+	padding: clamp(1rem, 3vw, 2.5rem);
+	background: var(--page-background);
+	color: var(--text-main);
+	overflow: auto;
+}
+
+.guides-sidebar {
+	position: sticky;
+	top: 1rem;
+	align-self: start;
+	max-height: calc(100dvh - var(--app-header-height) - 2rem);
+	overflow: auto;
+	border-right: 1px solid var(--split);
+	padding-right: 1rem;
+}
+
+.guides-sidebar-heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.35rem;
+	margin-bottom: 1.25rem;
+}
+
+.guides-sidebar-heading h1,
+.guide-header h1,
+.guide-section h2,
+.guide-empty h2 {
+	margin: 0;
+	color: var(--title-color);
+	letter-spacing: 0;
+}
+
+.guides-sidebar-heading h1 {
+	font-size: 1.7rem;
+	line-height: 1.1;
+}
+
+.guide-menu-toggle {
+	display: none;
+	border: 1px solid var(--split);
+	background: var(--background);
+	color: var(--text-main);
+	padding: 0.55rem 0.75rem;
+	font-size: 0.86rem;
+	font-weight: 720;
+	cursor: pointer;
+}
+
+.guide-menu-toggle:hover,
+.guide-menu-toggle:focus-visible {
+	border-color: var(--primary);
+	outline: none;
+}
+
+.guide-nav {
+	display: grid;
+	gap: 1.35rem;
+}
+
+.guide-section {
+	display: grid;
+	gap: 0.45rem;
+}
+
+.guide-section h2 {
+	font-size: 0.9rem;
+	color: var(--text-secondary);
+	font-weight: 740;
+}
+
+.guide-nav-item {
+	width: 100%;
+	border: 1px solid transparent;
+	border-left-color: var(--split);
+	background: transparent;
+	color: var(--text-main);
+	display: grid;
+	gap: 0.28rem;
+	text-align: left;
+	padding: 0.72rem 0.8rem;
+	cursor: pointer;
+}
+
+.guide-nav-item:hover,
+.guide-nav-item:focus-visible,
+.guide-nav-item.is-active {
+	border-left-color: var(--primary);
+	background: var(--background);
+	outline: none;
+	transform: translateX(3px);
+}
+
+.guide-nav-item span {
+	font-size: 0.96rem;
+	font-weight: 720;
+	line-height: 1.25;
+}
+
+.guide-reader {
+	min-width: 0;
+}
+
+.guide-toolbar {
+	display: none;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	margin-bottom: 1.25rem;
+	border-bottom: 1px solid var(--split);
+	padding-bottom: 1rem;
+}
+
+.guide-toolbar div {
+	min-width: 0;
+	display: grid;
+	gap: 0.25rem;
+}
+
+.guide-footer span {
+	color: var(--primary);
+	font-size: 0.76rem;
+	font-weight: 760;
+	text-transform: uppercase;
+	letter-spacing: 0;
+}
+
+.guide-toolbar strong {
+	color: var(--title-color);
+	font-size: 1rem;
+	line-height: 1.3;
+	overflow-wrap: anywhere;
+}
+
+.guide-toolbar select {
+	max-width: min(100%, 18rem);
+	border: 1px solid var(--split);
+	background: var(--background);
+	color: var(--text-main);
+	padding: 0.65rem 0.8rem;
+	outline: none;
+}
+
+.guide-toolbar select:focus-visible {
+	border-color: var(--primary);
+}
+
+.guide-article,
+.guide-empty {
+	width: min(900px, 100%);
+	padding-bottom: 5rem;
+}
+
+.guide-header {
+	display: grid;
+	gap: 0.8rem;
+	margin-bottom: clamp(1.5rem, 4vw, 2.6rem);
+}
+
+.guide-header h1 {
+	font-size: clamp(2rem, 5vw, 4.2rem);
+	font-weight: 680;
+	line-height: 1.04;
+}
+
+.guide-empty p {
+	max-width: 720px;
+	margin: 0;
+	color: var(--text-secondary);
+	font-size: clamp(1rem, 2vw, 1.18rem);
+	line-height: 1.65;
+}
+
+.guide-content {
+	display: grid;
+	gap: 1rem;
+	max-width: 820px;
+}
+
+.guide-content :deep(h1),
+.guide-content :deep(h2),
+.guide-content :deep(h3),
+.guide-content :deep(h4) {
+	margin: 0.65rem 0 0;
+	color: var(--title-color);
+	line-height: 1.24;
+	letter-spacing: 0;
+}
+
+.guide-content :deep(h1) {
+	font-size: clamp(1.7rem, 3vw, 2.45rem);
+}
+
+.guide-content :deep(h2) {
+	font-size: clamp(1.35rem, 2.2vw, 1.8rem);
+}
+
+.guide-content :deep(h3) {
+	font-size: clamp(1.12rem, 1.7vw, 1.34rem);
+}
+
+.guide-content :deep(p),
+.guide-content :deep(li),
+.guide-content :deep(blockquote) {
+	font-size: 1rem;
+	line-height: 1.82;
+}
+
+.guide-content :deep(p) {
+	margin: 0;
+	color: var(--text-main);
+	overflow-wrap: anywhere;
+}
+
+.guide-content :deep(ul) {
+	display: grid;
+	gap: 0.42rem;
+	margin: 0;
+	padding-left: 1.25rem;
+}
+
+.guide-content :deep(a) {
+	color: var(--primary);
+	font-weight: 680;
+	text-decoration: none;
+	border-bottom: 1px solid color-mix(in srgb, var(--primary) 34%, transparent);
+}
+
+.guide-content :deep(a:hover) {
+	color: var(--primary-dark);
+	border-bottom-color: currentColor;
+}
+
+.guide-content :deep(strong) {
+	color: var(--title-color);
+	font-weight: 780;
+}

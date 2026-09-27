@@ -1,0 +1,217 @@
+.register-page {
+	--register-border: color-mix(in srgb, var(--text-main) 14%, transparent);
+	display: grid;
+	grid-template-columns: minmax(0, 0.9fr) minmax(420px, 760px);
+	align-items: center;
+	gap: clamp(1.5rem, 5vw, 4rem);
+	min-height: calc(100dvh - var(--app-header-height, 0px));
+	background: var(--page-background);
+	color: var(--text-main);
+	padding: clamp(1rem, 5vw, 4rem);
+	box-sizing: border-box;
+	overflow: auto;
+}
+
+:global(:root[data-theme='dark'] .register-page) {
+	--register-border: color-mix(in srgb, var(--dark-text-primary) 18%, transparent);
+	background: var(--page-background);
+}
+
+.register-copy {
+	max-width: 680px;
+}
+
+.register-copy h1 {
+	margin: 0;
+	color: var(--title-color);
+	font-size: clamp(2.3rem, 7vw, 5.6rem);
+	font-weight: 420;
+	line-height: 1.05;
+}
+
+.register-copy p {
+	margin: 1rem 0 0;
+	color: var(--text-secondary);
+	font-size: clamp(1rem, 2.2vw, 1.35rem);
+	line-height: 1.55;
+}
+
+.dev-banner {
+	font-family: "SpaceMono";
+	margin-top: 1rem;
+	border: 1px solid color-mix(in srgb, var(--warning) 48%, var(--register-border));
+	background: color-mix(in srgb, var(--warning) 10%, transparent);
+	color: var(--text-main);
+	padding: 0.85rem 1rem;
+	line-height: 1.5;
+}
+
+.register-panel {
+	border: 1px solid var(--register-border);
+	background: color-mix(in srgb, var(--background) 94%, transparent);
+	padding: 1.25rem;
+	min-width: 0;
+}
+
+.panel-header {
+	display: flex;
+	justify-content: space-between;
+	gap: 1rem;
+	padding-bottom: 1rem;
+	border-bottom: 1px solid var(--register-border);
+}
+
+.step-counter {
+	color: var(--text-secondary);
+	font-size: 0.86rem;
+	font-weight: 700;
+}
+
+.panel-header h2 {
+	margin: 0.35rem 0 0;
+	color: var(--title-color);
+	font-size: clamp(1.35rem, 2vw, 1.75rem);
+	line-height: 1.2;
+}
+
+.panel-header p {
+	margin: 0.4rem 0 0;
+	color: var(--text-secondary);
+	line-height: 1.5;
+}
+
+.progress-strip {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	border: 1px solid var(--register-border);
+	margin: 1rem 0;
+}
+
+.progress-item {
+	display: grid;
+	gap: 0.28rem;
+	padding: 0.75rem;
+	border-right: 1px solid var(--register-border);
+	color: var(--text-secondary);
+}
+
+.progress-item:last-child {
+	border-right: none;
+}
+
+.progress-item span {
+	font-size: 0.82rem;
+	font-weight: 800;
+}
+
+.progress-item strong {
+	font-size: 0.9rem;
+}
+
+.progress-item.active,
+.progress-item.done {
+	background: color-mix(in srgb, var(--primary) 10%, transparent);
+	color: var(--text-main);
+}
+
+.step-swap-enter-active,
+.step-swap-leave-active {
+	transition:
+		opacity 180ms linear,
+		transform 180ms ease-out;
+	will-change: opacity, transform;
+}
+
+.step-swap-enter-from {
+	opacity: 0;
+	transform: translateY(8px);
+}
+
+.step-swap-leave-to {
+	opacity: 0;
+	transform: translateY(-8px);
+}
+
+.register-form,
+.quiz-section,
+.result-panel,
+.panel-actions {
+	display: grid;
+	gap: 1rem;
+}
+
+.verification-options {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.75rem;
+}
+
+.verification-option {
+	display: grid;
+	align-content: start;
+	gap: 0.4rem;
+	min-height: 120px;
+	text-align: left;
+	border: 1px solid var(--register-border);
+	background: var(--background-secondary);
+	color: var(--text-main);
+}
+
+.verification-option.selected {
+	border-color: var(--primary);
+	background: color-mix(in srgb, var(--primary) 10%, var(--background-secondary));
+}
+
+.verification-option:disabled {
+	cursor: not-allowed;
+	opacity: 0.62;
+}
+
+.verification-option span,
+.verification-option small,
+.configuration-status {
+	color: var(--text-secondary);
+	line-height: 1.45;
+}
+
+.configuration-status {
+	grid-column: 1 / -1;
+	margin: 0;
+	font-size: 0.9rem;
+}
+
+.field {
+	display: grid;
+	gap: 0.45rem;
+}
+
+.field span {
+	color: var(--text-secondary);
+	font-size: 0.88rem;
+}
+
+input {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 0.95rem 1rem;
+	border: 1px solid var(--register-border);
+	border-radius: 0;
+	background: var(--background-secondary);
+	font-size: 1rem;
+	color: var(--text-main);
+	outline: none;
+}
+
+input:focus {
+	border-color: var(--primary);
+}
+
+button {
+	width: 100%;
+	min-height: 48px;
+	padding: 0.82rem 1rem;
+	border-radius: 0;
+	font-size: 0.98rem;
+	font-weight: 700;
+	cursor: pointer;
+}

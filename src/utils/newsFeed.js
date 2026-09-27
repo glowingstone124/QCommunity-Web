@@ -197,6 +197,30 @@ async function loadNewsArticle(id) {
 	}
 
 	const markdown = await response.text()
+	const frontmatter = markdown.match(/^---\n([\s\S]*?)\n---\n/)
+	const contentParts = frontmatter
+		? parseFrontmatter(frontmatter[1]).content_parts
+			?.split(',')
+			.map((part) => part.trim())
+			.filter(Boolean) || []
+		: []
+
+	if (contentParts.length) {
+		const sections = await Promise.all(contentParts.map(async (part) => {
+			const partResponse = await fetch(`${NEWS_SOURCE_BASE}/${part}?t=${Date.now()}`, {
+				cache: 'no-store',
+			})
+
+			if (!partResponse.ok) {
+				throw new Error(`Failed to load news article part ${part}: ${partResponse.status}`)
+			}
+
+			return partResponse.text()
+		}))
+
+		return parseNewsMarkdown(`${frontmatter[0]}${sections.join('')}`)[0] || null
+	}
+
 	return parseNewsMarkdown(markdown)[0] || null
 }
 

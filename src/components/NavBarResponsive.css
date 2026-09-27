@@ -1,0 +1,176 @@
+@media (max-width: 980px) {
+	:global(:root) {
+		--app-header-height: 128px;
+	}
+
+	.header-content {
+		padding: 0.75rem 1rem;
+		align-items: flex-start;
+		flex-wrap: wrap;
+		gap: 0.65rem;
+		overflow: visible;
+	}
+
+	.navigation-zone {
+		order: 3;
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+		overflow: visible;
+	}
+
+	.primary-nav {
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+		min-height: 44px;
+		overflow-x: auto;
+		overflow-y: hidden;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: none;
+	}
+
+	.primary-nav::-webkit-scrollbar {
+		display: none;
+	}
+
+	.mega-panel {
+		top: 100%;
+	}
+
+	.user-section {
+		flex-wrap: wrap;
+		justify-content: flex-end;
+	}
+
+	.user-info {
+		display: none;
+	}
+
+	.avatar-label {
+		display: none;
+	}
+}
+
+@media (max-width: 640px) {
+	:global(:root) {
+		--app-header-height: 108px;
+	}
+
+	.header-content {
+		flex-direction: row;
+		align-items: center;
+		padding: 0.55rem 0.75rem;
+		gap: 0.45rem;
+	}
+
+	.user-section {
+		--header-control-height: 40px;
+		order: 1;
+		width: auto;
+		margin-left: auto;
+		justify-content: flex-end;
+		flex-wrap: nowrap;
+		gap: 0.4rem;
+	}
+
+	.logo-section {
+		order: 1;
+		width: auto;
+		max-width: none;
+		min-height: 40px;
+		padding: 0.2rem 0.45rem 0.2rem 0.3rem;
+		gap: 0.5rem;
+	}
+
+	.logo-mark {
+		width: 31px;
+		height: 31px;
+	}
+
+	.logo-text {
+		display: none;
+	}
+
+	.navigation-zone {
+		order: 2;
+		flex-basis: 100%;
+	}
+
+	.header-actions {
+		gap: 0.35rem;
+	}
+
+	.lang-btn,
+	.guide-btn {
+		padding: 0 0.55rem;
+		min-width: var(--header-control-height);
+	}
+
+	.mega-panel-inner {
+		grid-template-columns: 1fr;
+		padding: 1rem;
+	}
+
+	.mega-links {
+		grid-column: auto;
+	}
+
+	.login-alert {
+		flex: 0 1 auto;
+		justify-content: center;
+		padding: 0 0.7rem;
+	}
+
+	.alert-text {
+		font-size: 0.86rem;
+	}
+}
+
+@media (max-width: 360px) {
+	.header-content {
+		padding: 0.45rem;
+		gap: 0.3rem;
+	}
+
+	.logo-section {
+		min-width: 0;
+		padding-inline: 0.2rem;
+	}
+
+	.logo-mark {
+		width: 28px;
+		height: 28px;
+	}
+
+	.user-section {
+		--header-control-height: 36px;
+		min-width: 0;
+		gap: 0.25rem;
+	}
+
+	.header-actions {
+		gap: 0.25rem;
+	}
+
+	.lang-btn,
+	.guide-btn {
+		min-width: 36px;
+		padding-inline: 0.4rem;
+		font-size: 0.8rem;
+	}
+
+	.login-alert {
+		min-width: 0;
+		padding-inline: 0.5rem;
+	}
+
+	.alert-text {
+		font-size: 0.74rem;
+		white-space: nowrap;
+	}
+
+	.mega-panel-inner {
+		padding: 0.75rem;
+	}
+}

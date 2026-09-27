@@ -1,0 +1,225 @@
+.guide-content :deep(code) {
+	border: 1px solid color-mix(in srgb, var(--text-main) 12%, transparent);
+	background: color-mix(in srgb, var(--card-background) 82%, transparent);
+	color: var(--title-color);
+	font-family: var(--font-mono);
+	font-size: 0.9em;
+	padding: 0.08rem 0.32rem;
+}
+
+.guide-content :deep(pre) {
+	margin: 0;
+	max-width: 100%;
+	overflow: auto;
+	border: 1px solid color-mix(in srgb, var(--text-main) 12%, transparent);
+	background: var(--code-bg);
+	color: var(--code-text);
+	padding: 1rem;
+}
+
+.guide-content :deep(pre code) {
+	border: none;
+	background: transparent;
+	color: inherit;
+	padding: 0;
+}
+
+.guide-content :deep(blockquote) {
+	margin: 0;
+	border-left: 3px solid var(--primary);
+	background: var(--background);
+	color: var(--text-secondary);
+	padding: 0.85rem 1rem;
+}
+
+.guide-content :deep(blockquote p + p) {
+	margin-top: 0.55rem;
+}
+
+.guide-content :deep(img) {
+	width: min(100%, 840px);
+	display: block;
+	border: 1px solid color-mix(in srgb, var(--text-main) 12%, transparent);
+	background: var(--background);
+	object-fit: contain;
+}
+
+.guide-content :deep(.guide-table-wrap) {
+	max-width: 100%;
+	overflow: auto;
+	border: 1px solid color-mix(in srgb, var(--text-main) 12%, transparent);
+	background: var(--background);
+}
+
+.guide-content :deep(table) {
+	width: 100%;
+	border-collapse: collapse;
+	min-width: 560px;
+}
+
+.guide-content :deep(th),
+.guide-content :deep(td) {
+	border-bottom: 1px solid var(--split);
+	padding: 0.72rem 0.85rem;
+	text-align: left;
+	line-height: 1.5;
+}
+
+.guide-content :deep(th) {
+	color: var(--title-color);
+	background: var(--background-secondary);
+	font-weight: 760;
+}
+
+.guide-skeleton {
+	background: linear-gradient(
+		90deg,
+		color-mix(in srgb, var(--text-main) 7%, transparent),
+		color-mix(in srgb, var(--text-main) 13%, transparent),
+		color-mix(in srgb, var(--text-main) 7%, transparent)
+	);
+	background-size: 220% 100%;
+	animation: guide-loading 1.2s ease-in-out infinite;
+}
+
+.guide-skeleton--kicker {
+	width: 8rem;
+	height: 0.9rem;
+}
+
+.guide-skeleton--title {
+	width: min(36rem, 90%);
+	height: 4rem;
+}
+
+.guide-skeleton--text {
+	width: min(48rem, 100%);
+	height: 1rem;
+}
+
+.guide-skeleton--short {
+	width: min(28rem, 70%);
+	height: 1rem;
+}
+
+.guide-footer {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.85rem;
+	margin-top: clamp(2rem, 5vw, 3rem);
+	padding-top: 1.25rem;
+	border-top: 1px solid var(--split);
+}
+
+.guide-pager {
+	min-width: 0;
+	border: 1px solid var(--split);
+	background: var(--background);
+	color: var(--text-main);
+	display: grid;
+	gap: 0.35rem;
+	text-align: left;
+	padding: 0.95rem 1rem;
+	cursor: pointer;
+}
+
+.guide-pager--next {
+	text-align: right;
+}
+
+.guide-pager strong {
+	color: var(--title-color);
+	font-size: 0.98rem;
+	line-height: 1.35;
+	overflow-wrap: anywhere;
+}
+
+.guide-pager:hover,
+.guide-pager:focus-visible {
+	border-color: var(--primary);
+	background: var(--background-secondary);
+	outline: none;
+}
+
+.guide-pager:disabled {
+	cursor: not-allowed;
+	opacity: 0.46;
+}
+
+@keyframes guide-loading {
+	to {
+		background-position: -220% 0;
+	}
+}
+
+@media (max-width: 900px) {
+	.guides-page {
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+	}
+
+	.guides-sidebar {
+		width: 100%;
+		position: static;
+		max-height: none;
+		overflow: visible;
+		border-right: none;
+		border-bottom: 1px solid var(--split);
+		padding-right: 0;
+		padding-bottom: 1rem;
+	}
+
+	.guides-sidebar-heading {
+		margin-bottom: 0;
+	}
+
+	.guide-menu-toggle {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.guide-toolbar {
+		display: flex;
+	}
+
+	.guide-nav {
+		display: none;
+		margin-top: 1rem;
+	}
+
+	.guide-nav.is-open {
+		display: grid;
+	}
+
+	.guide-section {
+		min-width: 0;
+	}
+
+	.guide-nav-item:hover,
+	.guide-nav-item:focus-visible,
+	.guide-nav-item.is-active {
+		transform: none;
+	}
+}
+
+@media (max-width: 640px) {
+	.guide-toolbar {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.guide-toolbar select {
+		max-width: none;
+		width: 100%;
+	}
+
+	.guide-footer {
+		grid-template-columns: 1fr;
+	}
+
+	.guide-pager--next {
+		text-align: left;
+	}
+}
