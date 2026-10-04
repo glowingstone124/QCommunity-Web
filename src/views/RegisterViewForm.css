@@ -158,6 +158,49 @@
 	font-size: 0.92rem;
 }
 
+.terms > p:first-child {
+	margin: 0 0 0.7rem;
+	color: var(--text-secondary);
+}
+
+.terms-agreement {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.6rem;
+}
+
+.terms-agreement input {
+	margin-top: 0.2rem;
+}
+
+.terms-agreement a {
+	color: var(--primary);
+	font-weight: 700;
+	text-decoration: none;
+}
+
+.terms-agreement a:hover {
+	text-decoration: underline;
+}
+
+.terms-load-error {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.65rem;
+	margin: 0.6rem 0 0;
+	color: var(--error);
+}
+
+.terms-load-error p {
+	margin: 0;
+}
+
+.terms-load-error button {
+	width: fit-content;
+	padding: 0.5rem 0.75rem;
+}
+
 a {
 	color: var(--primary);
 	font-weight: 700;

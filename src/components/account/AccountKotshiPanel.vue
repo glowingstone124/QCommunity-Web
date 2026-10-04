@@ -56,7 +56,7 @@ function sourceLabel(source) {
 		<template v-else>
 			<div class="summary-grid">
 				<section class="summary-card quota-card">
-					<div class="card-kicker">{{ t('kotshiPage.quotaTitle') }}</div>
+					<h3 class="summary-card-title">{{ t('kotshiPage.quotaTitle') }}</h3>
 					<div class="quota-value">
 						<strong>{{ number(quota?.remaining) }}</strong>
 						<span>/ {{ number(quota?.limit) }}</span>
@@ -67,7 +67,7 @@ function sourceLabel(source) {
 				</section>
 
 				<section class="summary-card paid-card">
-					<div class="card-kicker">{{ t('kotshiPage.paidCredits') }}</div>
+					<h3 class="summary-card-title">{{ t('kotshiPage.paidCredits') }}</h3>
 					<div class="quota-value"><strong>{{ number(quota?.paid_credits) }}</strong></div>
 					<p>{{ t('kotshiPage.paidDescription') }}</p>
 					<small>{{ t('kotshiPage.paidRetention') }}</small>
@@ -148,7 +148,7 @@ function sourceLabel(source) {
 
 .summary-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .summary-card { min-width: 0; padding: 1rem; border: 1px solid var(--border-soft); background: var(--surface-soft); }
-.card-kicker { color: var(--text-secondary); font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.summary-card-title { margin: 0; color: var(--text-main); font-size: 1rem; font-weight: 700; line-height: 1.35; }
 .quota-value { display: flex; align-items: baseline; gap: 0.35rem; margin-top: 0.6rem; color: var(--text-main); }
 .quota-value strong { font-size: 2rem; line-height: 1; }
 .quota-value span { color: var(--text-secondary); }

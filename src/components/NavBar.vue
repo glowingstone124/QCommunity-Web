@@ -129,6 +129,11 @@ const navCategories = computed(() => [
 			: t('nav.community_title_guest'),
 		items: loggedIn.value ? [
 			{
+				path: '/terms',
+				label: t('nav.terms'),
+				description: t('nav.terms_description'),
+			},
+			{
 				path: '/query',
 				label: t('mainPage.query'),
 				description: t('mainPage_description.query'),
@@ -139,6 +144,11 @@ const navCategories = computed(() => [
 				description: t('mainPage_description.message_list'),
 			},
 		] : [
+			{
+				path: '/terms',
+				label: t('nav.terms'),
+				description: t('nav.terms_description'),
+			},
 			{
 				path: '/login',
 				label: t('nav.sign_in'),

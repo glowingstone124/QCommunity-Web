@@ -30,7 +30,7 @@
 			</div>
 
 			<Transition name="step-swap" mode="out-in">
-				<form v-if="quiz_seq === -1" :key="`form-${step}`" class="register-form" @submit.prevent="handleNext">
+				<form v-if="quiz_seq === -1 || verificationToken" :key="`form-${step}`" class="register-form" @submit.prevent="handleNext">
 					<label v-if="step === 1" class="field">
 						<span>{{ t('register.usernameLabel') }}</span>
 						<input v-model="username" type="text" :placeholder="t('register.usernameLabel')" autocomplete="username" required />
@@ -51,7 +51,7 @@
 						<input v-model="confirmPassword" type="password" :placeholder="t('register.passwordAgain')" autocomplete="new-password" minlength="8" required />
 					</label>
 
-					<div v-if="step === 4" class="verification-options">
+					<div v-if="step === 4 && !verificationToken" class="verification-options">
 						<button
 							v-for="method in verificationMethods"
 							:key="method.id"
@@ -69,7 +69,7 @@
 						<p v-if="verificationMethodsLoading" class="configuration-status">{{ t('register.loadingConfig') }}</p>
 					</div>
 
-					<div v-if="step === 4 && selectedVerificationMethod === 'quiz'" class="quiz-intro">
+					<div v-if="step === 4 && !verificationToken && selectedVerificationMethod === 'quiz'" class="quiz-intro">
 						<p>{{ t('register.quizIntro') }}</p>
 						<p v-if="quizQuestionCount !== null && quizPassingScore !== null">
 							{{ t('register.quizRule', { count: quizQuestionCount, score: quizPassingScore }) }}
@@ -78,7 +78,7 @@
 						<p>{{ t('register.quizBinding') }}</p>
 					</div>
 
-					<div v-if="step === 4 && selectedVerificationMethod === 'minecraft'" class="minecraft-intro">
+					<div v-if="step === 4 && !verificationToken && selectedVerificationMethod === 'minecraft'" class="minecraft-intro">
 						<p>{{ t('register.minecraftIntro') }}</p>
 						<p class="server-address">{{ minecraftServerAddress }}</p>
 						<p>{{ t('register.minecraftInstructions') }}</p>
@@ -87,6 +87,27 @@
 						</p>
 						<small v-if="minecraftSessionId && minecraftExpiryText">{{ t('register.requestExpires', { time: minecraftExpiryText }) }}</small>
 					</div>
+
+					<div v-if="step === 4" class="terms">
+						<p>{{ t('register.termsIntro') }}</p>
+						<label class="terms-agreement">
+							<input v-model="acceptedTerms" type="checkbox" :disabled="termsLoading || !termsVersion" required />
+							<span>
+								{{ t('register.termsConsentBefore') }}
+								<router-link to="/terms" target="_blank" rel="noopener">{{ t('register.termsLink') }}</router-link>{{ t('register.termsConsentAfter') }}
+							</span>
+						</label>
+						<p v-if="termsLoading" class="configuration-status">{{ t('register.termsLoading') }}</p>
+						<div v-else-if="termsLoadError" class="terms-load-error" role="alert">
+							<p>{{ t('register.termsLoadFailed') }}</p>
+							<button type="button" class="secondary-button" @click="reloadTerms">{{ t('register.termsRetry') }}</button>
+						</div>
+					</div>
+					<p v-if="verificationToken" class="configuration-status">
+						{{ quizResult?.passed && countdown > 0
+							? t('register.quizPassed', { score: quizResult.score, count: quizQuestionCount, countdown })
+							: t('register.verificationPassed') }}
+					</p>
 
 					<p v-if="message" class="message" role="alert">{{ message }}</p>
 
@@ -137,10 +158,6 @@
 				<p class="configuration-status">{{ t('register.verificationNotice') }}</p>
 			</div>
 
-			<div class="terms">
-				{{ t('register.termsBefore') }}
-				<a href="https://qoriginal.vip/docs#/things_to_know">{{ t('register.termsLink') }}</a>{{ t('register.termsSuffix') }}
-			</div>
 		</section>
 
 		<div v-if="isDialogVisible" class="dialog-overlay">
@@ -182,6 +199,12 @@ const {
 	minecraftServerAddress,
 	primaryActionLabel,
 	canStartVerification,
+	verificationToken,
+	acceptedTerms,
+	termsLoading,
+	termsLoadError,
+	termsVersion,
+	reloadTerms,
 	isDevMode,
 	stepItems,
 	currentStepTitle,

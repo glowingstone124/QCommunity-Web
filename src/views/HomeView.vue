@@ -16,7 +16,6 @@ let newsRefreshTimer = 0
 let revealObserver = null
 const activeHome = computed(() => (homeCampaign.enabled ? homeCampaign : regularHome))
 const heroTitle = computed(() => t(activeHome.value.titleKey))
-const heroBrand = computed(() => t(activeHome.value.brandKey))
 
 const localizedNews = computed(() =>
 	newsItems.value.slice(0, 20).map((item, index) => ({
@@ -125,14 +124,12 @@ function toSocialMedias(target) {
 		<div class="home-content">
 			<section class="home-hero" aria-labelledby="home-title" data-guide-target="home-hero">
 				<div class="hero-copy">
-					<span class="hero-brand">{{ heroBrand }}</span>
 					<h1 id="home-title">{{ heroTitle }}</h1>
 					<div class="collapse-choice-prompt">
 						<div class="choice-prompt-signal" aria-hidden="true">
 							<span></span><span></span><span></span>
 						</div>
 						<div class="choice-prompt-copy">
-							<span>{{ t('homeCampaign.fullRelease') }}</span>
 							<strong>{{ t(locale === 'zh' ? 'homeCampaign.launches' : 'homeCampaign.launchesEn', { date: collapseSchedule.startDateShortText[locale] || collapseSchedule.startDateShortText.zh }) }}</strong>
 							<p>{{ t(locale === 'zh' ? 'homeCampaign.description' : 'homeCampaign.descriptionEn') }}</p>
 						</div>
@@ -142,32 +139,12 @@ function toSocialMedias(target) {
 						</router-link>
 					</div>
 				</div>
-				<a class="scroll-cue" href="#home-ai" :aria-label="t('homePage.scroll_to_feed')">
+				<a class="scroll-cue" href="#home-news" :aria-label="t('homePage.scroll_to_feed')">
 					<span>{{ t('homePage.scroll_to_feed') }}</span>
 					<span class="scroll-cue-line" aria-hidden="true"></span>
 				</a>
 			</section>
 
-			<section id="home-ai" class="ai-banner reveal-item" aria-labelledby="ai-banner-title">
-				<div class="ai-banner-copy">
-					<h2 id="ai-banner-title">{{ t('homePage.ai_banner_title') }}</h2>
-					<p>{{ t('homePage.ai_banner_description') }}</p>
-					<a
-						class="ai-banner-action"
-						href="https://ai.qoriginal.vip"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						<span>{{ t('homePage.ai_banner_cta') }}</span>
-						<span class="ai-banner-action-arrow" aria-hidden="true">&#8599;</span>
-					</a>
-				</div>
-				<div class="ai-banner-visual" aria-hidden="true">
-					<div class="ai-banner-mark">
-						<img src="/images/qhub_icon_square_4096.png" alt="">
-					</div>
-				</div>
-			</section>
 
 			<section id="home-news" class="news-feed" aria-labelledby="news-title" data-guide-target="home-news">
 				<article
@@ -182,14 +159,11 @@ function toSocialMedias(target) {
 						<img :src="featuredNews.image" :alt="featuredNews.title" loading="lazy">
 					</div>
 					<div class="news-body">
-						<div v-if="featuredNews.id === '2026collapse'" class="collapse-signal">
-							{{ t(locale === 'zh' ? 'homeCampaign.collapseLabel' : 'homeCampaign.collapseLabelEn') }}
-						</div>
+						<h3>{{ featuredNews.title }}</h3>
 						<div class="news-meta">
 							<span>{{ featuredNews.type }}</span>
 							<time :datetime="featuredNews.date">{{ featuredNews.date }}</time>
 						</div>
-						<h3>{{ featuredNews.title }}</h3>
 						<p v-if="featuredNews.id === '2026collapse'" class="news-deck">{{ featuredNews.description }}</p>
 						<router-link :to="featuredNews.to" class="news-link">
 							<span>{{ t('homePage.read_more') }}</span>
@@ -213,11 +187,11 @@ function toSocialMedias(target) {
 							<img :src="item.image" :alt="item.title" loading="lazy">
 						</div>
 						<div class="news-body">
+							<h3>{{ item.title }}</h3>
 							<div class="news-meta">
 								<span>{{ item.type }}</span>
 								<time :datetime="item.date">{{ item.date }}</time>
 							</div>
-							<h3>{{ item.title }}</h3>
 							<router-link :to="item.to" class="news-link">
 								<span>{{ t('homePage.read_more') }}</span>
 								<span class="news-link-arrow" aria-hidden="true"></span>

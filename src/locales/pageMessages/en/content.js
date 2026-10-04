@@ -1,4 +1,21 @@
 export default {
+	termsPage: {
+		title: 'User Notice and Terms of Service',
+		description: 'Service eligibility, conduct, privacy and service responsibility for Quantum Original.',
+		backToGuides: 'Back to guides',
+		loading: 'Loading the user notice…',
+		loadFailed: 'The user notice could not be loaded. Check your connection and try again.',
+		retry: 'Reload',
+		reviewTitle: 'Please review the updated user notice',
+		reviewDescription: 'The user notice has changed. Read the complete document and confirm your agreement to continue using QHub.',
+		readToEnd: 'Scroll through the complete document before confirming.',
+		agreementLabel: 'I have read and agree to the current user notice and terms of service.',
+		reviewUpdated: 'The user notice changed during your review. Read the new version before confirming.',
+		accept: 'Agree and continue',
+		saving: 'Saving…',
+		signOut: 'Sign out',
+		saveFailed: 'This browser could not save your confirmation. Check its storage settings and try again.',
+	},
 	guidesPage: {
 		title: 'Guides',
 		index: 'Guide index',
@@ -18,7 +35,6 @@ export default {
 		guideTitles: {
 			README: 'Quantum Original Wiki',
 			connectingToServer: 'How to connect to the server',
-			things_to_know: 'Before joining',
 			commands: 'Command reference',
 			server_buildings: 'Server buildings',
 			metro: 'Metro map',
@@ -115,14 +131,11 @@ export default {
 		shuffle: 'Shuffle', download: 'Download PNG', defaultTitle: 'Quantum Original visual refresh',
 	},
 	homeCampaign: {
-		fullRelease: 'COLLAPSE FULL RELEASE',
 		launches: 'Full release launches {date}',
 		launchesEn: 'Full release launches {date}',
 		description: 'Three cities, fifteen keys, and up to 144 hours of faction survival.',
 		descriptionEn: 'Three cities, fifteen keys, and up to 144 hours of faction survival.',
 		explore: 'Explore release',
 		exploreEn: 'Explore release',
-		collapseLabel: 'DR. STEINBECK // FULL RELEASE INCOMING',
-		collapseLabelEn: 'DR. STEINBECK // FULL RELEASE INCOMING',
 	},
 };

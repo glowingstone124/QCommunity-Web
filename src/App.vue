@@ -21,12 +21,14 @@
 		</transition>
 	</router-view>
 	<OnboardingGuide />
+	<TermsReviewGate />
 </template>
 
 
 <script setup>
 import NavBar from './components/NavBar.vue';
 import OnboardingGuide from './components/OnboardingGuide.vue'
+import TermsReviewGate from './components/TermsReviewGate.vue'
 import {useI18n} from 'vue-i18n'
 import {computed, onBeforeUnmount, onMounted, watch} from "vue";
 import {useRoute} from "vue-router";

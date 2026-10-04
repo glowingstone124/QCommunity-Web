@@ -138,7 +138,6 @@ const {
 		<Transition name="station-panel">
 			<aside v-if="selectedStation" class="station-panel" aria-live="polite">
 					<button type="button" class="panel-close" :aria-label="t('mapPage.closeStation')" @click="selectedStation = null">×</button>
-						<span class="station-kicker">{{ t('mapPage.stationDetails') }}</span>
 					<h3>{{ selectedStation.name }}</h3><p>{{ selectedStation.nameEn || t('mapPage.noEnglishName') }}</p>
 				<dl class="station-facts">
 					<div>

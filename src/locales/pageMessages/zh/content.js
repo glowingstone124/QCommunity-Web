@@ -1,4 +1,21 @@
 export default {
+	termsPage: {
+		title: '用户须知与服务条款',
+		description: 'Quantum Original 服务资格、行为规范、信息保护与服务责任说明。',
+		backToGuides: '返回指南',
+		loading: '正在加载用户须知……',
+		loadFailed: '暂时无法加载用户须知，请检查网络后重试。',
+		retry: '重新加载',
+		reviewTitle: '请查阅更新后的用户须知',
+		reviewDescription: '用户须知已更新。请阅读完整内容并确认同意后继续使用 QHub。',
+		readToEnd: '请滚动阅读完全部内容后再确认。',
+		agreementLabel: '我已阅读并同意当前版本的用户须知与服务条款。',
+		reviewUpdated: '查阅期间用户须知已更新，请重新阅读新版本后再确认。',
+		accept: '确认并继续',
+		saving: '正在保存……',
+		signOut: '退出登录',
+		saveFailed: '无法在此浏览器保存确认记录，请检查浏览器存储设置后重试。',
+	},
 	guidesPage: {
 		title: '指南',
 		index: '指南目录',
@@ -18,7 +35,6 @@ export default {
 		guideTitles: {
 			README: 'Quantum Original Wiki',
 			connectingToServer: '如何连接到服务器',
-			things_to_know: '入服须知',
 			commands: '指令大全',
 			server_buildings: '服务器建筑一览',
 			metro: '地铁线路图',
@@ -115,14 +131,11 @@ export default {
 		shuffle: '换一张', download: '下载 PNG', defaultTitle: 'Quantum Original 官方网站视觉更新',
 	},
 	homeCampaign: {
-		fullRelease: '《陷落》正式版',
 		launches: '{date} 正式开启',
 		launchesEn: 'Full release launches {date}',
 		description: '三座城市、十五枚密钥，一场至多 144 小时的阵营生存对抗。',
 		descriptionEn: 'Three cities, fifteen keys, and up to 144 hours of faction survival.',
 		explore: '了解正式版',
 		exploreEn: 'Explore release',
-		collapseLabel: 'DOC. STEINBECK // 正式版即将开启',
-		collapseLabelEn: 'DR. STEINBECK // FULL RELEASE INCOMING',
 	},
 };

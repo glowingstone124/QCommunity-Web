@@ -60,7 +60,6 @@ const currentTeam = computed(() => teams.find((team) => team.id === selection.va
 const expectedTeam = computed(() => teams.find((team) => team.id === selection.value?.expectedTeam) || null)
 const pending = computed(() => teams.find((team) => team.id === pendingTeam.value) || null)
 const text = computed(() => ({
-	eyebrow: t('collapsePage.factionRegistration'),
 	title: t('collapsePage.chooseFaction'),
 	intro: t('collapsePage.registerPreference'),
 	locked: selection.value?.finalized ? t('collapsePage.factionAssigned') : t('collapsePage.preferenceRegistered'),
@@ -84,7 +83,6 @@ const scheduleText = computed(() => ({
 
 const heroText = computed(() => activityActive.value
 	? {
-		eyebrow: t('collapsePage.liveOperations'),
 		title: t('collapsePage.liveTitle'),
 		intro: t('collapsePage.liveDescription'),
 	}
@@ -213,7 +211,6 @@ onBeforeUnmount(() => {
 		<div class="atmosphere" aria-hidden="true"></div>
 		<header class="fallen-hero">
 			<div>
-				<p class="eyebrow">{{ heroText.eyebrow }}</p>
 				<h1>{{ heroText.title }}</h1>
 				<p class="intro">{{ heroText.intro }}</p>
 				<p v-if="isDevMode && !activityActive" class="dev-banner">
@@ -227,8 +224,8 @@ onBeforeUnmount(() => {
 
 		<section v-if="!activityActive" class="schedule-notice" aria-labelledby="collapse-schedule-title">
 			<div>
-				<p>{{ scheduleText.label }}</p>
 				<h2 id="collapse-schedule-title">{{ scheduleText.title }}</h2>
+				<p>{{ scheduleText.label }}</p>
 				<span>{{ scheduleText.detail }}</span>
 			</div>
 			<time :datetime="collapseSchedule.startDate">
@@ -262,8 +259,8 @@ onBeforeUnmount(() => {
 					></span>
 				</div>
 				<div class="locked-content">
-					<p class="status-label">● {{ text.locked }} // {{ currentTeam.id }}</p>
 					<h2>{{ localized(currentTeam.name) }}</h2>
+					<p class="status-label">{{ text.locked }} · {{ currentTeam.id }}</p>
 					<p>{{ localized(currentTeam.location) }}</p>
 					<strong>{{ localized(currentTeam.perk) }}</strong>
 					<small v-if="selection.finalized && expectedTeam && expectedTeam.id !== currentTeam.id">
@@ -292,8 +289,8 @@ onBeforeUnmount(() => {
 					<span class="team-code">0{{ team.id.charCodeAt(0) - 64 }}</span>
 				</div>
 				<div class="team-body">
-					<p class="team-location">{{ localized(team.location) }}</p>
 					<h2>{{ localized(team.name) }}</h2>
+					<p class="team-location">{{ localized(team.location) }}</p>
 					<p class="team-description">{{ localized(team.description) }}</p>
 					<div class="perk"><span>◆</span>{{ localized(team.perk) }}</div>
 					<button type="button" @click="openConfirmation(team)">
@@ -310,7 +307,6 @@ onBeforeUnmount(() => {
 		<Transition name="confirm-pop">
 			<div v-if="!activityActive && pending" class="modal-backdrop" @click.self="pendingTeam = null">
 				<section class="confirm-modal" role="dialog" aria-modal="true" :aria-labelledby="'confirm-title'">
-				<p class="modal-code">FALLEN / {{ pending.id }}</p>
 				<h2 id="confirm-title">{{ text.confirmTitle }}</h2>
 				<p>{{ text.confirmBody }}</p>
 				<div class="modal-actions">

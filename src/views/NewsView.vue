@@ -135,14 +135,11 @@ watch(
 
 			<article v-else class="article-shell" :class="{ 'article-shell--collapse': isCollapseArticle }">
 				<header class="article-header">
-					<div v-if="isCollapseArticle" class="collapse-article-label">
-						{{ t('newsPage.collapseLabel') }}
-					</div>
+					<h1>{{ localizedArticle.title }}</h1>
 					<div class="article-meta">
 						<span>{{ localizedArticle.type }}</span>
 						<time :datetime="localizedArticle.date">{{ localizedArticle.date }}</time>
 					</div>
-					<h1>{{ localizedArticle.title }}</h1>
 				</header>
 
 				<img

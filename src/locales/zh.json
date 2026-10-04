@@ -38,6 +38,8 @@
         "community": "社区",
         "community_title_logged_in": "账户、查询与消息",
         "community_title_guest": "登录或注册后访问社区功能",
+        "terms": "用户须知",
+        "terms_description": "查阅 Quantum Original 用户须知与服务条款。",
         "server": "服务器",
         "server_title": "状态、连接与交通",
         "content": "内容",
@@ -70,9 +72,7 @@
         "sso_target": "即将授权访问服务："
     },
     "homePage": {
-        "campaign_brand": "QHub",
         "campaign_title": "Quantum Original",
-        "regular_brand": "Quantum Original",
         "regular_title": "欢迎来到 QHub",
         "hero_title": "Quantum Original",
         "hero_description": "Quantum Original 的官网正在经历新一轮样式调整。您现在看到的页面是 Beta 版本，可能并不反映原始内容。",

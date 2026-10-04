@@ -82,11 +82,6 @@
 	animation: guide-loading 1.2s ease-in-out infinite;
 }
 
-.guide-skeleton--kicker {
-	width: 8rem;
-	height: 0.9rem;
-}
-
 .guide-skeleton--title {
 	width: min(36rem, 90%);
 	height: 4rem;

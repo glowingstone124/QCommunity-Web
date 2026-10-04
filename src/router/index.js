@@ -16,6 +16,7 @@ const QueryView = () => import('@/views/QueryView.vue')
 const RankingsView = () => import('@/views/RankingsView.vue')
 const RegisterView = () => import('@/views/RegisterView.vue')
 const SponsorsView = () => import('@/views/SponsorsView.vue')
+const TermsView = () => import('@/views/TermsView.vue')
 const TransportView = () => import('@/views/TransportView.vue')
 
 const routes = [
@@ -66,6 +67,16 @@ const routes = [
 		name: 'news',
 		component: NewsView,
 		meta: { pageTitleKey: 'newsPage.title', showNavBar: true },
+	},
+	{
+		path: '/terms',
+		name: 'terms',
+		component: TermsView,
+		meta: { pageTitleKey: 'termsPage.title', showNavBar: true },
+	},
+	{
+		path: '/guides/things_to_know',
+		redirect: { name: 'terms' },
 	},
 	{
 		path: '/guides/:id?',

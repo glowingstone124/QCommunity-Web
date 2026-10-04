@@ -25,20 +25,6 @@
 	padding: clamp(2rem, 5vw, 5rem) clamp(0.5rem, 3vw, 2.5rem) clamp(4rem, 9vw, 8rem);
 }
 
-.collapse-article-label {
-	display: inline-flex;
-	align-items: center;
-	justify-self: start;
-	padding: 0.5rem 0.75rem;
-	border: 1px solid color-mix(in srgb, #ff765e 58%, transparent);
-	background: color-mix(in srgb, #170706 78%, transparent);
-	color: #ffb09b;
-	font-family: "Space Mono", monospace;
-	font-size: clamp(0.68rem, 1vw, 0.78rem);
-	font-weight: 700;
-	letter-spacing: 0.08em;
-}
-
 .article-shell--collapse .article-header {
 	gap: 1.25rem;
 	padding-bottom: clamp(1.5rem, 4vw, 3rem);

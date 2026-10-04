@@ -14,11 +14,6 @@ export const guideSections = [
 				description: '版本、地址、分服切换与连接异常处理。',
 			},
 			{
-				id: 'things_to_know',
-				title: '入服须知',
-				description: '服务资格、行为规范、隐私与内容规则。',
-			},
-			{
 				id: 'commands',
 				title: '指令大全',
 				description: '常用服务器指令及其用途。',

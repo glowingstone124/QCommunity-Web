@@ -103,8 +103,7 @@ function localized(value) {
 			>
 				<header class="team-heading">
 					<div>
-						<span class="team-id">TEAM {{ team.team }}</span>
-						<h2>{{ localized(team.details.name) }}</h2>
+						<h2>{{ localized(team.details.name) }} · {{ team.team }}</h2>
 						<p>{{ localized(team.details.location) }}</p>
 					</div>
 					<div class="team-score">
@@ -145,8 +144,7 @@ function localized(value) {
 .live-team { position: relative; min-width: 0; padding: clamp(1.2rem, 2.5vw, 2rem); background: #111518; border-top: 4px solid var(--team-accent); overflow: hidden; }
 .live-team::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 100% 0, color-mix(in srgb, var(--team-accent) 14%, transparent), transparent 42%); pointer-events: none; }
 .team-heading { position: relative; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; min-height: 120px; }
-.team-id { color: var(--team-accent); font: 700 .7rem/1.4 'Space Mono', monospace; letter-spacing: .14em; }
-.team-heading h2 { margin: .45rem 0 .35rem; font-size: clamp(1.45rem, 2.4vw, 2.3rem); font-weight: 560; }.team-heading p { margin: 0; color: #8f9290; font-size: .84rem; }
+.team-heading h2 { margin: 0 0 .35rem; font-size: clamp(1.45rem, 2.4vw, 2.3rem); font-weight: 560; }.team-heading p { margin: 0; color: #8f9290; font-size: .84rem; }
 .team-score { flex: none; text-align: right; }.team-score strong { display: block; color: var(--team-accent); font: 500 clamp(2.5rem, 5vw, 4.8rem)/.9 'Space Mono', monospace; letter-spacing: -.08em; }.team-score small { color: #7f8381; font: 700 .68rem 'Space Mono', monospace; letter-spacing: .14em; }
 .roster-heading { position: relative; display: flex; justify-content: space-between; gap: 1rem; margin: 1.2rem 0 .65rem; padding-top: 1rem; border-top: 1px solid #303438; color: #8f9290; font: 700 .65rem/1.4 'Space Mono', monospace; letter-spacing: .1em; }
 .player-list { position: relative; margin: 0; padding: 0; list-style: none; display: grid; gap: 2px; }.player-list li { min-height: 42px; padding: 0 .7rem; display: grid; grid-template-columns: 8px 1fr auto; align-items: center; gap: .65rem; background: #171b1e; color: #858886; }.player-list li.is-online { color: #efeee8; }.player-list small { color: #646866; font: 700 .58rem 'Space Mono', monospace; letter-spacing: .08em; }.player-list .is-online small { color: #6fbc8b; }

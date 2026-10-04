@@ -161,7 +161,6 @@ watch(
 			</div>
 
 			<article v-if="isLoading" class="guide-article guide-article--loading" aria-busy="true">
-				<div class="guide-skeleton guide-skeleton--kicker"></div>
 				<div class="guide-skeleton guide-skeleton--title"></div>
 				<div class="guide-skeleton guide-skeleton--text"></div>
 				<div class="guide-skeleton guide-skeleton--text"></div>

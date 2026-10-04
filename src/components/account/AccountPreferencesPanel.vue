@@ -193,12 +193,10 @@ function setTheme(nextTheme) {
 
 .preference-group-header h3 {
     margin: 0;
-    color: var(--primary);
-    font-size: 0.76rem;
-    font-weight: 800;
-    letter-spacing: 0.13em;
-    line-height: 1.2;
-    text-transform: uppercase;
+    color: var(--text-main);
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.35;
 }
 
 .preference-group-header p {

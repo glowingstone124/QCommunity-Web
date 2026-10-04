@@ -1,12 +1,10 @@
 export const homeCampaign = {
 	enabled: true,
 	featuredNewsId: '2026collapse',
-	brandKey: 'homePage.campaign_brand',
 	titleKey: 'homePage.campaign_title',
 }
 
 export const regularHome = {
-	brandKey: 'homePage.regular_brand',
 	titleKey: 'homePage.regular_title',
 }
 

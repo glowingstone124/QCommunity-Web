@@ -8,6 +8,7 @@ import {
 import { markOnboardingPromptPending } from '@/composables/useOnboardingGuide.js'
 import { useMinecraftRegistration } from '@/composables/useMinecraftRegistration.js'
 import { useRegistrationQuiz } from '@/composables/useRegistrationQuiz.js'
+import { loadTermsDocument, saveTermsAcceptance } from '@/services/terms.js'
 
 const stepItems = [
 	{ id: 1, labelKey: 'register.stepUsername' },
@@ -31,18 +32,33 @@ export function useRegistrationForm() {
 	const quizQuestionCount = ref(null)
 	const quizPassingScore = ref(null)
 	const verificationToken = ref('')
+	const acceptedTerms = ref(false)
+	const termsLoading = ref(true)
+	const termsLoadError = ref(false)
+	const termsVersion = ref('')
 	const router = useRouter()
 	const { t, locale } = useI18n()
 	const isDevMode = import.meta.env.DEV
 
 	async function submitForm() {
 		if (!verificationToken.value || isLoading.value) return
+		if (!acceptedTerms.value || !termsVersion.value) {
+			message.value = t('register.termsMustAccept')
+			return
+		}
 		if (isDevMode) {
 			isDialogVisible.value = true
 			return
 		}
 		isLoading.value = true
 		try {
+			const latestTerms = await loadTermsDocument()
+			if (latestTerms.version !== termsVersion.value) {
+				termsVersion.value = latestTerms.version
+				acceptedTerms.value = false
+				message.value = t('register.termsUpdated')
+				return
+			}
 			const result = await registerAccount(
 				username.value,
 				Number(qq.value),
@@ -51,6 +67,7 @@ export function useRegistrationForm() {
 				selectedVerificationMethod.value,
 			)
 			if (result.code === 0) {
+				saveTermsAcceptance(username.value, termsVersion.value)
 				markOnboardingPromptPending()
 				isDialogVisible.value = true
 			} else {
@@ -132,6 +149,7 @@ export function useRegistrationForm() {
 
 	const primaryActionLabel = computed(() => {
 		if (step.value <= 3) return isDevMode ? t('register.nextDev') : t('register.next')
+		if (verificationToken.value) return isLoading.value ? t('register.registering') : t('register.completeRegistration')
 		if (selectedVerificationMethod.value === 'minecraft') {
 			if (minecraft.minecraftSessionId.value) return t('register.waitMinecraft')
 			return isLoading.value ? t('register.creatingMinecraft') : t('register.createMinecraft')
@@ -141,6 +159,8 @@ export function useRegistrationForm() {
 
 	const canStartVerification = computed(() => {
 		if (step.value < 4) return true
+		if (termsLoading.value || termsLoadError.value || !termsVersion.value || !acceptedTerms.value) return false
+		if (verificationToken.value) return true
 		if (verificationMethodsLoading.value) return false
 		const selected = verificationMethods.value.find(
 			(method) => method.id === selectedVerificationMethod.value,
@@ -197,6 +217,21 @@ export function useRegistrationForm() {
 		}
 	}
 
+	async function loadRegistrationTerms() {
+		termsLoading.value = true
+		termsLoadError.value = false
+		try {
+			const document = await loadTermsDocument()
+			termsVersion.value = document.version
+		} catch (error) {
+			console.error('Failed to load registration user notice:', error)
+			termsVersion.value = ''
+			termsLoadError.value = true
+		} finally {
+			termsLoading.value = false
+		}
+	}
+
 	async function handleNext() {
 		message.value = ''
 
@@ -227,6 +262,14 @@ export function useRegistrationForm() {
 			}
 			step.value++
 		} else if (step.value === 4) {
+			if (!acceptedTerms.value || !termsVersion.value) {
+				message.value = t('register.termsMustAccept')
+				return
+			}
+			if (verificationToken.value) {
+				await submitForm()
+				return
+			}
 			await beginVerification()
 		}
 	}
@@ -249,7 +292,10 @@ export function useRegistrationForm() {
 		minecraft.clearMinecraftPolling()
 	})
 
-	onMounted(loadVerificationMethods)
+	onMounted(() => {
+		loadVerificationMethods()
+		loadRegistrationTerms()
+	})
 
 	return {
 		t,
@@ -276,6 +322,12 @@ export function useRegistrationForm() {
 		minecraftServerAddress,
 		primaryActionLabel,
 		canStartVerification,
+		verificationToken,
+		acceptedTerms,
+		termsLoading,
+		termsLoadError,
+		termsVersion,
+		reloadTerms: loadRegistrationTerms,
 		isDevMode,
 		stepItems,
 		currentStepTitle,

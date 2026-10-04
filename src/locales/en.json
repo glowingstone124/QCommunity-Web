@@ -38,6 +38,8 @@
         "community": "Community",
         "community_title_logged_in": "Accounts, Query and Messages",
         "community_title_guest": "Sign in or register to access community features",
+        "terms": "User Notice",
+        "terms_description": "Read the Quantum Original user notice and terms of service.",
         "server": "Server",
         "server_title": "Status, Connections and Transport",
         "content": "Content",
@@ -70,9 +72,7 @@
         "sso_target": "Authorizing access to service:"
     },
     "homePage": {
-        "campaign_brand": "QHub",
         "campaign_title": "Quantum Original",
-        "regular_brand": "Quantum Original",
         "regular_title": "Welcome to QHub",
         "hero_title": "Quantum Original",
         "hero_description": "The Quantum Original website is going through another style refresh. This beta page may not reflect the original content.",
