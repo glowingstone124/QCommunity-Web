@@ -8,22 +8,13 @@ async function request(path, options = {}) {
 		throw error
 	}
 
-	const response = await fetch(`${API_BASE_URL}${path}`, {
+	return publicRequest(path, {
 		...options,
 		headers: {
-			'Content-Type': 'application/json',
 			Authorization: `Bearer ${token}`,
 			...options.headers,
 		},
 	})
-	const data = await response.json().catch(() => ({}))
-	if (!response.ok) {
-		const error = new Error(data.message || '请求失败，请稍后再试。')
-		error.status = response.status
-		error.data = data
-		throw error
-	}
-	return data
 }
 
 async function publicRequest(path, options = {}) {

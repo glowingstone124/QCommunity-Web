@@ -125,7 +125,7 @@ function toSocialMedias(target) {
 			<section class="home-hero" aria-labelledby="home-title" data-guide-target="home-hero">
 				<div class="hero-copy">
 					<h1 id="home-title">{{ heroTitle }}</h1>
-					<div class="collapse-choice-prompt">
+					<div v-if="homeCampaign.enabled" class="collapse-choice-prompt">
 						<div class="choice-prompt-signal" aria-hidden="true">
 							<span></span><span></span><span></span>
 						</div>

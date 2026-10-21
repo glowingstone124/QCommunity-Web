@@ -2,7 +2,7 @@
 import {computed, onMounted, ref} from 'vue'
 import { useI18n } from 'vue-i18n'
 import axios from "axios";
-import {getSpecialImage} from '/src/utils/cards.ts'
+import {getSpecialImage, groupCardsBySpecial, rarityMap} from '/src/utils/cards.ts'
 function apply(cardId: number) {
 	console.log("应用卡片", cardId)
 	axios.post(`https://api.qoriginal.vip/qo/authorization/account/card/custom`,
@@ -18,12 +18,7 @@ function apply(cardId: number) {
 const cards = ref([])
 const { t } = useI18n()
 const loading = ref(true)
-const rarityMap = {
-	1: { style: "common" },
-	2: { style: "uncommon" },
-	3: { style: "rare" },
-	4: { style: "limited" }
-}
+
 onMounted(async () => {
 	try {
 		const response = await axios.get("https://api.qoriginal.vip/qo/authorization/cards/obtained", {
@@ -47,16 +42,7 @@ onMounted(async () => {
 		loading.value = false
 	}
 })
-const groupedCards = computed(() => {
-  const groups = {}
-  for (const card of cards.value) {
-    if (!groups[card.special]) {
-      groups[card.special] = []
-    }
-    groups[card.special].push(card)
-  }
-  return groups
-})
+const groupedCards = computed(() => groupCardsBySpecial(cards.value))
 
 </script>
 
@@ -100,7 +86,6 @@ const groupedCards = computed(() => {
   </div>
 </template>
 
-
 <style scoped>
 @import "@/assets/browseCards.css";
 .apply {
@@ -118,59 +103,6 @@ const groupedCards = computed(() => {
 		color 0.18s ease;
 }
 
-.card-list {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-	gap: 0.9rem;
-}
-
-:deep(.card-group) {
-	border: 1px solid var(--border-soft);
-	border-radius: 0;
-	padding: 1.1rem;
-	background: var(--glass-strong);
-	margin-bottom: 0.85rem;
-}
-
-:deep(.group-title) {
-	color: var(--title-color);
-	font-size: 1rem;
-	margin: 0 0 0.75rem;
-}
-
-.card-group-heading {
-	min-height: 2.2rem;
-	display: flex;
-	align-items: center;
-}
-
-.card-group-heading img {
-	max-width: min(100%, 240px);
-	object-fit: contain;
-}
-
-.card-loading {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-	gap: 0.9rem;
-}
-
-.card-loading-item {
-	aspect-ratio: 5 / 7;
-	border: 1px solid var(--border-soft);
-	background: linear-gradient(135deg, var(--surface-soft), color-mix(in srgb, var(--primary) 7%, var(--glass-soft)));
-	animation: card-loading-pulse 1.1s var(--ease-in-out) infinite alternate;
-}
-
-@keyframes card-loading-pulse {
-	from { opacity: 0.52; }
-	to { opacity: 0.88; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.card-loading-item { animation: none; opacity: 0.7; }
-}
-
 @media (hover: hover) and (pointer: fine) {
 	.apply:hover {
 		background-color: var(--success);
@@ -180,3 +112,5 @@ const groupedCards = computed(() => {
 }
 
 </style>
+
+<style scoped src="@/assets/cardCatalog.css"></style>

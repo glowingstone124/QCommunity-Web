@@ -97,9 +97,6 @@
 		min-height: 0;
 	}
 
-	.ai-banner {
-		grid-template-columns: minmax(0, 1fr) minmax(260px, 0.82fr);
-	}
 }
 
 @media (max-width: 640px) {
@@ -133,34 +130,6 @@
 		padding: .85rem;
 	}
 
-	.ai-banner {
-		grid-template-columns: 1fr;
-	}
-
-	.ai-banner-copy {
-		padding: 1.5rem;
-	}
-
-	.ai-banner h2 {
-		max-width: 100%;
-		font-size: 2.25rem;
-	}
-
-	.ai-banner-copy p {
-		margin-top: 0.9rem;
-	}
-
-	.ai-banner-action {
-		width: 100%;
-		box-sizing: border-box;
-		margin-top: 1.35rem;
-	}
-
-	.ai-banner-visual {
-		min-height: 235px;
-		border-top: 1px solid color-mix(in srgb, var(--primary) 22%, transparent);
-		border-left: 0;
-	}
 	.choice-prompt-action {
 		grid-column: 1 / -1;
 		width: 100%;
@@ -179,10 +148,6 @@
 	.home-footer {
 		align-items: flex-start;
 		flex-direction: column;
-	}
-
-	.footer-links {
-		justify-content: flex-start;
 	}
 
 	.shader-background {

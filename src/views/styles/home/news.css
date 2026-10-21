@@ -91,7 +91,6 @@
 	mask-image: linear-gradient(90deg, black, transparent 92%);
 }
 
-
 .news-item--collapse .news-body {
 	position: relative;
 	z-index: 1;
@@ -131,7 +130,6 @@
 	transform: translateX(-100%);
 	transition: opacity 180ms ease, transform 520ms ease;
 }
-
 
 .news-item--text-only {
 	grid-template-columns: 1fr;
@@ -261,8 +259,6 @@
 @media (hover: hover) and (pointer: fine) {
 	.choice-prompt-action:hover { transform: translateX(3px); background-color: #cf6246; box-shadow: -8px 0 24px rgba(184,82,56,.22); }
 	.scroll-cue:hover { color: var(--primary); }
-	.ai-banner-action:hover { transform: translateX(4px); background-color: var(--button-primary-hover); box-shadow: -10px 0 28px color-mix(in srgb, var(--primary) 24%, transparent); }
-	.ai-banner-action:hover .ai-banner-action-arrow { transform: translate(2px, -2px); }
 	.news-item:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--primary) 42%, transparent); background: color-mix(in srgb, var(--background) 50%, transparent); box-shadow: 0 16px 42px color-mix(in srgb, var(--text-main) 10%, transparent); }
 	.news-item--collapse:hover { border-color: #ff765e; background: linear-gradient(135deg, color-mix(in srgb, #3b100d 90%, var(--background)) 0%, color-mix(in srgb, #0d111b 94%, var(--background)) 72%); }
 	.news-item:hover::after { opacity: 1; transform: translateX(100%); }
