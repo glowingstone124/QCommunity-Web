@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 const AccountCenterView = () => import('@/views/AccountCenterView.vue')
 const AdvancementView = () => import('@/views/AdvancementView.vue')
 const CardSingletonView = () => import('@/views/CardSingletonView.vue')
+const CasLoginView = () => import('@/views/CasLoginView.vue')
 const DashboardView = () => import('@/views/DashBoardView.vue')
 const GuidesView = () => import('@/views/GuidesView.vue')
 const FallenTeamView = () => import('@/views/FallenTeamView.vue')
@@ -37,6 +38,12 @@ const routes = [
 		name: 'login',
 		component: LoginView,
 		meta: { pageTitleKey: 'auth.loginTitle', showNavBar: true },
+	},
+	{
+		path: '/cas',
+		name: 'cas-login',
+		component: CasLoginView,
+		meta: { pageTitleKey: 'loginPage.login', showNavBar: false },
 	},
 	{
 		path: '/query',

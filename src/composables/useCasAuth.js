@@ -39,6 +39,7 @@ export function useCasAuth() {
 				}
 			} else if (res.status === 401) {
 				localStorage.removeItem('token')
+				localStorage.removeItem('user')
 				localStorage.removeItem('username')
 			}
 		} catch (e) {

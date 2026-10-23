@@ -9,9 +9,10 @@ const password = ref('');
 const loginstat = ref(false);
 const playtime = ref(0);
 const { t } = useI18n()
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.qoriginal.vip'
 onMounted(() => {
-	if (username) {
-		fetch("https://api.qoriginal.vip/qo/authorization/account", {
+	if (username.value && token.value) {
+		fetch(`${API_BASE_URL}/qo/authorization/account`, {
 			headers: {
 				"token": token.value
 			}
@@ -31,6 +32,9 @@ onMounted(() => {
 function logout() {
 	loginstat.value = false;
 	localStorage.removeItem('username');
+	localStorage.removeItem('token');
+	localStorage.removeItem('user');
+	token.value = '';
 }
 
 function accountcenter() {
@@ -38,14 +42,17 @@ function accountcenter() {
 }
 
 function login() {
-	post('https://api.glowingstone.cn/qo/game/login', {
+	post(`${API_BASE_URL}/qo/game/login`, {
 		username: username.value,
 		password: password.value,
 		web: true,
+		clientId: 'qcommunity',
 	}).then(result => {
 		if (result.result === true) {
+			localStorage.removeItem('user');
 			localStorage.setItem("username", username.value);
 			localStorage.setItem("token", result.token);
+			token.value = result.token;
 			loginstat.value = true;
 		} else {
 			alert(t('legacyPersonal.loginFailed'));
@@ -55,6 +62,7 @@ function login() {
 		alert(t('legacyPersonal.loginRequestFailed'));
 	});
 }
+
 </script>
 
 <template>
@@ -68,7 +76,7 @@ function login() {
             <a class="link" @click="accountcenter">{{ t('legacyPersonal.account') }}</a>
             <a class="link" @click="logout">{{ t('legacyPersonal.logout') }}</a>
         </span>
-		<span v-else style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <span v-else style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
             <form @submit.prevent="login" autocomplete="off" class="login-container">
                 <input type="text" v-model="username" :placeholder="t('legacyPersonal.username')" required/>
                 <input type="password" v-model="password" :placeholder="t('legacyPersonal.password')" required/>

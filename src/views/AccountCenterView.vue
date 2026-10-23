@@ -257,6 +257,7 @@ async function queryIpDetails() {
 function logout() {
 	localStorage.removeItem('username')
 	localStorage.removeItem('token')
+	localStorage.removeItem('user')
 	localStorage.removeItem('currentSetting')
 
 	username.value = ''

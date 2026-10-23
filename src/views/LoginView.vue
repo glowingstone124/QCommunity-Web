@@ -60,6 +60,11 @@
 					{{ errorMessage }}
 				</div>
 
+				<p v-if="!targetService" class="register-hint">
+					{{ $t('loginPage.cas_hint') }}
+					<router-link :to="{ path: '/cas', query: { redirect: $route.query.redirect } }">{{ $t('loginPage.cas_link') }}</router-link>
+				</p>
+
 				<p class="register-hint">
 					{{ $t('auth.noAccount') }}
 					<router-link to="/register">{{ $t('auth.goRegister') }}</router-link>
@@ -76,6 +81,7 @@ import { useI18n } from 'vue-i18n'
 import { post } from '/src/utils/request.js'
 import LoginShaderBackground from '@/components/auth/LoginShaderBackground.vue'
 import { useCasAuth } from '@/composables/useCasAuth.js'
+import { postLoginRedirect } from '@/utils/loginRedirect.js'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -87,7 +93,6 @@ const loading = ref(false)
 const { targetService, ssoServiceDisplay, grantTicket, trySilentSso } = useCasAuth()
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.qoriginal.vip'
-
 const login = async () => {
 	errorMessage.value = ''
 	loading.value = true
@@ -97,9 +102,11 @@ const login = async () => {
 			username: username.value,
 			password: password.value,
 			web: true,
+			clientId: 'qcommunity',
 		})
 
 		if (response.result) {
+			localStorage.removeItem('user')
 			localStorage.setItem('username', username.value)
 			localStorage.setItem('token', response.token)
 
@@ -112,16 +119,14 @@ const login = async () => {
 			}
 
 			const requestedRedirect = router.currentRoute.value.query.redirect
-			const redirect = typeof requestedRedirect === 'string' && requestedRedirect.startsWith('/')
-				? requestedRedirect
-				: '/'
+			const redirect = postLoginRedirect(requestedRedirect)
 			router.push(redirect).then(() => window.location.reload())
 		} else {
 			errorMessage.value = t('loginPage.err_user')
 		}
 	} catch (error) {
 		errorMessage.value = t('loginPage.err_network')
-		console.error('登录失败:', error)
+		console.error('QCommunity login failed:', error)
 	} finally {
 		loading.value = false
 	}

@@ -69,7 +69,9 @@
         "err_user": "Username and password don't match. Please try again.",
         "err_network": "Network error. Please try later.",
         "sso_authorizing": "Authorizing and redirecting...",
-        "sso_target": "Authorizing access to service:"
+        "sso_target": "Authorizing access to service:",
+        "cas_hint": "Prefer single sign-on?",
+        "cas_link": "Continue with CAS"
     },
     "homePage": {
         "campaign_title": "Quantum Original",

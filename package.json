@@ -20,6 +20,7 @@
     "@pnotify/bootstrap3": "^5.2.0",
     "@pnotify/core": "^5.2.0",
     "@pnotify/mobile": "^5.2.0",
+    "@quantumoriginal/login-sdk": "git+https://github.com/HolographicLab/QuantumOriginal-Login-SDK.git#d8a8eeecce278f1e68db9e82878c389e98e2a216",
     "axios": "^1.10.0",
     "colorthief": "^2.6.0",
     "dompurify": "^3.4.13",

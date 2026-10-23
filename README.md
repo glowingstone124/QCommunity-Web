@@ -28,3 +28,9 @@ npm run dev
 npm run build
 ```
 # QHub-Web
+
+## Authentication
+
+`/login` remains the QO credential portal and grants CAS tickets to relying services. `/cas` is QCommunity's CAS client callback; it validates tickets with `clientId: qcommunity` and refreshes saved sessions through QAPI.
+
+The frontend pins `@quantumoriginal/login-sdk` to a specific Git commit. `npm install` fetches and builds that SDK automatically; no sibling checkout or prebuilt SDK output is required.
