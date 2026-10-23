@@ -12,13 +12,14 @@
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { QoAuthClient, LocalStorageTokenStorage } from '@quantumoriginal/login-sdk'
+import { QoAuthClient, LocalStorageTokenStorage, extractTicketFromUrl, stripTicketFromUrl } from '@quantumoriginal/login-sdk'
 import { postLoginRedirect } from '@/utils/loginRedirect.js'
+import { prepareQhubCallback, consumeQhubCallback } from '@/utils/casCallback.js'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.qoriginal.vip'
 const auth = new QoAuthClient({
 	apiBaseUrl: API_BASE_URL,
-	authPortalUrl: 'https://qoriginal.vip/login',
+	authPortalUrl: import.meta.env.VITE_CAS_PORTAL_URL || 'https://qoriginal.vip/cas',
 	clientId: 'qcommunity',
 	storage: new LocalStorageTokenStorage(''),
 })
@@ -30,8 +31,9 @@ const errorMessage = ref('')
 
 function redirectAfterLogin(username) {
 	localStorage.setItem('username', username)
+	localStorage.setItem('qhub.auth.method', 'cas')
 	const redirect = postLoginRedirect(route.query.redirect)
-	router.replace(redirect).then(() => window.location.reload())
+	router.replace(redirect)
 }
 
 async function refreshSavedToken() {
@@ -49,10 +51,14 @@ async function refreshSavedToken() {
 	}
 }
 
+function callbackServiceUrl() {
+	return prepareQhubCallback(window.location.origin, postLoginRedirect(route.query.redirect))
+}
+
 function startLogin() {
 	errorMessage.value = ''
 	try {
-		auth.redirectToLogin()
+		auth.redirectToLogin(callbackServiceUrl())
 	} catch (error) {
 		errorMessage.value = error.message || t('loginPage.err_network')
 	}
@@ -60,13 +66,20 @@ function startLogin() {
 
 onMounted(async () => {
 	try {
-		const callbackUser = await auth.handleCallback()
-		if (callbackUser) {
+		const callbackUrl = window.location.href
+		const ticket = extractTicketFromUrl(callbackUrl)
+		if (new URL(callbackUrl).searchParams.has('ticket')) {
+			window.history.replaceState(window.history.state, '', stripTicketFromUrl(callbackUrl))
+			if (!consumeQhubCallback(callbackUrl)) throw new Error(t('casAuth.callbackMismatch'))
+			await auth.logout()
+			localStorage.removeItem('username')
+			localStorage.removeItem('qhub.auth.method')
+			const callbackUser = await auth.validateTicket(ticket || '', callbackUrl)
 			redirectAfterLogin(callbackUser.user)
 			return
 		}
 
-		if (await auth.getToken()) {
+		if (localStorage.getItem('qhub.auth.method') === 'cas' && await auth.getToken()) {
 			const savedSession = await refreshSavedToken()
 			if (savedSession) {
 				redirectAfterLogin(savedSession.user)
@@ -74,7 +87,7 @@ onMounted(async () => {
 			}
 		}
 
-		auth.redirectToLogin()
+		auth.redirectToLogin(callbackServiceUrl())
 	} catch (error) {
 		errorMessage.value = error.message || t('loginPage.err_network')
 	}

@@ -189,5 +189,15 @@
         "fill": "Fill {label}",
         "online_player_hint": "In-game completion suggests online player names",
         "fake_player_hint": "In-game completion suggests current fake player names"
-    }
+    },
+    "casAuth": {
+        "callbackMismatch": "This callback does not match the current sign-in. Please sign in again.",
+        "qqLabel": "QQ number",
+        "qqInstruction": "Send this command in the official group using this QQ account:",
+        "qqWaiting": "Waiting for QQ Auth. You will return to the application after verification.",
+        "qqStart": "Start QQ verification",
+        "qqRestart": "Start again",
+        "qqExpired": "The verification code expired. Please start again.",
+        "qqGrantFailed": "Identity verified. Unable to return to the application. Please retry."
+}
 }

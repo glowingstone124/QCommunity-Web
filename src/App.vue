@@ -20,8 +20,8 @@
 			/>
 		</transition>
 	</router-view>
-	<OnboardingGuide />
-	<TermsReviewGate />
+	<OnboardingGuide v-if="!route.meta.authPage" />
+	<TermsReviewGate v-if="!route.meta.authPage" />
 </template>
 
 

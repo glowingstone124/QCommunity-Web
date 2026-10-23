@@ -189,5 +189,15 @@
         "fill": "填入 {label}",
         "online_player_hint": "游戏内会补全在线玩家名",
         "fake_player_hint": "游戏内会补全当前假人名"
-    }
+    },
+    "casAuth": {
+        "callbackMismatch": "认证回调与本次登录不匹配，请重新登录。",
+        "qqLabel": "QQ 号",
+        "qqInstruction": "请使用此 QQ 在官方群中发送以下命令：",
+        "qqWaiting": "等待 QQ Auth 验证，成功后将自动返回应用。",
+        "qqStart": "获取 QQ 验证码",
+        "qqRestart": "重新获取",
+        "qqExpired": "验证码已过期，请重新获取。",
+        "qqGrantFailed": "身份已确认，暂时无法返回应用，请重试。"
+}
 }

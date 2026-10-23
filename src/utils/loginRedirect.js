@@ -5,7 +5,7 @@ export function postLoginRedirect(value) {
 	}
 	try {
 		const target = new URL(value, 'https://qoriginal.vip')
-		if (target.origin !== 'https://qoriginal.vip' || /^\/cas\/*$/i.test(decodeURIComponent(target.pathname))) {
+		if (target.origin !== 'https://qoriginal.vip' || /^\/(?:cas|login)\/*$/i.test(decodeURIComponent(target.pathname))) {
 			return '/'
 		}
 		return target.pathname + target.search + target.hash

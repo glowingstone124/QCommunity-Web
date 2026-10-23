@@ -8,7 +8,7 @@ const DashboardView = () => import('@/views/DashBoardView.vue')
 const GuidesView = () => import('@/views/GuidesView.vue')
 const FallenTeamView = () => import('@/views/FallenTeamView.vue')
 const HomeView = () => import('@/views/HomeView.vue')
-const LoginView = () => import('@/views/LoginView.vue')
+const CasPortalView = () => import('@/views/CasPortalView.vue')
 const MessageView = () => import('@/views/MessageView.vue')
 const MiscView = () => import('@/views/MiscView.vue')
 const NewsView = () => import('@/views/NewsView.vue')
@@ -36,14 +36,17 @@ const routes = [
 	{
 		path: '/login',
 		name: 'login',
-		component: LoginView,
-		meta: { pageTitleKey: 'auth.loginTitle', showNavBar: true },
+		component: CasLoginView,
+		beforeEnter: to => typeof to.query.service === 'string' && !to.query.ticket
+			? { path: '/cas', query: to.query, replace: true }
+			: true,
+		meta: { pageTitleKey: 'auth.loginTitle', showNavBar: false, authPage: true },
 	},
 	{
 		path: '/cas',
 		name: 'cas-login',
-		component: CasLoginView,
-		meta: { pageTitleKey: 'loginPage.login', showNavBar: false },
+		component: CasPortalView,
+		meta: { pageTitleKey: 'loginPage.login', showNavBar: false, authPage: true },
 	},
 	{
 		path: '/query',

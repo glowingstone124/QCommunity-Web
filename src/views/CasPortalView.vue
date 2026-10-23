@@ -1,5 +1,6 @@
 <template>
-	<div class="login-wrapper">
+	<CasLoginView v-if="isCallback" />
+	<div v-else class="login-wrapper">
 		<LoginShaderBackground />
 		<section class="login-copy">
 			<h1>Quantum Original</h1>
@@ -22,7 +23,8 @@
 				<div class="sso-badge-url">{{ ssoServiceDisplay }}</div>
 			</div>
 
-			<form @submit.prevent="login">
+			<QqAuthForm v-if="qqMode" :on-authorized="completeLogin" />
+			<form v-else @submit.prevent="login">
 				<div class="input-group">
 					<svg class="input-icon" viewBox="0 0 24 24">
 						<path
@@ -60,95 +62,36 @@
 					{{ errorMessage }}
 				</div>
 
-				<p v-if="!targetService" class="register-hint">
-					{{ $t('loginPage.cas_hint') }}
-					<router-link :to="{ path: '/cas', query: { redirect: $route.query.redirect } }">{{ $t('loginPage.cas_link') }}</router-link>
-				</p>
-
 				<p class="register-hint">
 					{{ $t('auth.noAccount') }}
 					<router-link to="/register">{{ $t('auth.goRegister') }}</router-link>
 				</p>
 			</form>
+			<p v-if="qqMode && errorMessage" class="error-message" role="alert">{{ errorMessage }}</p>
 		</section>
 	</div>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-import { post } from '/src/utils/request.js'
+import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import LoginShaderBackground from '@/components/auth/LoginShaderBackground.vue'
-import { useCasAuth } from '@/composables/useCasAuth.js'
-import { postLoginRedirect } from '@/utils/loginRedirect.js'
+import CasLoginView from './CasLoginView.vue'
+import QqAuthForm from '@/components/auth/QqAuthForm.vue'
+import { useCasPortal } from '@/composables/useCasPortal.js'
 
-const router = useRouter()
-const { t } = useI18n()
+const route = useRoute()
+const isCallback = computed(() => typeof route.query.ticket === 'string')
+const qqMode = computed(() => route.query.method === 'qq')
 const username = ref('')
 const password = ref('')
-const errorMessage = ref('')
-const loading = ref(false)
-
-const { targetService, ssoServiceDisplay, grantTicket, trySilentSso } = useCasAuth()
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.qoriginal.vip'
-const login = async () => {
-	errorMessage.value = ''
-	loading.value = true
-
-	try {
-		const response = await post(`${API_BASE_URL}/qo/game/login`, {
-			username: username.value,
-			password: password.value,
-			web: true,
-			clientId: 'qcommunity',
-		})
-
-		if (response.result) {
-			localStorage.removeItem('user')
-			localStorage.setItem('username', username.value)
-			localStorage.setItem('token', response.token)
-
-			if (targetService.value) {
-				const redirectUrl = await grantTicket(response.token, targetService.value)
-				if (redirectUrl) {
-					window.location.href = redirectUrl
-					return
-				}
-			}
-
-			const requestedRedirect = router.currentRoute.value.query.redirect
-			const redirect = postLoginRedirect(requestedRedirect)
-			router.push(redirect).then(() => window.location.reload())
-		} else {
-			errorMessage.value = t('loginPage.err_user')
-		}
-	} catch (error) {
-		errorMessage.value = t('loginPage.err_network')
-		console.error('QCommunity login failed:', error)
-	} finally {
-		loading.value = false
-	}
-}
-
-onMounted(async () => {
-	const currentToken = localStorage.getItem('token')
-	if (currentToken && targetService.value) {
-		loading.value = true
-		try {
-			await trySilentSso(currentToken)
-		} finally {
-			loading.value = false
-		}
-	}
-})
+const { targetService, ssoServiceDisplay, errorMessage, loading, completeLogin, login } = useCasPortal(username, password, isCallback, qqMode)
 </script>
 
 <style scoped>
 .login-wrapper {
 	position: relative;
-	min-height: calc(100dvh - var(--app-header-height, 0px));
+	min-height: 100dvh;
 	display: grid;
 	grid-template-columns: minmax(0, 580px) minmax(380px, 480px);
 	align-items: center;
