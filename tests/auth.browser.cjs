@@ -24,6 +24,7 @@ const session = {success:true,user:'AuthTest',uid:4242,token:'service-token',cli
     const body=request.postDataJSON();
     calls.push({path:url.pathname,body});
     const json=(body,status=200)=>route.fulfill({status,json:body});
+    if(url.pathname==='/qo/authorization/account')return json({username:'AuthTest',uid:4242,playtime:0});
     if(url.pathname==='/qo/game/login')return json({result:true,token:'central-credential'});
     if(url.pathname==='/qo/game/qq-login')return json({request_id:'request-1',code:'A1B2C3D4',expires_in:900},201);
     if(url.pathname==='/qo/game/qq-login/request-1')return json({status:'authorized',token:'qq-credential'});
@@ -121,6 +122,81 @@ const session = {success:true,user:'AuthTest',uid:4242,token:'service-token',cli
    assert.equal(await page.evaluate(()=>localStorage.getItem('token')),null);
    await page.close();
   }
-  console.log('PASS: QHub CAS-only entry, password/QQ portal ticket grant, callback isolation, expired ticket cleanup and retry');
+  for(const failure of [
+   {status:401,body:{message:'Invalid token'}},
+   {status:200,body:{error:1}},
+   {status:200,body:{error:3}},
+   {status:200,body:{code:'INVALID_TOKEN'}},
+  ]) {
+   const {page,errors}=await setup();
+   await page.addInitScript(()=>{
+    if(!sessionStorage.getItem('invalid-session-seeded')) {
+     localStorage.setItem('token','expired-token');localStorage.setItem('username','AuthTest');
+     localStorage.setItem('user','{}');localStorage.setItem('qhub.auth.method','cas');
+     sessionStorage.setItem('invalid-session-seeded','1');
+    }
+    new MutationObserver(()=>{
+     if(document.querySelector('.terms-review-dialog'))sessionStorage.setItem('terms-shown-before-login','1');
+    }).observe(document,{childList:true,subtree:true});
+   });
+   let termsRequests=0;
+   await page.route('https://qoriginal.vip/content/terms/**',route=>{termsRequests++;return route.fulfill({status:503,body:'Notice unavailable'});});
+   await page.route('https://api.qoriginal.vip/qo/authorization/account',async route=>{
+    await new Promise(resolve=>setTimeout(resolve,150));
+    return route.fulfill({status:failure.status,json:failure.body});
+   });
+   await page.goto('https://qoriginal.vip/news/2026oct?tag=updates#latest');
+   await page.waitForURL(url=>url.pathname==='/cas');
+   await page.locator('input[autocomplete=username]').waitFor();
+   assert.equal(await page.evaluate(()=>sessionStorage.getItem('terms-shown-before-login')),null);
+   assert.deepEqual(await page.evaluate(()=>['token','username','user','qhub.auth.method'].map(key=>localStorage.getItem(key))),[null,null,null,null]);
+   const service=new URL(new URL(page.url()).searchParams.get('service'));
+   assert.equal(service.searchParams.get('redirect'),'/news/2026oct?tag=updates#latest');
+   assert.equal(termsRequests,0,'Authentication fails before the notice is requested');
+   assert.deepEqual(errors,[]);
+   await page.close();
+  }
+  {
+   const {page}=await setup();
+   await page.addInitScript(()=>{localStorage.setItem('token','service-token');localStorage.setItem('username','AuthTest')});
+   await page.route('https://api.qoriginal.vip/qo/authorization/account',route=>route.fulfill({status:503,json:{message:'unavailable'}}));
+   await page.goto('https://qoriginal.vip/news/2026oct');
+   await page.waitForLoadState('networkidle');
+   assert.equal(new URL(page.url()).pathname,'/news/2026oct');
+   assert.equal(await page.evaluate(()=>localStorage.getItem('token')),'service-token');
+   assert.equal(await page.locator('.terms-review-dialog').count(),0,'An unverified session cannot open an agreement dialog');
+   await page.close();
+  }
+  {
+   const {page}=await setup();
+   await page.addInitScript(()=>{
+    if(!sessionStorage.getItem('valid-session-seeded')) {
+     localStorage.setItem('token','service-token');localStorage.setItem('username','AuthTest');
+     sessionStorage.setItem('valid-session-seeded','1');
+    }
+   });
+   let release=false;const pending=[];
+   const account={username:'AuthTest',uid:4242,playtime:0};
+   await page.route('https://api.qoriginal.vip/qo/authorization/account',route=>{
+    if(release)return route.fulfill({json:account});
+    pending.push(route);
+   });
+   await page.goto('https://qoriginal.vip/news/2026oct');
+   assert.equal(await page.locator('.terms-review-dialog').count(),0);
+   release=true;
+   for(const route of pending)await route.fulfill({json:account});
+   await page.locator('.terms-review-dialog').waitFor();
+   assert.equal(await page.evaluate(()=>localStorage.getItem('token')),'service-token');
+   await page.locator('.terms-review-content').hover();
+   await page.mouse.wheel(0,100000);
+   await page.locator('.terms-review-checkbox input').check();
+   await page.route('https://api.qoriginal.vip/qo/authorization/account',route=>route.fulfill({status:401,json:{message:'expired'}}));
+   await page.locator('.terms-accept-button').click();
+   await page.waitForURL(url=>url.pathname==='/cas');
+   assert.equal(await page.evaluate(()=>localStorage.getItem('token')),null);
+   assert.equal(await page.evaluate(()=>localStorage.getItem('qcommunity.terms.accepted.authtest')),null);
+   await page.close();
+  }
+  console.log('PASS: QHub CAS-only entry, password/QQ portal ticket grant, callback isolation, expired ticket cleanup, invalid-session login redirects and auth-before-terms');
  } finally { await browser.close(); }
 })().catch(error=>{console.error(error);process.exitCode=1});

@@ -1,9 +1,9 @@
 import DOMPurify from 'dompurify'
 import { marked } from 'marked'
+import { fetchSessionAccount } from './accountSession.js'
 
 const TERMS_DOCUMENT_URL = '/content/terms/user_notice.md'
 const TERMS_ACCEPTANCE_KEY_PREFIX = 'qcommunity.terms.accepted.'
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'https://api.qoriginal.vip').replace(/\/$/, '')
 
 export function getTermsAcceptanceKey(username) {
 	return `${TERMS_ACCEPTANCE_KEY_PREFIX}${encodeURIComponent(String(username || '').trim().toLowerCase())}`
@@ -51,16 +51,10 @@ export async function loadTermsDocument() {
 export async function resolveAuthenticatedUsername(token) {
 	if (!token) return ''
 
-	const response = await fetch(`${API_BASE_URL}/qo/authorization/account`, {
-		cache: 'no-store',
-		headers: { token },
-	})
-	if (!response.ok) throw new Error(`Account lookup failed: ${response.status}`)
-	const account = await response.json()
-	const username = account?.username?.trim()
-	if (!username || account.error) throw new Error('Could not identify the signed-in account')
+	const account = await fetchSessionAccount(token)
+	const username = account.username.trim()
 
-	if (localStorage.getItem('username') !== username) {
+	if (localStorage.getItem('token') === token && localStorage.getItem('username') !== username) {
 		localStorage.setItem('username', username)
 	}
 	return username

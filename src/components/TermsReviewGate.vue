@@ -53,6 +53,7 @@
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
+import { clearQhubSession, redirectInvalidSession, SessionExpiredError } from '@/utils/authSession.js'
 import {
 	getTermsAcceptanceKey,
 	hasAcceptedTerms,
@@ -100,10 +101,10 @@ async function checkCurrentAgreement(force = false) {
 	if (!force && identity === lastIdentity && (termsVersion.value || errorMessage.value)) return
 	const identityChanged = identity !== lastIdentity
 	if (identityChanged) {
-		isRequired.value = true
+		isRequired.value = false
 		termsHtml.value = ''
 		termsVersion.value = ''
-		username.value = savedUsername
+		username.value = ''
 		isChecked.value = false
 		hasReadToEnd.value = false
 	}
@@ -113,13 +114,14 @@ async function checkCurrentAgreement(force = false) {
 	errorMessage.value = ''
 
 	try {
-		const [accountName, document] = await Promise.all([
-			resolveAuthenticatedUsername(token),
-			loadTermsDocument(),
-		])
-		if (sequence !== checkSequence) return
+		// A stored token is not proof of a valid session. Authenticate before
+		// loading or displaying a notice that requires the user's agreement.
+		const accountName = await resolveAuthenticatedUsername(token)
+		if (sequence !== checkSequence || localStorage.getItem('token') !== token) return
 		lastIdentity = `${token}:${accountName}`
 		username.value = accountName
+		const document = await loadTermsDocument()
+		if (sequence !== checkSequence || localStorage.getItem('token') !== token) return
 		const versionChanged = document.version !== termsVersion.value
 		termsHtml.value = document.html
 		termsVersion.value = document.version
@@ -134,10 +136,16 @@ async function checkCurrentAgreement(force = false) {
 			updateReadState()
 		}
 	} catch (error) {
-		if (sequence !== checkSequence) return
+		if (sequence !== checkSequence || localStorage.getItem('token') !== token) return
+		if (error instanceof SessionExpiredError) {
+			isRequired.value = false
+			lastIdentity = ''
+			redirectInvalidSession(token)
+			return
+		}
 		console.error('Failed to check user notice acceptance:', error)
 		errorMessage.value = t('termsPage.loadFailed')
-		isRequired.value = true
+		isRequired.value = !!username.value
 	} finally {
 		if (sequence === checkSequence) isChecking.value = false
 	}
@@ -145,13 +153,17 @@ async function checkCurrentAgreement(force = false) {
 
 async function acceptCurrentTerms() {
 	if (!isChecked.value || !hasReadToEnd.value || isSaving.value) return
+	const token = localStorage.getItem('token')
+	if (!token) { isRequired.value = false; return }
 	isSaving.value = true
 	errorMessage.value = ''
 	const reviewedVersion = termsVersion.value
 	const sequence = checkSequence
 	try {
+		await resolveAuthenticatedUsername(token)
+		if (sequence !== checkSequence || localStorage.getItem('token') !== token) return
 		const latestDocument = await loadTermsDocument()
-		if (sequence !== checkSequence) return
+		if (sequence !== checkSequence || localStorage.getItem('token') !== token) return
 		if (latestDocument.version !== reviewedVersion) {
 			termsHtml.value = latestDocument.html
 			termsVersion.value = latestDocument.version
@@ -169,6 +181,12 @@ async function acceptCurrentTerms() {
 		}
 		isRequired.value = false
 	} catch (error) {
+		if (sequence !== checkSequence || localStorage.getItem('token') !== token) return
+		if (error instanceof SessionExpiredError) {
+			isRequired.value = false
+			redirectInvalidSession(token)
+			return
+		}
 		console.error('Failed to refresh user notice before acceptance:', error)
 		errorMessage.value = t('termsPage.loadFailed')
 	} finally {
@@ -177,9 +195,7 @@ async function acceptCurrentTerms() {
 }
 
 function signOut() {
-	localStorage.removeItem('token')
-	localStorage.removeItem('username')
-	localStorage.removeItem('user')
+	clearQhubSession()
 	isRequired.value = false
 	lastIdentity = ''
 	window.location.assign('/login')
@@ -204,6 +220,7 @@ onMounted(() => {
 watch(() => route.fullPath, () => checkCurrentAgreement(true))
 
 onBeforeUnmount(() => {
+	checkSequence += 1
 	window.removeEventListener('storage', handleStorageChange)
 	window.removeEventListener('focus', handleWindowFocus)
 })

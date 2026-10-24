@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { redirectInvalidSession } from './authSession.js'
 
 const instance = axios.create({
     timeout: 10000,
@@ -17,10 +18,9 @@ instance.interceptors.response.use(
     (response) => response.data,
     (error) => {
         if (error.response?.status === 401) {
-            localStorage.removeItem('token')
-            localStorage.removeItem('username')
-            localStorage.removeItem('user')
-            window.location.href = '/login'
+            const authorization = error.config?.headers?.Authorization
+            const token = typeof authorization === 'string' ? authorization.replace(/^Bearer\s+/i, '') : null
+            redirectInvalidSession(token)
         }
         return Promise.reject(error)
     }
