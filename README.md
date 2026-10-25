@@ -38,3 +38,11 @@ The standalone `/cas` portal verifies QO credentials or QQ Auth (`method=qq`) an
 The frontend pins `@quantumoriginal/login-sdk` to a specific Git commit. `npm install` fetches and builds that SDK automatically; no sibling checkout or prebuilt SDK output is required.
 
 Authentication checks: `npm test`, `npm run build`, then `npm run test:auth`. The browser check uses the production bundle and mocked QAPI responses. macOS uses installed Chrome by default; set `PLAYWRIGHT_CHANNEL=chromium` to use a Playwright browser.
+
+## License
+
+Copyright (c) 2026 Quantum Original contributors.
+
+Unless otherwise noted, the original source code in this project is licensed under the **Apache License, Version 2.0** (`Apache-2.0`). See [LICENSE](LICENSE) for the full text.
+
+Third-party dependencies and separately licensed assets retain their respective licenses. The third-party `skills/` repository retains its own license.
