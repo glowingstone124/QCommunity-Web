@@ -43,9 +43,13 @@ const fallenSelection = ref(null)
 const kotshiQueryEnabled = ref(true)
 const kotshiQuerySettingLoaded = ref(false)
 const kotshiQuerySettingSaving = ref(false)
+const qbotActiveResponseEnabled = ref(true)
+const qbotActiveResponseSettingLoaded = ref(false)
+const qbotActiveResponseSettingSaving = ref(false)
 const kotshiQuota = ref(null)
 const kotshiUsage = ref(null)
 const kotshiRecentUsage = ref([])
+const kotshiByChannel = ref({})
 const isLoadingKotshi = ref(false)
 const kotshiFeedback = ref('')
 const kotshiFeedbackType = ref('')
@@ -71,6 +75,13 @@ function queryAccountData() {
 				kotshiQueryEnabled.value = data.kotshi_query_enabled
 				kotshiQuerySettingLoaded.value = true
 			}
+			if (typeof data.active_response_enabled === 'boolean') {
+				qbotActiveResponseEnabled.value = data.active_response_enabled
+				qbotActiveResponseSettingLoaded.value = true
+			} else if (typeof data.qbot_active_response_enabled === 'boolean') {
+				qbotActiveResponseEnabled.value = data.qbot_active_response_enabled
+				qbotActiveResponseSettingLoaded.value = true
+			}
 			queryAccountStatus()
 		})
 	queryFallenTeam()
@@ -93,9 +104,12 @@ async function queryKotshiData() {
 		if (!response.ok) throw new Error(data?.message || t('kotshiPage.loadFailed'))
 		kotshiQueryEnabled.value = data.kotshi_query_enabled !== false
 		kotshiQuerySettingLoaded.value = true
+		qbotActiveResponseEnabled.value = data.active_response_enabled !== false && data.qbot_active_response_enabled !== false
+		qbotActiveResponseSettingLoaded.value = true
 		kotshiQuota.value = data.quota || null
 		kotshiUsage.value = data.usage || null
 		kotshiRecentUsage.value = Array.isArray(data.recent_usage) ? data.recent_usage : []
+		kotshiByChannel.value = data.by_channel || {}
 	} catch (error) {
 		console.error('加载 Kotshi 信息失败:', error)
 		setKotshiFeedback(error.message || t('kotshiPage.loadFailed'))
@@ -128,6 +142,36 @@ async function updateKotshiQueryEnabled(enabled) {
 		setKotshiFeedback(error.message || t('preferencesPage.saveFailed'))
 	} finally {
 		kotshiQuerySettingSaving.value = false
+	}
+}
+
+async function updateQbotActiveResponseEnabled(enabled) {
+	if (qbotActiveResponseSettingSaving.value) return
+	const previous = qbotActiveResponseEnabled.value
+	qbotActiveResponseEnabled.value = enabled
+	qbotActiveResponseSettingSaving.value = true
+	kotshiFeedback.value = ''
+	try {
+		const response = await fetch('https://api.qoriginal.vip/qo/authorization/account/kotshi', {
+			method: 'PATCH',
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				active_response_enabled: enabled,
+				qbot_active_response_enabled: enabled,
+			}),
+		})
+		const data = await response.json()
+		if (!response.ok) throw new Error(data?.message || t('preferencesPage.saveFailed'))
+		qbotActiveResponseEnabled.value = data.active_response_enabled !== false && data.qbot_active_response_enabled !== false
+		setKotshiFeedback(t('preferencesPage.saved'), 'success')
+	} catch (error) {
+		qbotActiveResponseEnabled.value = previous
+		setKotshiFeedback(error.message || t('preferencesPage.saveFailed'))
+	} finally {
+		qbotActiveResponseSettingSaving.value = false
 	}
 }
 
@@ -370,7 +414,11 @@ watch(currentSetting, (newValue) => {
 					:kotshi-query-setting-saving="kotshiQuerySettingSaving"
 					:kotshi-query-setting-feedback="kotshiFeedback"
 					:kotshi-query-setting-feedback-type="kotshiFeedbackType"
+					:qbot-active-response-enabled="qbotActiveResponseEnabled"
+					:qbot-active-response-setting-loaded="qbotActiveResponseSettingLoaded"
+					:qbot-active-response-setting-saving="qbotActiveResponseSettingSaving"
 					@update:kotshi-query-enabled="updateKotshiQueryEnabled"
+					@update:qbot-active-response-enabled="updateQbotActiveResponseEnabled"
 				/>
 			</transition>
 
@@ -381,10 +429,19 @@ watch(currentSetting, (newValue) => {
 					:quota="kotshiQuota"
 					:usage="kotshiUsage"
 					:recent-usage="kotshiRecentUsage"
+					:by-channel="kotshiByChannel"
 					:is-loading="isLoadingKotshi"
 					:feedback="kotshiFeedback"
 					:feedback-type="kotshiFeedbackType"
+					:kotshi-query-enabled="kotshiQueryEnabled"
+					:kotshi-query-setting-loaded="kotshiQuerySettingLoaded"
+					:kotshi-query-setting-saving="kotshiQuerySettingSaving"
+					:qbot-active-response-enabled="qbotActiveResponseEnabled"
+					:qbot-active-response-setting-loaded="qbotActiveResponseSettingLoaded"
+					:qbot-active-response-setting-saving="qbotActiveResponseSettingSaving"
 					@refresh="queryKotshiData"
+					@update:kotshi-query-enabled="updateKotshiQueryEnabled"
+					@update:qbot-active-response-enabled="updateQbotActiveResponseEnabled"
 				/>
 			</transition>
 		</main>

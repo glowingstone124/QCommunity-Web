@@ -11,8 +11,11 @@ const props = defineProps({
     kotshiQuerySettingSaving: { type: Boolean, default: false },
     kotshiQuerySettingFeedback: { type: String, default: '' },
     kotshiQuerySettingFeedbackType: { type: String, default: '' },
+    qbotActiveResponseEnabled: { type: Boolean, default: true },
+    qbotActiveResponseSettingLoaded: { type: Boolean, default: false },
+    qbotActiveResponseSettingSaving: { type: Boolean, default: false },
 })
-const emit = defineEmits(['update:kotshiQueryEnabled'])
+const emit = defineEmits(['update:kotshiQueryEnabled', 'update:qbotActiveResponseEnabled'])
 const { t } = useI18n()
 
 function setTheme(nextTheme) {
@@ -118,6 +121,21 @@ function setTheme(nextTheme) {
 								:checked="props.kotshiQueryEnabled"
 								:disabled="!props.kotshiQuerySettingLoaded || props.kotshiQuerySettingSaving"
 								@change="emit('update:kotshiQueryEnabled', $event.target.checked)"
+							/>
+						</label>
+					</section>
+					<section class="preference-row">
+						<div class="preference-copy">
+							<h3>{{ t('preferencesPage.qbotActiveResponse') }}</h3>
+							<p>{{ t('preferencesPage.qbotActiveResponseDescription') }}</p>
+						</div>
+						<label class="preference-toggle">
+							<span>{{ props.qbotActiveResponseSettingSaving ? t('preferencesPage.saving') : (props.qbotActiveResponseEnabled ? t('preferencesPage.enabled') : t('preferencesPage.disabled')) }}</span>
+							<input
+								type="checkbox"
+								:checked="props.qbotActiveResponseEnabled"
+								:disabled="!props.qbotActiveResponseSettingLoaded || props.qbotActiveResponseSettingSaving"
+								@change="emit('update:qbotActiveResponseEnabled', $event.target.checked)"
 							/>
 						</label>
 					</section>
