@@ -167,6 +167,11 @@ const navCategories = computed(() => [
 		title: t('nav.server_title'),
 		items: [
 			{
+				path: '/server',
+				label: t('nav.server_intro'),
+				description: t('nav.server_intro_description'),
+			},
+			{
 				path: '/dashboard',
 				label: t('mainPage.dashboard'),
 				description: t('mainPage_description.dashboard'),

@@ -241,11 +241,11 @@ a {
 }
 
 /* Shared, restrained entrance treatment for lower-frequency routed pages. */
-:where(.query-page, .dashboard, .advancement-page, .misc-page, .register-page, .chat, .guides-page, .news-page, .account, .transport-page) > :where(header, section, main, .page-header, .chat-header, .chat-body, .composer) {
+:where(.query-page, .dashboard, .advancement-page, .misc-page, .register-page, .chat, .guides-page, .news-page, .account, .transport-page, .server-intro-page) > :where(header, section, main, .page-header, .chat-header, .chat-body, .composer) {
   animation: app-section-in var(--motion-base) var(--ease-out) both;
 }
 
-:where(.query-page, .dashboard, .advancement-page, .misc-page, .register-page, .chat, .guides-page, .news-page) > :where(header, section, main, .chat-body):nth-child(2) {
+:where(.query-page, .dashboard, .advancement-page, .misc-page, .register-page, .chat, .guides-page, .news-page, .server-intro-page) > :where(header, section, main, .chat-body):nth-child(2) {
   animation-delay: 50ms;
 }
 

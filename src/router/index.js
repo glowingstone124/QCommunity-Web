@@ -16,6 +16,7 @@ const NotFoundView = () => import('@/views/NotFoundView.vue')
 const QueryView = () => import('@/views/QueryView.vue')
 const RankingsView = () => import('@/views/RankingsView.vue')
 const RegisterView = () => import('@/views/RegisterView.vue')
+const ServerView = () => import('@/views/ServerView.vue')
 const SponsorsView = () => import('@/views/SponsorsView.vue')
 const TermsView = () => import('@/views/TermsView.vue')
 const TransportView = () => import('@/views/TransportView.vue')
@@ -59,6 +60,12 @@ const routes = [
 		name: 'messages',
 		component: MessageView,
 		meta: { pageTitleKey: 'messagesPage.title', showNavBar: true, containedScroll: true },
+	},
+	{
+		path: '/server',
+		name: 'server-intro',
+		component: ServerView,
+		meta: { pageTitleKey: 'serverPage.title', showNavBar: true },
 	},
 	{
 		path: '/dashboard',

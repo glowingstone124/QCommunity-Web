@@ -15,7 +15,8 @@
         "greeting_text": "您已经游玩了 {played} 分钟",
         "account_center": "账户中心",
         "miscs": "小功能",
-        "advancements": "成就"
+        "advancements": "成就",
+        "server_intro": "服务器介绍"
     },
     "mainPage_description": {
         "register": "在这里注册你的QuantumOriginal账户",
@@ -28,7 +29,8 @@
         "transport": "获取交通路线",
         "miscs": "一些有趣的小玩意",
         "click_login": "点击此处登录",
-        "advancements": "查看QO成就完成情况"
+        "advancements": "查看QO成就完成情况",
+        "server_intro": "了解服务器架构、连接方式与特色玩法"
     },
     "nav": {
         "theme_light": "切换到浅色模式",
@@ -42,6 +44,8 @@
         "terms_description": "查阅 Quantum Original 用户须知与服务条款。",
         "server": "服务器",
         "server_title": "状态、连接与交通",
+        "server_intro": "服务器介绍",
+        "server_intro_description": "了解服务器玩法、版本与连接地址。",
         "content": "内容",
         "content_title": "指南与服务器资料",
         "news": "新闻动态",

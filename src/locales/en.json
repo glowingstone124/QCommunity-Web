@@ -15,7 +15,8 @@
         "greeting_text": "You have already played {played} minutes",
         "account_center": "Account Center",
         "miscs": "Miscs",
-        "advancements": "Advancements"
+        "advancements": "Advancements",
+        "server_intro": "About Server"
     },
     "mainPage_description": {
         "register": "Register your QuantumOriginal account here",
@@ -28,7 +29,8 @@
         "transport": "Get possible routes to anywhere",
         "miscs": "Some interesting toys & tools",
         "click_login": "Login",
-        "advancements": "View Quantum Original advancement progress"
+        "advancements": "View Quantum Original advancement progress",
+        "server_intro": "Learn about server architecture, connection and features"
     },
     "nav": {
         "theme_light": "Switch to light mode",
@@ -42,6 +44,8 @@
         "terms_description": "Read the Quantum Original user notice and terms of service.",
         "server": "Server",
         "server_title": "Status, Connections and Transport",
+        "server_intro": "About Server",
+        "server_intro_description": "Server architecture, connection guide and highlights.",
         "content": "Content",
         "content_title": "Guides and Server Notes",
         "news": "News",
