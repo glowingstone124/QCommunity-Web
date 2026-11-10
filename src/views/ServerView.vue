@@ -1,12 +1,10 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
 import {
 	qpluginTabs,
 	quickSteps,
 	serverHighlights,
-	serverLandmarks,
 	serverMetrics,
 	serverModes,
 	serverScenes,
@@ -14,7 +12,6 @@ import {
 } from '@/data/server.js'
 
 const { locale, t } = useI18n()
-const router = useRouter()
 const copyStatus = ref('')
 const activeQPluginTabId = ref('mechanics')
 const activeSceneIndex = ref(0)
@@ -170,13 +167,6 @@ async function copyText(text, label = '') {
 	} catch (error) {
 		console.error('Failed to copy to clipboard:', error)
 	}
-}
-
-function planRouteTo(landmark) {
-	router.push({
-		path: '/transport',
-		query: { end: landmark.name },
-	})
 }
 
 function formatCounted(value, decimals) {
@@ -626,65 +616,6 @@ onBeforeUnmount(() => {
 								<span class="link-arrow" aria-hidden="true">-></span>
 							</router-link>
 						</div>
-					</article>
-				</div>
-			</section>
-
-			<!-- Landmarks -->
-			<section class="server-section">
-				<div class="section-heading">
-					<h2>{{ t('serverPage.landmarksTitle') }}</h2>
-					<p>{{ t('serverPage.landmarksDescription') }}</p>
-				</div>
-
-				<div class="landmarks-grid">
-					<article
-						v-for="(landmark, idx) in serverLandmarks"
-						:key="landmark.id"
-						class="landmark-card"
-						:style="{ '--landmark-index': idx }"
-					>
-						<div class="landmark-header">
-							<div class="landmark-titles">
-								<h3>{{ locale === 'zh' ? landmark.name : landmark.nameEn }}</h3>
-								<span v-if="locale === 'zh'" class="landmark-sub">{{ landmark.nameEn }}</span>
-							</div>
-							<span class="landmark-badge">{{ t(landmark.categoryKey) }}</span>
-						</div>
-
-						<div class="landmark-meta">
-							<div class="meta-row">
-								<span class="meta-label">{{ t('serverPage.builderLabel') }}</span>
-								<strong class="meta-value">{{ landmark.builder }}</strong>
-							</div>
-							<div class="meta-row">
-								<span class="meta-label">{{ t('serverPage.coordsLabel') }}</span>
-								<button
-									type="button"
-									class="coords-btn mono"
-									:title="t('serverPage.copyIp')"
-									@click="copyText(landmark.coordinates, landmark.coordinates)"
-								>
-									<span>{{ landmark.coordinates }}</span>
-									<span class="coords-tag">
-										{{ copyStatus === landmark.coordinates ? t('serverPage.coordsCopied') : t('commandPage.copy') }}
-									</span>
-								</button>
-							</div>
-							<div class="meta-row">
-								<span class="meta-label">{{ t('serverPage.transitLabel') }}</span>
-								<span class="meta-value">{{ locale === 'zh' ? landmark.transit : landmark.transitEn }}</span>
-							</div>
-						</div>
-
-						<button
-							type="button"
-							class="landmark-action-btn"
-							@click="planRouteTo(landmark)"
-						>
-							<span>{{ t('serverPage.planRoute') }}</span>
-							<span class="action-arrow" aria-hidden="true">-></span>
-						</button>
 					</article>
 				</div>
 			</section>
