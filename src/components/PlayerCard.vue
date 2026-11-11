@@ -213,12 +213,12 @@ const infoItems = computed(() => [
 
 .status-online {
 	border-color: color-mix(in srgb, var(--success) 54%, var(--split));
-	color: var(--success);
+	color: var(--success-text);
 }
 
 .status-banned {
 	border-color: color-mix(in srgb, var(--error) 58%, var(--split));
-	color: var(--error);
+	color: var(--error-text);
 }
 
 .status-offline {

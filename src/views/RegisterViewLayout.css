@@ -118,7 +118,7 @@
 .step-swap-leave-active {
 	transition:
 		opacity 180ms linear,
-		transform 180ms ease-out;
+		transform 180ms var(--ease-out);
 	will-change: opacity, transform;
 }
 

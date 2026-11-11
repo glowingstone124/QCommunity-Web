@@ -7,12 +7,12 @@
 	gap: 0.75rem;
 	padding-top: 0.7rem;
 	border-top: 1px solid color-mix(in srgb, var(--error) 35%, var(--border-soft));
-	animation: affiliated-confirm-in 180ms ease both;
+	animation: affiliated-confirm-in 180ms var(--ease-out) both;
 }
 
 .delete-confirm p {
 	margin: 0;
-	color: var(--error);
+	color: var(--error-text);
 	font-size: 0.82rem;
 	line-height: 1.4;
 }
@@ -20,7 +20,7 @@
 .delete-confirm > div { display: flex; gap: 0.45rem; flex: 0 0 auto; }
 .confirm-cancel, .confirm-delete { min-height: 34px; padding: 0 0.7rem; border: 1px solid var(--border-soft); cursor: pointer; font-weight: 600; }
 .confirm-cancel { background: transparent; color: var(--text-main); }
-.confirm-delete { background: var(--error); border-color: var(--error); color: white; }
+.confirm-delete { background: var(--error-solid); border-color: var(--error-solid); color: white; }
 .confirm-cancel:disabled, .confirm-delete:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .new-account-form {
@@ -46,7 +46,7 @@
 	border: 1px solid var(--border-soft);
 	background-color: var(--glass-soft);
 	color: var(--text-main);
-	transition: border-color 0.18s ease;
+	transition: border-color 0.18s var(--ease-out);
 	width: 100%;
 	box-sizing: border-box;
 }
@@ -68,7 +68,7 @@
 	font-weight: 600;
 	border: 1px solid var(--primary);
 	cursor: pointer;
-	transition: background-color 0.18s ease;
+	transition: background-color 0.18s var(--ease-out);
 	width: fit-content;
 }
 
@@ -80,8 +80,8 @@
 	cursor: pointer;
 	font-weight: 600;
 	transition:
-		border-color 0.18s ease,
-		background-color 0.18s ease;
+		border-color 0.18s var(--ease-out),
+		background-color 0.18s var(--ease-out);
 	white-space: nowrap;
 }
 
@@ -158,17 +158,17 @@
 
 .state-box.error {
 	border-color: color-mix(in srgb, var(--error) 45%, var(--border-soft));
-	color: var(--error);
+	color: var(--error-text);
 }
 
 .hint-success {
-	color: var(--success);
+	color: var(--success-text);
 	font-weight: 600;
 	border-color: color-mix(in srgb, var(--success) 45%, var(--border-soft));
 }
 
 .hint-error {
-	color: var(--error);
+	color: var(--error-text);
 	font-weight: 600;
 	border-color: color-mix(in srgb, var(--error) 45%, var(--border-soft));
 }

@@ -144,7 +144,7 @@ function confirmRemove(ip) {
 	gap: 2rem;
 	padding-bottom: 1.15rem;
 	border-bottom: 1px solid var(--border-soft);
-	animation: whitelist-block-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+	animation: whitelist-block-in 420ms var(--ease-out) both;
 }
 
 .panel-title {
@@ -178,7 +178,7 @@ function confirmRemove(ip) {
 
 .capacity-copy strong { color: var(--text-main); font-size: 1rem; }
 .capacity-track { height: 6px; background: var(--surface-soft); border: 1px solid var(--border-soft); overflow: hidden; }
-.capacity-track span { display: block; height: 100%; background: var(--primary); transition: width 180ms ease; }
+.capacity-track span { display: block; height: 100%; background: var(--primary); transition: width 180ms var(--ease-out); }
 
 .workspace {
 	display: grid;
@@ -195,7 +195,7 @@ function confirmRemove(ip) {
 	padding: 1rem;
 	min-width: 0;
 	opacity: 0;
-	animation: whitelist-block-in 440ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	animation: whitelist-block-in 440ms var(--ease-out) forwards;
 }
 
 .section:nth-child(1) { animation-delay: 80ms; }
@@ -239,14 +239,14 @@ input:focus { outline: 2px solid color-mix(in srgb, var(--primary) 22%, transpar
 .primary-button:disabled, .secondary-button:disabled, .icon-button:disabled { opacity: 0.46; cursor: not-allowed; }
 
 .helper, .feedback { margin: 0; font-size: 0.84rem; line-height: 1.45; color: var(--text-secondary); }
-.helper.invalid, .feedback.error { color: var(--error); }
+.helper.invalid, .feedback.error { color: var(--error-text); }
 .feedback { padding: 0.7rem 0.75rem; border-left: 3px solid var(--error); background: color-mix(in srgb, var(--error) 6%, transparent); }
-.feedback.success { color: var(--success); border-color: var(--success); background: color-mix(in srgb, var(--success) 7%, transparent); }
+.feedback.success { color: var(--success-text); border-color: var(--success); background: color-mix(in srgb, var(--success) 7%, transparent); }
 
 .ip-list { display: grid; gap: 0.5rem; }
-.ip-list-enter-active, .ip-list-leave-active { transition: opacity 220ms ease, transform 220ms ease; }
+.ip-list-enter-active, .ip-list-leave-active { transition: opacity 220ms var(--ease-out), transform 220ms var(--ease-out); }
 .ip-list-enter-from, .ip-list-leave-to { opacity: 0; transform: translateY(-8px); }
-.ip-list-move { transition: transform 220ms ease; }
+.ip-list-move { transition: transform 220ms var(--ease-out); }
 .ip-row {
 	display: grid;
 	grid-template-columns: 32px minmax(0, 1fr) 38px;
@@ -261,13 +261,13 @@ input:focus { outline: 2px solid color-mix(in srgb, var(--primary) 22%, transpar
 .ip-index { color: var(--text-secondary); font-family: var(--font-mono); font-size: 0.75rem; text-align: center; }
 .ip-copy { min-width: 0; display: grid; gap: 0.2rem; }
 .ip-copy code { color: var(--text-main); font-family: var(--font-mono); font-size: 0.9rem; overflow-wrap: anywhere; }
-.ip-copy span { color: var(--success); font-size: 0.76rem; display: inline-flex; align-items: center; gap: 0.3rem; }
+.ip-copy span { color: var(--success-text); font-size: 0.76rem; display: inline-flex; align-items: center; gap: 0.3rem; }
 .icon-button { width: 36px; height: 36px; padding: 0; background: transparent; color: var(--text-secondary); }
-.icon-button.danger:hover:not(:disabled) { color: var(--error); border-color: var(--error); background: color-mix(in srgb, var(--error) 7%, transparent); }
-.remove-confirm { grid-column: 1 / -1; display: flex; align-items: center; justify-content: flex-end; gap: 0.4rem; padding-top: 0.5rem; border-top: 1px solid color-mix(in srgb, var(--error) 28%, var(--border-soft)); animation: confirm-row-in 180ms ease both; }
-.remove-confirm span { margin-right: auto; color: var(--error); font-size: 0.8rem; }
+.icon-button.danger:hover:not(:disabled) { color: var(--error-text); border-color: var(--error); background: color-mix(in srgb, var(--error) 7%, transparent); }
+.remove-confirm { grid-column: 1 / -1; display: flex; align-items: center; justify-content: flex-end; gap: 0.4rem; padding-top: 0.5rem; border-top: 1px solid color-mix(in srgb, var(--error) 28%, var(--border-soft)); animation: confirm-row-in 180ms var(--ease-out) both; }
+.remove-confirm span { margin-right: auto; color: var(--error-text); font-size: 0.8rem; }
 .remove-confirm button { min-height: 32px; padding: 0 0.65rem; border: 1px solid var(--border-soft); background: transparent; color: var(--text-main); cursor: pointer; font-weight: 600; }
-.remove-confirm .confirm-danger { color: white; background: var(--error); border-color: var(--error); }
+.remove-confirm .confirm-danger { color: white; background: var(--error-solid); border-color: var(--error-solid); }
 .remove-confirm button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .empty-state { min-height: 120px; display: grid; place-content: center; gap: 0.3rem; text-align: center; color: var(--text-secondary); background: var(--surface-soft); border: 1px dashed var(--border-soft); }

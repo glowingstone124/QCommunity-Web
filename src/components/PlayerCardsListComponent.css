@@ -134,7 +134,7 @@
 	border-radius: 0;
 	border: none;
 	cursor: pointer;
-	transition: background-color 0.18s ease;
+	transition: background-color 0.18s var(--ease-out);
 }
 
 .customizationBtn.active,
@@ -195,8 +195,8 @@
 	cursor: pointer;
 	border-radius: 0;
 	transition:
-		background-color 0.18s ease,
-		color 0.18s ease;
+		background-color 0.18s var(--ease-out),
+		color 0.18s var(--ease-out);
 	min-width: 100px;
 }
 

@@ -31,6 +31,7 @@ export function useInteractiveTransportMap(props, t) {
     isActiveStation,
     isActiveEdge,
     stationConnectionsForDisplay,
+    edges,
   } = useTransportMapRoutes(props, stations)
 
   const miscNodes = computed(() => graphNodes

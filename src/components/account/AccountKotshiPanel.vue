@@ -553,11 +553,11 @@ function sourceLabel(source) {
 
 .panel-title { margin: 0; color: var(--title-color); font-size: clamp(1.35rem, 2vw, 1.65rem); line-height: 1.2; font-weight: 800; }
 .panel-sub, .section-head p, .controls-sub { margin: 0.35rem 0 0; color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem; }
-.secondary-button { padding: 0.5rem 0.85rem; border: 1px solid var(--border-soft); background: transparent; color: var(--text-main); cursor: pointer; font-weight: 600; white-space: nowrap; transition: all 160ms ease; }
+.secondary-button { padding: 0.5rem 0.85rem; border: 1px solid var(--border-soft); background: transparent; color: var(--text-main); cursor: pointer; font-weight: 600; white-space: nowrap; transition: all 160ms var(--ease-out); }
 .secondary-button:hover:not(:disabled) { border-color: var(--primary); background: var(--surface-soft); }
 .secondary-button:disabled { opacity: 0.46; cursor: not-allowed; }
-.feedback { margin: 0; padding: 0.75rem 0.85rem; border-left: 3px solid var(--error); background: color-mix(in srgb, var(--error) 7%, transparent); color: var(--error); font-size: 0.9rem; }
-.feedback.success { border-color: var(--success); background: color-mix(in srgb, var(--success) 7%, transparent); color: var(--success); }
+.feedback { margin: 0; padding: 0.75rem 0.85rem; border-left: 3px solid var(--error); background: color-mix(in srgb, var(--error) 7%, transparent); color: var(--error-text); font-size: 0.9rem; }
+.feedback.success { border-color: var(--success); background: color-mix(in srgb, var(--success) 7%, transparent); color: var(--success-text); }
 .loading-state, .empty-state { padding: 2.5rem 1rem; text-align: center; color: var(--text-secondary); }
 .empty-state { display: grid; gap: 0.4rem; border: 1px dashed var(--border-soft); background: var(--surface-soft); }
 .empty-state strong { color: var(--text-main); font-size: 0.96rem; }
@@ -585,7 +585,7 @@ function sourceLabel(source) {
 	padding: 1rem;
 	background: var(--surface-soft);
 	border: 1px solid var(--border-soft);
-	transition: border-color 160ms ease;
+	transition: border-color 160ms var(--ease-out);
 }
 .control-tile.is-disabled {
 	opacity: 0.82;
@@ -604,14 +604,14 @@ function sourceLabel(source) {
 .control-badge {
 	align-self: flex-start;
 	padding: 0.15rem 0.45rem;
-	font-size: 0.72rem;
+	font-size: 0.76rem;
 	font-weight: 700;
 	letter-spacing: 0.02em;
 	border-radius: 2px;
 }
 .badge-active {
 	background: color-mix(in srgb, var(--success) 14%, transparent);
-	color: var(--success);
+	color: var(--success-text);
 	border: 1px solid color-mix(in srgb, var(--success) 35%, transparent);
 }
 .badge-inactive {
@@ -655,7 +655,7 @@ function sourceLabel(source) {
 	position: absolute;
 	inset: 0;
 	background-color: var(--border-soft);
-	transition: background-color 180ms ease;
+	transition: background-color 180ms var(--ease-out);
 	border-radius: 24px;
 }
 .switch-slider::before {
@@ -666,7 +666,7 @@ function sourceLabel(source) {
 	left: 3px;
 	bottom: 3px;
 	background-color: var(--background);
-	transition: transform 180ms ease;
+	transition: transform 180ms var(--ease-out);
 	border-radius: 50%;
 }
 .switch-toggle input:checked + .switch-slider {
@@ -697,7 +697,7 @@ function sourceLabel(source) {
 .quota-value strong { font-size: 2.2rem; line-height: 1; font-weight: 800; font-family: var(--font-mono); }
 .quota-value span { color: var(--text-secondary); font-size: 1.05rem; }
 .quota-track { height: 8px; margin-top: 0.9rem; overflow: hidden; background: var(--background-secondary); border: 1px solid var(--border-soft); }
-.quota-track span { display: block; height: 100%; background: var(--primary); transition: width 180ms ease; }
+.quota-track span { display: block; height: 100%; background: var(--primary); transition: width 180ms var(--ease-out); }
 .quota-meta-split { display: flex; justify-content: space-between; margin-top: 0.6rem; font-size: 0.82rem; color: var(--text-secondary); }
 .quota-meta-split strong { color: var(--text-main); }
 .summary-card p { margin: 0.75rem 0 0; color: var(--text-secondary); font-size: 0.86rem; line-height: 1.45; }
@@ -742,8 +742,8 @@ function sourceLabel(source) {
 }
 .metric-label { font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; }
 .metric-number { font-size: 1.55rem; color: var(--text-main); font-family: var(--font-mono); font-weight: 800; line-height: 1.15; }
-.metric-number.is-high { color: var(--success); }
-.metric-number.is-warn { color: var(--warning); }
+.metric-number.is-high { color: var(--success-text); }
+.metric-number.is-warn { color: var(--warning-text); }
 .metric-sub { font-size: 0.76rem; color: var(--text-secondary); line-height: 1.35; }
 .metric-bar-track { height: 5px; margin-top: 0.2rem; background: var(--background-secondary); border: 1px solid var(--border-soft); overflow: hidden; }
 .metric-bar-fill { display: block; height: 100%; background: var(--success); }
@@ -768,7 +768,7 @@ function sourceLabel(source) {
 	gap: 0.6rem;
 }
 .channel-icon-pill {
-	font-size: 0.7rem;
+	font-size: 0.76rem;
 	font-weight: 800;
 	padding: 0.1rem 0.4rem;
 	border-radius: 2px;
@@ -813,7 +813,7 @@ function sourceLabel(source) {
 	font-size: 0.78rem;
 	font-weight: 600;
 	cursor: pointer;
-	transition: all 140ms ease;
+	transition: all 140ms var(--ease-out);
 }
 .filter-pill:hover { color: var(--text-main); }
 .filter-pill.is-active {
@@ -830,7 +830,7 @@ function sourceLabel(source) {
 	padding: 0.55rem 0.75rem;
 	background: var(--surface-soft);
 	border: 1px solid var(--border-soft);
-	transition: border-color 140ms ease;
+	transition: border-color 140ms var(--ease-out);
 }
 .usage-row:hover { border-color: var(--primary); }
 .usage-index { color: var(--text-secondary); font-family: var(--font-mono); font-size: 0.78rem; }
@@ -852,11 +852,11 @@ function sourceLabel(source) {
 .usage-time-abs { color: var(--text-main); font-weight: 600; }
 .usage-time-rel { color: var(--text-secondary); font-size: 0.76rem; }
 .usage-latency { color: var(--primary); font-size: 0.74rem; font-family: var(--font-mono); font-weight: 700; }
-.usage-err-tip { font-size: 0.74rem; color: var(--error); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 420px; }
+.usage-err-tip { font-size: 0.74rem; color: var(--error-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 420px; }
 
 .usage-status { font-size: 0.78rem; font-weight: 700; text-align: center; padding: 0.15rem 0.35rem; }
-.usage-status.is-completed { color: var(--success); }
-.usage-status.is-failed, .usage-status.is-rejected { color: var(--error); }
+.usage-status.is-completed { color: var(--success-text); }
+.usage-status.is-failed, .usage-status.is-rejected { color: var(--error-text); }
 .usage-status.is-started { color: var(--primary); }
 
 .usage-tokens-col {
@@ -868,7 +868,7 @@ function sourceLabel(source) {
 	min-width: 80px;
 }
 .usage-tokens-col strong { color: var(--text-main); font-size: 0.92rem; }
-.usage-tokens-col span { color: var(--text-secondary); font-size: 0.72rem; }
+.usage-tokens-col span { color: var(--text-secondary); font-size: 0.76rem; }
 .usage-tokens-sub { opacity: 0.8; font-size: 0.68rem !important; }
 
 @media (max-width: 900px) {

@@ -44,6 +44,11 @@ function syncDocumentTitle() {
 	document.title = title ? `QHub | ${title}` : 'QHub'
 }
 
+// Keep <html lang> accurate: it drives CJK glyph selection, hyphenation and screen-reader voice.
+watch(locale, value => {
+	document.documentElement.lang = value === 'zh' ? 'zh-CN' : 'en'
+}, {immediate: true})
+
 function scheduleOnboardingPrompt() {
 	if (onboardingPromptTimer) {
 		window.clearTimeout(onboardingPromptTimer)

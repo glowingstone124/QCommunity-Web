@@ -96,17 +96,17 @@ const groupedCards = computed(() => groupCardsBySpecial(cards.value))
 	border: 1px solid var(--success);
 	padding: 6px 10px;
 	background-color: color-mix(in srgb, var(--success) 12%, transparent);
-	color: var(--success);
+	color: var(--success-text);
 	font-weight: 700;
 	transition:
-		background-color 0.18s ease,
-		color 0.18s ease;
+		background-color 0.18s var(--ease-out),
+		color 0.18s var(--ease-out);
 }
 
 @media (hover: hover) and (pointer: fine) {
 	.apply:hover {
-		background-color: var(--success);
-		color: var(--button-primary-text);
+		background-color: var(--success-solid);
+		color: #fff;
 		cursor: pointer;
 	}
 }

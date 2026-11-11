@@ -115,7 +115,7 @@ onBeforeUnmount(() => {
 	border-radius: 50%;
 	border: 2px solid var(--split);
 	object-fit: cover;
-	transition: transform 0.3s ease;
+	transition: transform 0.3s var(--ease-out);
 }
 
 
@@ -125,7 +125,7 @@ onBeforeUnmount(() => {
 }
 
 .details {
-	transition: max-height 0.5s ease;
+	transition: max-height 0.5s var(--ease-out);
 }
 
 p {
@@ -139,7 +139,7 @@ p {
 }
 .details-transition-enter-active,
 .details-transition-leave-active {
-	transition: all 0.4s ease;
+	transition: all 0.4s var(--ease-out);
 }
 .details-transition-enter-to,
 .details-transition-leave-from {

@@ -181,13 +181,13 @@ function setTheme(nextTheme) {
     padding: 0.7rem 0.75rem;
     border-left: 3px solid var(--error);
     background: color-mix(in srgb, var(--error) 7%, transparent);
-    color: var(--error);
+    color: var(--error-text);
 }
 
 .feedback.success {
     border-color: var(--success);
     background: color-mix(in srgb, var(--success) 7%, transparent);
-    color: var(--success);
+    color: var(--success-text);
 }
 
 .preference-list {

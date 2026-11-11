@@ -204,7 +204,7 @@ form {
 	background: var(--background-secondary);
 	padding: 0 1rem;
 	min-height: 52px;
-	transition: border-color 0.18s ease;
+	transition: border-color 0.18s var(--ease-out);
 }
 
 .input-group:focus-within {
@@ -248,7 +248,7 @@ button {
 	font-size: 1rem;
 	font-weight: 600;
 	cursor: pointer;
-	transition: filter 0.18s ease;
+	transition: filter 0.18s var(--ease-out);
 	display: flex;
 	justify-content: center;
 	align-items: center;

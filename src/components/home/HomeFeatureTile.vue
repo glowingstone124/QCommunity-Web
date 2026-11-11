@@ -40,7 +40,7 @@ defineProps({
 	border: 1px solid var(--split);
 	text-decoration: none;
 	color: inherit;
-	transition: transform 0.2s ease, border-color 0.2s ease;
+	transition: transform 0.2s var(--ease-out), border-color 0.2s var(--ease-out);
 }
 
 .tile:hover {

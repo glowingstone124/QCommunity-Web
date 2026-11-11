@@ -162,7 +162,7 @@ const gameStatisticItems = computed(() => [
 	justify-content: space-between;
 	align-items: center;
 	gap: 1rem;
-	animation: overview-item-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+	animation: overview-item-in 420ms var(--ease-out) both;
 }
 
 .panel-title {
@@ -205,7 +205,7 @@ const gameStatisticItems = computed(() => [
 	flex-direction: column;
 	gap: 0.4rem;
 	opacity: 0;
-	animation: overview-item-in 380ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	animation: overview-item-in 380ms var(--ease-out) forwards;
 }
 
 .stat-card:nth-child(1) { animation-delay: 70ms; }
@@ -233,11 +233,11 @@ const gameStatisticItems = computed(() => [
 }
 
 .status-ok {
-	color: var(--success);
+	color: var(--success-text);
 }
 
 .status-frozen {
-	color: var(--error);
+	color: var(--error-text);
 }
 
 .faction-value {
@@ -262,7 +262,7 @@ const gameStatisticItems = computed(() => [
 	border-radius: 0;
 	padding: 1rem;
 	opacity: 0;
-	animation: overview-item-in 440ms cubic-bezier(0.22, 1, 0.36, 1) 230ms forwards;
+	animation: overview-item-in 440ms var(--ease-out) 230ms forwards;
 }
 
 .section-title {
@@ -282,7 +282,7 @@ const gameStatisticItems = computed(() => [
 	background: var(--surface-soft);
 	padding: 0.82rem 0.9rem;
 	border: 1px solid var(--border-soft);
-	animation: overview-record-in 360ms ease both;
+	animation: overview-record-in 360ms var(--ease-out) both;
 }
 
 .login-record:nth-child(2) { animation-delay: 45ms; }

@@ -36,8 +36,8 @@ const { t } = useI18n()
 	padding: 0.95rem;
 	min-width: 0;
 	transition:
-		border-color 0.18s ease,
-		background-color 0.18s ease;
+		border-color 0.18s var(--ease-out),
+		background-color 0.18s var(--ease-out);
 }
 
 .card.completed {
@@ -64,7 +64,7 @@ const { t } = useI18n()
 }
 
 .completed .card-status {
-	color: var(--success);
+	color: var(--success-text);
 }
 
 .card-copy {

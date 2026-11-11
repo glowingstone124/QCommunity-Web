@@ -324,7 +324,7 @@ onBeforeUnmount(() => {
 
 .terms-review-error {
 	padding: 1rem;
-	color: var(--error);
+	color: var(--error-text);
 }
 
 .terms-review-error p {
@@ -340,7 +340,7 @@ onBeforeUnmount(() => {
 
 .terms-review-error-text {
 	margin: 0.6rem 0 0;
-	color: var(--error);
+	color: var(--error-text);
 	font-size: 0.88rem;
 }
 

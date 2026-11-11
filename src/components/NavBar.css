@@ -37,9 +37,9 @@
 	color: var(--text-main);
 	min-height: 50px;
 	transition:
-		background-color 160ms ease,
-		color 160ms ease,
-		transform 160ms ease;
+		background-color 160ms var(--ease-out),
+		color 160ms var(--ease-out),
+		transform 160ms var(--ease-out);
 }
 
 .logo-section:hover {
@@ -63,8 +63,8 @@
 	opacity: 0;
 	pointer-events: none;
 	transition:
-		opacity 180ms ease,
-		background-color 180ms ease;
+		opacity 180ms var(--ease-out),
+		background-color 180ms var(--ease-out);
 }
 
 .background-blur.active {
@@ -215,8 +215,8 @@
 	cursor: pointer;
 	color: var(--text-main);
 	transition:
-		border-color 160ms ease,
-		background-color 160ms ease;
+		border-color 160ms var(--ease-out),
+		background-color 160ms var(--ease-out);
 }
 
 .avatar-container:hover {
@@ -251,8 +251,8 @@
 	gap: 0.5rem;
 	border: 1px solid var(--text-main);
 	transition:
-		background-color 160ms ease,
-		color 160ms ease;
+		background-color 160ms var(--ease-out),
+		color 160ms var(--ease-out);
 }
 
 .login-alert:hover {
@@ -287,9 +287,9 @@
 	color: var(--text-main);
 	border: 1px solid var(--split);
 	transition:
-		border-color 160ms ease,
-		background-color 160ms ease,
-		color 160ms ease,
+		border-color 160ms var(--ease-out),
+		background-color 160ms var(--ease-out),
+		color 160ms var(--ease-out),
 		transform 120ms var(--ease-out);
 }
 

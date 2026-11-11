@@ -12,7 +12,8 @@
     "lint:fix": "eslint src --ext .js,.ts,.vue --fix",
     "format": "prettier --write src",
     "test": "node --test src/utils/*.test.js",
-    "test:auth": "node tests/auth.browser.cjs"
+    "test:auth": "node tests/auth.browser.cjs",
+    "test:transport": "node tests/transport.browser.cjs"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.0.1",

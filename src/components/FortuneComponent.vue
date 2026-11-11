@@ -182,7 +182,7 @@ const getProgressColor = (amount) => {
 	cursor: pointer;
 	text-decoration: none;
 	white-space: nowrap;
-	transition: background-color 0.18s ease;
+	transition: background-color 0.18s var(--ease-out);
 }
 
 .refresh-button:hover:not(:disabled),
@@ -210,7 +210,7 @@ const getProgressColor = (amount) => {
 
 .state-box.error {
 	border-color: color-mix(in srgb, var(--error) 48%, var(--fortune-border));
-	color: var(--error);
+	color: var(--error-text);
 }
 
 .login-prompt {
@@ -278,8 +278,8 @@ const getProgressColor = (amount) => {
 .progress-fill {
 	height: 100%;
 	transition:
-		width 0.45s ease,
-		background-color 0.18s ease;
+		width 0.45s var(--ease-out),
+		background-color 0.18s var(--ease-out);
 }
 
 .comment {

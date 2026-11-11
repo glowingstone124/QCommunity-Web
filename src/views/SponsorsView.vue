@@ -96,7 +96,7 @@ const roleLabel = (role) => role === '赞助' ? t('sponsorsPage.sponsor') : role
 .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin-bottom: 1.25rem; }
 .section-heading h2 { margin: 0; font-size: clamp(1.7rem, 4vw, 2.5rem); }
 .section-heading p { margin: 0.35rem 0 0; color: var(--text-secondary); }
-.artist-row { display: grid; grid-template-columns: 72px minmax(0, 1fr) auto; align-items: center; gap: 1.1rem; padding: 1rem; border: 1px solid var(--primary); color: inherit; text-decoration: none; transition: border-color var(--motion-fast) ease, transform var(--motion-fast) var(--ease-standard); }
+.artist-row { display: grid; grid-template-columns: 72px minmax(0, 1fr) auto; align-items: center; gap: 1.1rem; padding: 1rem; border: 1px solid var(--primary); color: inherit; text-decoration: none; transition: border-color var(--motion-fast) var(--ease-out), transform var(--motion-fast) var(--ease-standard); }
 .artist-row:hover { border-color: var(--primary-light); transform: translateY(-2px); }
 .artist-row img { width: 72px; height: 72px; object-fit: cover; }
 .artist-copy { display: grid; gap: 0.25rem; }
@@ -111,13 +111,13 @@ const roleLabel = (role) => role === '赞助' ? t('sponsorsPage.sponsor') : role
 .roles { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 0.45rem; }
 .role { padding: 0.3rem 0.65rem; border: 1px solid var(--split); color: var(--text-secondary); font-size: 0.76rem; font-weight: 700; }
 .role.api { border-color: color-mix(in srgb, var(--primary) 48%, var(--split)); color: var(--primary); }
-.role.plugin { border-color: color-mix(in srgb, var(--success) 48%, var(--split)); color: var(--success); }
+.role.plugin { border-color: color-mix(in srgb, var(--success) 48%, var(--split)); color: var(--success-text); }
 .role.sponsor { border-color: color-mix(in srgb, var(--warning) 55%, var(--split)); color: color-mix(in srgb, var(--warning) 82%, var(--text-main)); }
 .declaration-section { margin-top: 2.5rem; border-top: 1px solid var(--split); border-bottom: 1px solid var(--split); }
 .declaration-toggle { display: flex; justify-content: space-between; width: 100%; padding: 1rem 0; border: 0; background: transparent; color: var(--text-main); cursor: pointer; font-weight: 700; text-align: left; }
 .declaration-content { max-width: var(--measure-readable); padding: 0 0 1rem; color: var(--text-secondary); }
 .declaration-content p { margin: 0; }
-.declaration-enter-active, .declaration-leave-active { transition: opacity var(--motion-fast) ease, transform var(--motion-fast) var(--ease-standard); }
+.declaration-enter-active, .declaration-leave-active { transition: opacity var(--motion-fast) var(--ease-out), transform var(--motion-fast) var(--ease-standard); }
 .declaration-enter-from, .declaration-leave-to { opacity: 0; transform: translateY(-5px); }
 @keyframes row-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 720px) {

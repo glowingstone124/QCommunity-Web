@@ -52,8 +52,8 @@
 	font-weight: 700;
 	cursor: pointer;
 	transition:
-		border-color 0.18s ease,
-		background-color 0.18s ease;
+		border-color 0.18s var(--ease-out),
+		background-color 0.18s var(--ease-out);
 }
 
 .refresh-button:hover:not(:disabled) {
@@ -183,7 +183,7 @@
 
 .state-box.error {
 	border-color: color-mix(in srgb, var(--error) 48%, var(--advancement-border));
-	color: var(--error);
+	color: var(--error-text);
 }
 
 .hint-container {

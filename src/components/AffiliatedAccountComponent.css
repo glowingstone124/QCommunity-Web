@@ -20,7 +20,7 @@
 	gap: 1rem;
 	padding-bottom: 1rem;
 	border-bottom: 1px solid var(--border-soft);
-	animation: affiliated-block-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+	animation: affiliated-block-in 420ms var(--ease-out) both;
 }
 
 .headline {
@@ -58,7 +58,7 @@
 .meter-fill {
 	height: 100%;
 	background: var(--primary);
-	transition: width 0.2s ease;
+	transition: width 0.2s var(--ease-out);
 }
 
 .summary-grid {
@@ -66,7 +66,7 @@
 	grid-template-columns: repeat(3, minmax(0, 1fr));
 	border: 1px solid var(--border-soft);
 	opacity: 0;
-	animation: affiliated-block-in 420ms cubic-bezier(0.22, 1, 0.36, 1) 70ms forwards;
+	animation: affiliated-block-in 420ms var(--ease-out) 70ms forwards;
 }
 
 .summary-item {
@@ -109,7 +109,7 @@
 	gap: 1rem;
 	min-width: 0;
 	opacity: 0;
-	animation: affiliated-block-in 460ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	animation: affiliated-block-in 460ms var(--ease-out) forwards;
 }
 
 .grid .panel:nth-child(1) { animation-delay: 130ms; }
@@ -145,7 +145,7 @@
 
 .account-list-enter-active,
 .account-list-leave-active {
-	transition: opacity 220ms ease, transform 220ms ease;
+	transition: opacity 220ms var(--ease-out), transform 220ms var(--ease-out);
 }
 
 .account-list-enter-from,
@@ -155,7 +155,7 @@
 }
 
 .account-list-move {
-	transition: transform 220ms ease;
+	transition: transform 220ms var(--ease-out);
 }
 
 .account-card {
@@ -234,7 +234,7 @@
 }
 
 .icon-button:hover:not(:disabled) {
-	color: var(--error);
+	color: var(--error-text);
 	border-color: var(--error);
 	background: color-mix(in srgb, var(--error) 7%, transparent);
 }

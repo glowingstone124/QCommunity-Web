@@ -157,7 +157,7 @@
 }
 
 .empty-state.error h2 {
-	color: var(--error);
+	color: var(--error-text);
 }
 
 .affiliated-result {

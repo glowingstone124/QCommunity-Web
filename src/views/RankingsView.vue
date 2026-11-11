@@ -153,7 +153,7 @@ onMounted(loadRankings)
 .ranking-list .rank-3 { background: color-mix(in srgb, #c77c48 10%, transparent); }
 .empty-state, .loading-state, .error-state { margin: 1.5rem 0 0; padding: 1rem; border: 1px solid color-mix(in srgb, var(--text-main) 16%, transparent); color: var(--text-secondary); }
 .empty-state { margin: 0; border: 0; }
-.error-state { color: var(--error); border-color: color-mix(in srgb, var(--error) 45%, transparent); }
+.error-state { color: var(--error-text); border-color: color-mix(in srgb, var(--error) 45%, transparent); }
 
 @media (max-width: 1050px) { .boards-grid { grid-template-columns: 1fr; } }
 @media (max-width: 640px) {

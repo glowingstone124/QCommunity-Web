@@ -1,13 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8">
     <link rel="icon" href="favicon.svg" style="--stroke-width:100">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
     <title>QHub</title>
+    <script>
+      // Apply the saved theme before first paint so the loader and page never flash the wrong palette.
+      try {
+        var savedTheme = localStorage.getItem('theme');
+        document.documentElement.dataset.theme = savedTheme === 'dark' ? 'dark' : 'light';
+        document.documentElement.lang = localStorage.getItem('locale') === 'en' ? 'en' : 'zh-CN';
+      } catch (e) {}
+    </script>
     <style>
       :root {
-        color-scheme: light dark;
+        color-scheme: light;
+      }
+
+      :root[data-theme="dark"] {
+        color-scheme: dark;
       }
 
       body {
@@ -24,7 +37,7 @@
         background: #ffffff;
         color: #0f172a;
         font-family: "Space Grotesk", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        transition: opacity 180ms ease, visibility 180ms ease;
+        transition: opacity 200ms cubic-bezier(0.23, 1, 0.32, 1), visibility 200ms cubic-bezier(0.23, 1, 0.32, 1);
       }
 
       #asset-loader.is-hidden {
@@ -62,34 +75,39 @@
       .asset-loader__track {
         height: 6px;
         overflow: hidden;
-        background: #e5e7eb;
+        background: #e2e8f0;
       }
 
       .asset-loader__bar {
         width: 0%;
         height: 100%;
         background: #2563eb;
-        transition: width 120ms ease;
+        transition: width 160ms cubic-bezier(0.23, 1, 0.32, 1);
       }
 
-      @media (prefers-color-scheme: dark) {
-        body,
-        #asset-loader {
-          background: #03050a;
-          color: #f1f5f9;
-        }
-
-        .asset-loader__track {
-          background: #111827;
-        }
-
-        .asset-loader__percent {
-          color: #93c5fd;
-        }
-
+      @media (prefers-reduced-motion: reduce) {
+        #asset-loader,
         .asset-loader__bar {
-          background: #60a5fa;
+          transition-duration: 1ms;
         }
+      }
+
+      :root[data-theme="dark"] body,
+      :root[data-theme="dark"] #asset-loader {
+        background: #090c12;
+        color: #f1f5f9;
+      }
+
+      :root[data-theme="dark"] .asset-loader__track {
+        background: #1c2635;
+      }
+
+      :root[data-theme="dark"] .asset-loader__percent {
+        color: #93c5fd;
+      }
+
+      :root[data-theme="dark"] .asset-loader__bar {
+        background: #60a5fa;
       }
     </style>
   </head>

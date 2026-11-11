@@ -135,8 +135,8 @@ const emit = defineEmits(['activate', 'clear', 'select'])
 	color: var(--text-main);
 	cursor: pointer;
 	transition:
-		background-color 160ms ease,
-		color 160ms ease,
+		background-color 160ms var(--ease-out),
+		color 160ms var(--ease-out),
 		transform 160ms var(--ease-out);
 }
 

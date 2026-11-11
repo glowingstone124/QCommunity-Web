@@ -38,13 +38,13 @@
 }
 
 .message {
-	color: var(--error);
+	color: var(--error-text);
 	border-color: color-mix(in srgb, var(--error) 45%, var(--register-border));
 	background: color-mix(in srgb, var(--error) 10%, transparent);
 }
 
 .quiz-success {
-	color: var(--success);
+	color: var(--success-text);
 	border-color: color-mix(in srgb, var(--success) 45%, var(--register-border));
 	background: color-mix(in srgb, var(--success) 10%, transparent);
 }
@@ -189,7 +189,7 @@
 	flex-wrap: wrap;
 	gap: 0.65rem;
 	margin: 0.6rem 0 0;
-	color: var(--error);
+	color: var(--error-text);
 }
 
 .terms-load-error p {

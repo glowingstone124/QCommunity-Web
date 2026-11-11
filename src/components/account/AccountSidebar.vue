@@ -73,12 +73,12 @@ const navigationItems = computed(() =>
 }
 
 .side-header {
-	animation: account-side-item-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+	animation: account-side-item-in 420ms var(--ease-out) both;
 }
 
 .side :deep(.app-navigation-entry) {
 	opacity: 0;
-	animation: account-side-item-in 380ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	animation: account-side-item-in 380ms var(--ease-out) forwards;
 }
 
 .side :deep(.app-navigation-entry:nth-child(1)) { animation-delay: 70ms; }
@@ -101,7 +101,7 @@ const navigationItems = computed(() =>
 	flex-direction: column;
 	gap: 0.9rem;
 	opacity: 0;
-	animation: account-side-item-in 420ms cubic-bezier(0.22, 1, 0.36, 1) 230ms forwards;
+	animation: account-side-item-in 420ms var(--ease-out) 230ms forwards;
 }
 
 .logout-button {
@@ -116,16 +116,16 @@ const navigationItems = computed(() =>
 	gap: 0.25rem;
 	text-align: left;
 	cursor: pointer;
-	color: var(--error);
+	color: var(--error-text);
 	transition:
-		color 0.2s ease,
-		background-color 0.2s ease,
-		border-color 0.2s ease;
+		color 0.2s var(--ease-out),
+		background-color 0.2s var(--ease-out),
+		border-color 0.2s var(--ease-out);
 }
 
 .logout-button:hover {
-	background: var(--error);
-	border-color: var(--error);
+	background: var(--error-solid);
+	border-color: var(--error-solid);
 	color: white;
 }
 

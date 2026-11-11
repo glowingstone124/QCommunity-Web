@@ -72,7 +72,7 @@
 	display: block;
 	height: 100%;
 	background: var(--primary);
-	transition: width 180ms ease;
+	transition: width 180ms var(--ease-out);
 }
 
 .summary-list {
@@ -106,7 +106,7 @@
 }
 
 .empty-state.error {
-	color: var(--error);
+	color: var(--error-text);
 	border-color: color-mix(in srgb, var(--error) 42%, var(--split));
 }
 
@@ -137,8 +137,8 @@
 	padding: 0.8rem;
 	border-bottom: none;
 	transition:
-		background-color 160ms ease,
-		transform 160ms ease;
+		background-color 160ms var(--ease-out),
+		transform 160ms var(--ease-out);
 }
 
 .player-row:hover {
@@ -204,7 +204,7 @@
 }
 
 .health-value {
-	color: var(--success);
+	color: var(--success-text);
 }
 
 button:focus-visible {

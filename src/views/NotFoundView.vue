@@ -47,7 +47,7 @@ h1 { margin: 0; font-size: clamp(2.4rem, 8vw, 5.5rem); line-height: 1; }
 	color: var(--button-secondary-text);
 	cursor: pointer;
 	font-weight: 700;
-	transition: transform var(--motion-fast) var(--ease-standard), background var(--motion-fast) ease;
+	transition: transform var(--motion-fast) var(--ease-standard), background var(--motion-fast) var(--ease-out);
 }
 
 .redirect:hover { transform: translateY(-2px); background: var(--button-secondary-hover); }

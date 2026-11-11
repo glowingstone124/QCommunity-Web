@@ -15,7 +15,7 @@
 .skeleton-row:nth-child(4) .skeleton-bar { animation-delay: 360ms; }
 
 .error {
-  color: var(--error);
+  color: var(--error-text);
 }
 
 .result-main {
@@ -37,7 +37,7 @@
   display: grid;
   position: relative;
   opacity: 0;
-  animation: route-segment-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: route-segment-in 420ms var(--ease-out) both;
   animation-delay: calc(80ms + var(--segment-index, 0) * 130ms);
 }
 
@@ -51,7 +51,7 @@
   background: var(--segment-color);
   transform: scaleY(0);
   transform-origin: top center;
-  animation: route-line-grow 560ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: route-line-grow 560ms var(--ease-out) forwards;
   animation-delay: calc(150ms + var(--segment-index, 0) * 130ms);
 }
 
@@ -71,7 +71,7 @@
 .route-station-step {
   opacity: 0;
   transform: translateX(-8px);
-  animation: route-station-in 320ms ease forwards;
+  animation: route-station-in 320ms var(--ease-out) forwards;
   animation-delay: calc(180ms + var(--segment-index, 0) * 130ms + var(--station-index, 0) * 42ms);
 }
 
@@ -118,7 +118,7 @@
   box-sizing: border-box;
   align-self: center;
   position: relative;
-  animation: route-node-pop 360ms cubic-bezier(0.2, 0.9, 0.25, 1.25) both;
+  animation: route-node-pop 360ms var(--ease-spring) both;
   animation-delay: calc(120ms + var(--segment-index, 0) * 130ms);
 }
 
@@ -141,12 +141,12 @@
 
 .options-modal-enter-active,
 .options-modal-leave-active {
-  transition: opacity 180ms ease;
+  transition: opacity 180ms var(--ease-out);
 }
 
 .options-modal-enter-active .options-popup,
 .options-modal-leave-active .options-popup {
-  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms ease;
+  transition: transform 220ms var(--ease-out), opacity 180ms var(--ease-out);
 }
 
 .options-modal-enter-from,
@@ -240,7 +240,7 @@
 }
 
 .map-close-button:hover {
-  color: var(--error);
+  color: var(--error-text);
   border-color: var(--error);
   background: color-mix(in srgb, var(--error) 7%, transparent);
 }
@@ -260,12 +260,12 @@
 
 .map-preview-enter-active,
 .map-preview-leave-active {
-  transition: opacity 180ms ease;
+  transition: opacity 180ms var(--ease-out);
 }
 
 .map-preview-enter-active .map-preview-shell,
 .map-preview-leave-active .map-preview-shell {
-  transition: opacity 200ms ease, transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 200ms var(--ease-out), transform 240ms var(--ease-out);
 }
 
 .map-preview-enter-from,
@@ -307,7 +307,7 @@
 }
 
 .close-button:hover {
-  color: var(--error);
+  color: var(--error-text);
   border-color: var(--error);
 }
 
@@ -380,7 +380,7 @@
   border: 1px solid var(--transport-line-strong);
   position: relative;
   flex: 0 0 auto;
-  transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
+  transition: background-color 150ms var(--ease-out), border-color 150ms var(--ease-out), transform 150ms var(--ease-out);
 }
 
 .checkbox-input:checked + .checkbox-custom {

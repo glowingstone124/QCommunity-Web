@@ -80,8 +80,8 @@ h1 {
 	border-radius: 0;
 	cursor: pointer;
 	transition:
-		background-color 0.18s ease,
-		border-color 0.18s ease;
+		background-color 0.18s var(--ease-out),
+		border-color 0.18s var(--ease-out);
 	border: 1px solid var(--border-soft);
 }
 .avatar-item:hover {
@@ -116,7 +116,7 @@ h1 {
 	border: 1px solid var(--primary);
 	border-radius: 0;
 	cursor: pointer;
-	transition: background-color 0.18s ease;
+	transition: background-color 0.18s var(--ease-out);
 	width: fit-content;
 }
 .save-avatar-btn:hover {

@@ -121,8 +121,8 @@
 	position: relative;
 	overflow: hidden;
 	transition:
-		background-color 160ms ease,
-		color 160ms ease;
+		background-color 160ms var(--ease-out),
+		color 160ms var(--ease-out);
 }
 
 .server-option::before {
@@ -134,7 +134,7 @@
 	width: 3px;
 	background: var(--primary);
 	transform: scaleY(0);
-	transition: transform 160ms ease;
+	transition: transform 160ms var(--ease-out);
 }
 
 .server-option span {
@@ -308,7 +308,7 @@
 	min-width: 2px;
 	background: var(--success);
 	opacity: 0.88;
-	transition: height var(--motion-fast) ease, opacity var(--motion-fast) ease;
+	transition: height var(--motion-fast) var(--ease-out), opacity var(--motion-fast) var(--ease-out);
 }
 
 .mspt-bar.notice {
@@ -339,6 +339,6 @@
 	top: -1.25rem;
 	padding-left: 0.35rem;
 	background: var(--dashboard-surface);
-	color: var(--warning);
+	color: var(--warning-text);
 	font: 0.7rem/1 'SpaceMono', 'Inter', sans-serif;
 }

@@ -71,8 +71,8 @@
 .from {
     p {
         display: inline-block;
-        background-color: var(--success);
-        color: var(--button-primary-text);
+        background-color: #15803D;
+        color: #fff;
         font-family: "Bahnschrift", sans-serif;
         padding: 0.25em 0.5em;
         margin-bottom: 0.5rem;
