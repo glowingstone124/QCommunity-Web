@@ -10,6 +10,7 @@ export function useDashboardStatus() {
 	const servers = [
 		{ id: 1, nameKey: 'dashboardPage.serverSurvival', description: '/server survival' },
 		{ id: 4, nameKey: 'dashboardPage.serverCreative', description: '/server creative' },
+		{ id: 5, nameKey: 'dashboardPage.serverThulium', description: 'Thulium (MC 26.3)' },
 	]
 
 	const currentServerId = ref(1)

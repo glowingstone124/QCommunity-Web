@@ -4,6 +4,11 @@ import {useI18n} from "vue-i18n"
 import {getLeaderboards} from "@/services/rankings.js"
 
 const {locale, t} = useI18n()
+const selectedServer = ref("main")
+const serverOptions = [
+	{ id: "main", labelKey: "rankingServers.main", hintKey: "rankingServers.mainHint" },
+	{ id: "thulium", labelKey: "rankingServers.thulium", hintKey: "rankingServers.thuliumHint" },
+]
 const rankings = ref({place: [], destroy: [], playtime: []})
 const generatedAt = ref(0)
 const loading = ref(true)
@@ -51,11 +56,17 @@ function formatValue(boardId, value) {
 		.join(" ")
 }
 
+async function selectServer(serverId) {
+	if (selectedServer.value === serverId && !error.value) return
+	selectedServer.value = serverId
+	await loadRankings()
+}
+
 async function loadRankings() {
 	loading.value = true
 	error.value = ""
 	try {
-		const result = await getLeaderboards(50)
+		const result = await getLeaderboards(50, selectedServer.value)
 		rankings.value = result.rankings || {place: [], destroy: [], playtime: []}
 		generatedAt.value = Number(result.generatedAt || 0)
 	} catch (cause) {
@@ -74,6 +85,21 @@ onMounted(loadRankings)
 			<div>
 				<h1>{{ t('rankingsPage.title') }}</h1>
 				<p>{{ t('rankingsPage.description') }}</p>
+				<div class="server-switch" role="group" :aria-label="t('rankingServers.label')">
+					<button
+						v-for="option in serverOptions"
+						:key="option.id"
+						type="button"
+						class="server-tab"
+						:class="{ 'is-active': selectedServer === option.id }"
+						:aria-pressed="selectedServer === option.id"
+						:disabled="loading"
+						@click="selectServer(option.id)"
+					>
+						<span>{{ t(option.labelKey) }}</span>
+						<small>{{ t(option.hintKey) }}</small>
+					</button>
+				</div>
 			</div>
 			<div class="sync-box">
 				<span>{{ t('rankingsPage.generatedAt') }}</span>
@@ -130,6 +156,11 @@ onMounted(loadRankings)
 
 .rankings-hero h1 { margin: 0; color: var(--title-color); font-size: clamp(2rem, 5vw, 4.4rem); font-weight: 420; }
 .rankings-hero p { margin: .75rem 0 0; color: var(--text-secondary); }
+.server-switch { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1rem; }
+.server-tab { display: grid; gap: .15rem; text-align: left; padding: .55rem .9rem; border: 1px solid color-mix(in srgb, var(--text-main) 18%, transparent); background: transparent; color: var(--text-main); cursor: pointer; }
+.server-tab small { color: var(--text-secondary); font-size: .76rem; }
+.server-tab.is-active { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 12%, transparent); }
+.server-tab:disabled { cursor: wait; opacity: .7; }
 .sync-box { display: grid; gap: .35rem; min-width: min(100%, 260px); text-align: right; }
 .sync-box span { color: var(--text-secondary); font-size: .78rem; }
 .sync-box strong { font-size: .9rem; }

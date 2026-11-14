@@ -1,5 +1,6 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { buildOptionalAuthHeaders, parseTaRestrictedResponse } from '@/utils/taAccess.js'
 
 export function useTransportPlanner() {
   const { t, locale } = useI18n()
@@ -41,8 +42,21 @@ export function useTransportPlanner() {
 
   const fetchAllStations = async () => {
     try {
-      const response = await fetch('https://api.qoriginal.vip/qo/transportation/station/all')
-      stations.value = await response.json()
+      const response = await fetch('https://api.qoriginal.vip/qo/transportation/station/all', {
+        headers: buildOptionalAuthHeaders(),
+      })
+      const data = await response.json().catch(() => ([]))
+      const taGate = parseTaRestrictedResponse(response.status, data)
+      if (taGate.restricted) {
+        routeResult.value = {
+          taRestricted: true,
+          message: taGate.message || t('transportPage.taRestrictedFallback'),
+        }
+        return
+      }
+      if (Array.isArray(data)) {
+        stations.value = data
+      }
     } catch (error) {
       console.error('获取站点数据失败:', error)
     }
@@ -93,12 +107,24 @@ export function useTransportPlanner() {
       }
       const response = await fetch('https://api.qoriginal.vip/qo/transportation/calculate', {
         method: 'POST',
-        headers: {
+        headers: buildOptionalAuthHeaders({
           'Content-Type': 'application/json',
-        },
+        }),
         body: JSON.stringify(requestData)
       })
-      const data = await response.json()
+      const data = await response.json().catch(() => ({}))
+      const taGate = parseTaRestrictedResponse(response.status, data)
+      if (taGate.restricted) {
+        routeResult.value = {
+          taRestricted: true,
+          message: taGate.message || t('transportPage.taRestrictedFallback'),
+        }
+        return
+      }
+      if (!response.ok) {
+        routeResult.value = {error: data?.message || t('transportPage.noRoute')}
+        return
+      }
       routeResult.value = {message: t('transportPage.routeFound', { stops: data.totalStops, seconds: data.totalTime }), data: data}
       if (data.result === "-1") {
         routeResult.value = {message: t('transportPage.noRoute')}

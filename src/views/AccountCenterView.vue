@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { alert, defaultModules } from '@pnotify/core'
@@ -13,6 +13,9 @@ import AccountSidebar from '@/components/account/AccountSidebar.vue'
 import AccountWhitelistPanel from '@/components/account/AccountWhitelistPanel.vue'
 import AccountKotshiPanel from '@/components/account/AccountKotshiPanel.vue'
 import AffiliatedAccountComponent from '@/components/AffiliatedAccountComponent.vue'
+import TaFeatureNotice from '@/components/account/TaFeatureNotice.vue'
+import TaUpgradeCard from '@/components/account/TaUpgradeCard.vue'
+import { buildOptionalAuthHeaders, computeTaUpgradeState, normalizeAccountType } from '@/utils/taAccess.js'
 import PlayerCardsListComponent from '@/components/PlayerCardsListComponent.vue'
 import { useIpAddressValidation } from '@/composables/useIpAddressValidation.js'
 import { accountTabs } from '@/data/accountCenter'
@@ -53,6 +56,18 @@ const kotshiByChannel = ref({})
 const isLoadingKotshi = ref(false)
 const kotshiFeedback = ref('')
 const kotshiFeedbackType = ref('')
+const accountType = ref('qo')
+const requiredPlaytime = ref(180)
+const taSubmittingBind = ref(false)
+const taUpgradeError = ref('')
+const taPendingCommand = ref('')
+const taUpgradeState = computed(() =>
+	computeTaUpgradeState({
+		account_type: accountType.value,
+		playtime: playtime.value,
+		required_playtime: requiredPlaytime.value,
+	}),
+)
 
 function selectTab(tabId) {
 	currentSetting.value = tabId
@@ -71,6 +86,12 @@ function queryAccountData() {
 			playtime.value = data.playtime
 			statistics.value = data.statistics || {}
 			logins.value = data.logins
+			accountType.value = normalizeAccountType(data)
+			requiredPlaytime.value = Number(data.required_playtime || 180)
+			if (accountType.value === 'ta') {
+				isFrozen.value = data.frozen === true
+				statusHint.value = isFrozen.value ? t('accountPage.statusFrozen') : t('accountPage.statusNormal')
+			}
 			if (typeof data.kotshi_query_enabled === 'boolean') {
 				kotshiQueryEnabled.value = data.kotshi_query_enabled
 				kotshiQuerySettingLoaded.value = true
@@ -186,7 +207,7 @@ async function queryFallenTeam() {
 }
 
 function queryAccountStatus() {
-	if (!username.value) {
+	if (!username.value || accountType.value === 'ta') {
 		return
 	}
 	isFrozen.value = null
@@ -211,6 +232,37 @@ function queryAccountStatus() {
 function setIpFeedback(message, type = 'error') {
 	ipFeedback.value = message
 	ipFeedbackType.value = type
+}
+
+async function submitTaBindQq(qq) {
+	if (taSubmittingBind.value) return
+	taSubmittingBind.value = true
+	taUpgradeError.value = ''
+	try {
+		const res = await fetch('https://api.qoriginal.vip/qo/authorization/ta/bind-qq', {
+			method: 'POST',
+			headers: buildOptionalAuthHeaders({ 'Content-Type': 'application/json' }),
+			body: JSON.stringify({ qq }),
+		})
+		const data = await res.json().catch(() => ({}))
+		if (res.status === 403 && data?.code === 'INSUFFICIENT_PLAYTIME') {
+			taUpgradeError.value = data.message || t('taAccount.insufficientPlaytime', {
+				current: playtime.value,
+				required: requiredPlaytime.value,
+			})
+			return
+		}
+		if (!res.ok || data?.result !== true) {
+			taUpgradeError.value = data?.message || t('taAccount.bindFailed')
+			return
+		}
+		taPendingCommand.value = data.command || (data.token ? `.approve-register ${data.token}` : '')
+	} catch (error) {
+		console.error('提交 TA QQ 绑定失败:', error)
+		taUpgradeError.value = t('accountPage.connectFailed')
+	} finally {
+		taSubmittingBind.value = false
+	}
 }
 
 async function submitIp() {
@@ -360,18 +412,30 @@ watch(currentSetting, (newValue) => {
 
 		<main class="content" :class="{ immersive: isImmersive, 'personalization-layout': currentSetting === 2 }">
 			<transition name="slide-in">
-				<AccountOverviewPanel
-					v-if="currentSetting === 0"
-					key="account-info"
-					:username="username"
-					:uid="uid"
-					:playtime="playtime"
-					:statistics="statistics"
-					:logins="logins"
-					:is-frozen="isFrozen"
-					:status-hint="statusHint"
-					:fallen-selection="fallenSelection"
-				/>
+				<div v-if="currentSetting === 0" key="account-info" :class="{ 'overview-stack': accountType === 'ta' }">
+					<TaUpgradeCard
+						v-if="accountType === 'ta'"
+						:playtime="taUpgradeState.playtime"
+						:required-playtime="taUpgradeState.requiredPlaytime"
+						:remaining-minutes="taUpgradeState.remainingMinutes"
+						:progress-percent="taUpgradeState.progressPercent"
+						:can-upgrade="taUpgradeState.canUpgrade"
+						:submitting="taSubmittingBind"
+						:error-message="taUpgradeError"
+						:pending-command="taPendingCommand"
+						@submit-bind="submitTaBindQq"
+					/>
+					<AccountOverviewPanel
+						:username="username"
+						:uid="uid ?? 0"
+						:playtime="playtime"
+						:statistics="statistics"
+						:logins="logins"
+						:is-frozen="isFrozen"
+						:status-hint="statusHint"
+						:fallen-selection="fallenSelection"
+					/>
+				</div>
 			</transition>
 
 			<transition name="slide-in">
@@ -401,7 +465,15 @@ watch(currentSetting, (newValue) => {
 
 			<transition name="slide-in">
 				<section v-if="currentSetting === 3" key="affiliated" class="panel panel-full">
-					<AffiliatedAccountComponent />
+					<div v-if="accountType === 'ta'" class="ta-panel-center">
+						<TaFeatureNotice
+							:title="t('taAccount.featureGateTitle')"
+							:message="t('taAccount.featureGateAffiliated', { required: requiredPlaytime })"
+							:action-label="t('taAccount.goOverview')"
+							@action="selectTab(0)"
+						/>
+					</div>
+					<AffiliatedAccountComponent v-else />
 				</section>
 			</transition>
 
@@ -423,8 +495,18 @@ watch(currentSetting, (newValue) => {
 			</transition>
 
 			<transition name="slide-in">
+				<section v-if="currentSetting === 5 && accountType === 'ta'" key="kotshi-ta-gate" class="panel panel-full">
+					<div class="ta-panel-center">
+						<TaFeatureNotice
+							:title="t('taAccount.featureGateTitle')"
+							:message="t('taAccount.featureGateKotshi', { required: requiredPlaytime })"
+							:action-label="t('taAccount.goOverview')"
+							@action="selectTab(0)"
+						/>
+					</div>
+				</section>
 				<AccountKotshiPanel
-					v-if="currentSetting === 5"
+					v-else-if="currentSetting === 5"
 					key="kotshi"
 					:quota="kotshiQuota"
 					:usage="kotshiUsage"

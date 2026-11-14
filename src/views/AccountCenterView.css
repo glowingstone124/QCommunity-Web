@@ -70,6 +70,21 @@
 	box-sizing: border-box;
 }
 
+.overview-stack {
+	display: grid;
+	gap: 1rem;
+	padding: 1rem 1rem 0;
+}
+
+.ta-panel-center {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 100%;
+	padding: 1.5rem;
+	box-sizing: border-box;
+}
+
 @media (min-width: 1600px) {
 	.account {
 		grid-template-columns: 296px minmax(0, 1400px);

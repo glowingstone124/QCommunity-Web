@@ -1,5 +1,6 @@
 <script setup>
 import InteractiveTransportMap from '@/components/transport/InteractiveTransportMap.vue'
+import TaFeatureNotice from '@/components/account/TaFeatureNotice.vue'
 import { useTransportPlanner } from './useTransportPlanner.js'
 
 const {
@@ -157,6 +158,14 @@ const {
         </div>
       </div>
 
+      <div v-else-if="routeResult?.taRestricted" key="route-ta-restricted" class="route-result-content">
+        <TaFeatureNotice
+          :title="t('transportPage.taRestrictedTitle')"
+          :message="routeResult.message"
+          :action-label="t('transportPage.goAccountCenter')"
+          action-route="/account"
+        />
+      </div>
       <div v-else-if="routeResult" key="route-result" class="route-result-content">
 		<h3>{{ t('mapPage.searchResult') }}</h3>
         <p v-if="routeResult.message">{{ routeResult.message }}</p>

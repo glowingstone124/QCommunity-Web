@@ -115,6 +115,9 @@ export default {
 		planningRoute: '正在规划路线',
 		query: '查询',
 		advancedQuery: '高级查询',
+		taRestrictedTitle: '加入 QO 本体解锁交通路线查询',
+		taRestrictedFallback: '欢迎来到 Thulium！交通路线查询与换乘规划面向 QO 本体正式成员开放。在服务器游玩满 3 小时后前往个人中心绑定 QQ 并加入 QO 官方群，即可升级解锁。',
+		goAccountCenter: '前往个人中心升级',
 	},
 	mapPage: {
 		searchStation: '搜索站点',

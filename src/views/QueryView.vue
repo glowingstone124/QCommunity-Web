@@ -2,6 +2,8 @@
 import { computed, ref } from 'vue'
 import debounce from 'lodash/debounce'
 import { useI18n } from 'vue-i18n'
+import TaFeatureNotice from '@/components/account/TaFeatureNotice.vue'
+import { buildOptionalAuthHeaders, parseTaRestrictedResponse } from '@/utils/taAccess.js'
 import PlayerInfoCard from '@/components/PlayerCard.vue'
 import { fetchAvatar } from '@/services/avatar.js'
 
@@ -16,6 +18,7 @@ const found = ref(false)
 const searched = ref(false)
 const loading = ref(false)
 const errorMessage = ref('')
+const taRestrictedMessage = ref('')
 const playtime = ref(0)
 const lastLogin = ref(null)
 const statistics = ref({})
@@ -58,8 +61,17 @@ async function getPlayer(id) {
 	resetResult()
 
 	try {
-		const response = await fetch(`https://api.glowingstone.cn/qo/download/registry?name=${encodeURIComponent(id)}`)
-		const data = await response.json()
+		taRestrictedMessage.value = ''
+		const response = await fetch(`https://api.glowingstone.cn/qo/download/registry?name=${encodeURIComponent(id)}`, {
+			headers: buildOptionalAuthHeaders({ Accept: 'application/json' }),
+		})
+		const data = await response.json().catch(() => ({}))
+		const taGate = parseTaRestrictedResponse(response.status, data)
+		if (taGate.restricted) {
+			taRestrictedMessage.value = taGate.message || t('queryPage.taRestrictedFallback')
+			errorMessage.value = ''
+			return
+		}
 
 		if (data.code === 1) {
 			found.value = false
@@ -141,6 +153,14 @@ function submitSearch() {
 					<h2>{{ t('queryPage.loadingTitle') }}</h2>
 					<p>{{ t('queryPage.loadingDescription') }}</p>
 				</div>
+
+				<TaFeatureNotice
+					v-else-if="taRestrictedMessage"
+					:title="t('queryPage.taRestrictedTitle')"
+					:message="taRestrictedMessage"
+					:action-label="t('queryPage.goAccountCenter')"
+					action-route="/account"
+				/>
 
 				<div v-else-if="errorMessage" class="empty-state error">
 					<h2>{{ t('queryPage.failedTitle') }}</h2>

@@ -14,7 +14,7 @@ export function isInvalidSessionResponse(status, data) {
 }
 
 export function clearQhubSession(storage = localStorage) {
-	for (const key of ['token', 'username', 'user', 'qhub.auth.method']) storage.removeItem(key)
+	for (const key of ['token', 'username', 'user', 'qhub.auth.method', 'account_type']) storage.removeItem(key)
 }
 
 export function redirectInvalidSession(token, location = window.location, storage = localStorage) {

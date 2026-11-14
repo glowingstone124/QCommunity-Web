@@ -110,6 +110,9 @@ export default {
 		planningRoute: 'Planning route',
 		query: 'Search',
 		advancedQuery: 'Advanced search',
+		taRestrictedTitle: 'Join Quantum Original Main to Unlock Metro Query',
+		taRestrictedFallback: 'Welcome to Thulium! Transit route planning is available to full Quantum Original members. Play for 3 hours in Thulium, then bind your QQ in Account Center and join the official QO group to upgrade.',
+		goAccountCenter: 'Open Account Center',
 	},
 	mapPage: {
 		searchStation: 'Search stations',
