@@ -1,9 +1,13 @@
 <script setup>
 import { computed, ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import UiButton from '@/components/ui/UiButton.vue';
+import UiStatePanel from '@/components/ui/UiStatePanel.vue';
+import { useUiPreferences } from '@/composables/useUiPreferences.js';
 
 const loginStat = ref(false);
 const { t } = useI18n();
+const { isModernUi } = useUiPreferences();
 const hintMessage = ref("");
 const fortuneData = ref(null);
 const isLoading = ref(false);
@@ -16,7 +20,7 @@ const fortuneItems = computed(() => {
 		{ key: 'love', label: t('fortunePage.love'), data: fortuneData.value.love },
 		{ key: 'career', label: t('fortunePage.career'), data: fortuneData.value.career },
 		{ key: 'wealth', label: t('fortunePage.wealth'), data: fortuneData.value.wealth },
-	];
+	].filter((item) => item.data && typeof item.data === 'object');
 });
 
 onMounted(async () => {
@@ -65,9 +69,13 @@ async function fetchFortune() {
   isLoading.value = true;
   errorMessage.value = "";
   try {
-    fortuneData.value = await fetch("https://api.qoriginal.vip/qo/authorization/fortune", {
+    const payload = await fetch("https://api.qoriginal.vip/qo/authorization/fortune", {
       headers: { "token": localStorage.getItem("token") }
     }).then(response => response.json());
+    if (!payload || !payload.love || !payload.career || !payload.wealth) {
+      throw new Error("Invalid fortune payload");
+    }
+    fortuneData.value = payload;
   } catch (error) {
 		errorMessage.value = t('fortunePage.loadFailed');
   } finally {
@@ -84,35 +92,52 @@ const getProgressColor = (amount) => {
 
 <template>
 	<section class="fortune-panel">
-		<header class="fortune-header">
-			<div>
+		<div class="fortune-toolbar">
+			<div class="fortune-toolbar__copy">
 				<h2>{{ t('fortunePage.title') }}</h2>
 				<p>{{ t('fortunePage.description') }}</p>
 			</div>
-			<button
+			<UiButton
 				v-if="loginStat"
-				@click="fetchFortune"
-				class="refresh-button"
-				type="button"
+				variant="tonal"
+				icon="refresh"
+				:loading="isLoading"
 				:disabled="isLoading"
+				@click="fetchFortune"
 			>
 				{{ isLoading ? t('common.refreshing') : t('fortunePage.refresh') }}
-			</button>
-		</header>
-
-		<div v-if="isCheckingLogin" class="state-box">{{ t('fortunePage.checkingLogin') }}</div>
-
-		<div v-else-if="!loginStat" class="login-prompt">
-			<div>
-				<h3>{{ t('fortunePage.needLogin') }}</h3>
-				<p>{{ hintMessage }}</p>
-			</div>
-			<router-link to="/login" class="login-button">{{ t('fortunePage.loginNow') }}</router-link>
+			</UiButton>
 		</div>
 
-		<p v-else-if="errorMessage" class="state-box error">{{ errorMessage }}</p>
+		<UiStatePanel
+			v-if="isCheckingLogin"
+			state="loading"
+			:message="t('fortunePage.checkingLogin')"
+		/>
 
-		<div v-else-if="isLoading" class="state-box">{{ t('fortunePage.loading') }}</div>
+		<UiStatePanel
+			v-else-if="!loginStat"
+			state="info"
+			icon="lock"
+			:title="t('fortunePage.needLogin')"
+			:message="hintMessage"
+			:action-label="t('fortunePage.loginNow')"
+			action-to="/login"
+		/>
+
+		<UiStatePanel
+			v-else-if="errorMessage"
+			state="error"
+			:title="errorMessage"
+			:action-label="t('fortunePage.refresh')"
+			@action="fetchFortune"
+		/>
+
+		<UiStatePanel
+			v-else-if="isLoading"
+			state="loading"
+			:message="t('fortunePage.loading')"
+		/>
 
 		<div v-else-if="fortuneData" class="fortune-content">
 			<article v-for="item in fortuneItems" :key="item.key" class="category-card">
@@ -122,7 +147,14 @@ const getProgressColor = (amount) => {
 						<span>{{ item.data.amount }}%</span>
 					</div>
 				</div>
-				<div class="progress-bar">
+				<md-linear-progress
+					v-if="isModernUi"
+					class="m3-fortune-progress"
+					:value="Math.max(0, Math.min(1, Number(item.data.amount || 0) / 100))"
+					:style="{ '--md-linear-progress-active-indicator-color': getProgressColor(item.data.amount) }"
+					:aria-label="`${t('fortunePage.fortune', { label: item.label })}: ${item.data.amount}%`"
+				/>
+				<div v-else class="progress-bar">
 					<div
 						class="progress-fill"
 						:style="{
@@ -142,93 +174,31 @@ const getProgressColor = (amount) => {
 	--fortune-border: var(--border-soft, var(--split));
 	display: flex;
 	flex-direction: column;
-	gap: 1rem;
-	max-width: 1180px;
+	gap: 1.25rem;
 	width: 100%;
-	margin: 0 auto;
 	color: var(--text-main);
 }
 
-.fortune-header {
+.fortune-toolbar {
 	display: flex;
-	align-items: flex-start;
+	align-items: flex-end;
 	justify-content: space-between;
-	gap: 1rem;
-	border: 1px solid var(--fortune-border);
-	background: var(--background);
-	padding: 1rem;
+	flex-wrap: wrap;
+	gap: 0.75rem 1.25rem;
 }
 
-.fortune-header h2 {
+.fortune-toolbar__copy h2 {
 	margin: 0;
 	color: var(--title-color);
-	font-size: clamp(1.25rem, 1.8vw, 1.65rem);
+	font-size: clamp(1.2rem, 1.8vw, 1.5rem);
 	line-height: 1.2;
 }
 
-.fortune-header p {
-	margin: 0.32rem 0 0;
-	color: var(--text-secondary);
-	line-height: 1.5;
-}
-
-.refresh-button,
-.login-button {
-	border: 1px solid var(--primary);
-	background: var(--button-primary-bg);
-	color: var(--button-primary-text);
-	padding: 0.72rem 1rem;
-	font-weight: 700;
-	cursor: pointer;
-	text-decoration: none;
-	white-space: nowrap;
-	transition: background-color 0.18s var(--ease-out);
-}
-
-.refresh-button:hover:not(:disabled),
-.login-button:hover {
-	background: var(--button-primary-hover);
-}
-
-.refresh-button:disabled {
-	opacity: 0.55;
-	cursor: not-allowed;
-}
-
-.state-box,
-.login-prompt {
-	border: 1px solid var(--fortune-border);
-	background: var(--background);
-	padding: 1rem;
-	color: var(--text-secondary);
-	line-height: 1.5;
-}
-
-.state-box {
-	margin: 0;
-}
-
-.state-box.error {
-	border-color: color-mix(in srgb, var(--error) 48%, var(--fortune-border));
-	color: var(--error-text);
-}
-
-.login-prompt {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 1rem;
-}
-
-.login-prompt h3 {
-	margin: 0;
-	color: var(--title-color);
-	font-size: 1.05rem;
-}
-
-.login-prompt p {
+.fortune-toolbar__copy p {
 	margin: 0.3rem 0 0;
 	color: var(--text-secondary);
+	max-width: 65ch;
+	line-height: 1.55;
 }
 
 .fortune-content {
@@ -240,7 +210,7 @@ const getProgressColor = (amount) => {
 .category-card {
 	background: var(--background);
 	border: 1px solid var(--fortune-border);
-	padding: 1rem;
+	padding: 1.1rem 1.2rem;
 	min-width: 0;
 }
 
@@ -265,6 +235,7 @@ const getProgressColor = (amount) => {
 .category-header span {
 	color: var(--text-main);
 	font-weight: 800;
+	font-variant-numeric: tabular-nums;
 }
 
 .progress-bar {
@@ -284,9 +255,9 @@ const getProgressColor = (amount) => {
 
 .comment {
 	color: var(--text-secondary);
-	line-height: 1.55;
+	line-height: 1.6;
 	margin: 0;
-	padding-top: 0.8rem;
+	padding-top: 0.85rem;
 	border-top: 1px solid var(--fortune-border);
 	overflow-wrap: anywhere;
 }
@@ -297,16 +268,18 @@ const getProgressColor = (amount) => {
 	}
 }
 
-@media (max-width: 620px) {
-	.fortune-header,
-	.login-prompt {
-		flex-direction: column;
-	}
+.m3-fortune-progress {
+	width: 100%;
+	margin: 0 0 0.95rem;
+	--md-linear-progress-track-height: 8px;
+	--md-linear-progress-active-indicator-height: 8px;
+	--md-linear-progress-track-shape: 999px;
+}
 
-	.refresh-button,
-	.login-button {
-		width: 100%;
-		text-align: center;
-	}
+:global(:root[data-ui="modern"] .fortune-panel .category-card) {
+	border-radius: var(--md-sys-shape-corner-large);
+	border-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+	background: var(--md-sys-color-surface-container-low);
+	box-shadow: var(--md-sys-elevation-level1);
 }
 </style>

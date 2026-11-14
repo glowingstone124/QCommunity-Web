@@ -150,23 +150,23 @@ watch([avatarUrl, backgroundUrl, statistics], () => {
 					<img :src="avatarUrl" :alt="t('playerCard.avatarAlt')" ref="avatarImg" crossorigin="anonymous"
 						 @load="onImgLoad" />
 				</div>
-				<div class="section-4"><h1>{{ username }}</h1></div>
+				<div class="section-4"><p class="card-username">{{ username }}</p></div>
 				<div class="section-1"></div>
 			</div>
 			<div class="main">
 				<div class="statistics" v-for="(stat, index) in statistics" :key="index" :style="{ color: textColor }">
-					<h2>{{ stat.label }}</h2>
+					<p class="card-stat-label">{{ stat.label }}</p>
 					<p>{{ stat.value }}</p>
 				</div>
 			</div>
 			<div class="information">
-				<h1>{{ username }}</h1>
+				<p class="card-username">{{ username }}</p>
 				<div class="from">
 					<p>{{ collection }}</p>
 				</div>
 				<div class="level">
 					<div class="cube" :style="{ background: levelColors[level] }"></div>
-					<h2 :style="{ color: levelColors[level] }">{{ t(`cardsPage.${levelDesc[level] || 'unknownRarity'}`) }}</h2>
+					<p class="card-rarity-label" :style="{ color: levelColors[level] }">{{ t(`cardsPage.${levelDesc[level] || 'unknownRarity'}`) }}</p>
 				</div>
 			</div>
 		</div>

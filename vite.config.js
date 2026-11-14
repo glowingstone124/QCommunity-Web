@@ -7,7 +7,13 @@ import compression from 'vite-plugin-compression'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    vue(),
+    vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: (tag) => tag.startsWith('md-'),
+        },
+      },
+    }),
     compression({ algorithm: 'gzip' }),
   ],
   resolve: {
@@ -21,11 +27,22 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vue-vendor': ['vue', 'vue-router', 'pinia'],
-          'axios-vendor': ['axios'],
-          'icons-vendor': ['@fortawesome/vue-fontawesome', '@iconify/vue'],
-          'markdown-vendor': ['marked', 'dompurify'],
+        manualChunks(id) {
+          if (id.includes('node_modules/@material/web') || id.includes('node_modules/@material/material-color-utilities') || id.includes('node_modules/lit')) {
+            return 'material-vendor';
+          }
+          if (id.includes('node_modules/vue') || id.includes('node_modules/@vue') || id.includes('node_modules/pinia') || id.includes('node_modules/vue-router') || id.includes('node_modules/vue-i18n')) {
+            return 'vue-vendor';
+          }
+          if (id.includes('node_modules/axios')) {
+            return 'axios-vendor';
+          }
+          if (id.includes('node_modules/@fortawesome') || id.includes('node_modules/@iconify')) {
+            return 'icons-vendor';
+          }
+          if (id.includes('node_modules/marked') || id.includes('node_modules/dompurify')) {
+            return 'markdown-vendor';
+          }
         }
       }
     },

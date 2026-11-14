@@ -1,5 +1,14 @@
 <script setup>
+import { computed } from 'vue'
 import { useDashboardStatus } from '@/composables/useDashboardStatus.js'
+import { useUiPreferences } from '@/composables/useUiPreferences.js'
+import UiPageHeader from '@/components/ui/UiPageHeader.vue'
+import UiTabs from '@/components/ui/UiTabs.vue'
+import UiStatGrid from '@/components/ui/UiStatGrid.vue'
+import UiStatCard from '@/components/ui/UiStatCard.vue'
+import UiStatePanel from '@/components/ui/UiStatePanel.vue'
+
+const { isModernUi } = useUiPreferences()
 
 const {
 	POLLING_INTERVAL,
@@ -25,49 +34,67 @@ const {
 	statCards,
 	t,
 } = useDashboardStatus()
+
+const serverTabItems = computed(() =>
+	servers.value.map((server) => ({
+		key: server.id,
+		label: t(server.nameKey),
+		description: server.description,
+	}))
+)
+
+function statIcon(key) {
+	if (key === 'online') return 'group'
+	if (key === 'total') return 'badge'
+	if (key === 'mspt') return 'speed'
+	return 'analytics'
+}
+
+function statTone(key) {
+	if (key === 'online') return 'primary'
+	if (key === 'mspt') {
+		if (msptNumber.value > 50) return 'error'
+		if (msptNumber.value > 35) return 'warning'
+		return 'success'
+	}
+	return 'default'
+}
 </script>
 
 <template>
 	<div class="dashboard page-shell">
-		<section class="dashboard-hero">
-			<div class="hero-copy">
-					<h1>{{ t('dashboardPage.title') }}</h1>
-			</div>
-
-			<div class="status-panel" :class="performanceState.className">
-				<span class="status-dot" aria-hidden="true"></span>
-				<span>{{ performanceState.label }}</span>
+		<UiPageHeader
+			class="dashboard-section"
+			:title="t('dashboardPage.title')"
+		>
+			<template #actions>
+				<div class="status-panel" :class="performanceState.className">
+					<span class="status-dot" aria-hidden="true"></span>
+					<span>{{ performanceState.label }}</span>
 					<small>{{ t('dashboardPage.updated', { time: lastUpdatedText }) }}</small>
-			</div>
-		</section>
+				</div>
+			</template>
 
-		<section class="server-switcher" :aria-label="t('dashboardPage.serverSelection')">
-			<button
-				v-for="server in servers"
-				:key="server.id"
-				type="button"
-				class="server-option"
-				:class="{ active: currentServerId === server.id }"
-				@click="selectServer(server.id)"
-			>
-					<span>{{ t(server.nameKey) }}</span>
-				<small>{{ server.description }}</small>
-			</button>
-		</section>
+			<UiTabs
+				:model-value="currentServerId"
+				variant="segmented"
+				:items="serverTabItems"
+				:aria-label="t('dashboardPage.serverSelection')"
+				@select="(item) => selectServer(item.key)"
+			/>
+		</UiPageHeader>
 
-		<section class="overview-grid">
-			<article
+		<UiStatGrid class="dashboard-section" :columns="3">
+			<UiStatCard
 				v-for="card in statCards"
 				:key="card.key"
-				class="metric-card"
-				:class="`metric-${card.key}`"
-				:style="card.loadScale !== undefined ? { '--metric-load-scale': card.loadScale } : undefined"
-			>
-				<span class="metric-label">{{ card.label }}</span>
-				<strong>{{ card.value }}</strong>
-				<span class="metric-helper">{{ card.helper }}</span>
-			</article>
-		</section>
+				:label="card.label"
+				:value="card.value"
+				:helper="card.helper"
+				:icon="statIcon(card.key)"
+				:tone="statTone(card.key)"
+			/>
+		</UiStatGrid>
 
 		<section class="mspt-history-panel">
 			<div class="section-title horizontal">
@@ -100,7 +127,13 @@ const {
 					></span>
 				</div>
 			</div>
-				<div v-else class="empty-state">{{ t('dashboardPage.waitingSamples') }}</div>
+				<UiStatePanel
+					v-else
+					state="info"
+					icon="analytics"
+					compact
+					:message="t('dashboardPage.waitingSamples')"
+				/>
 
 			<div v-if="msptBars.length" class="chart-footer">
 				<span>0ms</span>
@@ -119,7 +152,12 @@ const {
 							<span>{{ t('dashboardPage.activity') }}</span>
 						<strong>{{ serverLoad }}%</strong>
 					</div>
-					<div class="load-track" aria-hidden="true">
+					<md-linear-progress
+						v-if="isModernUi"
+						:value.prop="Math.max(0, Math.min(1, Number(serverLoad || 0) / 100))"
+						:aria-label="t('dashboardPage.activity')"
+					/>
+					<div v-else class="load-track" aria-hidden="true">
 						<span :style="{ width: `${serverLoad}%` }"></span>
 					</div>
 				</div>
@@ -149,8 +187,19 @@ const {
 					<span class="player-count">{{ onlineCount }}</span>
 				</div>
 
-				<div v-if="fetchError" class="empty-state error">{{ fetchError }}</div>
-					<div v-else-if="!players.length" class="empty-state">{{ t('dashboardPage.noOnlinePlayers') }}</div>
+				<UiStatePanel
+					v-if="fetchError"
+					state="error"
+					compact
+					:message="fetchError"
+				/>
+				<UiStatePanel
+					v-else-if="!players.length"
+					state="empty"
+					icon="group_off"
+					compact
+					:message="t('dashboardPage.noOnlinePlayers')"
+				/>
 				<div v-else class="player-list">
 					<div class="player-list-head" aria-hidden="true">
 						<span>{{ t('dashboardPage.player') }}</span>

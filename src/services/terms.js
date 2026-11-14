@@ -1,6 +1,5 @@
-import DOMPurify from 'dompurify'
-import { marked } from 'marked'
 import { fetchSessionAccount } from './accountSession.js'
+import { renderSafeMarkdownHtml } from '@/utils/safeMarkdown.js'
 
 const TERMS_DOCUMENT_URL = '/content/terms/user_notice.md'
 const TERMS_ACCEPTANCE_KEY_PREFIX = 'qcommunity.terms.accepted.'
@@ -44,7 +43,7 @@ export async function loadTermsDocument() {
 	return {
 		markdown,
 		version,
-		html: DOMPurify.sanitize(marked.parse(markdown)),
+		html: renderSafeMarkdownHtml(markdown),
 	}
 }
 

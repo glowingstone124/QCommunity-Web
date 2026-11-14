@@ -9,13 +9,13 @@
 
 		<section class="login-container" :aria-label="$t('auth.loginForm')">
 			<header class="header">
-				<h1>{{ $t("loginPage.welcome_back") }}</h1>
+				<h2>{{ $t("loginPage.welcome_back") }}</h2>
 				<p>{{ $t("loginPage.login") }}</p>
 			</header>
 
 			<div v-if="targetService" class="sso-service-badge">
 				<div class="sso-badge-header">
-					<svg class="sso-badge-icon" viewBox="0 0 24 24">
+					<svg class="sso-badge-icon" viewBox="0 0 24 24" aria-hidden="true">
 						<path d="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.89,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z"/>
 					</svg>
 					<span>{{ $t("loginPage.sso_target") }}</span>
@@ -26,13 +26,14 @@
 			<QqAuthForm v-if="qqMode" :on-authorized="completeLogin" />
 			<form v-else @submit.prevent="login">
 				<div class="input-group">
-					<svg class="input-icon" viewBox="0 0 24 24">
+					<svg class="input-icon" viewBox="0 0 24 24" aria-hidden="true">
 						<path
 							d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z"/>
 					</svg>
 					<input
 						v-model="username"
 						type="text"
+						:aria-label="$t('auth.usernamePlaceholder')"
 						:placeholder="$t('auth.usernamePlaceholder')"
 						autocomplete="username"
 						required
@@ -40,34 +41,32 @@
 				</div>
 
 				<div class="input-group">
-					<svg class="input-icon" viewBox="0 0 24 24">
+					<svg class="input-icon" viewBox="0 0 24 24" aria-hidden="true">
 						<path
 							d="M12,17C10.89,17 10,16.1 10,15C10,13.89 10.89,13 12,13C13.1,13 14,13.9 14,15C14,16.1 13.1,17 12,17M18,20V10H6V20H18M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V10C4,8.89 4.89,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z"/>
 					</svg>
 					<input
 						v-model="password"
 						type="password"
+						:aria-label="$t('auth.passwordPlaceholder')"
 						:placeholder="$t('auth.passwordPlaceholder')"
 						autocomplete="current-password"
 						required
 					>
 				</div>
 
-				<button type="submit" :disabled="loading">
-					<span v-if="!loading">{{ $t("loginPage.now_login") }}</span>
-					<div v-else class="spinner"></div>
-				</button>
+				<UiButton type="submit" variant="filled" full-width :loading="loading" :disabled="loading">
+					{{ $t('loginPage.now_login') }}
+				</UiButton>
 
-				<div v-if="errorMessage" class="error-message">
-					{{ errorMessage }}
-				</div>
+				<UiStatePanel v-if="errorMessage" state="error" compact role="alert" :message="errorMessage" />
 
 				<p class="register-hint">
 					{{ $t('auth.noAccount') }}
 					<router-link to="/register">{{ $t('auth.goRegister') }}</router-link>
 				</p>
 			</form>
-			<p v-if="qqMode && errorMessage" class="error-message" role="alert">{{ errorMessage }}</p>
+			<UiStatePanel v-if="qqMode && errorMessage" state="error" compact role="alert" :message="errorMessage" />
 		</section>
 	</div>
 </template>
@@ -78,7 +77,12 @@ import { useRoute } from 'vue-router'
 import LoginShaderBackground from '@/components/auth/LoginShaderBackground.vue'
 import CasLoginView from './CasLoginView.vue'
 import QqAuthForm from '@/components/auth/QqAuthForm.vue'
+import UiButton from '@/components/ui/UiButton.vue'
+import UiStatePanel from '@/components/ui/UiStatePanel.vue'
 import { useCasPortal } from '@/composables/useCasPortal.js'
+import { useUiPreferences } from '@/composables/useUiPreferences.js'
+
+const { isModernUi } = useUiPreferences()
 
 const route = useRoute()
 const isCallback = computed(() => typeof route.query.ticket === 'string')
@@ -145,9 +149,10 @@ const { targetService, ssoServiceDisplay, errorMessage, loading, completeLogin, 
 	margin-bottom: 1rem;
 }
 
-.header h1 {
+.header h2 {
 	color: var(--title-color);
 	font-size: 1.55rem;
+	font-weight: 700;
 	line-height: 1.2;
 	margin: 0;
 }
@@ -227,6 +232,9 @@ form {
 	min-width: 0;
 	padding: 0.95rem 0;
 	font-size: 1rem;
+}
+
+.input-group input:focus:not(:focus-visible) {
 	outline: none;
 }
 
@@ -234,31 +242,28 @@ form {
 	color: var(--text-secondary);
 }
 
-input:focus {
-	outline: none;
-}
-
-button {
+button:not(.ui-btn) {
 	width: 100%;
 	min-height: 52px;
 	padding: 0.95rem 1.25rem;
-	background: var(--primary);
-	color: var(--background);
+	background: var(--button-primary-bg);
+	color: var(--button-primary-text);
 	border: none;
+	border-radius: var(--ui-radius-sm, 0);
 	font-size: 1rem;
 	font-weight: 600;
 	cursor: pointer;
-	transition: filter 0.18s var(--ease-out);
+	transition: background-color 0.18s var(--ease-out);
 	display: flex;
 	justify-content: center;
 	align-items: center;
 }
 
-button:hover:not(:disabled) {
-	filter: brightness(1.1);
+button:not(.ui-btn):hover:not(:disabled) {
+	background: var(--button-primary-hover);
 }
 
-button:disabled {
+button:not(.ui-btn):disabled {
 	opacity: 0.7;
 	cursor: not-allowed;
 }
@@ -266,7 +271,7 @@ button:disabled {
 .spinner {
 	width: 18px;
 	height: 18px;
-	border: 2px solid var(--background);
+	border: 2px solid var(--button-primary-text);
 	border-top-color: transparent;
 	border-radius: 50%;
 	animation: spin 0.8s linear infinite;
@@ -279,7 +284,7 @@ button:disabled {
 }
 
 .error-message {
-	color: #ef4444;
+	color: var(--error-text);
 	font-size: 0.9rem;
 	margin: 0.25rem 0 0;
 	text-align: left;
@@ -319,5 +324,54 @@ button:disabled {
 		max-width: 480px;
 		margin: 0 auto;
 	}
+}
+
+/* Material Design 3 CAS Login Card & Inputs */
+:global(:root[data-ui="modern"] .login-wrapper .login-container) {
+	border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+	border-radius: var(--md-sys-shape-corner-extra-large);
+	background: color-mix(in srgb, var(--md-sys-color-surface-container-low) 92%, transparent);
+	backdrop-filter: blur(18px) saturate(140%);
+	box-shadow: var(--md-sys-elevation-level3);
+	padding: 2rem;
+}
+
+:global(:root[data-ui="modern"] .login-wrapper .sso-service-badge) {
+	border-radius: var(--md-sys-shape-corner-large);
+	border-color: transparent;
+	background: var(--md-sys-color-secondary-container);
+	color: var(--md-sys-color-on-secondary-container);
+}
+
+:global(:root[data-ui="modern"] .login-wrapper .sso-badge-url),
+:global(:root[data-ui="modern"] .login-wrapper .sso-badge-header) {
+	color: var(--md-sys-color-on-secondary-container);
+}
+
+:global(:root[data-ui="modern"] .login-wrapper .sso-badge-icon) {
+	fill: var(--md-sys-color-on-secondary-container);
+}
+
+:global(:root[data-ui="modern"] .login-wrapper .input-group) {
+	border-radius: var(--md-sys-shape-corner-medium);
+	border: 1px solid var(--md-sys-color-outline);
+	background: var(--md-sys-color-surface-container-lowest);
+}
+
+:global(:root[data-ui="modern"] .login-wrapper .input-group:focus-within) {
+	border-color: var(--md-sys-color-primary);
+	box-shadow: inset 0 0 0 1px var(--md-sys-color-primary);
+}
+
+:global(:root[data-ui="modern"] .login-wrapper .input-group input),
+:global(:root[data-ui="modern"] .login-wrapper .input-group input:focus) {
+	border: none;
+	background: transparent;
+	box-shadow: none;
+	min-block-size: auto;
+}
+
+:global(:root[data-ui="modern"] .login-wrapper button) {
+	border-radius: var(--md-sys-shape-corner-full);
 }
 </style>

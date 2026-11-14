@@ -54,9 +54,11 @@
     border-top: 1px solid var(--border-soft);
 }
 
-.name-bar h3 {
+.name-bar h3,
+.name-bar .card-name {
     margin: 0;
     font-size: 1rem;
+    font-weight: 700;
     letter-spacing: -0.01em;
 }
 

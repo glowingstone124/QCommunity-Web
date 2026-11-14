@@ -1,7 +1,12 @@
 <script setup>
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import UiButton from '@/components/ui/UiButton.vue'
+import UiStatePanel from '@/components/ui/UiStatePanel.vue'
+import { useUiPreferences } from '@/composables/useUiPreferences.js'
 import { isValidQqNumber } from '@/utils/taAccess.js'
+
+const { isModernUi } = useUiPreferences()
 
 const props = defineProps({
 	playtime: { type: Number, default: 0 },
@@ -71,7 +76,12 @@ async function copyApprovalCommand() {
 				<span>{{ t('taAccount.progressLabel') }}</span>
 				<span>{{ progressPercent }}%</span>
 			</div>
-			<div class="ta-progress-track" role="progressbar" :aria-valuenow="progressPercent" aria-valuemin="0" aria-valuemax="100">
+			<md-linear-progress
+				v-if="isModernUi"
+				:value.prop="Math.max(0, Math.min(1, Number(progressPercent || 0) / 100))"
+				:aria-label="t('taAccount.progressLabel')"
+			/>
+			<div v-else class="ta-progress-track" role="progressbar" :aria-valuenow="progressPercent" aria-valuemin="0" aria-valuemax="100">
 				<div class="ta-progress-fill" :style="{ width: `${progressPercent}%` }"></div>
 			</div>
 			<p class="ta-progress-hint" :class="{ 'is-ready': canUpgrade }">
@@ -93,29 +103,42 @@ async function copyApprovalCommand() {
 						:placeholder="t('taAccount.qqPlaceholder')"
 						:disabled="submitting"
 					/>
-					<button
+					<UiButton
 						type="submit"
+						variant="filled"
 						class="ta-submit-btn"
+						:loading="submitting"
 						:disabled="!canUpgrade || submitting"
 					>
 						{{ submitting ? t('taAccount.submittingBind') : t('taAccount.submitBind') }}
-					</button>
+					</UiButton>
 				</div>
 			</label>
 		</form>
 
-		<p v-if="localValidationError || errorMessage" class="ta-feedback is-error" role="status">
-			{{ localValidationError || errorMessage }}
-		</p>
+		<UiStatePanel
+			v-if="localValidationError || errorMessage"
+			state="error"
+			compact
+			role="alert"
+			:message="localValidationError || errorMessage"
+		/>
 
 		<div v-if="pendingCommand" class="ta-pending-box" role="status">
 			<h4>{{ t('taAccount.pendingTitle') }}</h4>
 			<p>{{ t('taAccount.pendingDescription') }}</p>
 			<div class="ta-command-row">
 				<code class="ta-command-code">{{ pendingCommand }}</code>
-				<button type="button" class="ta-copy-btn" @click="copyApprovalCommand">
+				<UiButton
+					type="button"
+					variant="tonal"
+					size="sm"
+					:icon="copied ? 'check' : 'content_copy'"
+					class="ta-copy-btn"
+					@click="copyApprovalCommand"
+				>
 					{{ copied ? t('taAccount.copiedCommand') : t('taAccount.copyCommand') }}
-				</button>
+				</UiButton>
 			</div>
 			<a
 				href="https://qm.qq.com/q/ca25kxwf0k"
@@ -237,12 +260,15 @@ async function copyApprovalCommand() {
 }
 
 .ta-input:focus {
-	outline: none;
 	border-color: var(--primary);
 }
 
-.ta-submit-btn,
-.ta-copy-btn {
+.ta-input:focus:not(:focus-visible) {
+	outline: none;
+}
+
+:global(:root:not([data-ui="modern"]) .account .ta-submit-btn),
+:global(:root:not([data-ui="modern"]) .account .ta-copy-btn) {
 	border: 1px solid var(--primary);
 	background: var(--button-primary-bg);
 	color: var(--button-primary-text);
@@ -251,12 +277,12 @@ async function copyApprovalCommand() {
 	cursor: pointer;
 }
 
-.ta-submit-btn:hover:not(:disabled),
-.ta-copy-btn:hover:not(:disabled) {
+:global(:root:not([data-ui="modern"]) .account .ta-submit-btn:hover:not(:disabled)),
+:global(:root:not([data-ui="modern"]) .account .ta-copy-btn:hover:not(:disabled)) {
 	background: var(--button-primary-hover);
 }
 
-.ta-submit-btn:disabled {
+:global(:root:not([data-ui="modern"]) .account .ta-submit-btn:disabled) {
 	opacity: 0.55;
 	cursor: not-allowed;
 }
@@ -312,5 +338,40 @@ async function copyApprovalCommand() {
 	color: var(--primary);
 	font-weight: 600;
 	text-decoration: underline;
+}
+
+/* Material Design 3 TA Upgrade Card */
+:global(:root[data-ui="modern"] .account .ta-upgrade-card) {
+	border: none;
+	border-radius: var(--md-sys-shape-corner-large);
+	background: var(--md-sys-color-surface-container);
+	box-shadow: var(--md-sys-elevation-level1);
+}
+
+:global(:root[data-ui="modern"] .account .ta-badge) {
+	border-radius: var(--md-sys-shape-corner-full);
+	background: var(--md-sys-color-tertiary-container);
+	color: var(--md-sys-color-on-tertiary-container);
+}
+
+:global(:root[data-ui="modern"] .account .ta-progress-track) {
+	border-radius: var(--md-sys-shape-corner-full);
+	background: var(--md-sys-color-surface-container-highest);
+}
+
+:global(:root[data-ui="modern"] .account .ta-progress-fill) {
+	border-radius: var(--md-sys-shape-corner-full);
+	background: var(--md-sys-color-primary);
+}
+
+:global(:root[data-ui="modern"] .account .ta-pending-box) {
+	border-radius: var(--md-sys-shape-corner-large);
+	border-color: color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent);
+	background: color-mix(in srgb, var(--md-sys-color-primary-container) 35%, var(--md-sys-color-surface-container-low));
+}
+
+:global(:root[data-ui="modern"] .account .ta-command-code) {
+	border-radius: var(--md-sys-shape-corner-medium);
+	background: var(--md-sys-color-surface-container-lowest);
 }
 </style>

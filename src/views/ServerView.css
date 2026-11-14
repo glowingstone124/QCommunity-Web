@@ -148,10 +148,8 @@
 	display: flex;
 	align-items: center;
 	gap: 0.75rem;
-	font-size: 0.76rem;
-	font-weight: 700;
-	letter-spacing: 0.12em;
-	text-transform: uppercase;
+	font-size: 0.8rem;
+	font-weight: 600;
 	color: var(--text-secondary);
 }
 
@@ -407,10 +405,8 @@
 }
 
 .metric-label {
-	font-size: 0.75rem;
+	font-size: 0.82rem;
 	font-weight: 700;
-	text-transform: uppercase;
-	letter-spacing: 0.05em;
 	color: var(--text-secondary);
 }
 
@@ -456,10 +452,8 @@
 }
 
 .spec-label {
-	font-size: 0.76rem;
-	text-transform: uppercase;
+	font-size: 0.82rem;
 	font-weight: 700;
-	letter-spacing: 0.04em;
 	color: var(--primary);
 }
 
@@ -481,7 +475,7 @@
 	flex-wrap: wrap;
 }
 
-.copy-btn {
+:global(:root:not([data-ui="modern"]) .server-intro-page .copy-btn) {
 	padding: 0.25rem 0.6rem;
 	font-size: 0.75rem;
 	font-weight: 600;
@@ -495,11 +489,11 @@
 	transition: background var(--motion-fast) var(--ease-out), color var(--motion-fast) var(--ease-out);
 }
 
-.copy-btn:hover {
+:global(:root:not([data-ui="modern"]) .server-intro-page .copy-btn:hover) {
 	background: var(--button-secondary-hover);
 }
 
-.copy-btn.is-copied {
+:global(:root:not([data-ui="modern"]) .server-intro-page .copy-btn.is-copied) {
 	background: var(--primary);
 	color: var(--button-primary-text);
 }
@@ -512,7 +506,7 @@
 	justify-content: flex-start;
 }
 
-.action-btn-primary {
+:global(:root:not([data-ui="modern"]) .server-intro-page .action-btn-primary) {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -530,11 +524,11 @@
 	transition: background var(--motion-fast) var(--ease-out), transform var(--motion-fast) var(--ease-out);
 }
 
-.action-btn-primary:hover {
+:global(:root:not([data-ui="modern"]) .server-intro-page .action-btn-primary:hover) {
 	background: var(--button-primary-hover);
 }
 
-.action-btn-primary:active {
+:global(:root:not([data-ui="modern"]) .server-intro-page .action-btn-primary:active) {
 	transform: scale(0.985);
 }
 
@@ -890,10 +884,8 @@
 }
 
 .matrix-label {
-	font-size: 0.68rem;
+	font-size: 0.75rem;
 	font-weight: 700;
-	letter-spacing: 0.05em;
-	text-transform: uppercase;
 	color: var(--text-secondary);
 }
 
@@ -1134,52 +1126,9 @@
 	display: grid;
 }
 
-.qplugin-tabs {
-	display: flex;
+.qplugin-tabs-nav {
 	border-bottom: 1px solid var(--split);
 	background: var(--background-secondary);
-	overflow-x: auto;
-}
-
-.qplugin-tab-btn {
-	padding: 0.85rem 1.4rem;
-	font-size: 0.88rem;
-	font-weight: 700;
-	border: none;
-	border-right: 1px solid var(--split);
-	background: transparent;
-	color: var(--text-secondary);
-	cursor: pointer;
-	border-radius: 0;
-	box-shadow: none;
-	white-space: nowrap;
-	position: relative;
-	transition: color var(--motion-fast) var(--ease-out), background var(--motion-fast) var(--ease-out);
-}
-
-.qplugin-tab-btn::after {
-	content: '';
-	position: absolute;
-	bottom: -1px;
-	left: 0;
-	width: 100%;
-	height: 2px;
-	background: transparent;
-	transition: background var(--motion-fast) var(--ease-out);
-}
-
-.qplugin-tab-btn:hover {
-	color: var(--title-color);
-	background: color-mix(in srgb, var(--primary) 5%, transparent);
-}
-
-.qplugin-tab-btn.is-active {
-	color: var(--primary);
-	background: var(--background);
-}
-
-.qplugin-tab-btn.is-active::after {
-	background: var(--primary);
 }
 
 .qplugin-tab-content {
@@ -1480,7 +1429,7 @@
 	margin-top: 0.25rem;
 }
 
-.feature-link {
+:global(:root:not([data-ui="modern"]) .server-intro-page .feature-link) {
 	display: inline-flex;
 	align-items: center;
 	gap: 0.35rem;
@@ -1491,17 +1440,8 @@
 	transition: color var(--motion-fast) var(--ease-out);
 }
 
-.feature-link:hover {
+:global(:root:not([data-ui="modern"]) .server-intro-page .feature-link:hover) {
 	text-decoration: underline;
-}
-
-.link-arrow {
-	font-family: var(--font-mono);
-	transition: transform var(--motion-fast) var(--ease-out);
-}
-
-.feature-link:hover .link-arrow {
-	transform: translateX(3px);
 }
 
 /* Landmarks Grid */
@@ -1721,7 +1661,7 @@
 	color: var(--text-secondary);
 }
 
-.step-action {
+:global(:root:not([data-ui="modern"]) .server-intro-page .step-action) {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -1738,12 +1678,12 @@
 	transition: background var(--motion-fast) var(--ease-out), color var(--motion-fast) var(--ease-out), transform var(--motion-fast) var(--ease-out);
 }
 
-.step-action:hover {
+:global(:root:not([data-ui="modern"]) .server-intro-page .step-action:hover) {
 	background: var(--primary);
 	color: var(--button-primary-text);
 }
 
-.step-action:active {
+:global(:root:not([data-ui="modern"]) .server-intro-page .step-action:active) {
 	transform: scale(0.985);
 }
 
@@ -1827,8 +1767,8 @@
 /* Finale */
 /* ========================================================= */
 .finale {
-	background: var(--primary);
-	color: var(--button-primary-text);
+	background: var(--accent-surface-bg, var(--button-primary-bg));
+	color: var(--accent-surface-text, var(--button-primary-text));
 	padding-block: clamp(4rem, 12vw, 9rem);
 	overflow: hidden;
 }
@@ -1895,7 +1835,7 @@
 	font-weight: 700;
 }
 
-.finale-link {
+:global(:root:not([data-ui="modern"]) .server-intro-page .finale-link) {
 	display: inline-flex;
 	align-items: center;
 	padding: 0.8rem 1.4rem;
@@ -1909,17 +1849,17 @@
 	transition: background var(--motion-fast) var(--ease-out), color var(--motion-fast) var(--ease-out), transform var(--motion-fast) var(--ease-out);
 }
 
-.finale-link:hover {
+:global(:root:not([data-ui="modern"]) .server-intro-page .finale-link:hover) {
 	background: var(--button-primary-text);
 	border-color: var(--button-primary-text);
 	color: var(--primary);
 }
 
-.finale-link:active {
+:global(:root:not([data-ui="modern"]) .server-intro-page .finale-link:active) {
 	transform: scale(0.985);
 }
 
-.finale-link.is-ghost {
+:global(:root:not([data-ui="modern"]) .server-intro-page .finale-link.is-ghost) {
 	border-color: color-mix(in srgb, currentColor 45%, transparent);
 }
 
@@ -2130,5 +2070,219 @@
 
 	.scene-specs-matrix {
 		grid-template-columns: 1fr;
+	}
+}
+
+/* ========================================================= */
+/* Material Design 3 Overrides (data-ui="modern") */
+/* ========================================================= */
+:global(:root[data-ui="modern"] .server-intro-page) {
+	color: var(--md-sys-color-on-surface);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	:global(:root[data-ui="modern"] .server-intro-page .hero-word > span) {
+		animation: word-rise 280ms var(--md-sys-motion-easing-emphasized-decelerate, cubic-bezier(0.05, 0.7, 0.1, 1)) calc(var(--i, 0) * 60ms) both;
+	}
+
+	:global(:root[data-ui="modern"] .server-intro-page .hero-description) {
+		animation: hero-fade-in 260ms var(--md-sys-motion-easing-emphasized-decelerate, cubic-bezier(0.05, 0.7, 0.1, 1)) 80ms both;
+	}
+
+	:global(:root[data-ui="modern"] .server-intro-page .hero .quick-connect-strip) {
+		animation: hero-fade-in 260ms var(--md-sys-motion-easing-emphasized-decelerate, cubic-bezier(0.05, 0.7, 0.1, 1)) 140ms both;
+	}
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .hero-title) {
+	text-wrap: balance;
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .hero-description),
+:global(:root[data-ui="modern"] .server-intro-page .feature-desc),
+:global(:root[data-ui="modern"] .server-intro-page .mode-desc),
+:global(:root[data-ui="modern"] .server-intro-page .step-content p) {
+	text-wrap: pretty;
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .page-progress) {
+	background: var(--md-sys-color-primary);
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .server-btn-icon),
+:global(:root[data-ui="modern"] .server-intro-page .server-nav-icon) {
+	font-size: 1.05rem;
+	line-height: 1;
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .quick-connect-strip),
+:global(:root[data-ui="modern"] .server-intro-page .metrics-strip),
+:global(:root[data-ui="modern"] .server-intro-page .qplugin-console-panel),
+:global(:root[data-ui="modern"] .server-intro-page .scene-photo-frame) {
+	border-radius: var(--md-sys-shape-corner-extra-large);
+	border: 1px solid var(--md-sys-color-outline-variant);
+	background: var(--md-sys-color-surface-container-low);
+	box-shadow: var(--md-sys-elevation-level1);
+	overflow: hidden;
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .metric-cell),
+:global(:root[data-ui="modern"] .server-intro-page .qplugin-item-card),
+:global(:root[data-ui="modern"] .server-intro-page .mode-card),
+:global(:root[data-ui="modern"] .server-intro-page .feature-card),
+:global(:root[data-ui="modern"] .server-intro-page .landmark-card),
+:global(:root[data-ui="modern"] .server-intro-page .step-card),
+:global(:root[data-ui="modern"] .server-intro-page .quick-link-card) {
+	position: relative;
+	border-radius: var(--md-sys-shape-corner-large);
+	border: 1px solid var(--md-sys-color-outline-variant);
+	background: var(--md-sys-color-surface-container-low);
+	color: var(--md-sys-color-on-surface);
+	transition:
+		background-color var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1)),
+		border-color var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1)),
+		box-shadow var(--md-sys-motion-duration-medium2, 300ms) var(--md-sys-motion-easing-emphasized, cubic-bezier(0.2, 0, 0, 1)),
+		transform var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-emphasized-decelerate, cubic-bezier(0.05, 0.7, 0.1, 1));
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .metric-cell) {
+	border-radius: 0;
+	border-color: transparent;
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .metric-cell::before),
+:global(:root[data-ui="modern"] .server-intro-page .mode-card::before),
+:global(:root[data-ui="modern"] .server-intro-page .feature-card::before),
+:global(:root[data-ui="modern"] .server-intro-page .landmark-card::before) {
+	display: none;
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .qplugin-item-card:hover),
+:global(:root[data-ui="modern"] .server-intro-page .mode-card:hover),
+:global(:root[data-ui="modern"] .server-intro-page .feature-card:hover),
+:global(:root[data-ui="modern"] .server-intro-page .landmark-card:hover),
+:global(:root[data-ui="modern"] .server-intro-page .step-card:hover),
+:global(:root[data-ui="modern"] .server-intro-page .quick-link-card:hover) {
+	background: var(--md-sys-color-surface-container);
+	border-color: var(--md-sys-color-outline);
+	box-shadow: var(--md-sys-elevation-level2);
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .quick-link-card) {
+	overflow: hidden;
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .ticker-toggle),
+:global(:root[data-ui="modern"] .server-intro-page .scene-nav-arrow),
+:global(:root[data-ui="modern"] .server-intro-page .rail-seg),
+:global(:root[data-ui="modern"] .server-intro-page .mode-command) {
+	position: relative;
+	overflow: hidden;
+	transition:
+		background-color var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1)),
+		color var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1)),
+		border-color var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1)),
+		transform var(--md-sys-motion-duration-short2, 100ms) var(--md-sys-motion-easing-emphasized-decelerate, cubic-bezier(0.05, 0.7, 0.1, 1));
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .step-action) {
+	margin-top: 0.25rem;
+	width: fit-content;
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .ticker-toggle),
+:global(:root[data-ui="modern"] .server-intro-page .scene-nav-arrow) {
+	border-radius: var(--md-sys-shape-corner-full);
+	border: 1px solid var(--md-sys-color-outline-variant);
+	background: var(--md-sys-color-surface-container-high);
+	color: var(--md-sys-color-on-surface);
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .rail-seg) {
+	border-radius: var(--md-sys-shape-corner-medium);
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .rail-seg.is-active) {
+	background: var(--md-sys-color-secondary-container);
+	color: var(--md-sys-color-on-secondary-container);
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .rail-seg.is-active .rail-fill),
+:global(:root[data-ui="modern"] .server-intro-page .rail-seg.is-done .rail-fill) {
+	background: var(--md-sys-color-primary);
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .qplugin-tabs-nav) {
+	border-bottom: 1px solid var(--md-sys-color-outline-variant);
+	background: var(--md-sys-color-surface-container);
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .qplugin-badge),
+:global(:root[data-ui="modern"] .server-intro-page .mode-tag),
+:global(:root[data-ui="modern"] .server-intro-page .landmark-badge) {
+	border-radius: var(--md-sys-shape-corner-full);
+	background: var(--md-sys-color-tertiary-container);
+	color: var(--md-sys-color-on-tertiary-container);
+	border-color: transparent;
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .qplugin-terminal-line),
+:global(:root[data-ui="modern"] .server-intro-page .mode-command) {
+	border-radius: var(--md-sys-shape-corner-medium);
+	border: 1px solid var(--md-sys-color-outline-variant);
+	background: var(--md-sys-color-surface-container-highest);
+	color: var(--md-sys-color-on-surface);
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .qplugin-terminal-line) {
+	overflow-x: auto;
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .qplugin-terminal-line code),
+:global(:root[data-ui="modern"] .server-intro-page .mode-command code) {
+	color: var(--md-sys-color-primary);
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .finale) {
+	background: var(--md-sys-color-primary);
+	color: var(--md-sys-color-on-primary);
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .finale .finale-link) {
+	background: var(--md-sys-color-on-primary);
+	color: var(--md-sys-color-primary);
+	border-color: transparent;
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .finale .finale-link.is-ghost) {
+	background: transparent;
+	color: var(--md-sys-color-on-primary);
+	border: 1.5px solid var(--md-sys-color-on-primary);
+}
+
+:global(:root[data-ui="modern"] .server-intro-page :is(
+	.ticker-toggle,
+	.scene-nav-arrow,
+	.rail-seg,
+	.mode-command,
+	.quick-link-card
+):focus-visible) {
+	outline: 3px solid var(--md-sys-color-primary);
+	outline-offset: 2px;
+}
+
+:global(:root[data-ui="modern"] .server-intro-page .finale :is(.finale-address, .finale-link):focus-visible) {
+	outline: 3px solid var(--md-sys-color-on-primary);
+	outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	:global(:root[data-ui="modern"] .server-intro-page .qplugin-item-card),
+	:global(:root[data-ui="modern"] .server-intro-page .mode-card),
+	:global(:root[data-ui="modern"] .server-intro-page .feature-card),
+	:global(:root[data-ui="modern"] .server-intro-page .landmark-card),
+	:global(:root[data-ui="modern"] .server-intro-page .step-card),
+	:global(:root[data-ui="modern"] .server-intro-page .quick-link-card) {
+		transition: none;
 	}
 }

@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AppNavigation from '@/components/ui/AppNavigation.vue'
+import { useUiPreferences } from '@/composables/useUiPreferences.js'
 
 const props = defineProps({
 	currentSetting: {
@@ -16,6 +17,7 @@ const props = defineProps({
 
 const emit = defineEmits(['select', 'logout'])
 const { t } = useI18n()
+const { isModernUi } = useUiPreferences()
 
 const navigationItems = computed(() =>
 	props.tabs.map((tab) => ({
@@ -30,7 +32,6 @@ const navigationItems = computed(() =>
 	<aside class="side">
 		<div class="side-header">
 			<h1>{{ t('accountPage.title') }}</h1>
-			<p class="side-sub">{{ t('accountPage.sideDescription') }}</p>
 		</div>
 		<AppNavigation
 			:active-key="currentSetting"
@@ -42,6 +43,7 @@ const navigationItems = computed(() =>
 		/>
 		<div class="side-foot">
 			<button type="button" class="logout-button" @click="emit('logout')">
+				<md-ripple v-if="isModernUi" />
 				<span class="logout-title">{{ t('accountPage.logout') }}</span>
 				<span class="logout-desc">{{ t('accountPage.logoutDescription') }}</span>
 			</button>
@@ -78,15 +80,15 @@ const navigationItems = computed(() =>
 
 .side :deep(.app-navigation-entry) {
 	opacity: 0;
-	animation: account-side-item-in 380ms var(--ease-out) forwards;
+	animation: account-side-item-in 200ms var(--ease-out) forwards;
 }
 
-.side :deep(.app-navigation-entry:nth-child(1)) { animation-delay: 70ms; }
-.side :deep(.app-navigation-entry:nth-child(2)) { animation-delay: 110ms; }
-.side :deep(.app-navigation-entry:nth-child(3)) { animation-delay: 150ms; }
-.side :deep(.app-navigation-entry:nth-child(4)) { animation-delay: 190ms; }
-.side :deep(.app-navigation-entry:nth-child(5)) { animation-delay: 230ms; }
-.side :deep(.app-navigation-entry:nth-child(6)) { animation-delay: 270ms; }
+.side :deep(.app-navigation-entry:nth-child(1)) { animation-delay: 20ms; }
+.side :deep(.app-navigation-entry:nth-child(2)) { animation-delay: 40ms; }
+.side :deep(.app-navigation-entry:nth-child(3)) { animation-delay: 60ms; }
+.side :deep(.app-navigation-entry:nth-child(4)) { animation-delay: 80ms; }
+.side :deep(.app-navigation-entry:nth-child(5)) { animation-delay: 100ms; }
+.side :deep(.app-navigation-entry:nth-child(6)) { animation-delay: 120ms; }
 
 .side-sub {
 	margin: 0;
@@ -101,7 +103,7 @@ const navigationItems = computed(() =>
 	flex-direction: column;
 	gap: 0.9rem;
 	opacity: 0;
-	animation: account-side-item-in 420ms var(--ease-out) 230ms forwards;
+	animation: account-side-item-in 200ms var(--ease-out) 60ms forwards;
 }
 
 .logout-button {
@@ -136,9 +138,12 @@ const navigationItems = computed(() =>
 }
 
 .logout-desc {
-	color: currentColor;
+	color: var(--text-secondary);
 	font-size: 0.88rem;
-	opacity: 0.68;
+}
+
+.logout-button:hover .logout-desc {
+	color: rgba(255, 255, 255, 0.9);
 }
 
 @keyframes account-side-item-in {
@@ -227,5 +232,37 @@ const navigationItems = computed(() =>
 		animation: none;
 		transform: none;
 	}
+}
+
+/* Material Design 3 Navigation Drawer Sidebar */
+:global(:root[data-ui="modern"] .account .side) {
+	background: var(--md-sys-color-surface-container);
+	border-radius: var(--md-sys-shape-corner-extra-large);
+	padding: 1.25rem 1rem;
+	border: none;
+}
+
+:global(:root[data-ui="modern"] .account .side .logout-button) {
+	position: relative;
+	overflow: hidden;
+	border: 1px solid transparent;
+	border-radius: var(--md-sys-shape-corner-large);
+	background: color-mix(in srgb, var(--md-sys-color-error-container) 78%, transparent);
+	color: var(--md-sys-color-on-error-container);
+	padding: 0.9rem 1.05rem;
+}
+
+:global(:root[data-ui="modern"] .account .side .logout-desc) {
+	color: color-mix(in srgb, var(--md-sys-color-on-error-container) 82%, transparent);
+}
+
+:global(:root[data-ui="modern"] .account .side .logout-button:hover) {
+	background: var(--md-sys-color-error);
+	border-color: var(--md-sys-color-error);
+	color: var(--md-sys-color-on-error);
+}
+
+:global(:root[data-ui="modern"] .account .side .logout-button:hover .logout-desc) {
+	color: var(--md-sys-color-on-error);
 }
 </style>

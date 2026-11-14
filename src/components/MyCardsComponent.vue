@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import UiButton from "@/components/ui/UiButton.vue"
 import {computed, onMounted, ref} from 'vue'
 import { useI18n } from 'vue-i18n'
 import axios from "axios";
@@ -62,13 +63,13 @@ const groupedCards = computed(() => groupCardsBySpecial(cards.value))
 		   :src="getSpecialImage(special)"
 		   :alt="special"
 		   style="height: 80px; vertical-align: middle;"
-	   /><h2 class="group-title" v-else>{{ special }}</h2>
+	   /><h4 class="group-title" v-else>{{ special }}</h4>
       </div>
       <div class="card-list">
       <div class="card" v-for="card in group" :key="card.id">
         <img :src="card.file_url" :alt="card.name" />
         <div class="name-bar">
-          <h3>{{ card.name }}</h3>
+          <p class="card-name">{{ card.name }}</p>
         </div>
         <div class="overlay">
           <p>{{ card.special }}</p>
@@ -78,7 +79,7 @@ const groupedCards = computed(() => groupCardsBySpecial(cards.value))
           >
 						<p>{{ t(`cardsPage.${rarityMap[card.rarity]?.style || 'unknownRarity'}`) }}</p>
           </span>
-          <button class="apply" @click="apply(card.id)">{{ t('cardsPage.apply') }}</button>
+          <UiButton type="button" size="sm" variant="filled" class="apply" @click="apply(card.id)">{{ t('cardsPage.apply') }}</UiButton>
         </div>
       </div>
          </div>
@@ -88,7 +89,12 @@ const groupedCards = computed(() => groupCardsBySpecial(cards.value))
 
 <style scoped>
 @import "@/assets/browseCards.css";
-.apply {
+:global(:root[data-ui="modern"] .card-list .card .overlay .apply) {
+	z-index: 2;
+	margin-top: 0.35rem;
+}
+
+:global(:root:not([data-ui="modern"]) .card-list .card .overlay .apply) {
 	z-index: 9999;
 	margin-top: 5px;
 	font-size: 0.8rem;
@@ -104,7 +110,7 @@ const groupedCards = computed(() => groupCardsBySpecial(cards.value))
 }
 
 @media (hover: hover) and (pointer: fine) {
-	.apply:hover {
+	:global(:root:not([data-ui="modern"]) .card-list .card .overlay .apply:hover) {
 		background-color: var(--success-solid);
 		color: #fff;
 		cursor: pointer;

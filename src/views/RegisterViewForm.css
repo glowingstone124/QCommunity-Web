@@ -1,24 +1,24 @@
-.primary-button,
-.dialog button {
+:global(:root:not([data-ui="modern"]) .register-page .primary-button),
+:global(:root:not([data-ui="modern"]) .register-page .dialog button) {
 	border: 1px solid var(--primary);
 	background: var(--button-primary-bg);
 	color: var(--button-primary-text);
 }
 
-.primary-button:hover,
-.dialog button:hover {
+:global(:root:not([data-ui="modern"]) .register-page .primary-button:hover),
+:global(:root:not([data-ui="modern"]) .register-page .dialog button:hover) {
 	background: var(--button-primary-hover);
 }
 
-.secondary-button,
-.options button {
+:global(:root:not([data-ui="modern"]) .register-page .secondary-button),
+.options button:not(.ui-btn) {
 	border: 1px solid var(--register-border);
 	background: var(--background-secondary);
 	color: var(--text-main);
 }
 
-.secondary-button:hover,
-.options button:hover {
+:global(:root:not([data-ui="modern"]) .register-page .secondary-button:hover),
+.options button:not(.ui-btn):hover {
 	border-color: var(--primary);
 }
 

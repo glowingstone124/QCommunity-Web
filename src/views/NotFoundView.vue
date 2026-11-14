@@ -1,27 +1,21 @@
 <script setup lang="ts">
-import {useRouter} from "vue-router";
-import {useI18n} from "vue-i18n";
-let route = useRouter();
-const {t} = useI18n();
-function redirect() {
-	route.push('/');
-}
+import { useI18n } from "vue-i18n";
+import UiButton from "@/components/ui/UiButton.vue";
+
+const { t } = useI18n();
 </script>
 
 <template>
 	<div class="not-found">
 		<h1>{{ t('notFoundPage.title') }}</h1>
 		<p class="description">{{ t('notFoundPage.description') }}</p>
-		<button type="button" class="redirect" @click="redirect">
-			<span class="arrow" aria-hidden="true">←</span><span>{{ t('notFoundPage.home') }}</span>
-		</button>
+		<UiButton variant="tonal" size="lg" icon="arrow_back" to="/">
+			{{ t('notFoundPage.home') }}
+		</UiButton>
 	</div>
 </template>
 
 <style scoped>
-@import "/src/assets/base.css";
-@import "/src/assets/main.css";
-
 .not-found {
 	display: flex;
 	justify-content: center;
@@ -30,7 +24,7 @@ function redirect() {
 	flex-direction: column;
 	text-align: center;
 	padding: 2rem;
-	background: radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--primary) 12%, transparent), transparent 38%);
+	background: var(--page-background, var(--background));
 }
 
 h1 { margin: 0; font-size: clamp(2.4rem, 8vw, 5.5rem); line-height: 1; }
@@ -53,4 +47,31 @@ h1 { margin: 0; font-size: clamp(2.4rem, 8vw, 5.5rem); line-height: 1; }
 .redirect:hover { transform: translateY(-2px); background: var(--button-secondary-hover); }
 .arrow { transition: transform var(--motion-fast) var(--ease-standard); }
 .redirect:hover .arrow { transform: translateX(-3px); }
+
+:global(:root[data-ui="modern"] .not-found) {
+	background: var(--md-sys-color-surface);
+}
+
+:global(:root[data-ui="modern"] .not-found h1) {
+	color: var(--md-sys-color-on-surface);
+	text-wrap: balance;
+}
+
+:global(:root[data-ui="modern"] .not-found .description) {
+	color: var(--md-sys-color-on-surface-variant);
+	text-wrap: pretty;
+}
+
+:global(:root[data-ui="modern"] .not-found .redirect) {
+	min-height: 48px;
+	padding: 0.75rem 1.45rem;
+	border: none;
+	background: var(--md-sys-color-secondary-container);
+	color: var(--md-sys-color-on-secondary-container);
+}
+
+:global(:root[data-ui="modern"] .not-found .redirect:hover) {
+	transform: none;
+	background: color-mix(in srgb, var(--md-sys-color-on-secondary-container) 8%, var(--md-sys-color-secondary-container));
+}
 </style>

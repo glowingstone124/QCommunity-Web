@@ -1,6 +1,9 @@
 <script setup>
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import UiStatCard from '@/components/ui/UiStatCard.vue'
+import UiStatGrid from '@/components/ui/UiStatGrid.vue'
+import UiStatePanel from '@/components/ui/UiStatePanel.vue'
 import {collapseSchedule} from '@/data/collapse.js'
 
 const props = defineProps({
@@ -94,35 +97,46 @@ const gameStatisticItems = computed(() => [
 			</div>
 			<span class="pill">{{ t('accountOverview.boundQq', { uid: uid || '—' }) }}</span>
 		</header>
-		<div class="stats">
-			<div class="stat-card">
-				<p class="stat-label">{{ t('accountOverview.username') }}</p>
-				<p class="stat-value">{{ username || '—' }}</p>
-			</div>
-			<div class="stat-card">
-				<p class="stat-label">{{ t('accountOverview.playtime') }}</p>
-				<p class="stat-value">{{ t('accountOverview.minutes', { count: playtime }) }}</p>
-			</div>
-			<div class="stat-card">
-				<p class="stat-label">{{ t('accountOverview.loginCount') }}</p>
-				<p class="stat-value">{{ logins.length }}</p>
-			</div>
-			<div class="stat-card">
-				<p class="stat-label">{{ t('accountOverview.accountStatus') }}</p>
-				<p class="stat-value" :class="isFrozen ? 'status-frozen' : 'status-ok'">{{ statusHint || t('accountPage.statusChecking') }}</p>
-			</div>
-			<div class="stat-card faction-card">
-				<p class="stat-label">{{ fallenSelection?.finalized ? t('accountOverview.currentFaction') : t('accountOverview.expectedFaction') }}</p>
-				<p class="stat-value faction-value">
-					{{ fallenSelection ? t(teamNames[fallenSelection.team]) : t('accountOverview.notSelected') }}
-				</p>
-				<small v-if="fallenSelection && !fallenSelection.finalized">{{ t('accountOverview.activityStarts', { date: collapseSchedule.startDateShortText[locale] || collapseSchedule.startDateShortText.zh }) }}</small>
-			</div>
-			<div v-for="item in gameStatisticItems" :key="item.label" class="stat-card">
-				<p class="stat-label">{{ item.label }}</p>
-				<p class="stat-value">{{ item.value }}</p>
-			</div>
-		</div>
+		<UiStatGrid class="overview-stat-grid">
+			<UiStatCard
+				:label="t('accountOverview.username')"
+				:value="username || '—'"
+				icon="person"
+			/>
+			<UiStatCard
+				:label="t('accountOverview.playtime')"
+				:value="t('accountOverview.minutes', { count: playtime })"
+				icon="schedule"
+			/>
+			<UiStatCard
+				:label="t('accountOverview.loginCount')"
+				:value="logins.length"
+				icon="login"
+			/>
+			<UiStatCard
+				:label="t('accountOverview.accountStatus')"
+				:value="statusHint || t('accountPage.statusChecking')"
+				:icon="isFrozen ? 'gpp_bad' : 'verified_user'"
+				:tone="isFrozen ? 'error' : 'success'"
+			/>
+			<UiStatCard
+				:label="fallenSelection?.finalized ? t('accountOverview.currentFaction') : t('accountOverview.expectedFaction')"
+				:value="fallenSelection ? t(teamNames[fallenSelection.team]) : t('accountOverview.notSelected')"
+				icon="flag"
+				tone="primary"
+			>
+				<small v-if="fallenSelection && !fallenSelection.finalized" class="faction-activity-note">
+					{{ t('accountOverview.activityStarts', { date: collapseSchedule.startDateShortText[locale] || collapseSchedule.startDateShortText.zh }) }}
+				</small>
+			</UiStatCard>
+			<UiStatCard
+				v-for="item in gameStatisticItems"
+				:key="item.label"
+				:label="item.label"
+				:value="item.value"
+				icon="analytics"
+			/>
+		</UiStatGrid>
 		<div class="section">
 			<div class="section-title">{{ t('accountOverview.loginHistory') }}</div>
 			<div v-if="logins.length" class="record-grid">
@@ -136,7 +150,7 @@ const gameStatisticItems = computed(() => [
 					<p>{{ formatDate(login.date) }}</p>
 				</div>
 			</div>
-			<p v-else class="empty">{{ t('accountOverview.noLoginHistory') }}</p>
+			<UiStatePanel v-else state="empty" compact :message="t('accountOverview.noLoginHistory')" />
 		</div>
 	</section>
 </template>
@@ -262,7 +276,7 @@ const gameStatisticItems = computed(() => [
 	border-radius: 0;
 	padding: 1rem;
 	opacity: 0;
-	animation: overview-item-in 440ms var(--ease-out) 230ms forwards;
+	animation: overview-item-in 200ms var(--ease-out) 60ms forwards;
 }
 
 .section-title {
@@ -376,5 +390,53 @@ const gameStatisticItems = computed(() => [
 		animation: none;
 		transform: none;
 	}
+}
+
+/* Material Design 3 Overview Tonal Cards */
+.overview-stat-grid {
+	grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+	gap: 0.75rem;
+}
+
+.faction-activity-note {
+	color: var(--text-secondary);
+	font-size: 0.78rem;
+	line-height: 1.4;
+}
+
+:global(:root[data-ui="modern"] .account .overview-stat-grid .ui-stat-card) {
+	border: none;
+	border-radius: var(--md-sys-shape-corner-large);
+	background: var(--md-sys-color-surface-container);
+	padding: 1.15rem 1.2rem;
+	box-shadow: var(--md-sys-elevation-level1);
+}
+
+:global(:root[data-ui="modern"] .account .overview-stat-grid .ui-stat-card__value) {
+	font-size: clamp(1.08rem, 1.45vw, 1.35rem);
+	line-height: 1.24;
+}
+
+:global(:root[data-ui="modern"] .account .section) {
+	border: none;
+	border-radius: var(--md-sys-shape-corner-large);
+	background: var(--md-sys-color-surface-container);
+	padding: 1.25rem;
+}
+
+:global(:root[data-ui="modern"] .account .login-record) {
+	border-radius: var(--md-sys-shape-corner-medium);
+	background: var(--md-sys-color-surface-container-low);
+	border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+}
+
+:global(:root[data-ui="modern"] .account .login-record.success) {
+	border-color: color-mix(in srgb, var(--md-sys-color-success) 45%, transparent);
+	background: color-mix(in srgb, var(--md-sys-color-success-container) 35%, var(--md-sys-color-surface-container-low));
+}
+
+:global(:root[data-ui="modern"] .account .login-record.fail) {
+	border-color: color-mix(in srgb, var(--md-sys-color-error) 45%, transparent);
+	background: color-mix(in srgb, var(--md-sys-color-error-container) 35%, var(--md-sys-color-surface-container-low));
 }
 </style>

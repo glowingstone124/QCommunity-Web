@@ -1,0 +1,510 @@
+/* Modern QHub UI Design Layer (`:root[data-ui="modern"]`) & Global Accessibility Primitives */
+
+/* Dynamic `<meta name="color-scheme">` cascade synchronization (`dark-mode-toggle` pattern) */
+:root {
+  color-scheme: light dark;
+}
+
+:root:has(> head > meta[name="color-scheme"][content="dark"]) {
+  color-scheme: dark;
+}
+
+:root:has(> head > meta[name="color-scheme"][content="light"]) {
+  color-scheme: light;
+}
+
+/* Global skip-to-content link & landmark focus hygiene */
+.skip-link {
+  position: fixed;
+  top: -100%;
+  left: 1rem;
+  z-index: 9999;
+  padding: 0.72rem 1.15rem;
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  border: 2px solid var(--background);
+  border-radius: var(--ui-radius-sm, 6px);
+  font-size: 0.94rem;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 10px 30px color-mix(in srgb, #020617 24%, transparent);
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  top: 0.9rem;
+  outline: 2px solid var(--focus-ring, var(--primary));
+  outline-offset: 2px;
+}
+
+#main-content:focus {
+  outline: none;
+}
+
+#main-content:focus-visible {
+  outline: 2px solid var(--focus-ring, var(--primary));
+  outline-offset: -3px;
+}
+
+/* Preserve monospace typography & optical sizing without breaking inheritance via universal `*` */
+:where(code, pre, kbd, samp, .mono, [data-mono]) {
+  font-family: var(--font-mono);
+}
+
+/* View Transitions integration (`same-document-transitions` pattern) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 210ms;
+  animation-timing-function: var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* ========================================================================== */
+/* Material Design 3 System Tokens — Light Mode (Default `[data-ui="modern"]`) */
+/* ========================================================================== */
+:root[data-ui="modern"] {
+  /* Material 3 Cobalt-Azure Seed (#0B57D0) SchemeVibrant Fallback Tokens (synced at runtime by @material/material-color-utilities) */
+  --md-sys-color-primary: #0056d2;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #dae2ff;
+  --md-sys-color-on-primary-container: #0040a1;
+  --md-sys-color-secondary: #5b5b7e;
+  --md-sys-color-on-secondary: #ffffff;
+  --md-sys-color-secondary-container: #e1dfff;
+  --md-sys-color-on-secondary-container: #434465;
+  --md-sys-color-tertiary: #655688;
+  --md-sys-color-on-tertiary: #ffffff;
+  --md-sys-color-tertiary-container: #e9ddff;
+  --md-sys-color-on-tertiary-container: #4d3f6f;
+
+  /* Material 3 5-Level Tonal Surface Hierarchy */
+  --md-sys-color-surface: #faf8ff;
+  --md-sys-color-surface-dim: #d8d9e7;
+  --md-sys-color-surface-bright: #faf8ff;
+  --md-sys-color-surface-container-lowest: #ffffff;
+  --md-sys-color-surface-container-low: #f2f3ff;
+  --md-sys-color-surface-container: #ecedfb;
+  --md-sys-color-surface-container-high: #e6e7f5;
+  --md-sys-color-surface-container-highest: #e0e2ef;
+  --md-sys-color-on-surface: #181b25;
+  --md-sys-color-on-surface-variant: #434654;
+  --md-sys-color-outline: #737785;
+  --md-sys-color-outline-variant: #c3c6d6;
+  --md-sys-color-inverse-surface: #2d303a;
+  --md-sys-color-inverse-on-surface: #eff0fe;
+  --md-sys-color-inverse-primary: #b2c5ff;
+
+  /* Semantic Status Containers */
+  --md-sys-color-error: #ba1a1a;
+  --md-sys-color-on-error: #ffffff;
+  --md-sys-color-error-container: #ffdad6;
+  --md-sys-color-on-error-container: #93000a;
+  --md-sys-color-success: #146c2e;
+  --md-sys-color-on-success: #ffffff;
+  --md-sys-color-success-container: #cef4dd;
+  --md-sys-color-on-success-container: #002517;
+  --md-sys-color-warning: #8f4e00;
+  --md-sys-color-on-warning: #ffffff;
+  --md-sys-color-warning-container: #ffe6dc;
+  --md-sys-color-on-warning-container: #3b1300;
+
+  /* Material 3 Shape Scale */
+  --md-sys-shape-corner-none: 0px;
+  --md-sys-shape-corner-extra-small: 4px;
+  --md-sys-shape-corner-small: 8px;
+  --md-sys-shape-corner-medium: 12px;
+  --md-sys-shape-corner-large: 16px;
+  --md-sys-shape-corner-extra-large: 28px;
+  --md-sys-shape-corner-full: 9999px;
+
+  --ui-radius-xs: var(--md-sys-shape-corner-extra-small);
+  --ui-radius-sm: var(--md-sys-shape-corner-small);
+  --ui-radius-md: var(--md-sys-shape-corner-medium);
+  --ui-radius-lg: var(--md-sys-shape-corner-large);
+  --ui-radius-xl: var(--md-sys-shape-corner-extra-large);
+  --ui-radius-pill: var(--md-sys-shape-corner-full);
+
+  /* Material 3 Official Motion Spec & State Layers */
+  --md-sys-state-hover-opacity: 0.08;
+  --md-sys-state-focus-opacity: 0.12;
+  --md-sys-state-pressed-opacity: 0.12;
+  --md-sys-state-dragged-opacity: 0.16;
+  --md-sys-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --md-sys-motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --md-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-easing-standard-decelerate: cubic-bezier(0, 0, 0, 1);
+  --md-sys-motion-easing-standard-accelerate: cubic-bezier(0.3, 0, 1, 1);
+  --md-sys-motion-duration-short2: 100ms;
+  --md-sys-motion-duration-short4: 200ms;
+  --md-sys-motion-duration-medium2: 300ms;
+  --md-sys-motion-duration-medium4: 400ms;
+
+  /* @material/web Custom Element Token Bindings */
+  --md-ripple-hover-color: var(--md-sys-color-primary);
+  --md-ripple-pressed-color: var(--md-sys-color-primary);
+  --md-ripple-hover-opacity: 0.08;
+  --md-ripple-pressed-opacity: 0.12;
+  --md-focus-ring-color: var(--md-sys-color-primary);
+  --md-divider-color: var(--md-sys-color-outline-variant);
+  --md-linear-progress-track-shape: var(--md-sys-shape-corner-full);
+  --md-linear-progress-track-height: 6px;
+  --md-linear-progress-active-indicator-height: 6px;
+  --md-circular-progress-size: 32px;
+
+  /* Material 3 Elevation Tonal Shadows */
+  --md-sys-elevation-level0: none;
+  --md-sys-elevation-level1: 0 1px 2px color-mix(in srgb, #001D35 10%, transparent), 0 1px 3px 1px color-mix(in srgb, #001D35 6%, transparent);
+  --md-sys-elevation-level2: 0 1px 2px color-mix(in srgb, #001D35 12%, transparent), 0 2px 6px 2px color-mix(in srgb, #001D35 7%, transparent);
+  --md-sys-elevation-level3: 0 4px 8px 3px color-mix(in srgb, #001D35 8%, transparent), 0 1px 3px color-mix(in srgb, #001D35 14%, transparent);
+  --md-sys-elevation-level4: 0 8px 16px 4px color-mix(in srgb, #001D35 10%, transparent), 0 2px 6px color-mix(in srgb, #001D35 16%, transparent);
+
+  /* Material 3 Type Scale (fluid rem-clamped for 200% zoom resilience + 65ch prose measure) */
+  --md-sys-typescale-display-size: clamp(2.15rem, 1.55rem + 2.2vw, 3.5rem);
+  --md-sys-typescale-headline-size: clamp(1.5rem, 1.25rem + 0.9vw, 2rem);
+  --md-sys-typescale-title-size: clamp(1.125rem, 1.04rem + 0.35vw, 1.375rem);
+  --md-sys-typescale-body-size: clamp(0.95rem, 0.92rem + 0.16vw, 1rem);
+  --md-sys-typescale-label-size: clamp(0.8rem, 0.78rem + 0.1vw, 0.875rem);
+  --measure-readable: 65ch;
+
+  --ui-text-xs: var(--md-sys-typescale-label-size);
+  --ui-text-sm: clamp(0.86rem, 0.83rem + 0.18vw, 0.94rem);
+  --ui-text-base: var(--md-sys-typescale-body-size);
+  --ui-text-lg: var(--md-sys-typescale-title-size);
+  --ui-text-xl: var(--md-sys-typescale-headline-size);
+  --ui-text-2xl: var(--md-sys-typescale-display-size);
+
+  /* Map QHub Semantic Variables -> Material 3 Tokens */
+  --primary: var(--md-sys-color-primary);
+  --primary-dark: #0842A0;
+  --primary-light: #60A5FA;
+  --focus-ring: var(--md-sys-color-primary);
+
+  --background: var(--md-sys-color-surface-container-lowest);
+  --background-secondary: var(--md-sys-color-surface-container-low);
+  --page-background: var(--md-sys-color-surface);
+  --card-background: var(--md-sys-color-surface-container);
+  --glass-strong: color-mix(in srgb, var(--md-sys-color-surface-container-low) 92%, transparent);
+  --glass-soft: var(--md-sys-color-surface-container-low);
+  --surface-soft: var(--md-sys-color-surface-container-high);
+
+  --title-color: var(--md-sys-color-on-surface);
+  --text-main: var(--md-sys-color-on-surface);
+  --text-secondary: var(--md-sys-color-on-surface-variant);
+  --text: var(--md-sys-color-on-surface);
+
+  --split: color-mix(in srgb, var(--md-sys-color-outline-variant) 85%, transparent);
+  --border-soft: color-mix(in srgb, var(--md-sys-color-outline-variant) 60%, transparent);
+  --border-strong: var(--md-sys-color-outline);
+
+  --success-text: var(--md-sys-color-success);
+  --warning-text: var(--md-sys-color-warning);
+  --error-text: var(--md-sys-color-error);
+
+  --button-primary-bg: var(--md-sys-color-primary);
+  --button-primary-text: var(--md-sys-color-on-primary);
+  --button-primary-hover: color-mix(in srgb, var(--md-sys-color-on-primary) 10%, var(--md-sys-color-primary));
+  --button-secondary-bg: var(--md-sys-color-surface-container-lowest);
+  --button-secondary-border: var(--md-sys-color-outline);
+  --button-secondary-text: var(--md-sys-color-primary);
+  --button-secondary-hover: color-mix(in srgb, var(--md-sys-color-primary) 8%, var(--md-sys-color-surface-container-lowest));
+  --button-tonal-bg: var(--md-sys-color-secondary-container);
+  --button-tonal-text: var(--md-sys-color-on-secondary-container);
+  --button-tonal-hover: color-mix(in srgb, var(--md-sys-color-on-secondary-container) 8%, var(--md-sys-color-secondary-container));
+  --button-ghost-text: var(--md-sys-color-primary);
+  --button-ghost-hover: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
+
+  --accent-surface-bg: var(--md-sys-color-primary);
+  --accent-surface-text: var(--md-sys-color-on-primary);
+
+  --ui-shadow-sm: var(--md-sys-elevation-level1);
+  --ui-shadow-md: var(--md-sys-elevation-level2);
+  --ui-shadow-lg: var(--md-sys-elevation-level3);
+}
+
+/* ========================================================================== */
+/* Material Design 3 System Tokens — Dark Mode                                */
+/* ========================================================================== */
+:root[data-ui="modern"][data-theme="dark"] {
+  --md-sys-color-primary: #b2c5ff;
+  --md-sys-color-on-primary: #002b72;
+  --md-sys-color-primary-container: #0040a1;
+  --md-sys-color-on-primary-container: #dae2ff;
+  --md-sys-color-secondary: #c4c3eb;
+  --md-sys-color-on-secondary: #2d2d4d;
+  --md-sys-color-secondary-container: #434465;
+  --md-sys-color-on-secondary-container: #e1dfff;
+  --md-sys-color-tertiary: #d0bef6;
+  --md-sys-color-on-tertiary: #362856;
+  --md-sys-color-tertiary-container: #4d3f6f;
+  --md-sys-color-on-tertiary-container: #e9ddff;
+
+  --md-sys-color-surface: #10131c;
+  --md-sys-color-surface-dim: #10131c;
+  --md-sys-color-surface-bright: #363943;
+  --md-sys-color-surface-container-lowest: #0b0e17;
+  --md-sys-color-surface-container-low: #181b25;
+  --md-sys-color-surface-container: #1c1f29;
+  --md-sys-color-surface-container-high: #272a34;
+  --md-sys-color-surface-container-highest: #32343f;
+  --md-sys-color-on-surface: #e0e2ef;
+  --md-sys-color-on-surface-variant: #c3c6d6;
+  --md-sys-color-outline: #8d909f;
+  --md-sys-color-outline-variant: #434654;
+  --md-sys-color-inverse-surface: #e0e2ef;
+  --md-sys-color-inverse-on-surface: #2d303a;
+  --md-sys-color-inverse-primary: #0056d2;
+
+  --md-sys-color-error: #ffb4ab;
+  --md-sys-color-on-error: #690005;
+  --md-sys-color-error-container: #93000a;
+  --md-sys-color-on-error-container: #ffdad6;
+  --md-sys-color-success: #6ee787;
+  --md-sys-color-on-success: #003915;
+  --md-sys-color-success-container: #005323;
+  --md-sys-color-on-success-container: #a8f5b3;
+  --md-sys-color-warning: #ffb870;
+  --md-sys-color-on-warning: #4a2800;
+  --md-sys-color-warning-container: #6d3a00;
+  --md-sys-color-on-warning-container: #ffdcbe;
+
+  --primary: var(--md-sys-color-primary);
+  --primary-dark: #D3E3FD;
+  --primary-light: #D3E3FD;
+  --focus-ring: var(--md-sys-color-primary);
+
+  --background: var(--md-sys-color-surface-container-low);
+  --background-secondary: var(--md-sys-color-surface-container);
+  --page-background: var(--md-sys-color-surface);
+  --card-background: var(--md-sys-color-surface-container-high);
+  --glass-strong: color-mix(in srgb, var(--md-sys-color-surface-container-low) 92%, transparent);
+  --glass-soft: var(--md-sys-color-surface-container);
+  --surface-soft: var(--md-sys-color-surface-container-high);
+
+  --title-color: var(--md-sys-color-on-surface);
+  --text-main: var(--md-sys-color-on-surface);
+  --text-secondary: var(--md-sys-color-on-surface-variant);
+  --text: var(--md-sys-color-on-surface);
+
+  --split: color-mix(in srgb, var(--md-sys-color-outline-variant) 85%, transparent);
+  --border-soft: color-mix(in srgb, var(--md-sys-color-outline-variant) 55%, transparent);
+  --border-strong: var(--md-sys-color-outline);
+
+  --success-text: var(--md-sys-color-success);
+  --warning-text: var(--md-sys-color-warning);
+  --error-text: var(--md-sys-color-error);
+
+  --button-primary-bg: var(--md-sys-color-primary);
+  --button-primary-text: var(--md-sys-color-on-primary);
+  --button-primary-hover: color-mix(in srgb, var(--md-sys-color-on-primary) 10%, var(--md-sys-color-primary));
+  --button-secondary-bg: var(--md-sys-color-surface-container-high);
+  --button-secondary-border: var(--md-sys-color-outline);
+  --button-secondary-text: var(--md-sys-color-on-surface);
+  --button-secondary-hover: color-mix(in srgb, var(--md-sys-color-primary) 10%, var(--md-sys-color-surface-container-high));
+  --button-tonal-bg: var(--md-sys-color-secondary-container);
+  --button-tonal-text: var(--md-sys-color-on-secondary-container);
+  --button-tonal-hover: color-mix(in srgb, var(--md-sys-color-on-secondary-container) 10%, var(--md-sys-color-secondary-container));
+  --button-ghost-text: var(--md-sys-color-primary);
+  --button-ghost-hover: color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent);
+
+  --accent-surface-bg: var(--md-sys-color-primary-container);
+  --accent-surface-text: var(--md-sys-color-on-primary-container);
+
+  --ui-shadow-sm: 0 1px 2px color-mix(in srgb, #000000 32%, transparent), 0 1px 3px 1px color-mix(in srgb, #000000 18%, transparent);
+  --ui-shadow-md: 0 2px 6px 2px color-mix(in srgb, #000000 26%, transparent), 0 1px 2px color-mix(in srgb, #000000 36%, transparent);
+  --ui-shadow-lg: 0 6px 14px 4px color-mix(in srgb, #000000 34%, transparent), 0 2px 6px color-mix(in srgb, #000000 40%, transparent);
+}
+
+/* M3 Surface Canvas & Readable Scrollbar Standards */
+:root[data-ui="modern"] {
+  scrollbar-gutter: stable;
+}
+
+:root[data-ui="modern"] * {
+  scrollbar-width: auto;
+  scrollbar-color: var(--md-sys-color-outline) transparent;
+}
+
+:root[data-ui="modern"] body {
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+}
+
+:root[data-ui="modern"][data-theme="dark"] body {
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+}
+
+/* Typographic Polish & Material Symbols Defaults */
+:root[data-ui="modern"] :where(h1, h2, h3) {
+  text-wrap: balance;
+}
+
+:root[data-ui="modern"] :where(p, li) {
+  text-wrap: pretty;
+}
+
+:root[data-ui="modern"] .material-symbols-rounded {
+  font-size: 1.2rem;
+  line-height: 1;
+  font-variation-settings: 'FILL' 0, 'wght' 450, 'GRAD' 0, 'opsz' 24;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+:root[data-ui="modern"] md-linear-progress {
+  width: 100%;
+  --md-linear-progress-track-color: var(--md-sys-color-surface-container-highest);
+  --md-linear-progress-active-indicator-color: var(--md-sys-color-primary);
+}
+
+:root[data-ui="modern"] md-circular-progress {
+  --md-circular-progress-active-indicator-color: var(--md-sys-color-primary);
+}
+
+:root[data-ui="modern"] :where(button, a, [role="button"], .server-tab, .server-option):has(> md-ripple) {
+  position: relative;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-ui="modern"] md-ripple {
+    display: none;
+  }
+}
+
+/* Material 3 Cards & Containers: tonal elevation instead of hard boxes */
+:root[data-ui="modern"] :where(.panel, .result-panel, .query-panel, .board-card, .server-summary, .players-panel, .mspt-history-panel, .metric-card, .transport-panel, .route-result-panel, .terms-error) {
+  border-radius: var(--md-sys-shape-corner-large);
+  border-color: transparent;
+  background-color: var(--md-sys-color-surface-container-low);
+  box-shadow: var(--md-sys-elevation-level1);
+  transition: background-color 180ms var(--md-sys-motion-easing-standard), box-shadow 220ms var(--md-sys-motion-easing-emphasized);
+}
+
+/* Material 3 Menus & Dialogs */
+:root[data-ui="modern"] :where(.options-popup, .map-preview-modal, .review-card) {
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  border-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+  background-color: var(--md-sys-color-surface-container-high);
+  box-shadow: var(--md-sys-elevation-level3);
+}
+
+/* Material 3 Pill Buttons */
+:root[data-ui="modern"] :where(.search-btn, .search-button, .apply-button, .close-button, .preset-button, .login-alert, .avatar-container, .primary-link, .ta-submit-btn, .ta-copy-btn, .send-button, .primary-button, .clear-btn, .swap-button) {
+  border-radius: var(--md-sys-shape-corner-full);
+  min-block-size: 42px;
+  font-weight: 600;
+  transition:
+    background-color 160ms var(--md-sys-motion-easing-standard),
+    box-shadow 180ms var(--md-sys-motion-easing-standard),
+    transform 120ms var(--md-sys-motion-easing-emphasized);
+}
+
+:root[data-ui="modern"] :where(.search-btn, .search-button, .apply-button, .ta-submit-btn, .send-button, .primary-button):hover:not(:disabled) {
+  box-shadow: var(--md-sys-elevation-level2);
+}
+
+/* Material 3 Disabled Buttons: legible tonal container instead of washed opacity */
+:root[data-ui="modern"] :where(button, .apply-button, .search-button, .search-btn, .ta-submit-btn):disabled {
+  opacity: 1;
+  background: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
+  border-color: transparent;
+  color: color-mix(in srgb, var(--md-sys-color-on-surface) 58%, transparent);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* Material 3 Outlined / Tonal Inputs & Selectors (WCAG 1.4.11 >=3:1 boundary) */
+:root[data-ui="modern"] :where(input[type="text"], input[type="password"], input[type="number"], input[type="search"], textarea, select) {
+  border-radius: var(--md-sys-shape-corner-medium);
+  border: 1px solid var(--md-sys-color-outline);
+  background-color: var(--md-sys-color-surface-container-lowest);
+  color: var(--md-sys-color-on-surface);
+  min-block-size: 46px;
+  transition:
+    border-color 150ms var(--md-sys-motion-easing-standard),
+    background-color 150ms var(--md-sys-motion-easing-standard),
+    box-shadow 150ms var(--md-sys-motion-easing-standard);
+}
+
+:root[data-ui="modern"] :where(input[type="text"], input[type="password"], input[type="number"], input[type="search"], textarea, select):hover:not(:disabled) {
+  border-color: var(--md-sys-color-on-surface);
+}
+
+:root[data-ui="modern"] :where(input[type="text"], input[type="password"], input[type="number"], input[type="search"], textarea, select):focus {
+  border-color: var(--md-sys-color-primary);
+  box-shadow: inset 0 0 0 1px var(--md-sys-color-primary);
+}
+
+:root[data-ui="modern"] :where(input, textarea, select):user-invalid {
+  border-color: var(--md-sys-color-error);
+  box-shadow: inset 0 0 0 1px var(--md-sys-color-error);
+}
+
+/* Sub-containers & Utility Pills */
+:root[data-ui="modern"] :where(.status-panel, .server-switcher, .sync-box, .zoom-controls, .map-route-status, .station-panel) {
+  border-radius: var(--md-sys-shape-corner-large);
+  border-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 55%, transparent);
+  background-color: var(--md-sys-color-surface-container);
+}
+
+:root[data-ui="modern"] .theme-segmented {
+  border-radius: var(--md-sys-shape-corner-full);
+}
+
+:root[data-ui="modern"] :where(.metric-card strong, .rank, .score, .player-count, .chart-current strong, .load-meter-header strong, .quota-value, .stat-value) {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Guarantee visible keyboard focus rings across all interactive primitives in Material 3 UI */
+:root[data-ui="modern"] :where(button, a, input, textarea, select, [role="button"], [role="option"], [tabindex]):focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--focus-ring) 22%, transparent);
+}
+
+/* Forced-Colors (Windows High Contrast) & High-Contrast Support */
+@media (forced-colors: active) {
+  :where(button, a, input, textarea, select, [role="button"], [tabindex]):focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+    box-shadow: none;
+  }
+
+  .app-navigation-item.is-active,
+  .theme-option.is-active,
+  .server-option.active {
+    border: 2px solid Highlight;
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root[data-ui="modern"]:not([data-theme="dark"]) {
+    --md-sys-color-on-surface-variant: #25272C;
+    --md-sys-color-outline: #4A4D54;
+    --md-sys-color-outline-variant: #74777F;
+    --text-secondary: #25272C;
+    --split: #74777F;
+    --border-soft: #74777F;
+  }
+
+  :root[data-ui="modern"][data-theme="dark"] {
+    --md-sys-color-on-surface-variant: #E1E3EC;
+    --md-sys-color-outline: #C4C6D0;
+    --md-sys-color-outline-variant: #8E9099;
+    --text-secondary: #E1E3EC;
+    --split: #8E9099;
+    --border-soft: #8E9099;
+  }
+}

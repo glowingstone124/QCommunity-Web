@@ -199,6 +199,9 @@ input {
 	background: var(--background-secondary);
 	font-size: 1rem;
 	color: var(--text-main);
+}
+
+input:focus:not(:focus-visible) {
 	outline: none;
 }
 
@@ -206,7 +209,12 @@ input:focus {
 	border-color: var(--primary);
 }
 
-button {
+input:focus-visible {
+	outline: 2px solid var(--focus-ring);
+	outline-offset: 2px;
+}
+
+button:not(.ui-btn) {
 	width: 100%;
 	min-height: 48px;
 	padding: 0.82rem 1rem;
@@ -214,4 +222,115 @@ button {
 	font-size: 0.98rem;
 	font-weight: 700;
 	cursor: pointer;
+}
+
+/* Material Design 3 Registration Layout */
+.m3-register-progress {
+	width: 100%;
+	margin-bottom: 1rem;
+	--md-linear-progress-track-height: 6px;
+	--md-linear-progress-active-indicator-height: 6px;
+	--md-linear-progress-track-shape: 999px;
+}
+
+.m3-inline-spinner {
+	--md-circular-progress-size: 20px;
+}
+
+:global(:root[data-ui="modern"] .register-page) {
+	background: var(--md-sys-color-surface);
+	--register-border: color-mix(in srgb, var(--md-sys-color-outline-variant) 55%, transparent);
+	grid-template-columns: minmax(280px, 1fr) minmax(420px, 660px);
+	gap: clamp(1.5rem, 4vw, 3.5rem);
+}
+
+:global(:root[data-ui="modern"] .register-page .register-copy) {
+	min-width: 0;
+}
+
+:global(:root[data-ui="modern"] .register-page .register-copy h1) {
+	font-size: clamp(2.1rem, 4.1vw, 3.85rem);
+	overflow-wrap: break-word;
+}
+
+:global(:root[data-ui="modern"] .register-page .register-panel),
+:global(:root[data-ui="modern"] .register-page .result-panel),
+:global(:root[data-ui="modern"] .register-page .verification-option),
+:global(:root[data-ui="modern"] .register-page .quiz-intro),
+:global(:root[data-ui="modern"] .register-page .minecraft-intro),
+:global(:root[data-ui="modern"] .register-page .quiz-window) {
+	border-radius: var(--md-sys-shape-corner-large);
+	background: var(--md-sys-color-surface-container-low);
+	border-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+	box-shadow: var(--md-sys-elevation-level1);
+}
+
+:global(:root[data-ui="modern"] .register-page .register-panel) {
+	border-radius: var(--md-sys-shape-corner-extra-large);
+	padding: 1.5rem;
+}
+
+:global(:root[data-ui="modern"] .register-page .progress-strip) {
+	border-radius: var(--md-sys-shape-corner-large);
+	overflow: hidden;
+	background: var(--md-sys-color-surface-container);
+	margin-bottom: 0.75rem;
+}
+
+:global(:root[data-ui="modern"] .register-page .progress-item.active),
+:global(:root[data-ui="modern"] .register-page .progress-item.done) {
+	background: var(--md-sys-color-secondary-container);
+	color: var(--md-sys-color-on-secondary-container);
+}
+
+:global(:root[data-ui="modern"] .register-page .dev-banner) {
+	border-radius: var(--md-sys-shape-corner-medium);
+	background: var(--md-sys-color-warning-container);
+	color: var(--md-sys-color-on-warning-container);
+	border-color: transparent;
+}
+
+:global(:root[data-ui="modern"] .register-page input:not([type="checkbox"])) {
+	border-radius: var(--md-sys-shape-corner-medium);
+	background: var(--md-sys-color-surface-container-highest);
+	border-color: color-mix(in srgb, var(--md-sys-color-outline) 45%, transparent);
+}
+
+:global(:root[data-ui="modern"] .register-page input:user-invalid) {
+	border-color: var(--md-sys-color-error);
+	background: color-mix(in srgb, var(--md-sys-color-error-container) 35%, var(--md-sys-color-surface-container-highest));
+}
+
+:global(:root[data-ui="modern"] .register-page .verification-option.selected) {
+	background: var(--md-sys-color-secondary-container);
+	color: var(--md-sys-color-on-secondary-container);
+	border-color: transparent;
+}
+
+:global(:root[data-ui="modern"] .register-page .dialog) {
+	border-radius: var(--md-sys-shape-corner-extra-large);
+	background: var(--md-sys-color-surface-container-high);
+	border: none;
+	box-shadow: var(--md-sys-elevation-level4);
+	padding: 1.5rem;
+}
+
+:global(:root[data-ui="modern"] .register-page button) {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	border-radius: var(--md-sys-shape-corner-full);
+}
+
+:global(:root[data-ui="modern"] .register-page .verification-option) {
+	display: grid;
+	justify-content: stretch;
+	border-radius: var(--md-sys-shape-corner-large);
+	padding: 1rem;
+}
+
+:global(:root[data-ui="modern"] .register-page .terms-agreement input[type="checkbox"]) {
+	accent-color: var(--md-sys-color-primary);
 }

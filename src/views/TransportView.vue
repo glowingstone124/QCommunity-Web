@@ -1,7 +1,13 @@
 <script setup>
+import UiButton from '@/components/ui/UiButton.vue'
+import UiPageHeader from '@/components/ui/UiPageHeader.vue'
+import UiStatePanel from '@/components/ui/UiStatePanel.vue'
 import InteractiveTransportMap from '@/components/transport/InteractiveTransportMap.vue'
 import TaFeatureNotice from '@/components/account/TaFeatureNotice.vue'
 import { useTransportPlanner } from './useTransportPlanner.js'
+import { useUiPreferences } from '@/composables/useUiPreferences.js'
+
+const { isModernUi } = useUiPreferences()
 
 const {
   t,
@@ -44,10 +50,12 @@ const {
 </script>
 
 <template>
-	<div class="title">
-	<h1>{{ t('transportPage.title') }}</h1>
-	<h2>{{ t('transportPage.description') }}</h2>
-  </div>
+	<UiPageHeader
+		class="title"
+		:title="t('transportPage.title')"
+		:subtitle="t('transportPage.description')"
+		:divider="false"
+	/>
 
   <div class="container">
     <div class="query">
@@ -65,18 +73,26 @@ const {
               autocomplete="off"
           />
           <Transition name="suggestions">
-          <div v-if="showStartSuggestions && filteredStartStations.length" class="suggestions">
-            <div
+          <div
+            v-if="showStartSuggestions && filteredStartStations.length"
+            class="suggestions"
+            role="listbox"
+            :aria-label="t('transportPage.start')"
+          >
+            <button
                 v-for="station in filteredStartStations"
                 :key="station.id"
+                type="button"
+                role="option"
+                :aria-selected="String(startStationId) === String(station.id)"
 				@click="selectStartStation(station, locale)"
                 class="suggestion-item"
             >
-				<div class="station-name" v-if="locale === 'en'">{{ station.name_en }}</div>
-				<div class="station-name" v-else>{{ station.name }}</div>
-				<div class="station-name-en" v-if="locale === 'en'">{{ station.name }}</div>
-              <div class="station-name-en" v-else>{{ station.name_en }}</div>
-            </div>
+				<span class="station-name" v-if="locale === 'en'">{{ station.name_en }}</span>
+				<span class="station-name" v-else>{{ station.name }}</span>
+				<span class="station-name-en" v-if="locale === 'en'">{{ station.name }}</span>
+              <span class="station-name-en" v-else>{{ station.name_en }}</span>
+            </button>
           </div>
           </Transition>
         </div>
@@ -96,47 +112,63 @@ const {
               autocomplete="off"
           />
           <Transition name="suggestions">
-          <div v-if="showEndSuggestions && filteredEndStations.length" class="suggestions">
-            <div
+          <div
+            v-if="showEndSuggestions && filteredEndStations.length"
+            class="suggestions"
+            role="listbox"
+            :aria-label="t('transportPage.end')"
+          >
+            <button
                 v-for="station in filteredEndStations"
                 :key="station.id"
+                type="button"
+                role="option"
+                :aria-selected="String(endStationId) === String(station.id)"
 				@click="selectEndStation(station, locale)"
                 class="suggestion-item"
             >
-				<div class="station-name" v-if="locale === 'en'">{{ station.name_en }}</div>
-              <div class="station-name" v-else>{{ station.name }}</div>
-				<div class="station-name-en" v-if="locale === 'en'">{{ station.name }}</div>
-              <div class="station-name-en" v-else>{{ station.name_en }}</div>
-            </div>
+				<span class="station-name" v-if="locale === 'en'">{{ station.name_en }}</span>
+              <span class="station-name" v-else>{{ station.name }}</span>
+				<span class="station-name-en" v-if="locale === 'en'">{{ station.name }}</span>
+              <span class="station-name-en" v-else>{{ station.name_en }}</span>
+            </button>
           </div>
           </Transition>
         </div>
       </div>
 
       <div class="button-group">
-        <button
-            @click="searchRoute"
+        <UiButton
+            variant="filled"
+            size="lg"
+            icon="search"
+            :loading="isLoading"
             :disabled="isLoading || !startStationId || !endStationId"
             class="search-button"
             :class="{ loading: isLoading }"
+            @click="searchRoute"
         >
-          <span v-if="isLoading" class="button-spinner" aria-hidden="true"></span>
-          <span>{{ searchButtonLabel }}</span>
-        </button>
-        <button
-            @click="showOptions = true"
-            class="options-button"
+          {{ searchButtonLabel }}
+        </UiButton>
+        <UiButton
+            variant="tonal"
+            size="lg"
+            icon="tune"
             :disabled="isLoading"
+            class="options-button"
+            @click="showOptions = true"
         >
-			{{ t('transportPage.advanced') }}
-        </button>
+          {{ t('transportPage.advanced') }}
+        </UiButton>
       </div>
 	<button type="button" class="transport-map-button" :aria-label="t('transportPage.mapButton')" @click="showMap">
+        <md-ripple v-if="isModernUi" />
         <span class="map-entry-copy">
 			<strong>{{ t('transportPage.openMap') }}</strong>
 			<small>{{ t('transportPage.mapDescription') }}</small>
         </span>
-        <span class="map-entry-art" aria-hidden="true">
+        <span v-if="isModernUi" class="material-symbols-rounded" aria-hidden="true">map</span>
+        <span v-else class="map-entry-art" aria-hidden="true">
           <i></i><i></i><i></i>
         </span>
       </button>
@@ -146,7 +178,8 @@ const {
       <Transition name="result-swap" mode="out-in">
       <div v-if="isLoading" key="loading" class="loading-state" aria-live="polite" aria-busy="true">
         <div class="loading-copy">
-          <span class="loading-spinner" aria-hidden="true"></span>
+          <md-circular-progress v-if="isModernUi" indeterminate />
+          <span v-else class="loading-spinner" aria-hidden="true"></span>
 			<h3>{{ t('transportPage.planning') }}</h3>
 			<p>{{ t('transportPage.planningDescription') }}</p>
         </div>
@@ -167,9 +200,9 @@ const {
         />
       </div>
       <div v-else-if="routeResult" key="route-result" class="route-result-content">
-		<h3>{{ t('mapPage.searchResult') }}</h3>
+		<h2>{{ t('mapPage.searchResult') }}</h2>
         <p v-if="routeResult.message">{{ routeResult.message }}</p>
-        <p v-if="routeResult.error" class="error">{{ routeResult.error }}</p>
+        <UiStatePanel v-if="routeResult.error" state="error" compact class="error" :message="routeResult.error" />
         <div v-if="routeResult.data?.segments?.length" class="result-main route-timeline">
           <div
               v-for="(segment, seg) in routeResult.data.segments"
@@ -203,10 +236,15 @@ const {
           </div>
         </div>
       </div>
-      <div v-else key="placeholder" class="placeholder">
-		<p>{{ t('mapPage.resultPlaceholder') }}</p>
-		<p>{{ t('mapPage.resultHint') }}</p>
-      </div>
+      <UiStatePanel
+          v-else
+          key="placeholder"
+          state="empty"
+          icon="route"
+          class="placeholder"
+          :title="t('mapPage.resultPlaceholder')"
+          :message="t('mapPage.resultHint')"
+      />
       </Transition>
     </div>
   </div>
@@ -231,27 +269,30 @@ const {
         <div class="options-section">
 			<h3>{{ t('mapPage.presets') }}</h3>
           <div class="preset-buttons">
-            <button
-                type="button"
+            <UiButton
+                variant="tonal"
+                size="sm"
                 class="preset-button"
                 @click="applyPreset('all')"
             >
 				{{ t('mapPage.allPresets') }}
-            </button>
-            <button
-                type="button"
+            </UiButton>
+            <UiButton
+                variant="tonal"
+                size="sm"
                 class="preset-button"
                 @click="applyPreset('rail')"
             >
 				{{ t('mapPage.railPreset') }}
-            </button>
-            <button
-                type="button"
+            </UiButton>
+            <UiButton
+                variant="tonal"
+                size="sm"
                 class="preset-button"
                 @click="applyPreset('overworld')"
             >
 				{{ t('mapPage.overworldPreset') }}
-            </button>
+            </UiButton>
           </div>
         </div>
 
@@ -308,7 +349,7 @@ const {
       </div>
 
       <div class="popup-footer">
-		<button type="button" class="apply-button" @click="closeOptions">{{ t('mapPage.applyOptions') }}</button>
+		<UiButton variant="filled" size="md" class="apply-button" @click="closeOptions">{{ t('mapPage.applyOptions') }}</UiButton>
       </div>
     </div>
   </div>

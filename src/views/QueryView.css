@@ -1,19 +1,21 @@
 .query-page {
-	height: 100%;
-	min-height: 0;
-	overflow: auto;
+	width: min(1280px, 100%);
+	min-height: calc(100dvh - var(--app-header-height, 0px));
+	margin-inline: auto;
 	background: var(--page-background);
-	padding: 1rem;
+	padding: clamp(1.25rem, 3.5vw, 2.5rem) clamp(1.25rem, 4vw, 3rem) 4rem;
+	box-sizing: border-box;
+	display: grid;
+	gap: 1.5rem;
+	align-content: start;
 }
 
 .query-shell {
-	width: min(1280px, 100%);
-	min-height: 100%;
-	margin: 0 auto;
+	width: 100%;
 	display: grid;
 	grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
-	gap: 1rem;
-	align-items: stretch;
+	gap: 1.25rem;
+	align-items: start;
 }
 
 .query-panel,
@@ -21,14 +23,14 @@
 	background: var(--background);
 	border: 1px solid var(--split);
 	border-radius: 8px;
-	padding: 1.2rem;
+	padding: 1.25rem;
 	box-sizing: border-box;
 }
 
 .query-panel {
 	display: flex;
 	flex-direction: column;
-	gap: 1.25rem;
+	gap: 1rem;
 }
 
 .panel-heading h1 {
@@ -68,11 +70,14 @@
 	border-radius: 6px;
 	padding: 0.85rem 0.9rem;
 	font-size: 1rem;
-	outline: none;
 }
 
 .search-field input:focus {
 	border-color: var(--primary);
+}
+
+.search-field input:focus:not(:focus-visible) {
+	outline: none;
 }
 
 .search-btn {
@@ -214,4 +219,59 @@
 		align-items: stretch;
 		min-height: 0;
 	}
+}
+
+/* Material Design 3 Query Workspace */
+:global(:root[data-ui="modern"] .query-page) {
+	background: var(--md-sys-color-surface);
+}
+
+:global(:root[data-ui="modern"] .query-page .query-panel),
+:global(:root[data-ui="modern"] .query-page .result-panel) {
+	border: none;
+	border-radius: var(--md-sys-shape-corner-extra-large);
+	background: var(--md-sys-color-surface-container-low);
+	box-shadow: var(--md-sys-elevation-level1);
+}
+
+:global(:root[data-ui="modern"] .query-page .result-label) {
+	border-radius: var(--md-sys-shape-corner-full);
+	border-color: transparent;
+	background: var(--md-sys-color-secondary-container);
+	color: var(--md-sys-color-on-secondary-container);
+	padding: 0.25rem 0.7rem;
+}
+
+:global(:root[data-ui="modern"] .query-page .search-field input) {
+	border-radius: var(--md-sys-shape-corner-medium);
+	background: var(--md-sys-color-surface-container-highest);
+	border-color: color-mix(in srgb, var(--md-sys-color-outline) 45%, transparent);
+	padding: 0.85rem 1rem;
+}
+
+:global(:root[data-ui="modern"] .query-page .search-btn) {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.45rem;
+	min-height: 48px;
+	border: none;
+	border-radius: var(--md-sys-shape-corner-full);
+	background: var(--md-sys-color-primary);
+	color: var(--md-sys-color-on-primary);
+}
+
+:global(:root[data-ui="modern"] .query-page .empty-state),
+:global(:root[data-ui="modern"] .query-page .affiliated-result) {
+	border-radius: var(--md-sys-shape-corner-large);
+	background: var(--md-sys-color-surface-container);
+	border-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+}
+
+:global(:root[data-ui="modern"] .query-page .empty-state--loading) {
+	display: grid;
+	justify-items: center;
+	text-align: center;
+	gap: 0.6rem;
 }

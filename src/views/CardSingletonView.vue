@@ -1,5 +1,5 @@
 <template>
-	<main class="card-page">
+	<div class="card-page">
 		<div style="position:absolute; left:-9999px; top:-9999px;">
 			<ArtCardForQueryUsage
 				:username="username"
@@ -11,11 +11,13 @@
 		<div v-if="cardImage" class="card-preview">
 			<img :src="cardImage" :alt="t('avatarPage.cardAlt', { name: username })" />
 		</div>
-		<div v-else class="card-loading" role="status">
-			<span class="spinner" aria-hidden="true"></span>
-			<p>{{ t('avatarPage.generatingCard', { name: username }) }}</p>
-		</div>
-	</main>
+		<UiStatePanel
+			v-else
+			state="loading"
+			class="card-loading"
+			:message="t('avatarPage.generatingCard', { name: username })"
+		/>
+	</div>
 </template>
 
 
@@ -23,6 +25,7 @@
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import ArtCardForQueryUsage from '@/components/ArtCardForQueryUsage.vue';
+import UiStatePanel from '@/components/ui/UiStatePanel.vue';
 import html2canvas from 'html2canvas';
 
 const props = defineProps<{ username?: string }>();

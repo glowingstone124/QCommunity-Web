@@ -50,6 +50,12 @@
 	.avatar-label {
 		display: none;
 	}
+
+	.avatar-container {
+		width: var(--header-control-height);
+		padding: 0;
+		justify-content: center;
+	}
 }
 
 @media (max-width: 640px) {
@@ -102,9 +108,20 @@
 	}
 
 	.lang-btn,
-	.guide-btn {
+	.guide-btn,
+	.theme-btn {
 		padding: 0 0.55rem;
 		min-width: var(--header-control-height);
+	}
+
+	.theme-btn {
+		padding: 0;
+		width: var(--header-control-height);
+	}
+
+	.ui-mode-btn {
+		padding: 0 0.6rem;
+		font-size: 0.82rem;
 	}
 
 	.mega-panel-inner {
@@ -154,10 +171,17 @@
 	}
 
 	.lang-btn,
-	.guide-btn {
+	.guide-btn,
+	.theme-btn,
+	.ui-mode-btn {
 		min-width: 36px;
 		padding-inline: 0.4rem;
-		font-size: 0.8rem;
+		font-size: 0.78rem;
+	}
+
+	.theme-btn {
+		width: 36px;
+		padding-inline: 0;
 	}
 
 	.login-alert {

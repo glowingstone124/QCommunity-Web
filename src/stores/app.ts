@@ -1,19 +1,26 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import {
+    initUiPreferences,
+    resolvedTheme,
+    setThemePreference,
+    setUiMode,
+    themePreference,
+    toggleResolvedTheme,
+    toggleUiMode,
+    uiMode,
+} from '@/composables/useUiPreferences.js'
 
 export const useAppStore = defineStore('app', () => {
-    const theme = ref<string>(localStorage.getItem('theme') || 'light')
     const isLoading = ref<boolean>(false)
     const pageTitle = ref<string>('QHub')
 
     function setTheme(newTheme: string) {
-        theme.value = newTheme
-        localStorage.setItem('theme', newTheme)
-        document.documentElement.dataset.theme = newTheme
+        setThemePreference(newTheme)
     }
 
     function toggleTheme() {
-        setTheme(theme.value === 'dark' ? 'light' : 'dark')
+        toggleResolvedTheme()
     }
 
     function setLoading(value: boolean) {
@@ -26,8 +33,21 @@ export const useAppStore = defineStore('app', () => {
     }
 
     function init() {
-        document.documentElement.dataset.theme = theme.value
+        initUiPreferences()
     }
 
-    return { theme, isLoading, pageTitle, setTheme, toggleTheme, setLoading, setPageTitle, init }
+    return {
+        theme: resolvedTheme,
+        themePreference,
+        uiMode,
+        isLoading,
+        pageTitle,
+        setTheme,
+        toggleTheme,
+        setUiMode,
+        toggleUiMode,
+        setLoading,
+        setPageTitle,
+        init,
+    }
 })

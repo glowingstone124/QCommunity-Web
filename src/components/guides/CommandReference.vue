@@ -2,8 +2,12 @@
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { commands } from '@/data/commandReference.js'
+import UiButton from '@/components/ui/UiButton.vue'
+import UiSearchField from '@/components/ui/UiSearchField.vue'
+import { useUiPreferences } from '@/composables/useUiPreferences.js'
 
 const { t } = useI18n()
+const { isModernUi } = useUiPreferences()
 
 const query = ref('/')
 const activeCommandName = ref(commands[0].name)
@@ -222,16 +226,13 @@ async function copyCommand() {
 		</header>
 
 		<div class="command-console">
-			<label class="command-search">
-				<span>{{ t('commandPage.command') }}</span>
-				<input
-					v-model="query"
-					type="text"
-					autocomplete="off"
-					spellcheck="false"
-					placeholder="/"
-				>
-			</label>
+			<UiSearchField
+				v-model="query"
+				class="command-search"
+				:label="t('commandPage.command')"
+				placeholder="/"
+				@clear="query = '/'"
+			/>
 
 			<div class="completion-list" :aria-label="t('commandPage.completion')">
 				<button
@@ -241,6 +242,7 @@ async function copyCommand() {
 					class="completion-item"
 					@click="applyCompletion(option)"
 				>
+					<md-ripple v-if="isModernUi" />
 					<strong>{{ option.label }}</strong>
 					<span>{{ option.description }}</span>
 				</button>
@@ -257,6 +259,7 @@ async function copyCommand() {
 					:class="{ 'is-active': command.name === activeCommand.name }"
 					@click="selectCommand(command)"
 				>
+					<md-ripple v-if="isModernUi" />
 					<span>{{ command.category }}</span>
 					<strong>{{ command.name }}</strong>
 					<small>{{ command.description }}</small>
@@ -290,6 +293,7 @@ async function copyCommand() {
 								:class="{ 'is-selected': selectedArgs[optionKey(activeCommand, arg)] === option.value }"
 								@click="setArg(activeCommand, arg, option.value)"
 							>
+								<md-ripple v-if="isModernUi" />
 								<strong>{{ option.label }}</strong>
 								<span>{{ option.description }}</span>
 							</button>
@@ -300,7 +304,7 @@ async function copyCommand() {
 				<div class="command-output">
 					<span>{{ t('commandPage.generated') }}</span>
 					<code>{{ composedCommand }}</code>
-					<button type="button" @click="copyCommand">{{ t('commandPage.copy') }}</button>
+					<UiButton variant="tonal" icon="content_copy" @click="copyCommand">{{ t('commandPage.copy') }}</UiButton>
 				</div>
 			</article>
 		</div>

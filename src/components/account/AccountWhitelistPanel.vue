@@ -1,6 +1,9 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import UiButton from '@/components/ui/UiButton.vue'
+import UiStatePanel from '@/components/ui/UiStatePanel.vue'
+import { useUiPreferences } from '@/composables/useUiPreferences.js'
 
 const props = defineProps({
 	ipAddr: { type: String, default: '' },
@@ -13,6 +16,7 @@ const props = defineProps({
 	feedbackType: { type: String, default: '' },
 })
 const { t } = useI18n()
+const { isModernUi } = useUiPreferences()
 
 const emit = defineEmits(['submit', 'remove', 'refresh', 'update:ipAddr'])
 const ipLimit = 5
@@ -38,7 +42,13 @@ function confirmRemove(ip) {
 					<span>{{ t('whitelistPage.used') }}</span>
 					<strong>{{ iplist.length }} / {{ ipLimit }}</strong>
 				</div>
-				<div class="capacity-track"><span :style="{ width: `${capacityPercent}%` }"></span></div>
+				<md-linear-progress
+					v-if="isModernUi"
+					class="m3-capacity-progress"
+					:value.prop="capacityPercent / 100"
+					:aria-label="t('whitelistPage.capacity')"
+				/>
+				<div v-else class="capacity-track"><span :style="{ width: `${capacityPercent}%` }"></span></div>
 			</div>
 		</header>
 
@@ -64,15 +74,28 @@ function confirmRemove(ip) {
 							@input="emit('update:ipAddr', $event.target.value)"
 						/>
 					</label>
-					<button class="primary-button" type="submit" :disabled="!isValidIp || isSubmitting || remainingSlots === 0">
-						<font-awesome-icon :icon="['far', 'square-plus']" aria-hidden="true" />
-						<span>{{ isSubmitting ? t('whitelistPage.submitting') : t('whitelistPage.add') }}</span>
-					</button>
+					<UiButton
+						class="primary-button"
+						type="submit"
+						variant="filled"
+						icon="add"
+						:loading="isSubmitting"
+						:disabled="!isValidIp || isSubmitting || remainingSlots === 0"
+					>
+						{{ isSubmitting ? t('whitelistPage.submitting') : t('whitelistPage.add') }}
+					</UiButton>
 				</form>
 				<p class="helper" :class="{ invalid: ipAddr && !isValidIp }">
 					{{ ipAddr && !isValidIp ? t('whitelistPage.invalidIp') : t('whitelistPage.ipOnly') }}
 				</p>
-				<p v-if="feedback" class="feedback" :class="feedbackType" role="status">{{ feedback }}</p>
+				<UiStatePanel
+					v-if="feedback"
+					:state="feedbackType === 'error' ? 'error' : 'info'"
+					compact
+					:icon="feedbackType === 'success' ? 'check_circle' : 'info'"
+					role="status"
+					:message="feedback"
+				/>
 			</section>
 
 			<section class="section list-section">
@@ -81,12 +104,21 @@ function confirmRemove(ip) {
 						<h3>{{ t('whitelistPage.registered') }}</h3>
 						<p>{{ t('whitelistPage.registeredDescription') }}</p>
 					</div>
-					<button class="secondary-button" type="button" :disabled="isLoading" @click="emit('refresh')">
+					<UiButton
+						class="secondary-button"
+						type="button"
+						variant="tonal"
+						size="sm"
+						icon="refresh"
+						:loading="isLoading"
+						:disabled="isLoading"
+						@click="emit('refresh')"
+					>
 						{{ isLoading ? t('common.refreshing') : t('whitelistPage.refreshList') }}
-					</button>
+					</UiButton>
 				</div>
 
-				<div v-if="isLoading && !iplist.length" class="empty-state">{{ t('whitelistPage.loading') }}</div>
+				<UiStatePanel v-if="isLoading && !iplist.length" state="loading" :message="t('whitelistPage.loading')" />
 				<TransitionGroup v-else-if="iplist.length" name="ip-list" tag="div" class="ip-list">
 					<div v-for="(ip, index) in iplist" :key="ip" class="ip-row" :class="{ 'is-confirming': confirmingIp === ip }">
 						<span class="ip-index">{{ String(index + 1).padStart(2, '0') }}</span>
@@ -94,30 +126,36 @@ function confirmRemove(ip) {
 							<code>{{ ip }}</code>
 							<span><font-awesome-icon :icon="['far', 'circle-check']" aria-hidden="true" /> {{ t('whitelistPage.enabled') }}</span>
 						</div>
-						<button
+						<UiButton
 							v-if="confirmingIp !== ip"
 							type="button"
+							variant="outlined"
+							size="sm"
+							icon="delete"
 							class="icon-button danger"
 							:disabled="Boolean(deletingIp)"
 							:aria-label="t('whitelistPage.deleteIp', { ip })"
 							:title="t('whitelistPage.deleteIpTitle', { ip })"
 							@click="confirmingIp = ip"
-						>
-							<font-awesome-icon :icon="['far', 'trash-can']" aria-hidden="true" />
-						</button>
+						/>
 						<div v-else class="remove-confirm">
 							<span>{{ t('whitelistPage.removeConfirm') }}</span>
-							<button type="button" :disabled="Boolean(deletingIp)" @click="confirmingIp = ''">{{ t('common.cancel') }}</button>
-							<button type="button" class="confirm-danger" :disabled="Boolean(deletingIp)" @click="confirmRemove(ip)">
+							<UiButton type="button" variant="text" size="sm" :disabled="Boolean(deletingIp)" @click="confirmingIp = ''">
+								{{ t('common.cancel') }}
+							</UiButton>
+							<UiButton type="button" variant="danger" size="sm" :loading="deletingIp === ip" :disabled="Boolean(deletingIp)" @click="confirmRemove(ip)">
 								{{ deletingIp === ip ? t('whitelistPage.removing') : t('whitelistPage.remove') }}
-							</button>
+							</UiButton>
 						</div>
 					</div>
 				</TransitionGroup>
-				<div v-else class="empty-state">
-					<strong>{{ t('whitelistPage.noAddresses') }}</strong>
-					<span>{{ t('whitelistPage.noAddressesDescription') }}</span>
-				</div>
+				<UiStatePanel
+					v-else
+					state="empty"
+					icon="dns"
+					:title="t('whitelistPage.noAddresses')"
+					:message="t('whitelistPage.noAddressesDescription')"
+				/>
 			</section>
 		</div>
 	</section>
@@ -221,9 +259,9 @@ input {
 }
 input:focus { outline: 2px solid color-mix(in srgb, var(--primary) 22%, transparent); border-color: var(--primary); }
 
-.primary-button,
-.secondary-button,
-.icon-button {
+:global(:root:not([data-ui="modern"]) .account .primary-button),
+:global(:root:not([data-ui="modern"]) .account .secondary-button),
+:global(:root:not([data-ui="modern"]) .account .icon-button) {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -232,11 +270,13 @@ input:focus { outline: 2px solid color-mix(in srgb, var(--primary) 22%, transpar
 	cursor: pointer;
 	font-weight: 600;
 }
-.primary-button { min-height: 44px; padding: 0 1rem; background: var(--button-primary-bg); border-color: var(--primary); color: var(--button-primary-text); white-space: nowrap; }
-.primary-button:hover:not(:disabled) { background: var(--button-primary-hover); }
-.secondary-button { padding: 0.5rem 0.75rem; background: transparent; color: var(--text-main); white-space: nowrap; }
-.secondary-button:hover:not(:disabled) { border-color: var(--primary); background: var(--surface-soft); }
-.primary-button:disabled, .secondary-button:disabled, .icon-button:disabled { opacity: 0.46; cursor: not-allowed; }
+:global(:root:not([data-ui="modern"]) .account .primary-button) { min-height: 44px; padding: 0 1rem; background: var(--button-primary-bg); border-color: var(--primary); color: var(--button-primary-text); white-space: nowrap; }
+:global(:root:not([data-ui="modern"]) .account .primary-button:hover:not(:disabled)) { background: var(--button-primary-hover); }
+:global(:root:not([data-ui="modern"]) .account .secondary-button) { padding: 0.5rem 0.75rem; background: transparent; color: var(--text-main); white-space: nowrap; }
+:global(:root:not([data-ui="modern"]) .account .secondary-button:hover:not(:disabled)) { border-color: var(--primary); background: var(--surface-soft); }
+:global(:root:not([data-ui="modern"]) .account .primary-button:disabled),
+:global(:root:not([data-ui="modern"]) .account .secondary-button:disabled),
+:global(:root:not([data-ui="modern"]) .account .icon-button:disabled) { opacity: 0.46; cursor: not-allowed; }
 
 .helper, .feedback { margin: 0; font-size: 0.84rem; line-height: 1.45; color: var(--text-secondary); }
 .helper.invalid, .feedback.error { color: var(--error-text); }
@@ -311,5 +351,51 @@ input:focus { outline: 2px solid color-mix(in srgb, var(--primary) 22%, transpar
 		animation: none;
 		transform: none;
 	}
+}
+
+/* Material Design 3 Whitelist Workspace */
+.m3-capacity-progress {
+	width: 100%;
+	--md-linear-progress-track-height: 6px;
+	--md-linear-progress-active-indicator-height: 6px;
+	--md-linear-progress-track-shape: 999px;
+}
+
+:global(:root[data-ui="modern"] .account .capacity),
+:global(:root[data-ui="modern"] .account .section) {
+	border: none;
+	border-radius: var(--md-sys-shape-corner-large);
+	background: var(--md-sys-color-surface-container);
+	box-shadow: var(--md-sys-elevation-level1);
+}
+
+:global(:root[data-ui="modern"] .account .slot-count) {
+	border: none;
+	border-radius: var(--md-sys-shape-corner-full);
+	background: var(--md-sys-color-secondary-container);
+	color: var(--md-sys-color-on-secondary-container);
+	padding: 0.24rem 0.75rem;
+}
+
+:global(:root[data-ui="modern"] .account .ip-field input) {
+	border-radius: var(--md-sys-shape-corner-medium);
+	border-color: var(--md-sys-color-outline-variant);
+	background: var(--md-sys-color-surface-container-low);
+}
+
+:global(:root[data-ui="modern"] .account .ip-row) {
+	border-radius: var(--md-sys-shape-corner-medium);
+	border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+	background: var(--md-sys-color-surface-container-low);
+}
+
+:global(:root[data-ui="modern"] .account .ip-row.is-confirming) {
+	border-color: color-mix(in srgb, var(--md-sys-color-error) 55%, transparent);
+	background: color-mix(in srgb, var(--md-sys-color-error-container) 32%, var(--md-sys-color-surface-container-low));
+}
+
+:global(:root[data-ui="modern"] .account .ip-row .icon-button) {
+	min-width: 38px;
+	padding-inline: 0.55rem;
 }
 </style>

@@ -28,13 +28,18 @@
 	--dashboard-yellow-soft: color-mix(in srgb, var(--warning) 15%, #101722);
 }
 
-.dashboard-hero,
-.server-switcher,
-.overview-grid,
+.dashboard-section,
 .mspt-history-panel,
 .activity-layout {
 	width: min(1280px, 100%);
 	margin: 0 auto;
+}
+
+.dashboard {
+	display: grid;
+	gap: 1.25rem;
+	align-content: start;
+	padding: clamp(1.25rem, 3.5vw, 2.5rem) clamp(1.25rem, 4vw, 3rem) 4rem;
 }
 
 .dashboard-hero {
@@ -102,7 +107,7 @@
 
 .server-switcher {
 	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
+	grid-template-columns: repeat(3, minmax(0, 1fr));
 	gap: 1px;
 	margin-bottom: 1rem;
 	border: 1px solid var(--dashboard-line);
@@ -341,4 +346,76 @@
 	background: var(--dashboard-surface);
 	color: var(--warning-text);
 	font: 0.7rem/1 'SpaceMono', 'Inter', sans-serif;
+}
+
+:global(:root[data-ui="modern"] .dashboard) {
+	--dashboard-surface: var(--md-sys-color-surface-container-low);
+	--dashboard-surface-muted: var(--md-sys-color-surface);
+	--dashboard-line: color-mix(in srgb, var(--md-sys-color-outline-variant) 55%, transparent);
+	--dashboard-line-strong: var(--md-sys-color-outline);
+	--dashboard-soft: var(--md-sys-color-surface-container);
+	--dashboard-blue-soft: color-mix(in srgb, var(--md-sys-color-primary-container) 55%, var(--md-sys-color-surface-container-low));
+	--dashboard-green-soft: color-mix(in srgb, var(--md-sys-color-success-container) 55%, var(--md-sys-color-surface-container-low));
+	--dashboard-yellow-soft: color-mix(in srgb, var(--md-sys-color-warning-container) 55%, var(--md-sys-color-surface-container-low));
+	background: var(--md-sys-color-surface);
+}
+
+:global(:root[data-ui="modern"] .dashboard .server-switcher) {
+	gap: 0.45rem;
+	padding: 0.4rem;
+	border-radius: var(--md-sys-shape-corner-full);
+	border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+	background: var(--md-sys-color-surface-container);
+}
+
+:global(:root[data-ui="modern"] .dashboard .server-option) {
+	border-radius: var(--md-sys-shape-corner-full);
+	background: transparent;
+	border: none;
+	color: var(--md-sys-color-on-surface-variant);
+	padding: 0.65rem 1.2rem;
+}
+
+:global(:root[data-ui="modern"] .dashboard .server-option.active) {
+	background: var(--md-sys-color-secondary-container);
+	color: var(--md-sys-color-on-secondary-container);
+	box-shadow: var(--md-sys-elevation-level1);
+}
+
+:global(:root[data-ui="modern"] .dashboard .server-option:hover:not(.active)) {
+	background: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
+	color: var(--md-sys-color-on-surface);
+}
+
+:global(:root[data-ui="modern"] .dashboard .server-option.active::before) {
+	display: none;
+}
+
+:global(:root[data-ui="modern"] .dashboard .metric-card) {
+	background: var(--md-sys-color-surface-container);
+	border: none;
+	border-radius: var(--md-sys-shape-corner-large);
+	box-shadow: var(--md-sys-elevation-level1);
+}
+
+:global(:root[data-ui="modern"] .dashboard .mspt-history-panel),
+:global(:root[data-ui="modern"] .dashboard .server-summary),
+:global(:root[data-ui="modern"] .dashboard .players-panel) {
+	background: var(--md-sys-color-surface-container-low);
+	border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+	border-radius: var(--md-sys-shape-corner-extra-large);
+	box-shadow: var(--md-sys-elevation-level1);
+}
+
+:global(:root[data-ui="modern"] .dashboard .status-panel) {
+	border-radius: var(--md-sys-shape-corner-full);
+	background: var(--md-sys-color-surface-container-high);
+	border-color: transparent;
+	padding-inline: 1rem;
+}
+
+:global(:root[data-ui="modern"] .dashboard .player-pill),
+:global(:root[data-ui="modern"] .dashboard .summary-grid > div) {
+	border-radius: var(--md-sys-shape-corner-large);
+	background: var(--md-sys-color-surface-container);
 }

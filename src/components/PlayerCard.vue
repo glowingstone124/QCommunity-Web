@@ -2,6 +2,8 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ArtCardForQueryUsage from '@/components/ArtCardForQueryUsage.vue'
+import UiStatCard from '@/components/ui/UiStatCard.vue'
+import UiStatGrid from '@/components/ui/UiStatGrid.vue'
 
 interface Props {
 	username: string
@@ -133,23 +135,27 @@ const infoItems = computed(() => [
 					<p>{{ t('playerCard.infoDescription') }}</p>
 				</div>
 
-				<div class="info-grid">
-					<div v-for="item in infoItems" :key="item.label" class="info-item">
-						<span>{{ item.label }}</span>
-						<strong>{{ item.value }}</strong>
-					</div>
-				</div>
+				<UiStatGrid :columns="2" class="player-info-grid">
+					<UiStatCard
+						v-for="item in infoItems"
+						:key="item.label"
+						:label="item.label"
+						:value="item.value"
+					/>
+				</UiStatGrid>
 
 				<div class="section-heading game-statistics-heading">
 					<h3>{{ t('playerCard.statistics') }}</h3>
 				</div>
 
-				<div class="info-grid">
-					<div v-for="item in gameStatisticItems" :key="item.label" class="info-item">
-						<span>{{ item.label }}</span>
-						<strong>{{ item.value }}</strong>
-					</div>
-				</div>
+				<UiStatGrid :columns="2" class="player-info-grid">
+					<UiStatCard
+						v-for="item in gameStatisticItems"
+						:key="item.label"
+						:label="item.label"
+						:value="item.value"
+					/>
+				</UiStatGrid>
 			</div>
 		</section>
 	</article>
@@ -333,5 +339,34 @@ const infoItems = computed(() => [
 	.info-grid {
 		grid-template-columns: 1fr;
 	}
+}
+
+/* Material Design 3 Player Profile Card */
+:global(:root[data-ui="modern"] .player-info) {
+	border-radius: var(--md-sys-shape-corner-extra-large);
+	border: none;
+	background: var(--md-sys-color-surface-container-low);
+	box-shadow: var(--md-sys-elevation-level1);
+}
+
+:global(:root[data-ui="modern"] .player-info .preview-panel),
+:global(:root[data-ui="modern"] .player-info .detail-panel) {
+	border-radius: var(--md-sys-shape-corner-large);
+	background: var(--md-sys-color-surface-container);
+	border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 42%, transparent);
+}
+
+:global(:root[data-ui="modern"] .player-info .preview-frame) {
+	border-radius: var(--md-sys-shape-corner-medium);
+	background: var(--md-sys-color-surface-container-high);
+}
+
+:global(:root[data-ui="modern"] .player-info .player-info-grid .ui-stat-card__value) {
+	font-size: clamp(1.02rem, 1.35vw, 1.22rem);
+	line-height: 1.25;
+}
+
+:global(:root[data-ui="modern"] .player-info .player-info-grid .ui-stat-card) {
+	background: var(--md-sys-color-surface-container-low);
 }
 </style>

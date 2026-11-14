@@ -22,11 +22,14 @@
         filter 220ms var(--ease-out),
         transform 260ms var(--ease-out);
     will-change: top, left, transform, opacity;
+}
+
+.onboarding-panel:focus:not(:focus-visible) {
     outline: none;
 }
 
-.onboarding-panel:focus {
-    outline: 2px solid color-mix(in srgb, var(--primary-light) 55%, transparent);
+.onboarding-panel:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--primary-light) 75%, transparent);
     outline-offset: 3px;
 }
 
@@ -45,7 +48,7 @@
     margin-left: auto;
     color: var(--text-secondary);
     font:
-        700 0.72rem/1 'Space Mono',
+        700 0.72rem/1 'SpaceMono',
         monospace;
 }
 
@@ -73,7 +76,11 @@
 .onboarding-close:focus-visible {
     border-color: var(--primary-light);
     color: var(--text-main);
-    outline: none;
+}
+
+.onboarding-close:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
 }
 
 .onboarding-close:active {
@@ -180,7 +187,13 @@
     border-color: var(--primary-light);
     background: var(--button-secondary-hover);
     color: var(--text-main);
-    outline: none;
+}
+
+.onboarding-action:focus-visible,
+.onboarding-secondary:focus-visible,
+.onboarding-next:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
 }
 
 .onboarding-action--primary:hover,
@@ -222,7 +235,11 @@
 .onboarding-skip:hover,
 .onboarding-skip:focus-visible {
     color: var(--text-main);
-    outline: none;
+}
+
+.onboarding-skip:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
 }
 
 .onboarding-skip:active {
@@ -301,4 +318,97 @@
     .onboarding-progress-bar span {
         transition: none;
     }
+}
+
+/* Material Design 3 Onboarding Dialogs & Cards */
+:global(:root[data-ui="modern"] .onboarding-panel),
+:global(:root[data-ui="modern"] .onboarding-prompt-panel) {
+    border: none;
+    border-radius: var(--md-sys-shape-corner-extra-large);
+    background: var(--md-sys-color-surface-container-high);
+    color: var(--md-sys-color-on-surface);
+    box-shadow: var(--md-sys-elevation-level4);
+}
+
+:global(:root[data-ui="modern"] .onboarding-close),
+:global(:root[data-ui="modern"] .onboarding-action),
+:global(:root[data-ui="modern"] .onboarding-skip),
+:global(:root[data-ui="modern"] .onboarding-prompt-later),
+:global(:root[data-ui="modern"] .onboarding-prompt-start),
+:global(:root[data-ui="modern"] .onboarding-secondary),
+:global(:root[data-ui="modern"] .onboarding-next) {
+    position: relative;
+    overflow: hidden;
+    transition:
+        background-color var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1)),
+        color var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1)),
+        border-color var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1)),
+        transform var(--md-sys-motion-duration-short2, 100ms) var(--md-sys-motion-easing-emphasized-decelerate, cubic-bezier(0.05, 0.7, 0.1, 1));
+}
+
+:global(:root[data-ui="modern"] .onboarding-close:focus-visible),
+:global(:root[data-ui="modern"] .onboarding-action:focus-visible),
+:global(:root[data-ui="modern"] .onboarding-skip:focus-visible),
+:global(:root[data-ui="modern"] .onboarding-prompt-later:focus-visible),
+:global(:root[data-ui="modern"] .onboarding-prompt-start:focus-visible),
+:global(:root[data-ui="modern"] .onboarding-secondary:focus-visible),
+:global(:root[data-ui="modern"] .onboarding-next:focus-visible) {
+    outline: 3px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
+}
+
+:global(:root[data-ui="modern"] .m3-onboarding-progress) {
+    width: 100%;
+    border-radius: var(--md-sys-shape-corner-full);
+    --md-linear-progress-track-height: 6px;
+    --md-linear-progress-active-indicator-height: 6px;
+    --md-linear-progress-track-shape: var(--md-sys-shape-corner-full);
+    --md-linear-progress-track-color: var(--md-sys-color-surface-container-highest);
+    --md-linear-progress-active-indicator-color: var(--md-sys-color-primary);
+}
+
+:global(:root[data-ui="modern"] .onboarding-btn-icon) {
+    font-size: 1.125rem;
+    line-height: 1;
+}
+
+:global(:root[data-ui="modern"] .onboarding-close) {
+    border-radius: var(--md-sys-shape-corner-full);
+    background: var(--md-sys-color-surface-container-highest);
+    color: var(--md-sys-color-on-surface-variant);
+    border-color: transparent;
+}
+
+:global(:root[data-ui="modern"] .onboarding-action) {
+    border-radius: var(--md-sys-shape-corner-large);
+    background: var(--md-sys-color-surface-container-low);
+    color: var(--md-sys-color-on-surface);
+    border-color: var(--md-sys-color-outline-variant);
+}
+
+:global(:root[data-ui="modern"] .onboarding-action--primary) {
+    background: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
+    border-color: transparent;
+}
+
+:global(:root[data-ui="modern"] .onboarding-skip) {
+    border-radius: var(--md-sys-shape-corner-full);
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+:global(:root[data-ui="modern"] .onboarding-prompt-later),
+:global(:root[data-ui="modern"] .onboarding-secondary) {
+    border-radius: var(--md-sys-shape-corner-full);
+    background: transparent;
+    color: var(--md-sys-color-primary);
+    border-color: var(--md-sys-color-outline);
+}
+
+:global(:root[data-ui="modern"] .onboarding-prompt-start),
+:global(:root[data-ui="modern"] .onboarding-next) {
+    border-radius: var(--md-sys-shape-corner-full);
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+    border-color: transparent;
 }

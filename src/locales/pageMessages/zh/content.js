@@ -2,6 +2,7 @@ export default {
 	termsPage: {
 		title: '用户须知与服务条款',
 		description: 'Quantum Original 服务资格、行为规范、信息保护与服务责任说明。',
+		toc: '条款目录',
 		backToGuides: '返回指南',
 		loading: '正在加载用户须知……',
 		loadFailed: '暂时无法加载用户须知，请检查网络后重试。',

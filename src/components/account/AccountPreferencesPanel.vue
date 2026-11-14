@@ -1,11 +1,20 @@
 <script setup>
+import { computed } from 'vue'
 import { useOnboardingGuide } from '@/composables/useOnboardingGuide.js'
-import { useThemePreference } from '@/composables/useHeaderProfile.js'
+import { useUiPreferences } from '@/composables/useUiPreferences.js'
 import { useI18n } from 'vue-i18n'
 import TaFeatureNotice from '@/components/account/TaFeatureNotice.vue'
+import UiSwitch from '@/components/ui/UiSwitch.vue'
+import UiTabs from '@/components/ui/UiTabs.vue'
 
 const { isGuideButtonVisible, setGuideButtonVisible } = useOnboardingGuide()
-const theme = useThemePreference()
+const {
+    isModernUi,
+    osPrefersDark,
+    setThemePreference,
+    setUiMode,
+    themePreference,
+} = useUiPreferences()
 const props = defineProps({
     isTaAccount: { type: Boolean, default: false },
     requiredPlaytime: { type: Number, default: 180 },
@@ -21,12 +30,25 @@ const props = defineProps({
 const emit = defineEmits(['update:kotshiQueryEnabled', 'update:qbotActiveResponseEnabled', 'goOverview'])
 const { t } = useI18n()
 
-function setTheme(nextTheme) {
-    if (nextTheme !== 'light' && nextTheme !== 'dark') return
+const systemThemeLabel = computed(() =>
+    t('preferencesPage.themeSystem', {
+        current: t(osPrefersDark.value ? 'preferencesPage.dark' : 'preferencesPage.light'),
+    }),
+)
 
-    theme.value = nextTheme
-    document.documentElement.dataset.theme = nextTheme
-    localStorage.setItem('theme', nextTheme)
+const themeOptions = computed(() => [
+    { key: 'system', label: systemThemeLabel.value, icon: 'contrast' },
+    { key: 'light', label: t('preferencesPage.light'), icon: 'light_mode' },
+    { key: 'dark', label: t('preferencesPage.dark'), icon: 'dark_mode' },
+])
+
+function setTheme(nextTheme) {
+    if (nextTheme !== 'system' && nextTheme !== 'light' && nextTheme !== 'dark') return
+    setThemePreference(nextTheme, { animate: true })
+}
+
+function toggleUiExperience(checked) {
+    setUiMode(checked ? 'modern' : 'classic', { animate: true })
 }
 </script>
 
@@ -51,34 +73,39 @@ function setTheme(nextTheme) {
 			<section class="preference-group">
 				<header class="preference-group-header">
 					<h3>{{ t('preferencesPage.appearanceGroup') }}</h3>
-					<p>{{ t('preferencesPage.appearanceGroupDescription') }}</p>
 				</header>
 				<div class="preference-list">
+					<section class="preference-row preference-row--featured">
+						<div class="preference-copy">
+							<div class="preference-title-line">
+								<h3>{{ t('preferencesPage.uiExperience') }}</h3>
+								<span class="ui-experience-badge" :class="{ 'is-modern': isModernUi }">
+									{{ isModernUi ? t('preferencesPage.uiModern') : t('preferencesPage.uiClassic') }}
+								</span>
+							</div>
+							<p>{{ t('preferencesPage.uiExperienceDescription') }}</p>
+						</div>
+						<UiSwitch
+							:model-value="isModernUi"
+							:status-text="isModernUi ? t('preferencesPage.uiModern') : t('preferencesPage.uiClassic')"
+							:aria-label="t('preferencesPage.uiExperience')"
+							@update:model-value="toggleUiExperience"
+						/>
+					</section>
+
 					<section class="preference-row">
 						<div class="preference-copy">
 							<h3>{{ t('preferencesPage.defaultTheme') }}</h3>
 							<p>{{ t('preferencesPage.themeDescription') }}</p>
 						</div>
-						<div class="theme-segmented" role="group" :aria-label="t('preferencesPage.defaultTheme')">
-							<button
-								type="button"
-								class="theme-option"
-								:class="{ 'is-active': theme === 'light' }"
-								:aria-pressed="theme === 'light'"
-								@click="setTheme('light')"
-							>
-								{{ t('preferencesPage.light') }}
-							</button>
-							<button
-								type="button"
-								class="theme-option"
-								:class="{ 'is-active': theme === 'dark' }"
-								:aria-pressed="theme === 'dark'"
-								@click="setTheme('dark')"
-							>
-								{{ t('preferencesPage.dark') }}
-							</button>
-						</div>
+						<UiTabs
+							:model-value="themePreference"
+							:items="themeOptions"
+							variant="segmented"
+							:aria-label="t('preferencesPage.defaultTheme')"
+							class="theme-segmented-tabs"
+							@update:model-value="setTheme"
+						/>
 					</section>
 				</div>
 			</section>
@@ -86,7 +113,6 @@ function setTheme(nextTheme) {
 			<section class="preference-group">
 				<header class="preference-group-header">
 					<h3>{{ t('preferencesPage.guidanceGroup') }}</h3>
-					<p>{{ t('preferencesPage.guidanceGroupDescription') }}</p>
 				</header>
 				<div class="preference-list">
 					<section class="preference-row">
@@ -94,14 +120,12 @@ function setTheme(nextTheme) {
 							<h3>{{ t('preferencesPage.guideButton') }}</h3>
 							<p>{{ t('preferencesPage.guideButtonDescription') }}</p>
 						</div>
-						<label class="preference-toggle">
-							<span>{{ t('preferencesPage.showButton') }}</span>
-							<input
-								type="checkbox"
-								:checked="isGuideButtonVisible"
-								@change="setGuideButtonVisible($event.target.checked)"
-							/>
-						</label>
+						<UiSwitch
+							:model-value="isGuideButtonVisible"
+							:status-text="t('preferencesPage.showButton')"
+							:aria-label="t('preferencesPage.guideButton')"
+							@update:model-value="setGuideButtonVisible"
+						/>
 					</section>
 				</div>
 			</section>
@@ -109,7 +133,6 @@ function setTheme(nextTheme) {
 			<section class="preference-group">
 				<header class="preference-group-header">
 					<h3>{{ t('preferencesPage.privacyGroup') }}</h3>
-					<p>{{ t('preferencesPage.privacyGroupDescription') }}</p>
 				</header>
 				<div v-if="props.isTaAccount" class="preference-ta-gate">
 					<TaFeatureNotice
@@ -125,30 +148,26 @@ function setTheme(nextTheme) {
 							<h3>{{ t('preferencesPage.kotshiQuery') }}</h3>
 							<p>{{ t('preferencesPage.kotshiQueryDescription') }}</p>
 						</div>
-						<label class="preference-toggle">
-							<span>{{ props.kotshiQuerySettingSaving ? t('preferencesPage.saving') : (props.kotshiQueryEnabled ? t('preferencesPage.enabled') : t('preferencesPage.disabled')) }}</span>
-							<input
-								type="checkbox"
-								:checked="props.kotshiQueryEnabled"
-								:disabled="!props.kotshiQuerySettingLoaded || props.kotshiQuerySettingSaving"
-								@change="emit('update:kotshiQueryEnabled', $event.target.checked)"
-							/>
-						</label>
+						<UiSwitch
+							:model-value="props.kotshiQueryEnabled"
+							:status-text="props.kotshiQuerySettingSaving ? t('preferencesPage.saving') : (props.kotshiQueryEnabled ? t('preferencesPage.enabled') : t('preferencesPage.disabled'))"
+							:disabled="!props.kotshiQuerySettingLoaded || props.kotshiQuerySettingSaving"
+							:aria-label="t('preferencesPage.kotshiQuery')"
+							@update:model-value="emit('update:kotshiQueryEnabled', $event)"
+						/>
 					</section>
 					<section class="preference-row">
 						<div class="preference-copy">
 							<h3>{{ t('preferencesPage.qbotActiveResponse') }}</h3>
 							<p>{{ t('preferencesPage.qbotActiveResponseDescription') }}</p>
 						</div>
-						<label class="preference-toggle">
-							<span>{{ props.qbotActiveResponseSettingSaving ? t('preferencesPage.saving') : (props.qbotActiveResponseEnabled ? t('preferencesPage.enabled') : t('preferencesPage.disabled')) }}</span>
-							<input
-								type="checkbox"
-								:checked="props.qbotActiveResponseEnabled"
-								:disabled="!props.qbotActiveResponseSettingLoaded || props.qbotActiveResponseSettingSaving"
-								@change="emit('update:qbotActiveResponseEnabled', $event.target.checked)"
-							/>
-						</label>
+						<UiSwitch
+							:model-value="props.qbotActiveResponseEnabled"
+							:status-text="props.qbotActiveResponseSettingSaving ? t('preferencesPage.saving') : (props.qbotActiveResponseEnabled ? t('preferencesPage.enabled') : t('preferencesPage.disabled'))"
+							:disabled="!props.qbotActiveResponseSettingLoaded || props.qbotActiveResponseSettingSaving"
+							:aria-label="t('preferencesPage.qbotActiveResponse')"
+							@update:model-value="emit('update:qbotActiveResponseEnabled', $event)"
+						/>
 					</section>
 				</div>
 			</section>
@@ -274,6 +293,42 @@ function setTheme(nextTheme) {
     background: var(--background-secondary);
 }
 
+.theme-segmented--three {
+    grid-template-columns: auto repeat(2, minmax(72px, 1fr));
+}
+
+.preference-title-line {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.ui-experience-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.16rem 0.55rem;
+    border: 1px solid var(--split);
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    background: var(--background-secondary);
+}
+
+.ui-experience-badge.is-modern {
+    border-color: color-mix(in srgb, var(--primary) 42%, transparent);
+    background: color-mix(in srgb, var(--primary) 12%, var(--background));
+    color: var(--primary);
+}
+
+.preference-hint {
+    margin-top: 0.35rem;
+    color: var(--primary) !important;
+    font-size: 0.82rem !important;
+    font-weight: 600;
+}
+
 .theme-option {
     min-height: 38px;
     padding: 0.55rem 0.85rem;
@@ -282,6 +337,7 @@ function setTheme(nextTheme) {
     color: var(--text-secondary);
     font-weight: 700;
     cursor: pointer;
+    white-space: nowrap;
     transition:
         background-color 160ms var(--ease-out),
         border-color 160ms var(--ease-out),
@@ -293,7 +349,11 @@ function setTheme(nextTheme) {
 .theme-option:focus-visible {
     border-color: var(--primary-light);
     color: var(--text-main);
-    outline: none;
+}
+
+.theme-option:focus-visible {
+    outline: 2px solid var(--focus-ring, var(--primary));
+    outline-offset: 2px;
 }
 
 .theme-option.is-active {
@@ -358,6 +418,10 @@ function setTheme(nextTheme) {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
+    .theme-segmented--three {
+        grid-template-columns: 1fr;
+    }
+
     .preference-toggle {
         justify-content: space-between;
     }
@@ -368,5 +432,74 @@ function setTheme(nextTheme) {
     .preference-toggle input {
         transition: none;
     }
+}
+
+/* Material Design 3 Settings List & Segmented Controls */
+:global(:root[data-ui="modern"] .account .preferences-panel) {
+    background: transparent;
+    padding: 1.5rem 1.75rem 2rem;
+}
+
+:global(:root[data-ui="modern"] .account .preferences-panel .panel-header) {
+    border-bottom-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 55%, transparent);
+    padding-bottom: 1.25rem;
+}
+
+:global(:root[data-ui="modern"] .account .preferences-panel .feedback) {
+    border-left: 0;
+    border-radius: var(--md-sys-shape-corner-large);
+    background: var(--md-sys-color-error-container);
+    color: var(--md-sys-color-on-error-container);
+    padding: 0.9rem 1.1rem;
+    font-weight: 600;
+}
+
+:global(:root[data-ui="modern"] .account .preferences-panel .feedback.success) {
+    background: var(--md-sys-color-success-container);
+    color: var(--md-sys-color-on-success-container);
+}
+
+:global(:root[data-ui="modern"] .account .preferences-panel .preference-list) {
+    border-top: 0;
+    gap: 0.85rem;
+    margin-top: 1.25rem;
+}
+
+:global(:root[data-ui="modern"] .account .preferences-panel .preference-group) {
+    background: var(--md-sys-color-surface-container);
+    border-radius: var(--md-sys-shape-corner-large);
+    padding: 1.2rem 1.25rem 0.65rem;
+}
+
+:global(:root[data-ui="modern"] .account .preferences-panel .preference-list > .preference-row) {
+    border-bottom: 0;
+    border-radius: var(--md-sys-shape-corner-large);
+    background: var(--md-sys-color-surface-container);
+    padding: 1.2rem 1.35rem;
+}
+
+:global(:root[data-ui="modern"] .account .preferences-panel .preference-list > .preference-row--featured) {
+    background: var(--md-sys-color-primary-container);
+}
+
+:global(:root[data-ui="modern"] .account .preferences-panel .preference-list > .preference-row--featured .preference-copy h3),
+:global(:root[data-ui="modern"] .account .preferences-panel .preference-list > .preference-row--featured .preference-copy p) {
+    color: var(--md-sys-color-on-primary-container);
+}
+
+:global(:root[data-ui="modern"] .account .preferences-panel .preference-group .preference-row:last-child) {
+    border-bottom: 0;
+}
+
+:global(:root[data-ui="modern"] .account .preferences-panel .ui-experience-badge) {
+    border: 0;
+    padding: 0.2rem 0.7rem;
+    background: var(--md-sys-color-surface-container-high);
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+:global(:root[data-ui="modern"] .account .preferences-panel .ui-experience-badge.is-modern) {
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
 }
 </style>

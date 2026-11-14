@@ -28,27 +28,33 @@
 					<strong>{{ t(item.labelKey) }}</strong>
 				</div>
 			</div>
+			<md-linear-progress
+				v-if="isModernUi"
+				class="m3-register-progress"
+				:value="Math.max(0.25, Math.min(1, step / Math.max(1, stepItems.length)))"
+				:aria-label="t('register.stepCounter', { step })"
+			/>
 
 			<Transition name="step-swap" mode="out-in">
 				<form v-if="quiz_seq === -1 || verificationToken" :key="`form-${step}`" class="register-form" @submit.prevent="handleNext">
 					<label v-if="step === 1" class="field">
 						<span>{{ t('register.usernameLabel') }}</span>
-						<input v-model="username" type="text" :placeholder="t('register.usernameLabel')" autocomplete="username" required />
+						<input v-model="username" type="text" :placeholder="t('register.usernameLabel')" autocomplete="username" autocorrect="off" autocapitalize="none" spellcheck="false" enterkeyhint="next" required />
 					</label>
 
 					<label v-if="step === 2" class="field">
 						<span>{{ t('register.qqLabel') }}</span>
-						<input v-model="qq" type="text" :placeholder="t('register.qqLabel')" inputmode="numeric" @input="validateQQ" required />
+						<input v-model="qq" type="text" :placeholder="t('register.qqLabel')" inputmode="numeric" autocorrect="off" autocapitalize="none" spellcheck="false" enterkeyhint="next" @input="validateQQ" required />
 					</label>
 
 					<label v-if="step === 3" class="field">
 						<span>{{ t('register.passwordLabel') }}</span>
-						<input v-model="password" type="password" :placeholder="t('register.passwordSetup')" autocomplete="new-password" minlength="8" required />
+						<input v-model="password" type="password" :placeholder="t('register.passwordSetup')" autocomplete="new-password" minlength="8" enterkeyhint="next" required />
 					</label>
 
 					<label v-if="step === 3" class="field">
 						<span>{{ t('register.confirmPasswordLabel') }}</span>
-						<input v-model="confirmPassword" type="password" :placeholder="t('register.passwordAgain')" autocomplete="new-password" minlength="8" required />
+						<input v-model="confirmPassword" type="password" :placeholder="t('register.passwordAgain')" autocomplete="new-password" minlength="8" enterkeyhint="done" required />
 					</label>
 
 					<div v-if="step === 4 && !verificationToken" class="verification-options">
@@ -61,6 +67,7 @@
 							:disabled="!method.available || (minecraftSessionId && selectedVerificationMethod !== method.id)"
 							@click="selectedVerificationMethod = method.id"
 						>
+							<md-ripple v-if="isModernUi" />
 							<strong>{{ method.displayName }}</strong>
 							<span>{{ method.description }}</span>
 							<small v-if="method.state === 'reserved'">{{ t('register.reserved') }}</small>
@@ -100,7 +107,7 @@
 						<p v-if="termsLoading" class="configuration-status">{{ t('register.termsLoading') }}</p>
 						<div v-else-if="termsLoadError" class="terms-load-error" role="alert">
 							<p>{{ t('register.termsLoadFailed') }}</p>
-							<button type="button" class="secondary-button" @click="reloadTerms">{{ t('register.termsRetry') }}</button>
+							<UiButton type="button" variant="tonal" size="sm" @click="reloadTerms">{{ t('register.termsRetry') }}</UiButton>
 						</div>
 					</div>
 					<p v-if="verificationToken" class="configuration-status">
@@ -109,12 +116,19 @@
 							: t('register.verificationPassed') }}
 					</p>
 
-					<p v-if="message" class="message" role="alert">{{ message }}</p>
+					<UiStatePanel v-if="message" state="error" compact role="alert" :message="message" />
 
-					<button type="submit" class="primary-button" :disabled="isLoading || !canStartVerification">
-						<span v-if="isLoading" class="spinner"></span>
+					<UiButton
+						type="submit"
+						variant="filled"
+						size="lg"
+						full-width
+						class="primary-button"
+						:loading="isLoading"
+						:disabled="isLoading || !canStartVerification"
+					>
 						{{ primaryActionLabel }}
-					</button>
+					</UiButton>
 				</form>
 
 				<div v-else-if="step === 4 && quiz_seq < quizQuestions.length" :key="`quiz-${quiz_seq}`" class="quiz-section">
@@ -126,7 +140,9 @@
 
 					<div class="quiz-meta">
 						<span>{{ t('register.remainingSeconds', { countdown }) }}</span>
-						<button v-if="quiz_seq === 0" type="button" class="secondary-button" @click="switchPage">{{ t('register.skipWait') }}</button>
+						<UiButton v-if="quiz_seq === 0" type="button" variant="tonal" size="sm" class="secondary-button" @click="switchPage">
+							{{ t('register.skipWait') }}
+						</UiButton>
 					</div>
 
 					<div class="options">
@@ -136,13 +152,18 @@
 							type="button"
 							@click="selectAnswer(optionIndex)"
 						>
-							{{ option }}
+							<md-ripple v-if="isModernUi" />
+							<span>{{ option }}</span>
 						</button>
 					</div>
 				</div>
 
 				<div v-else :key="`result-${quiz_seq}`" class="result-panel">
-					<p v-if="isSubmittingQuiz"><span class="spinner"></span>{{ t('register.checkingQuiz') }}</p>
+					<p v-if="isSubmittingQuiz" class="state-loading">
+						<md-circular-progress v-if="isModernUi" class="m3-inline-spinner" indeterminate :aria-label="t('register.checkingQuiz')" />
+						<span v-else class="spinner"></span>
+						<span>{{ t('register.checkingQuiz') }}</span>
+					</p>
 					<p v-else-if="message" class="message">{{ message }}</p>
 					<p v-else-if="quizResult && !quizResult.passed" class="message">
 						{{ t('register.quizFailed', { score: quizResult.score, count: quizQuestionCount }) }}
@@ -150,7 +171,11 @@
 					<p v-else-if="quizResult?.passed && !isLoading" class="quiz-success">
 						{{ t('register.quizPassed', { score: quizResult.score, count: quizQuestionCount, countdown }) }}
 					</p>
-					<p v-if="isLoading"><span class="spinner"></span>{{ t('register.registering') }}</p>
+					<p v-if="isLoading" class="state-loading">
+						<md-circular-progress v-if="isModernUi" class="m3-inline-spinner" indeterminate :aria-label="t('register.registering')" />
+						<span v-else class="spinner"></span>
+						<span>{{ t('register.registering') }}</span>
+					</p>
 				</div>
 			</Transition>
 
@@ -160,19 +185,32 @@
 
 		</section>
 
-		<div v-if="isDialogVisible" class="dialog-overlay">
+		<div
+			v-if="isDialogVisible"
+			class="dialog-overlay"
+			role="dialog"
+			aria-modal="true"
+			:aria-label="t(isDevMode ? 'register.devSuccessTitle' : 'register.successTitle')"
+		>
 			<div class="dialog">
 				<h2>{{ t(isDevMode ? 'register.devSuccessTitle' : 'register.successTitle') }}</h2>
-				<h4 v-if="!isDevMode">{{ t('register.successMessage') }}</h4>
-				<h4 v-else>{{ t('register.devSuccessMessage') }}</h4>
-				<button @click="closeDialog">{{ t('common.confirm') }}</button>
+				<p v-if="!isDevMode">{{ t('register.successMessage') }}</p>
+				<p v-else>{{ t('register.devSuccessMessage') }}</p>
+				<UiButton type="button" variant="filled" full-width @click="closeDialog">
+					{{ t('common.confirm') }}
+				</UiButton>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script setup>
+import UiButton from '@/components/ui/UiButton.vue'
+import UiStatePanel from '@/components/ui/UiStatePanel.vue'
 import { useRegistrationForm } from '@/composables/useRegistrationForm.js'
+import { useUiPreferences } from '@/composables/useUiPreferences.js'
+
+const { isModernUi } = useUiPreferences()
 
 const {
 	t,

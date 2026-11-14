@@ -1,12 +1,12 @@
 <template>
     <section class="cover-panel">
-        <header class="tool-header">
-            <div>
+        <div class="tool-bar">
+            <div class="tool-bar__copy">
                 <h2>{{ t('coverPage.heading') }}</h2>
                 <p>{{ t('coverPage.description') }}</p>
             </div>
             <span class="local-badge">{{ t('coverPage.localBadge') }}</span>
-        </header>
+        </div>
 
         <div class="generator-grid">
             <section class="preview-panel" :aria-label="t('coverPage.preview')">
@@ -46,15 +46,23 @@
                     ></video>
                     <div class="video-preview-footer">
                         <span>{{ videoPreviewFormat.toUpperCase() }}</span>
-                        <button type="button" class="secondary-button" @click="downloadVideo">
+                        <UiButton variant="tonal" size="sm" icon="download" @click="downloadVideo">
                             {{ t('coverPage.downloadVideo') }}
-                        </button>
+                        </UiButton>
                     </div>
                 </div>
-                <p v-if="renderError || downloadError" class="error-state" role="alert">
-                    {{ renderError || downloadError }}
-                </p>
-                <p v-if="videoError" class="error-state" role="alert">{{ videoError }}</p>
+                <UiStatePanel
+                    v-if="renderError || downloadError"
+                    state="error"
+                    compact
+                    :message="renderError || downloadError"
+                />
+                <UiStatePanel
+                    v-if="videoError"
+                    state="error"
+                    compact
+                    :message="videoError"
+                />
             </section>
 
             <div class="control-panel">
@@ -262,28 +270,35 @@
                 <p class="size-hint">{{ t('coverPage.videoHint') }}</p>
 
                 <div class="actions">
-                    <button type="button" class="secondary-button" @click="randomizeSeed">
+                    <UiButton variant="outlined" icon="casino" @click="randomizeSeed">
                         {{ t('coverPage.randomSeed') }}
-                    </button>
-                    <button
-                        type="button"
-                        class="primary-button"
+                    </UiButton>
+                    <UiButton
+                        variant="filled"
+                        icon="download"
                         :disabled="!canDownload"
                         @click="downloadCover"
                     >
                         {{ t('coverPage.downloadAction') }}
-                    </button>
-                    <button
-                        type="button"
-                        class="primary-button video-button"
+                    </UiButton>
+                    <UiButton
+                        variant="tonal"
+                        icon="movie"
                         :disabled="!canGenerateVideo || isRecording"
+                        :loading="isRecording"
                         @click="generateVideo"
                     >
                         {{ isRecording ? t('coverPage.videoGenerating', { progress: videoPercent }) : t('coverPage.generateVideo') }}
-                    </button>
+                    </UiButton>
                 </div>
+                <md-linear-progress
+                    v-if="isRecording && isModernUi"
+                    class="m3-video-progress"
+                    :value="Math.max(0, Math.min(1, Number(videoProgress || 0)))"
+                    :aria-label="t('coverPage.videoProgress', { progress: videoPercent })"
+                />
                 <progress
-                    v-if="isRecording"
+                    v-else-if="isRecording"
                     class="video-progress"
                     :value="videoProgress"
                     max="1"
@@ -297,6 +312,9 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import UiButton from '@/components/ui/UiButton.vue'
+import UiStatePanel from '@/components/ui/UiStatePanel.vue'
+import { useUiPreferences } from '@/composables/useUiPreferences.js'
 import {
     COVER_STYLES,
     MAX_COVER_DIMENSION,
@@ -313,6 +331,7 @@ const DEFAULT_COVER_HEIGHT = 1440
 const MIN_TITLE_FONT_SIZE = 16
 const MAX_TITLE_FONT_SIZE = 1024
 const { t } = useI18n()
+const { isModernUi } = useUiPreferences()
 const title = ref('')
 const titleDocument = ref(parseCoverTitleMarkup(''))
 const titleMarkupError = ref(null)

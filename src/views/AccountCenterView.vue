@@ -434,7 +434,7 @@ watch(currentSetting, (newValue) => {
 			@logout="logout"
 		/>
 
-		<main class="content" :class="{ immersive: isImmersive, 'personalization-layout': currentSetting === 2 }">
+		<section class="content" :class="{ immersive: isImmersive, 'personalization-layout': currentSetting === 2 }">
 			<transition name="slide-in">
 				<div v-if="currentSetting === 0" key="account-info" :class="{ 'overview-stack': accountType === 'ta' }">
 					<TaUpgradeCard
@@ -553,7 +553,7 @@ watch(currentSetting, (newValue) => {
 					@update:qbot-active-response-enabled="updateQbotActiveResponseEnabled"
 				/>
 			</transition>
-		</main>
+		</section>
 	</div>
 </template>
 

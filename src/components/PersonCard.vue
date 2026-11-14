@@ -159,10 +159,20 @@ input[type="password"] {
 	transition: border-bottom 0.3s ease-in-out;
 }
 
+input[type="text"]:focus:not(:focus-visible),
+input[type="password"]:focus:not(:focus-visible) {
+	outline: none;
+}
+
 input[type="text"]:focus,
 input[type="password"]:focus {
-	outline: none;
 	border-bottom: 4px solid var(--primary);
+}
+
+input[type="text"]:focus-visible,
+input[type="password"]:focus-visible {
+	outline: 2px solid var(--focus-ring);
+	outline-offset: 2px;
 }
 
 input[type="text"]::placeholder,

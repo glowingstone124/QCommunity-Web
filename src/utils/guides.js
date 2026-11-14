@@ -1,6 +1,5 @@
 import { guideItems } from '@/data/guides.js'
-import { marked } from 'marked'
-import DOMPurify from 'dompurify'
+import { renderSafeMarkdownHtml } from '@/utils/safeMarkdown.js'
 
 const GUIDE_SOURCE_BASE = '/content/guides'
 
@@ -90,7 +89,9 @@ function renderTable(lines, startIndex) {
 
 export function markdownToGuideHtml(markdown) {
 	const html = []
-	const lines = markdown.replace(/\r\n/g, '\n').split('\n')
+	const normalized = markdown.replace(/\r\n/g, '\n')
+	const lines = normalized.split('\n')
+	const headingShift = /(^|\n)#\s+/.test(normalized) ? 1 : 0
 	let index = 0
 	let paragraph = []
 	let listItems = []
@@ -161,7 +162,7 @@ export function markdownToGuideHtml(markdown) {
 			flushParagraph()
 			flushList()
 			flushBlockquote()
-			const level = heading[1].length
+			const level = Math.min(heading[1].length + headingShift, 6)
 			html.push(`<h${level}>${renderInline(heading[2])}</h${level}>`)
 			index += 1
 			continue
@@ -214,11 +215,10 @@ export async function loadGuideMarkdown(id) {
 		}
 
 		const markdown = await response.text()
-		const rawHtml = marked.parse(markdown)
 
 		return {
 			...guide,
-			html: DOMPurify.sanitize(rawHtml),
+			html: renderSafeMarkdownHtml(markdown),
 		}
 	} catch (error) {
 		console.error(error)

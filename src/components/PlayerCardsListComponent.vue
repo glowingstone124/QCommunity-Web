@@ -5,15 +5,26 @@ import ArtCard from "@/components/ArtCard.vue"
 import AllCardsComponent from "@/components/AllCardsComponent.vue"
 import MyCardsComponent from "@/components/MyCardsComponent.vue";
 import ChangeAvatarComponent from "@/components/ChangeAvatarComponent.vue";
+import UiTabs from "@/components/ui/UiTabs.vue";
 
 const selectedIndex = ref<0 | 1>(0)
 const { t } = useI18n()
 
-const selectModule = ref(0)
+const selectModule = ref<0 | 1>(0)
 
 const componentsList = [AllCardsComponent, MyCardsComponent]
 
 const currentComponent = computed(() => componentsList[selectedIndex.value])
+
+const moduleTabs = computed(() => [
+	{ key: 0, label: t('cardsPage.card'), icon: 'badge' },
+	{ key: 1, label: t('cardsPage.avatar'), icon: 'account_circle' },
+])
+
+const cardFilterTabs = computed(() => [
+	{ key: 0, label: t('cardsPage.allCards') },
+	{ key: 1, label: t('cardsPage.myCards') },
+])
 
 const viewportWidth = ref(typeof window === "undefined" ? 1200 : window.innerWidth)
 
@@ -52,7 +63,7 @@ onBeforeUnmount(() => {
 		<section class="left">
 			<div class="preview-panel">
 				<div class="preview-copy">
-					<h1>{{ t('cardsPage.previewTitle') }}</h1>
+					<h2 class="preview-title">{{ t('cardsPage.previewTitle') }}</h2>
 					<p>{{ t('cardsPage.previewDescription') }}</p>
 				</div>
 				<div class="card-stage">
@@ -66,33 +77,31 @@ onBeforeUnmount(() => {
 		<section class="right">
 			<header class="workspace-header">
 				<div>
-					<h1 class="workspace-title">{{ t('cardsPage.personalization') }}</h1>
+					<h2 class="workspace-title">{{ t('cardsPage.personalization') }}</h2>
 					<p class="workspace-sub">{{ t('cardsPage.personalizationDescription') }}</p>
 				</div>
-				<div class="customizationSelect">
-					<button type="button" class="customizationBtn" :class="{ active: selectModule === 0 }" @click="selectModule = 0">
-						<p>{{ t('cardsPage.card') }}</p>
-					</button>
-					<button type="button" class="customizationBtn" :class="{ active: selectModule === 1 }" @click="selectModule = 1">
-						<p>{{ t('cardsPage.avatar') }}</p>
-					</button>
-				</div>
+				<UiTabs
+					v-model="selectModule"
+					:items="moduleTabs"
+					variant="segmented"
+					:aria-label="t('cardsPage.personalization')"
+					class="customizationSelectTabs"
+				/>
 			</header>
 
 			<section v-show="selectModule === 0" class="workspace-section customizationFatherContainer">
 				<div class="section-topbar">
 					<div class="section-copy">
-						<h2>{{ t('cardsPage.library') }}</h2>
+						<h3>{{ t('cardsPage.library') }}</h3>
 						<p>{{ t('cardsPage.libraryDescription') }}</p>
 					</div>
-					<div class="btn-group">
-						<button :class="{ active: selectedIndex === 0 }" @click="selectedIndex = 0">
-						{{ t('cardsPage.allCards') }}
-						</button>
-						<button :class="{ active: selectedIndex === 1 }" @click="selectedIndex = 1">
-						{{ t('cardsPage.myCards') }}
-						</button>
-					</div>
+					<UiTabs
+						v-model="selectedIndex"
+						:items="cardFilterTabs"
+						variant="chips"
+						:aria-label="t('cardsPage.library')"
+						class="cardFilterTabs"
+					/>
 				</div>
 				<div class="section-body">
 					<component :is="currentComponent"/>
@@ -102,7 +111,7 @@ onBeforeUnmount(() => {
 			<section v-show="selectModule === 1" class="workspace-section avatar-panel">
 				<div class="section-topbar">
 					<div class="section-copy">
-						<h2>{{ t('cardsPage.avatarLibrary') }}</h2>
+						<h3>{{ t('cardsPage.avatarLibrary') }}</h3>
 						<p>{{ t('cardsPage.avatarDescription') }}</p>
 					</div>
 				</div>

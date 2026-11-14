@@ -1,7 +1,16 @@
 <template>
 	<div v-if="showNavBar" class="app-shell">
+		<a class="skip-link" href="#main-content" @click.prevent="focusMainContent">
+			{{ t('common.skipToContent') }}
+		</a>
 		<NavBar />
-		<main class="app-main" :class="{ 'app-main--contained': route.meta.containedScroll }">
+		<main
+			id="main-content"
+			ref="mainContentRef"
+			class="app-main"
+			:class="{ 'app-main--contained': route.meta.containedScroll }"
+			tabindex="-1"
+		>
 			<router-view v-slot="{ Component, route: viewRoute }">
 				<transition name="route-fade" mode="out-in">
 					<component
@@ -12,14 +21,16 @@
 			</router-view>
 		</main>
 	</div>
-	<router-view v-else v-slot="{ Component, route: viewRoute }">
-		<transition name="route-fade" mode="out-in">
-			<component
-				:is="Component"
-				:key="['guides', 'news'].includes(viewRoute.name) ? viewRoute.name : viewRoute.fullPath"
-			/>
-		</transition>
-	</router-view>
+	<main v-else id="main-content" ref="mainContentRef" class="app-main-standalone" tabindex="-1">
+		<router-view v-slot="{ Component, route: viewRoute }">
+			<transition name="route-fade" mode="out-in">
+				<component
+					:is="Component"
+					:key="['guides', 'news'].includes(viewRoute.name) ? viewRoute.name : viewRoute.fullPath"
+				/>
+			</transition>
+		</router-view>
+	</main>
 	<OnboardingGuide v-if="!route.meta.authPage" />
 	<TermsReviewGate v-if="!route.meta.authPage" />
 </template>
@@ -30,14 +41,19 @@ import NavBar from './components/NavBar.vue';
 import OnboardingGuide from './components/OnboardingGuide.vue'
 import TermsReviewGate from './components/TermsReviewGate.vue'
 import {useI18n} from 'vue-i18n'
-import {computed, onBeforeUnmount, onMounted, watch} from "vue";
+import {computed, onBeforeUnmount, onMounted, ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import {hasPendingOnboardingPrompt, hasSeenOnboarding, useOnboardingGuide} from '@/composables/useOnboardingGuide.js'
 const route = useRoute();
 const showNavBar = computed(() => route.meta.showNavBar !== false);
 const {locale, t} = useI18n()
 const {openPrompt} = useOnboardingGuide()
+const mainContentRef = ref(null)
 let onboardingPromptTimer = 0
+
+function focusMainContent() {
+	mainContentRef.value?.focus({ preventScroll: false })
+}
 
 function syncDocumentTitle() {
 	const title = route.meta.pageTitleKey ? t(route.meta.pageTitleKey) : ''
@@ -61,22 +77,6 @@ function scheduleOnboardingPrompt() {
 }
 
 onMounted(() => {
-	if (import.meta.env.PROD) {
-		document.addEventListener('contextmenu', e => e.preventDefault());
-		document.addEventListener('dragstart', e => e.preventDefault());
-		document.addEventListener('copy', e => e.preventDefault());
-		document.addEventListener('selectstart', e => e.preventDefault());
-		document.addEventListener('keydown', function (e) {
-			if (
-				e.key === 'F12' ||
-				(e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') ||
-				(e.ctrlKey && e.key.toLowerCase() === 'u')
-			) {
-				e.preventDefault();
-			}
-		});
-	}
-
 	scheduleOnboardingPrompt()
 });
 
@@ -92,7 +92,8 @@ onBeforeUnmount(() => {
 
 <style>
 @import "/src/assets/main.css";
-* {
+@import "/src/assets/modern-ui.css";
+:where(button, [role="button"], .logo-section, .app-navigation-item) {
 	user-select: none;
 }
 
@@ -157,6 +158,12 @@ input, textarea, article, .article-content, .markdown-body, [data-selectable] {
 
 .app-main--contained {
 	overflow: hidden;
+}
+
+.app-main-standalone {
+	width: 100%;
+	min-height: 100dvh;
+	background: var(--page-background);
 }
 
 .route-fade-enter-active,

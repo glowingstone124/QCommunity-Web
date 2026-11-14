@@ -4,6 +4,7 @@ export default {
 		refresh: 'Refresh',
 		refreshing: 'Refreshing',
 		syncing: 'Syncing',
+		clear: 'Clear',
 		confirm: 'Confirm',
 		cancel: 'Cancel',
 		unknown: 'Unknown',
@@ -17,6 +18,7 @@ export default {
 		mainNavigationLink: 'Main navigation link',
 		loginAlert: 'Sign in here',
 		backHome: 'Back home',
+		skipToContent: 'Skip to main content',
 	},
 	auth: {
 		loginTitle: 'Sign in',

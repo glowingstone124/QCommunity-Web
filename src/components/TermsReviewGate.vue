@@ -23,7 +23,10 @@
 			></div>
 			<div v-else class="terms-review-error" role="alert">
 				<p>{{ t('termsPage.loadFailed') }}</p>
-				<button type="button" @click="checkCurrentAgreement(true)">{{ t('termsPage.retry') }}</button>
+				<button type="button" @click="checkCurrentAgreement(true)">
+					<md-ripple v-if="isModernUi" />
+					<span>{{ t('termsPage.retry') }}</span>
+				</button>
 			</div>
 
 			<footer class="terms-review-footer">
@@ -34,14 +37,18 @@
 				</label>
 				<p v-if="errorMessage && termsHtml" class="terms-review-error-text" role="alert">{{ errorMessage }}</p>
 				<div class="terms-review-actions">
-					<button type="button" class="terms-logout-button" @click="signOut">{{ t('termsPage.signOut') }}</button>
+					<button type="button" class="terms-logout-button" @click="signOut">
+						<md-ripple v-if="isModernUi" />
+						<span>{{ t('termsPage.signOut') }}</span>
+					</button>
 					<button
 						type="button"
 						class="terms-accept-button"
 						:disabled="!isChecked || !username || !termsVersion || isSaving"
 						@click="acceptCurrentTerms"
 					>
-						{{ isSaving ? t('termsPage.saving') : t('termsPage.accept') }}
+						<md-ripple v-if="isModernUi" />
+						<span>{{ isSaving ? t('termsPage.saving') : t('termsPage.accept') }}</span>
 					</button>
 				</div>
 			</footer>
@@ -54,6 +61,7 @@ import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { clearQhubSession, redirectInvalidSession, SessionExpiredError } from '@/utils/authSession.js'
+import { useUiPreferences } from '@/composables/useUiPreferences.js'
 import {
 	getTermsAcceptanceKey,
 	hasAcceptedTerms,
@@ -63,6 +71,7 @@ import {
 } from '@/services/terms.js'
 
 const { t } = useI18n()
+const { isModernUi } = useUiPreferences()
 const route = useRoute()
 const isRequired = ref(false)
 const isChecking = ref(false)
@@ -373,5 +382,37 @@ onBeforeUnmount(() => {
 .terms-accept-button:disabled {
 	cursor: not-allowed;
 	opacity: 0.55;
+}
+
+/* Material Design 3 Dialog Specification (28px corner + pill actions) */
+:global(:root[data-ui="modern"] .terms-review-overlay .terms-review-dialog) {
+	border-radius: var(--md-sys-shape-corner-extra-large);
+	border: none;
+	background: var(--md-sys-color-surface-container-high);
+	box-shadow: var(--md-sys-elevation-level4);
+	overflow: hidden;
+}
+
+:global(:root[data-ui="modern"] .terms-review-overlay .terms-review-actions button),
+:global(:root[data-ui="modern"] .terms-review-overlay .terms-review-error button) {
+	position: relative;
+	border-radius: var(--md-sys-shape-corner-full);
+	padding-inline: 1.25rem;
+	min-height: 44px;
+}
+
+:global(:root[data-ui="modern"] .terms-review-overlay .terms-logout-button) {
+	border-color: var(--md-sys-color-outline);
+	background: transparent;
+}
+
+:global(:root[data-ui="modern"] .terms-review-overlay .terms-accept-button:not(:disabled)) {
+	border-color: transparent;
+	background: var(--md-sys-color-primary);
+	color: var(--md-sys-color-on-primary);
+}
+
+:global(:root[data-ui="modern"] .terms-review-overlay .terms-review-checkbox input) {
+	accent-color: var(--md-sys-color-primary);
 }
 </style>

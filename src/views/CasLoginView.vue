@@ -1,17 +1,26 @@
 <template>
-	<main class="cas-login">
-		<h1>{{ $t('loginPage.sso_authorizing') }}</h1>
-		<p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
-		<button v-if="errorMessage" type="button" @click="startLogin">
-			{{ $t('loginPage.cas_link') }}
-		</button>
-	</main>
+	<section class="cas-login">
+		<UiStatePanel
+			v-if="errorMessage"
+			state="error"
+			:title="$t('loginPage.sso_authorizing')"
+			:message="errorMessage"
+			:action-label="$t('loginPage.cas_link')"
+			@action="startLogin"
+		/>
+		<UiStatePanel
+			v-else
+			state="loading"
+			:title="$t('loginPage.sso_authorizing')"
+		/>
+	</section>
 </template>
 
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import UiStatePanel from '@/components/ui/UiStatePanel.vue'
 import { QoAuthClient, LocalStorageTokenStorage, extractTicketFromUrl, stripTicketFromUrl } from '@quantumoriginal/login-sdk'
 import { postLoginRedirect } from '@/utils/loginRedirect.js'
 import { prepareQhubCallback, consumeQhubCallback } from '@/utils/casCallback.js'

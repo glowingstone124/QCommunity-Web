@@ -10,13 +10,14 @@ import { faCircleCheck, faClock, faSquarePlus, faTrashCan } from '@fortawesome/f
 
 library.add(faCircleCheck, faClock, faSquarePlus, faTrashCan)
 import "@/assets/colors.css"
-import {usePageStore} from "@/utils/store.ts";
+import "@/plugins/material3.js"
+import { usePageStore } from "@/utils/store.ts";
 import { useAppStore } from "@/stores/app";
 import { useUserStore } from "@/stores/user";
 import { loadCoreAssets } from "@/utils/assetLoader.js";
+import { initUiPreferences } from "@/composables/useUiPreferences.js";
 
-const savedTheme = localStorage.getItem("theme") || "light";
-document.documentElement.dataset.theme = savedTheme === "dark" ? "dark" : "light";
+initUiPreferences();
 
 function updateAssetLoader(percent) {
     const normalizedPercent = Math.min(Math.max(percent, 0), 100);

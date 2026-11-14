@@ -3,6 +3,8 @@ import {computed, onBeforeUnmount, onMounted, ref} from 'vue'
 import {useI18n} from 'vue-i18n'
 import {useRouter} from 'vue-router'
 import FallenLiveStatus from '@/components/fallen/FallenLiveStatus.vue'
+import UiButton from '@/components/ui/UiButton.vue'
+import UiStatePanel from '@/components/ui/UiStatePanel.vue'
 import {collapseSchedule} from '@/data/collapse.js'
 import {getFallenActivityStatus, getFallenTeamSelection, selectFallenTeam} from '@/services/fallen.js'
 
@@ -247,29 +249,18 @@ onBeforeUnmount(() => {
 			>
 				<img :src="currentTeam.image" :alt="localized(currentTeam.name)">
 				<div class="locked-overlay"></div>
-				<div v-if="celebrating" class="impact-fx" aria-hidden="true">
-					<span class="impact-flash"></span>
-					<span class="impact-ring impact-ring--one"></span>
-					<span class="impact-ring impact-ring--two"></span>
-					<span
-						v-for="index in 12"
-						:key="index"
-						class="impact-ray"
-						:style="{'--ray-index': index - 1}"
-					></span>
-				</div>
 				<div class="locked-content">
 					<h2>{{ localized(currentTeam.name) }}</h2>
-					<p class="status-label">{{ text.locked }} · {{ currentTeam.id }}</p>
+					<p class="status-label">{{ text.locked }} ({{ currentTeam.id }})</p>
 					<p>{{ localized(currentTeam.location) }}</p>
 					<strong>{{ localized(currentTeam.perk) }}</strong>
 					<small v-if="selection.finalized && expectedTeam && expectedTeam.id !== currentTeam.id">
 						{{ t('collapsePage.registeredPreference', { team: localized(expectedTeam.name) }) }}
 					</small>
 					<span>{{ message || text.selected }}</span>
-					<button v-if="isDevMode" type="button" class="reset-preview" @click="resetDevPreview">
+					<UiButton v-if="isDevMode" type="button" variant="outlined" class="reset-preview" @click="resetDevPreview">
 						{{ t('collapsePage.resetPreview') }}
-					</button>
+					</UiButton>
 				</div>
 			</section>
 
@@ -293,16 +284,29 @@ onBeforeUnmount(() => {
 					<p class="team-location">{{ localized(team.location) }}</p>
 					<p class="team-description">{{ localized(team.description) }}</p>
 					<div class="perk"><span>◆</span>{{ localized(team.perk) }}</div>
-					<button type="button" @click="openConfirmation(team)">
+					<UiButton
+						type="button"
+						variant="outlined"
+						full-width
+						trailing-icon="arrow_forward"
+						class="team-action-btn"
+						@click="openConfirmation(team)"
+					>
 						{{ loggedIn || isDevMode ? text.choose : text.login }}
-						<span>→</span>
-					</button>
+					</UiButton>
 				</div>
 				</article>
 			</section>
 		</Transition>
 
-		<p v-if="!activityActive && errorMessage" class="error-banner" role="alert">{{ errorMessage }}</p>
+		<UiStatePanel
+			v-if="!activityActive && errorMessage"
+			state="error"
+			compact
+			role="alert"
+			class="error-banner"
+			:message="errorMessage"
+		/>
 
 		<Transition name="confirm-pop">
 			<div v-if="!activityActive && pending" class="modal-backdrop" @click.self="pendingTeam = null">
@@ -310,10 +314,12 @@ onBeforeUnmount(() => {
 				<h2 id="confirm-title">{{ text.confirmTitle }}</h2>
 				<p>{{ text.confirmBody }}</p>
 				<div class="modal-actions">
-					<button type="button" class="secondary" :disabled="submitting" @click="pendingTeam = null">{{ text.cancel }}</button>
-					<button type="button" class="primary" :disabled="submitting" @click="confirmSelection">
-						{{ submitting ? '…' : text.confirm }}
-					</button>
+					<UiButton type="button" variant="outlined" class="secondary" :disabled="submitting" @click="pendingTeam = null">
+						{{ text.cancel }}
+					</UiButton>
+					<UiButton type="button" variant="filled" class="primary" :loading="submitting" :disabled="submitting" @click="confirmSelection">
+						{{ text.confirm }}
+					</UiButton>
 				</div>
 				</section>
 			</div>

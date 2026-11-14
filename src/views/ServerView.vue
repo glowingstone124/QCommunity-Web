@@ -10,10 +10,20 @@ import {
 	serverScenes,
 	serverSpecs,
 } from '@/data/server.js'
+import UiButton from '@/components/ui/UiButton.vue'
+import UiTabs from '@/components/ui/UiTabs.vue'
+import { useUiPreferences } from '@/composables/useUiPreferences.js'
 
 const { locale, t } = useI18n()
+const { isModernUi } = useUiPreferences()
 const copyStatus = ref('')
 const activeQPluginTabId = ref('mechanics')
+const qpluginTabItems = computed(() =>
+	qpluginTabs.map((tab) => ({
+		key: tab.id,
+		label: t(tab.labelKey),
+	}))
+)
 const activeSceneIndex = ref(0)
 const tickerPaused = ref(false)
 const isPinned = ref(false)
@@ -285,15 +295,17 @@ onBeforeUnmount(() => {
 						<span class="spec-label">{{ t('serverPage.serverAddress') }}</span>
 						<div class="ip-row">
 							<strong class="spec-value mono">{{ serverSpecs.domain }}</strong>
-							<button
-								type="button"
+							<UiButton
+								:variant="copyStatus === serverSpecs.domain ? 'filled' : 'tonal'"
+								size="sm"
+								:icon="copyStatus === serverSpecs.domain ? 'check' : 'content_copy'"
 								class="copy-btn"
 								:class="{ 'is-copied': copyStatus === serverSpecs.domain }"
 								:aria-label="t('serverPage.copyIp')"
 								@click="copyText(serverSpecs.domain, serverSpecs.domain)"
 							>
 								{{ copyStatus === serverSpecs.domain ? t('serverPage.copied') : t('serverPage.copyIp') }}
-							</button>
+							</UiButton>
 						</div>
 					</div>
 
@@ -308,9 +320,9 @@ onBeforeUnmount(() => {
 					</div>
 
 					<div class="spec-action">
-						<router-link to="/dashboard" class="action-btn-primary">
+						<UiButton to="/dashboard" variant="filled" full-width class="action-btn-primary">
 							{{ t('serverPage.viewStatus') }}
-						</router-link>
+						</UiButton>
 					</div>
 				</div>
 			</div>
@@ -338,12 +350,20 @@ onBeforeUnmount(() => {
 				:aria-label="tickerPaused ? t('serverPage.tickerPlay') : t('serverPage.tickerPause')"
 				@click="tickerPaused = !tickerPaused"
 			>
-				<svg v-if="!tickerPaused" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
-					<path d="M4 3h3v10H4zM9 3h3v10H9z" fill="currentColor" />
-				</svg>
-				<svg v-else viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
-					<path d="M4 3l9 5-9 5z" fill="currentColor" />
-				</svg>
+				<md-ripple v-if="isModernUi" />
+				<template v-if="isModernUi">
+					<span class="material-symbols-rounded server-btn-icon" aria-hidden="true">
+						{{ tickerPaused ? 'play_arrow' : 'pause' }}
+					</span>
+				</template>
+				<template v-else>
+					<svg v-if="!tickerPaused" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+						<path d="M4 3h3v10H4zM9 3h3v10H9z" fill="currentColor" />
+					</svg>
+					<svg v-else viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+						<path d="M4 3l9 5-9 5z" fill="currentColor" />
+					</svg>
+				</template>
 			</button>
 		</section>
 
@@ -461,7 +481,9 @@ onBeforeUnmount(() => {
 						:disabled="activeSceneIndex === 0"
 						@click="prevScene"
 					>
-						<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+						<md-ripple v-if="isModernUi" :disabled="activeSceneIndex === 0" />
+						<span v-if="isModernUi" class="material-symbols-rounded server-nav-icon" aria-hidden="true">chevron_left</span>
+						<svg v-else viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
 							<path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.6" />
 						</svg>
 					</button>
@@ -478,6 +500,7 @@ onBeforeUnmount(() => {
 							:aria-selected="activeSceneIndex === idx"
 							@click="goToScene(idx)"
 						>
+							<md-ripple v-if="isModernUi" />
 							<span class="rail-fill" aria-hidden="true"></span>
 							<span class="rail-label">
 								<span class="rail-num mono">{{ scene.index }}</span>
@@ -493,7 +516,9 @@ onBeforeUnmount(() => {
 						:disabled="activeSceneIndex === sceneCount - 1"
 						@click="nextScene"
 					>
-						<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+						<md-ripple v-if="isModernUi" :disabled="activeSceneIndex === sceneCount - 1" />
+						<span v-if="isModernUi" class="material-symbols-rounded server-nav-icon" aria-hidden="true">chevron_right</span>
+						<svg v-else viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
 							<path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6" />
 						</svg>
 					</button>
@@ -510,22 +535,21 @@ onBeforeUnmount(() => {
 				</div>
 
 				<div class="qplugin-console-panel">
-					<div class="qplugin-tabs" role="tablist">
-						<button
-							v-for="tab in qpluginTabs"
-							:key="tab.id"
-							type="button"
-							class="qplugin-tab-btn"
-							:class="{ 'is-active': activeQPluginTabId === tab.id }"
-							role="tab"
-							:aria-selected="activeQPluginTabId === tab.id"
-							@click="activeQPluginTabId = tab.id"
-						>
-							{{ t(tab.labelKey) }}
-						</button>
-					</div>
+					<UiTabs
+						v-model="activeQPluginTabId"
+						:items="qpluginTabItems"
+						variant="tabs"
+						:aria-label="t('serverPage.qpluginTitle')"
+						class="qplugin-tabs-nav"
+					/>
 
-					<div class="qplugin-tab-content">
+					<div
+						:id="`qplugin-panel-${activeQPluginTabId}`"
+						class="qplugin-tab-content"
+						role="tabpanel"
+						:aria-labelledby="`qplugin-tab-${activeQPluginTabId}`"
+						tabindex="0"
+					>
 						<div class="qplugin-cards">
 							<article
 								v-for="item in activeQPluginTab.items"
@@ -572,6 +596,7 @@ onBeforeUnmount(() => {
 								:title="t('serverPage.copyIp')"
 								@click="copyText(mode.command, mode.command)"
 							>
+								<md-ripple v-if="isModernUi" />
 								<code>{{ mode.command }}</code>
 								<span class="command-copy-tag">
 									{{ copyStatus === mode.command ? t('serverPage.copied') : t('commandPage.copy') }}
@@ -611,10 +636,16 @@ onBeforeUnmount(() => {
 						</div>
 						<p class="feature-desc">{{ t(item.descKey) }}</p>
 						<div v-if="item.link" class="feature-link-wrap">
-							<router-link :to="item.link" class="feature-link">
+							<UiButton
+								:to="item.link"
+								variant="tonal"
+								size="sm"
+								trailing-icon="arrow_forward"
+								class="feature-link"
+							>
 								{{ t('serverPage.exploreTitle') }}
-								<span class="link-arrow" aria-hidden="true">-></span>
-							</router-link>
+								<span v-if="!isModernUi" class="link-arrow" aria-hidden="true">-></span>
+							</UiButton>
 						</div>
 					</article>
 				</div>
@@ -639,13 +670,15 @@ onBeforeUnmount(() => {
 							<h3>{{ t(item.titleKey) }}</h3>
 							<p>{{ t(item.descKey) }}</p>
 						</div>
-						<router-link
+						<UiButton
 							v-if="item.link && item.actionKey"
 							:to="item.link"
+							variant="filled"
+							size="sm"
 							class="step-action"
 						>
 							{{ t(item.actionKey) }}
-						</router-link>
+						</UiButton>
 					</article>
 				</div>
 			</section>
@@ -658,18 +691,22 @@ onBeforeUnmount(() => {
 
 				<div class="quick-links-grid">
 					<router-link to="/dashboard" class="quick-link-card">
+						<md-ripple v-if="isModernUi" />
 						<strong>{{ t('mainPage.dashboard') }}</strong>
 						<span>{{ t('mainPage_description.dashboard') }}</span>
 					</router-link>
 					<router-link to="/rankings" class="quick-link-card">
+						<md-ripple v-if="isModernUi" />
 						<strong>{{ t('mainPage.rankings') }}</strong>
 						<span>{{ t('mainPage_description.rankings') }}</span>
 					</router-link>
 					<router-link to="/transport" class="quick-link-card">
+						<md-ripple v-if="isModernUi" />
 						<strong>{{ t('mainPage.transport') }}</strong>
 						<span>{{ t('mainPage_description.transport') }}</span>
 					</router-link>
 					<router-link to="/guides" class="quick-link-card">
+						<md-ripple v-if="isModernUi" />
 						<strong>{{ t('nav.wiki_guides') }}</strong>
 						<span>{{ t('nav.wiki_guides_description') }}</span>
 					</router-link>
@@ -699,8 +736,12 @@ onBeforeUnmount(() => {
 					<span class="finale-hint mono">
 						{{ copyStatus === serverSpecs.domain ? t('serverPage.copied') : t('serverPage.copyIp') }}
 					</span>
-					<router-link to="/register" class="finale-link">{{ t('serverPage.step1Action') }}</router-link>
-					<router-link to="/dashboard" class="finale-link is-ghost">{{ t('serverPage.viewStatus') }}</router-link>
+					<UiButton to="/register" variant="tonal" size="lg" class="finale-link">
+						{{ t('serverPage.step1Action') }}
+					</UiButton>
+					<UiButton to="/dashboard" variant="outlined" size="lg" class="finale-link is-ghost">
+						{{ t('serverPage.viewStatus') }}
+					</UiButton>
 				</div>
 			</div>
 		</section>

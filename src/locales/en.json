@@ -35,6 +35,12 @@
     "nav": {
         "theme_light": "Switch to light mode",
         "theme_dark": "Switch to dark mode",
+        "theme_switch": "Switch color theme",
+        "ui_switch_label": "Switch interface version",
+        "ui_mode_modern": "New UI",
+        "ui_mode_classic": "Classic",
+        "ui_switch_to_classic": "Active: New UI (click to return to Classic UI)",
+        "ui_switch_to_modern": "Active: Classic UI (click to try New UI)",
         "language_english": "EN",
         "language_chinese": "中文",
         "community": "Community",
@@ -90,7 +96,10 @@
         "read_more": "Read more",
         "footer_rights": "All rights reserved.",
         "footer_news": "News",
-        "footer_guides": "Wiki Guides"
+        "footer_guides": "Wiki Guides",
+        "latest_news": "Latest Updates",
+        "social_xiaohongshu": "Visit Quantum Original on Xiaohongshu",
+        "social_bilibili": "Visit Quantum Original on Bilibili"
     },
     "newsPage": {
         "title": "News",
@@ -125,7 +134,7 @@
         "titleSize": "Title font size (px)",
         "fontSizeError": "Title font size must be a whole number from 16 to 1024 px.",
         "titleColor": "Title color",
-        "titleColorAuto": "Automatic · theme color",
+        "titleColorAuto": "Automatic theme color",
         "titleColorDark": "Dark theme color",
         "titleColorLight": "Light theme color",
         "titleColorCustom": "Custom color",

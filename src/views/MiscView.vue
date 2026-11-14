@@ -1,24 +1,21 @@
 <template>
-	<div class="misc-page">
-		<header class="page-header">
-			<div>
-				<h1>{{ t('miscPage.title') }}</h1>
-				<p>{{ t('miscPage.description') }}</p>
-			</div>
-		</header>
+	<div class="misc-page page-shell">
+		<UiPageHeader
+			:title="t('miscPage.title')"
+			:subtitle="t('miscPage.description')"
+			:divider="false"
+		>
+			<UiTabs
+				v-model="activeKey"
+				:items="menuItems"
+				variant="tabs"
+				:aria-label="t('miscPage.nav_label')"
+			/>
+		</UiPageHeader>
 
-		<AppNavigation
-			:items="menuItems"
-			:active-key="activeKey"
-			orientation="horizontal"
-			density="panel"
-			:aria-label="t('miscPage.nav_label')"
-			@select="switchComponent"
-		/>
-
-		<main class="content">
+		<section class="content">
 			<component :is="activeComponent" />
-		</main>
+		</section>
 	</div>
 </template>
 
@@ -28,7 +25,8 @@ import { useI18n } from 'vue-i18n'
 import BeaconColorComponent from '@/components/BeaconColorComponent.vue'
 import CoverGeneratorComponent from '@/components/CoverGeneratorComponent.vue'
 import FortuneComponent from '@/components/FortuneComponent.vue'
-import AppNavigation from '@/components/ui/AppNavigation.vue'
+import UiPageHeader from '@/components/ui/UiPageHeader.vue'
+import UiTabs from '@/components/ui/UiTabs.vue'
 
 const activeKey = ref('fortune')
 const { t } = useI18n()
@@ -37,19 +35,19 @@ const menuItems = computed(() => [
 	{
 		key: 'fortune',
 		label: t('miscPage.fortune'),
-		description: t('miscPage.fortune_description'),
+		icon: 'auto_awesome',
 		component: FortuneComponent,
 	},
 	{
 		key: 'beacon-color',
 		label: t('miscPage.beacon_color'),
-		description: t('miscPage.beacon_color_description'),
+		icon: 'light_mode',
 		component: BeaconColorComponent,
 	},
 	{
 		key: 'cover-generator',
 		label: t('miscPage.cover_generator'),
-		description: t('miscPage.cover_generator_description'),
+		icon: 'image',
 		component: CoverGeneratorComponent,
 	},
 ])
@@ -59,10 +57,6 @@ const activeComponent = computed(() => {
 		menuItems.value.find((item) => item.key === activeKey.value)?.component || FortuneComponent
 	)
 })
-
-const switchComponent = (item) => {
-	activeKey.value = item.key
-}
 </script>
 
 <style scoped>
@@ -71,40 +65,18 @@ const switchComponent = (item) => {
 	--border-soft: var(--misc-border);
 	display: flex;
 	flex-direction: column;
-	gap: 1rem;
-	height: 100%;
+	gap: 1.5rem;
+	width: min(1340px, 100%);
 	min-height: calc(100dvh - var(--app-header-height, 0px));
+	margin-inline: auto;
 	background: var(--page-background);
 	color: var(--text-main);
-	padding: 1rem;
+	padding: clamp(1.25rem, 3.5vw, 2.5rem) clamp(1.25rem, 4vw, 3rem) 4rem;
 	box-sizing: border-box;
-	overflow: auto;
 }
 
 :global(:root[data-theme='dark'] .misc-page) {
 	--misc-border: color-mix(in srgb, var(--dark-text-primary) 18%, transparent);
-}
-
-.page-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-	gap: 1rem;
-	padding-bottom: 1rem;
-	border-bottom: 1px solid var(--misc-border);
-}
-
-.page-header h1 {
-	margin: 0;
-	color: var(--title-color);
-	font-size: clamp(1.55rem, 2.2vw, 2.15rem);
-	line-height: 1.15;
-}
-
-.page-header p {
-	margin: 0.35rem 0 0;
-	color: var(--text-secondary);
-	line-height: 1.5;
 }
 
 .content {
@@ -113,7 +85,12 @@ const switchComponent = (item) => {
 
 @media (max-width: 760px) {
 	.misc-page {
-		padding: 0.85rem;
+		padding: 1rem;
 	}
+}
+
+:global(:root[data-ui="modern"] .misc-page) {
+	background: var(--md-sys-color-surface);
+	--misc-border: color-mix(in srgb, var(--md-sys-color-outline-variant) 55%, transparent);
 }
 </style>

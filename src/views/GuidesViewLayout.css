@@ -1,119 +1,74 @@
 .guides-page {
-	min-height: 100%;
-	display: grid;
-	grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
-	gap: clamp(1.25rem, 3vw, 2.5rem);
-	padding: clamp(1rem, 3vw, 2.5rem);
 	background: var(--page-background);
-	color: var(--text-main);
-	overflow: auto;
-}
-
-.guides-sidebar {
-	position: sticky;
-	top: 1rem;
-	align-self: start;
-	max-height: calc(100dvh - var(--app-header-height) - 2rem);
-	overflow: auto;
-	border-right: 1px solid var(--split);
-	padding-right: 1rem;
 }
 
 .guides-sidebar-heading {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 0.35rem;
-	margin-bottom: 1.25rem;
+	gap: 0.75rem;
+	width: 100%;
 }
 
 .guides-sidebar-heading h1,
+.guides-sidebar-heading .guides-sidebar-title,
 .guide-header h1,
-.guide-section h2,
-.guide-empty h2 {
+.guide-section h2 {
 	margin: 0;
 	color: var(--title-color);
 	letter-spacing: 0;
 }
 
-.guides-sidebar-heading h1 {
-	font-size: 1.7rem;
-	line-height: 1.1;
+.guides-sidebar-heading h1,
+.guides-sidebar-heading .guides-sidebar-title {
+	font-size: 1.45rem;
+	font-weight: 700;
+	line-height: 1.15;
 }
 
-.guide-menu-toggle {
+.guides-sidebar-heading .guide-menu-toggle {
 	display: none;
-	border: 1px solid var(--split);
-	background: var(--background);
-	color: var(--text-main);
-	padding: 0.55rem 0.75rem;
-	font-size: 0.86rem;
-	font-weight: 720;
-	cursor: pointer;
 }
 
-.guide-menu-toggle:hover,
-.guide-menu-toggle:focus-visible {
-	border-color: var(--primary);
-	outline: none;
+@media (max-width: 900px) {
+	.guides-sidebar-heading .guide-menu-toggle {
+		display: inline-flex;
+	}
 }
 
 .guide-nav {
 	display: grid;
-	gap: 1.35rem;
+	gap: 1.15rem;
+	margin-top: 0.35rem;
 }
 
 .guide-section {
 	display: grid;
-	gap: 0.45rem;
+	gap: 0.25rem;
 }
 
 .guide-section h2 {
-	font-size: 0.9rem;
+	margin: 0 0 0.25rem;
+	padding-inline: 0.35rem;
+	font-size: 0.85rem;
 	color: var(--text-secondary);
-	font-weight: 740;
+	font-weight: 700;
 }
 
 .guide-nav-item {
 	width: 100%;
-	border: 1px solid transparent;
-	border-left-color: var(--split);
-	background: transparent;
-	color: var(--text-main);
-	display: grid;
-	gap: 0.28rem;
-	text-align: left;
-	padding: 0.72rem 0.8rem;
-	cursor: pointer;
-}
-
-.guide-nav-item:hover,
-.guide-nav-item:focus-visible,
-.guide-nav-item.is-active {
-	border-left-color: var(--primary);
-	background: var(--background);
-	outline: none;
-	transform: translateX(3px);
-}
-
-.guide-nav-item span {
-	font-size: 0.96rem;
-	font-weight: 720;
-	line-height: 1.25;
-}
-
-.guide-reader {
-	min-width: 0;
+	font-weight: 620;
 }
 
 .guide-toolbar {
-	display: none;
+	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 1rem;
-	margin-bottom: 1.25rem;
-	border-bottom: 1px solid var(--split);
-	padding-bottom: 1rem;
+	flex-wrap: wrap;
+	gap: 0.75rem 1rem;
+	width: 100%;
+	padding-bottom: 0.75rem;
+	border-bottom: 1px solid var(--border-soft, var(--split));
 }
 
 .guide-toolbar div {
@@ -124,9 +79,8 @@
 
 .guide-footer span {
 	color: var(--primary);
-	font-size: 0.76rem;
-	font-weight: 760;
-	text-transform: uppercase;
+	font-size: 0.78rem;
+	font-weight: 700;
 	letter-spacing: 0;
 }
 
@@ -143,17 +97,18 @@
 	background: var(--background);
 	color: var(--text-main);
 	padding: 0.65rem 0.8rem;
-	outline: none;
 }
 
 .guide-toolbar select:focus-visible {
 	border-color: var(--primary);
 }
 
-.guide-article,
-.guide-empty {
-	width: min(900px, 100%);
-	padding-bottom: 5rem;
+.guide-article {
+	width: 100%;
+	padding-bottom: 3rem;
+	background: transparent;
+	border: none;
+	box-shadow: none;
 }
 
 .guide-header {
@@ -239,4 +194,32 @@
 .guide-content :deep(strong) {
 	color: var(--title-color);
 	font-weight: 780;
+}
+
+/* Material Design 3 Guides View */
+:global(:root[data-ui="modern"] .guides-page) {
+	background: var(--md-sys-color-surface);
+}
+
+:global(:root[data-ui="modern"] .guides-page .guide-pager) {
+	position: relative;
+	border-radius: var(--md-sys-shape-corner-large);
+	background: var(--md-sys-color-surface-container-low);
+	border-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 55%, transparent);
+	box-shadow: none;
+}
+
+:global(:root[data-ui="modern"] .guides-page .guide-content pre),
+:global(:root[data-ui="modern"] .guides-page .guide-content blockquote),
+:global(:root[data-ui="modern"] .guides-page .guide-content .guide-table-wrap) {
+	border-radius: var(--md-sys-shape-corner-medium);
+	background: var(--md-sys-color-surface-container-low);
+	border-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+	box-shadow: none;
+}
+
+:global(:root[data-ui="modern"] .guides-page .guide-toolbar select) {
+	border-radius: var(--md-sys-shape-corner-small);
+	background: var(--md-sys-color-surface-container-highest);
+	border-color: var(--md-sys-color-outline);
 }

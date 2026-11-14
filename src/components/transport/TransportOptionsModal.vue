@@ -1,7 +1,9 @@
 <script setup>
 import { useI18n } from 'vue-i18n'
+import { useUiPreferences } from '@/composables/useUiPreferences.js'
 
 const { t } = useI18n()
+const { isModernUi } = useUiPreferences()
 
 const props = defineProps({
 	dimensionOptions: {
@@ -54,16 +56,20 @@ function closeOnOutsideClick(event) {
 		<div class="options-popup">
 			<div class="popup-header">
 				<h2>{{ t('mapPage.optionsTitle') }}</h2>
-				<button type="button" class="close-button" :aria-label="t('mapPage.close')" @click="emit('close')">&times;</button>
+				<button type="button" class="close-button" :aria-label="t('mapPage.close')" @click="emit('close')">
+					<md-ripple v-if="isModernUi" />
+					<span v-if="isModernUi" class="material-symbols-rounded" aria-hidden="true">close</span>
+					<span v-else aria-hidden="true">&times;</span>
+				</button>
 			</div>
 
 			<div class="popup-content">
 				<div class="options-section">
 					<h3>{{ t('mapPage.presets') }}</h3>
 					<div class="preset-buttons">
-						<button class="preset-button" @click="emit('preset', 'all')">{{ t('mapPage.allPresets') }}</button>
-						<button class="preset-button" @click="emit('preset', 'rail')">{{ t('mapPage.railPreset') }}</button>
-						<button class="preset-button" @click="emit('preset', 'overworld')">{{ t('mapPage.overworldPreset') }}</button>
+						<button class="preset-button" @click="emit('preset', 'all')"><md-ripple v-if="isModernUi" />{{ t('mapPage.allPresets') }}</button>
+						<button class="preset-button" @click="emit('preset', 'rail')"><md-ripple v-if="isModernUi" />{{ t('mapPage.railPreset') }}</button>
+						<button class="preset-button" @click="emit('preset', 'overworld')"><md-ripple v-if="isModernUi" />{{ t('mapPage.overworldPreset') }}</button>
 					</div>
 				</div>
 
@@ -115,7 +121,7 @@ function closeOnOutsideClick(event) {
 			</div>
 
 			<div class="popup-footer">
-				<button class="apply-button" @click="emit('close')">{{ t('mapPage.applyOptions') }}</button>
+				<button class="apply-button" @click="emit('close')"><md-ripple v-if="isModernUi" />{{ t('mapPage.applyOptions') }}</button>
 			</div>
 		</div>
 	</div>
@@ -252,7 +258,7 @@ function closeOnOutsideClick(event) {
 	left: 5px;
 	width: 5px;
 	height: 10px;
-	border: solid white;
+	border: solid var(--md-sys-color-on-primary, white);
 	border-width: 0 2px 2px 0;
 	transform: rotate(45deg);
 }
@@ -284,5 +290,35 @@ function closeOnOutsideClick(event) {
 	.dimension-checkboxes {
 		grid-template-columns: 1fr;
 	}
+}
+
+/* Material Design 3 Transport Options Dialog */
+:global(:root[data-ui="modern"] .options-popup-overlay .options-popup) {
+	border-radius: var(--md-sys-shape-corner-extra-large);
+	border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+	background: var(--md-sys-color-surface-container-high);
+	box-shadow: var(--md-sys-elevation-level4);
+}
+
+:global(:root[data-ui="modern"] .options-popup-overlay .preset-button) {
+	border-radius: var(--md-sys-shape-corner-full);
+	background: var(--md-sys-color-secondary-container);
+	color: var(--md-sys-color-on-secondary-container);
+	border: none;
+}
+
+:global(:root[data-ui="modern"] .options-popup-overlay .apply-button) {
+	border-radius: var(--md-sys-shape-corner-full);
+	padding-inline: 1.4rem;
+}
+
+:global(:root[data-ui="modern"] .options-popup-overlay .checkbox-label) {
+	border-radius: var(--md-sys-shape-corner-medium);
+	background: var(--md-sys-color-surface-container-low);
+}
+
+:global(:root[data-ui="modern"] .options-popup-overlay .current-settings) {
+	border-radius: var(--md-sys-shape-corner-large);
+	background: var(--md-sys-color-surface-container);
 }
 </style>

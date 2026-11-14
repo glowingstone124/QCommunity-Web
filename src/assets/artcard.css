@@ -2,15 +2,17 @@
 @import "./colors.css";
 
 .statistics {
-    h2, p {
+    .card-stat-label, p {
         color: var(--dark-text-primary);
         font-family: "Bahnschrift", sans-serif;
     }
-    h2 {
-        font-size: 1.9rem;
-    }
-    p{
+    p {
         font-size: 1.4rem;
+    }
+    .card-stat-label {
+        font-size: 1.9rem;
+        font-weight: 700;
+        margin: 0.83em 0;
     }
 }
 
@@ -43,9 +45,12 @@
     padding-left: 30px;
     flex: 2;
 
-    h1 {
+    .card-username {
         font-family: "Bahnschrift", sans-serif;
         color: var(--dark-text-primary);
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0.67em 0;
     }
 
     background-color: rgba(15, 23, 42, 0.8);
@@ -62,9 +67,13 @@
     align-items: center;
     display: flex;
     flex-direction: row;
+    color: var(--dark-text-primary);
 
-    h2 {
+    .card-rarity-label {
+        color: var(--dark-text-primary);
         margin: 0;
+        font-size: 1.5rem;
+        font-weight: 700;
     }
 }
 
@@ -100,10 +109,13 @@
     display: table;
     text-align: center;
     flex: 4;
-    h1{
+    .card-username {
         display: table-cell;
         vertical-align: middle;
         color: var(--dark-text-primary);
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
     }
 }
 .wrapper {

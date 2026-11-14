@@ -4,6 +4,7 @@ export default {
 		refresh: '刷新',
 		refreshing: '刷新中',
 		syncing: '同步中',
+		clear: '清除',
 		confirm: '确认',
 		cancel: '取消',
 		unknown: '未知',
@@ -17,6 +18,7 @@ export default {
 		mainNavigationLink: '主导航链接',
 		loginAlert: '点击此处登录',
 		backHome: '回到首页',
+		skipToContent: '跳至主要内容',
 	},
 	auth: {
 		loginTitle: '登录',

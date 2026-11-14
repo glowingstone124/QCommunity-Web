@@ -41,7 +41,7 @@
 	gap: 0.4rem;
 }
 
-.preview-copy h1 {
+.preview-copy .preview-title {
 	margin: 0;
 	font-size: 1.45rem;
 	color: var(--title-color);
@@ -98,9 +98,10 @@
 
 .workspace-header {
 	display: flex;
-	justify-content: space-between;
+	flex-direction: column;
+	justify-content: flex-start;
 	align-items: flex-start;
-	gap: 1rem;
+	gap: 0.75rem;
 }
 
 .workspace-title {
@@ -116,37 +117,32 @@
 	line-height: 1.5;
 }
 
-.customizationSelect{
-	background-color: var(--surface-soft);
+.customizationSelectTabs {
+	flex-shrink: 0;
+}
+
+.cardFilterTabs {
+	flex-shrink: 0;
+}
+
+:global(:root:not([data-ui="modern"]) .customizationSelectTabs .ui-tabs__group),
+:global(:root:not([data-ui="modern"]) .cardFilterTabs .ui-tabs__group) {
+	background: var(--surface-soft);
 	border: 1px solid var(--border-soft);
-	display: flex;
-	justify-content: center;
-	border-radius: 0;
 	padding: 0.25rem;
 	gap: 0.25rem;
 }
 
-.customizationBtn{
-	background-color: transparent;
-	width: 100%;
-	align-content: center;
-	padding: 0.65rem 1rem;
-	border-radius: 0;
+:global(:root:not([data-ui="modern"]) .customizationSelectTabs .ui-tabs__btn),
+:global(:root:not([data-ui="modern"]) .cardFilterTabs .ui-tabs__btn) {
 	border: none;
-	cursor: pointer;
-	transition: background-color 0.18s var(--ease-out);
+	background: transparent;
 }
 
-.customizationBtn.active,
-.customizationBtn:hover{
-	background-color: var(--glass-strong);
-}
-
-.customizationBtn p {
+:global(:root:not([data-ui="modern"]) .customizationSelectTabs .ui-tabs__btn.is-active),
+:global(:root:not([data-ui="modern"]) .cardFilterTabs .ui-tabs__btn.is-active) {
+	background: var(--glass-strong);
 	color: var(--text-main);
-	margin: 0;
-	text-align: center;
-	font-weight: 600;
 }
 
 .section-topbar {
@@ -162,7 +158,7 @@
 	gap: 0.3rem;
 }
 
-.section-copy h2 {
+.section-copy h3 {
 	margin: 0;
 	font-size: 1.1rem;
 	color: var(--title-color);
@@ -172,37 +168,6 @@
 	margin: 0;
 	color: var(--text-secondary);
 	line-height: 1.5;
-}
-
-.btn-group {
-	display: inline-flex;
-	width: fit-content;
-	border-radius: 0;
-	background: var(--surface-soft);
-	border: 1px solid var(--border-soft);
-	padding: 4px;
-	overflow: hidden;
-}
-
-.btn-group button {
-	position: relative;
-	z-index: 1;
-	padding: 8px 16px;
-	background: transparent;
-	color: var(--text-secondary);
-	font-weight: bold;
-	border: none;
-	cursor: pointer;
-	border-radius: 0;
-	transition:
-		background-color 0.18s var(--ease-out),
-		color 0.18s var(--ease-out);
-	min-width: 100px;
-}
-
-.btn-group button.active {
-	background: var(--glass-strong);
-	color: var(--text-main);
 }
 
 .workspace-section {
@@ -258,7 +223,7 @@
 		display: none;
 	}
 
-	.preview-copy h1 {
+	.preview-copy .preview-title {
 		font-size: 1.7rem;
 	}
 
@@ -280,19 +245,12 @@
 		flex-direction: column;
 	}
 
-	.customizationSelect {
-		flex-direction: row;
+	.customizationSelectTabs {
 		width: 100%;
 	}
 
-	.btn-group {
+	.cardFilterTabs {
 		width: 100%;
-		justify-content: stretch;
-	}
-
-	.btn-group button {
-		flex: 1;
-		min-width: 0;
 	}
 
 	.customizationFatherContainer {
@@ -322,14 +280,6 @@
 		align-items: stretch;
 	}
 
-	.customizationSelect {
-		width: 100%;
-	}
-
-	.customizationBtn {
-		padding: 0.6rem 0.75rem;
-	}
-
 	.card-viewport {
 		width: var(--card-width);
 		height: var(--card-height);
@@ -344,7 +294,7 @@
 		gap: 0.2rem;
 	}
 
-	.preview-copy h1 {
+	.preview-copy .preview-title {
 		font-size: 1.3rem;
 	}
 
@@ -353,33 +303,11 @@
 		padding-bottom: 0;
 	}
 
-	.customizationSelect {
-		padding: 0.2rem;
-		gap: 0.25rem;
-	}
-
-	.customizationBtn {
-		padding: 0.7rem 0.85rem;
-	}
-
-	.customizationBtn p {
-		font-size: 0.95rem;
-	}
-
 	.section-topbar {
 		gap: 0.75rem;
 	}
 
-	.section-copy h2 {
+	.section-copy h3 {
 		font-size: 1.2rem;
-	}
-
-	.btn-group {
-		padding: 3px;
-	}
-
-	.btn-group button {
-		padding: 0.65rem 0.75rem;
-		font-size: 0.9rem;
 	}
 }

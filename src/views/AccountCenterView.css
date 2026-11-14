@@ -2,24 +2,20 @@
 @import '/src/assets/main.css';
 @import '/src/assets/colors.css';
 
-:global(:root) {
+.account {
 	--account-bg: var(--page-background);
-	--glass-strong: var(--background);
-	--glass-soft: var(--background);
-	--nav-bg: var(--background);
 	--surface-soft: color-mix(in srgb, var(--text-main) 4%, transparent);
 	--border-soft: color-mix(in srgb, var(--text-main) 14%, transparent);
 	--account-muted-border: color-mix(in srgb, var(--text-main) 9%, transparent);
+	--nav-bg: var(--background);
 }
 
-:global(:root[data-theme='dark']) {
+:global(:root[data-theme='dark'] .account) {
 	--account-bg: var(--page-background);
-	--glass-strong: var(--background-secondary);
-	--glass-soft: var(--background-secondary);
-	--nav-bg: var(--background-secondary);
 	--surface-soft: color-mix(in srgb, var(--dark-text-primary) 7%, transparent);
 	--border-soft: color-mix(in srgb, var(--dark-text-primary) 18%, transparent);
 	--account-muted-border: color-mix(in srgb, var(--dark-text-primary) 10%, transparent);
+	--nav-bg: var(--background-secondary);
 }
 
 .account {
@@ -173,4 +169,38 @@
 	.account { animation: none; }
 	.slide-in-enter-active { transition: none; }
 	.slide-in-enter-from { opacity: 1; transform: none; }
+}
+
+/* Material Design 3 Account Workspace */
+:global(:root[data-ui="modern"] .account) {
+	background: var(--md-sys-color-surface);
+	gap: 1.25rem;
+	padding: 1.25rem;
+}
+
+:global(:root[data-ui="modern"] .account .content) {
+	border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+	border-radius: var(--md-sys-shape-corner-extra-large);
+	background: var(--md-sys-color-surface-container-low);
+	box-shadow: var(--md-sys-elevation-level1);
+}
+
+:global(:root[data-ui="modern"] .account .panel-full),
+:global(:root[data-ui="modern"] .account .content.immersive .panel) {
+	background: transparent;
+}
+
+:global(:root[data-ui="modern"] .account .panel-full) {
+	padding: 1.5rem;
+}
+
+@media (max-width: 960px) {
+	:global(:root[data-ui="modern"] .account) {
+		padding: 0.9rem;
+		gap: 0.9rem;
+	}
+
+	:global(:root[data-ui="modern"] .account .content) {
+		border-radius: var(--md-sys-shape-corner-large);
+	}
 }

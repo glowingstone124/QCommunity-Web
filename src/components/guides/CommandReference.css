@@ -56,9 +56,8 @@
 .command-output span,
 .detail-heading span {
 	color: var(--primary);
-	font-size: 0.78rem;
-	font-weight: 780;
-	text-transform: uppercase;
+	font-size: 0.82rem;
+	font-weight: 700;
 }
 
 .command-search input {
@@ -70,11 +69,19 @@
 	font-size: clamp(1rem, 2vw, 1.2rem);
 	padding: 0.9rem 1rem;
 	box-sizing: border-box;
+}
+
+.command-search input:focus:not(:focus-visible) {
 	outline: none;
 }
 
 .command-search input:focus {
 	border-color: var(--primary);
+}
+
+.command-search input:focus-visible {
+	outline: 2px solid var(--focus-ring);
+	outline-offset: 2px;
 }
 
 .completion-list {
@@ -151,7 +158,14 @@
 .command-output button:hover,
 .command-output button:focus-visible {
 	border-color: var(--primary);
-	outline: none;
+}
+
+.command-list-item:focus-visible,
+.completion-item:focus-visible,
+.arg-option:focus-visible,
+.command-output button:focus-visible {
+	outline: 2px solid var(--focus-ring);
+	outline-offset: 2px;
 }
 
 .command-list-item.is-active,
@@ -252,4 +266,57 @@
 	.command-output button {
 		min-height: 2.75rem;
 	}
+}
+
+/* Material Design 3 Unboxed Command Docs */
+:global(:root[data-ui="modern"] .command-reference .command-console),
+:global(:root[data-ui="modern"] .command-reference .command-detail) {
+	border: none;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+	padding: 0;
+}
+
+:global(:root[data-ui="modern"] .command-reference .command-detail) {
+	padding-inline-start: 1.5rem;
+	border-inline-start: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 55%, transparent);
+}
+
+@media (max-width: 860px) {
+	:global(:root[data-ui="modern"] .command-reference .command-detail) {
+		padding-inline-start: 0;
+		padding-top: 1.25rem;
+		border-inline-start: none;
+		border-top: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 55%, transparent);
+	}
+}
+
+:global(:root[data-ui="modern"] .command-reference .command-list-item),
+:global(:root[data-ui="modern"] .command-reference .completion-item),
+:global(:root[data-ui="modern"] .command-reference .arg-option) {
+	position: relative;
+	border-radius: var(--md-sys-shape-corner-medium);
+	border-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 55%, transparent);
+	background: var(--md-sys-color-surface-container-low);
+	overflow: hidden;
+}
+
+:global(:root[data-ui="modern"] .command-reference .command-list-item.is-active),
+:global(:root[data-ui="modern"] .command-reference .arg-option.is-selected) {
+	border-color: transparent;
+	background: var(--md-sys-color-secondary-container);
+	color: var(--md-sys-color-on-secondary-container);
+}
+
+:global(:root[data-ui="modern"] .command-reference .command-list-item.is-active strong),
+:global(:root[data-ui="modern"] .command-reference .arg-option.is-selected strong) {
+	color: var(--md-sys-color-on-secondary-container);
+}
+
+:global(:root[data-ui="modern"] .command-reference .usage-block code),
+:global(:root[data-ui="modern"] .command-reference .command-output code) {
+	border-radius: var(--md-sys-shape-corner-medium);
+	background: var(--md-sys-color-surface-container);
+	border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
 }

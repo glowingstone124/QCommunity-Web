@@ -96,7 +96,7 @@ const groupedCards = computed(() => groupCardsBySpecial(cards.value))
 		   :src="getSpecialImage(special)"
 		   :alt="special"
 		   style="height: 80px; vertical-align: middle;"
-	   /><h2 class="group-title" v-else>{{ special }}</h2>
+	   /><h4 class="group-title" v-else>{{ special }}</h4>
       </div>
       <div class="card-list">
       <div class="card" v-for="card in group" :key="card.id" :data-card-id="card.id">
@@ -109,7 +109,7 @@ const groupedCards = computed(() => groupCardsBySpecial(cards.value))
         />
         <div v-else class="card-image-placeholder" aria-hidden="true">#{{ card.id }}</div>
         <div class="name-bar">
-          <h3>{{ card.name }}</h3>
+          <p class="card-name">{{ card.name }}</p>
         </div>
         <div class="overlay">
           <p>{{ card.special }}</p>

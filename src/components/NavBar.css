@@ -263,6 +263,7 @@
 .alert-text {
 	font-weight: 500;
 	font-size: 0.95rem;
+	white-space: nowrap;
 }
 
 .header-actions {
@@ -273,19 +274,25 @@
 }
 
 .lang-btn,
-.guide-btn {
-	display: grid;
-	place-items: center;
+.guide-btn,
+.theme-btn,
+.ui-mode-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.42rem;
 	padding: 0 0.8rem;
 	height: var(--header-control-height);
 	min-width: var(--header-control-height);
 	box-sizing: border-box;
 	font-size: 0.9rem;
+	font-weight: 600;
 	cursor: pointer;
 	border-radius: 0;
 	background: transparent;
 	color: var(--text-main);
 	border: 1px solid var(--split);
+	white-space: nowrap;
 	transition:
 		border-color 160ms var(--ease-out),
 		background-color 160ms var(--ease-out),
@@ -293,14 +300,159 @@
 		transform 120ms var(--ease-out);
 }
 
+.ui-mode-indicator {
+	width: 0.5rem;
+	height: 0.5rem;
+	border-radius: 999px;
+	background: var(--text-secondary);
+	flex-shrink: 0;
+	transition: background-color 160ms var(--ease-out), transform 160ms var(--ease-out);
+}
+
+.ui-mode-btn.is-modern {
+	border-color: color-mix(in srgb, var(--primary) 52%, transparent);
+	background: color-mix(in srgb, var(--primary) 10%, var(--background));
+	color: var(--primary);
+	border-radius: var(--ui-radius-sm, 6px);
+}
+
+.ui-mode-btn.is-modern .ui-mode-indicator {
+	background: var(--primary);
+}
+
+.theme-btn {
+	padding: 0;
+	width: var(--header-control-height);
+}
+
+.theme-icon {
+	width: 18px;
+	height: 18px;
+	display: block;
+}
+
 .lang-btn:hover,
-.guide-btn:hover {
+.guide-btn:hover,
+.theme-btn:hover,
+.ui-mode-btn:hover {
 	border-color: var(--text-main);
 	background: var(--background-secondary);
 }
 
+.ui-mode-btn.is-modern:hover {
+	border-color: var(--primary);
+	background: color-mix(in srgb, var(--primary) 16%, var(--background));
+}
+
 .lang-btn:active,
-.guide-btn:active {
+.guide-btn:active,
+.theme-btn:active,
+.ui-mode-btn:active {
 	transform: scale(0.97);
+}
+
+:global(:root[data-ui="modern"] .app-header) {
+	background: color-mix(in srgb, var(--md-sys-color-surface-container-low) 92%, transparent);
+	backdrop-filter: blur(18px) saturate(140%);
+	border-bottom-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+	box-shadow: var(--md-sys-elevation-level1);
+}
+
+:global(:root[data-ui="modern"][data-theme="dark"] .app-header) {
+	background: color-mix(in srgb, var(--md-sys-color-surface-container-low) 92%, transparent);
+	border-bottom-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+}
+
+:global(:root[data-ui="modern"] .app-header .logo-section) {
+	position: relative;
+	overflow: hidden;
+	border-radius: var(--md-sys-shape-corner-full);
+	padding-inline: 0.55rem 0.85rem;
+}
+
+:global(:root[data-ui="modern"] .app-header .logo-section:hover) {
+	background: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
+}
+
+:global(:root[data-ui="modern"] .app-header .mega-panel) {
+	background: var(--md-sys-color-surface-container-high);
+	border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+	border-radius: 0 0 var(--md-sys-shape-corner-extra-large) var(--md-sys-shape-corner-extra-large);
+	box-shadow: var(--md-sys-elevation-level3);
+}
+
+:global(:root[data-ui="modern"] .app-header .mega-panel-inner) {
+	grid-template-columns: minmax(210px, 0.58fr) minmax(320px, 1.42fr);
+}
+
+:global(:root[data-ui="modern"] .app-header .user-info) {
+	border-radius: var(--md-sys-shape-corner-full);
+	border-color: transparent;
+	background: var(--md-sys-color-surface-container);
+	padding-inline: 0.85rem;
+}
+
+:global(:root[data-ui="modern"] .app-header .avatar-container) {
+	position: relative;
+	overflow: hidden;
+	border-radius: var(--md-sys-shape-corner-full);
+	border-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 60%, transparent);
+	background: var(--md-sys-color-surface-container);
+}
+
+:global(:root[data-ui="modern"] .app-header .avatar-container:hover) {
+	background: color-mix(in srgb, var(--md-sys-color-primary) 8%, var(--md-sys-color-surface-container));
+	border-color: var(--md-sys-color-primary);
+}
+
+:global(:root[data-ui="modern"] .app-header .user-avatar) {
+	border-radius: var(--md-sys-shape-corner-full);
+}
+
+:global(:root[data-ui="modern"] .app-header .login-alert) {
+	position: relative;
+	overflow: hidden;
+	border-radius: var(--md-sys-shape-corner-full);
+	border-color: transparent;
+	background: var(--md-sys-color-primary);
+	color: var(--md-sys-color-on-primary);
+}
+
+:global(:root[data-ui="modern"] .app-header .login-alert:hover) {
+	background: var(--button-primary-hover);
+	color: var(--md-sys-color-on-primary);
+	box-shadow: var(--md-sys-elevation-level1);
+}
+
+:global(:root[data-ui="modern"] .app-header .theme-btn),
+:global(:root[data-ui="modern"] .app-header .guide-btn),
+:global(:root[data-ui="modern"] .app-header .lang-btn),
+:global(:root[data-ui="modern"] .app-header .ui-mode-btn) {
+	position: relative;
+	overflow: hidden;
+	border-radius: var(--md-sys-shape-corner-full);
+	border-color: transparent;
+	background: var(--md-sys-color-surface-container);
+	color: var(--md-sys-color-on-surface-variant);
+}
+
+:global(:root[data-ui="modern"] .app-header .theme-btn:hover),
+:global(:root[data-ui="modern"] .app-header .guide-btn:hover),
+:global(:root[data-ui="modern"] .app-header .lang-btn:hover) {
+	border-color: transparent;
+	background: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, var(--md-sys-color-surface-container));
+	color: var(--md-sys-color-on-surface);
+}
+
+:global(:root[data-ui="modern"] .app-header .ui-mode-btn.is-modern) {
+	border-color: transparent;
+	background: var(--md-sys-color-secondary-container);
+	color: var(--md-sys-color-on-secondary-container);
+	padding-inline: 0.9rem;
+}
+
+:global(:root[data-ui="modern"] .app-header .ui-mode-btn.is-modern:hover) {
+	background: color-mix(in srgb, var(--md-sys-color-on-secondary-container) 8%, var(--md-sys-color-secondary-container));
+	border-color: transparent;
 }
 

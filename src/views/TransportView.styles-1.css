@@ -32,7 +32,7 @@ h1 {
   line-height: 1.08;
 }
 
-h2 {
+.title-subtitle {
   margin: 0.65rem 0 0;
   color: var(--text-secondary);
   font-size: clamp(1rem, 2vw, 1.25rem);
@@ -96,9 +96,12 @@ label {
 }
 
 .station-input:focus {
-  outline: none;
   border-color: var(--primary);
   background: var(--transport-surface);
+}
+
+.station-input:focus:not(:focus-visible) {
+  outline: none;
 }
 
 .suggestions {
@@ -111,6 +114,7 @@ label {
   overflow-y: auto;
   background: var(--background);
   border: 1px solid var(--transport-line-strong);
+  box-shadow: var(--ui-shadow-md, none);
 }
 
 .suggestions-enter-active,
@@ -126,13 +130,17 @@ label {
 }
 
 .suggestion-item {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--transport-line);
+  background: transparent;
   padding: 0.75rem 0.9rem;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  border-bottom: 1px solid var(--transport-line);
+  text-align: left;
   transition: background-color 160ms var(--ease-out);
 }
 
@@ -161,14 +169,14 @@ label {
   gap: 0.75rem;
 }
 
-.button-group button,
-.preset-button,
-.apply-button,
-.close-button {
+:global(:root:not([data-ui="modern"]) .options-popup .preset-button),
+:global(:root:not([data-ui="modern"]) .options-popup .apply-button),
+:global(:root:not([data-ui="modern"]) .options-popup .close-button) {
   border-radius: 0;
 }
 
-.button-group button {
+:global(:root:not([data-ui="modern"]) .container .button-group button) {
+  border-radius: 0;
   min-height: 46px;
   padding: 0 1rem;
   border: 1px solid var(--transport-line);
@@ -182,7 +190,7 @@ label {
       opacity 160ms var(--ease-out);
 }
 
-.search-button {
+:global(:root:not([data-ui="modern"]) .container .button-group .search-button) {
   color: var(--button-primary-text);
   background: var(--button-primary-bg);
   display: inline-flex;
@@ -191,27 +199,27 @@ label {
   gap: 0.65rem;
 }
 
-.options-button {
+:global(:root:not([data-ui="modern"]) .container .button-group .options-button) {
   color: var(--text-main);
   background: var(--background);
 }
 
-.search-button:hover:not(:disabled) {
+:global(:root:not([data-ui="modern"]) .container .button-group .search-button:hover:not(:disabled)) {
   background: var(--button-primary-hover);
   transform: translateY(-1px);
 }
 
-.options-button:hover:not(:disabled) {
+:global(:root:not([data-ui="modern"]) .container .button-group .options-button:hover:not(:disabled)) {
   border-color: var(--text-main);
   background: var(--transport-active);
   transform: translateY(-1px);
 }
 
-.button-group button:active:not(:disabled) {
+:global(:root:not([data-ui="modern"]) .container .button-group button:active:not(:disabled)) {
   transform: translateY(0);
 }
 
-.button-group button:disabled {
+:global(:root:not([data-ui="modern"]) .container .button-group button:disabled) {
   opacity: 0.5;
   cursor: not-allowed;
 }
@@ -311,6 +319,7 @@ label {
   justify-content: center;
 }
 
+.result h2,
 .result h3 {
   color: var(--title-color);
   margin-top: 0;
@@ -404,5 +413,52 @@ label {
 @keyframes transport-workspace-in {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Material Design 3 Transport Planner Surfaces & Pill Controls */
+:global(:root[data-ui="modern"] .container > .query),
+:global(:root[data-ui="modern"] .container > .result) {
+  --transport-surface: var(--md-sys-color-surface-container-low);
+  --transport-line: color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+  --transport-line-strong: var(--md-sys-color-outline);
+  --transport-soft: var(--md-sys-color-surface-container);
+  --transport-active: color-mix(in srgb, var(--md-sys-color-primary) 10%, var(--md-sys-color-surface-container-low));
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 42%, transparent);
+  background: var(--md-sys-color-surface-container-low);
+  box-shadow: var(--md-sys-elevation-level1);
+  padding: 1.25rem;
+}
+
+:global(:root[data-ui="modern"] .container > .query .station-input) {
+  border-radius: var(--md-sys-shape-corner-medium);
+  border: 1px solid var(--md-sys-color-outline);
+  background: var(--md-sys-color-surface-container-lowest);
+}
+
+:global(:root[data-ui="modern"] .container > .query .station-input:focus) {
+  border-color: var(--md-sys-color-primary);
+  box-shadow: inset 0 0 0 1px var(--md-sys-color-primary);
+  background: var(--md-sys-color-surface-container-lowest);
+}
+
+:global(:root[data-ui="modern"] .container > .query .suggestions) {
+  border-radius: var(--md-sys-shape-corner-large);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 55%, transparent);
+  background: var(--md-sys-color-surface-container-high);
+  box-shadow: var(--md-sys-elevation-level3);
+  overflow-x: hidden;
+  padding: 0.35rem;
+}
+
+:global(:root[data-ui="modern"] .container .transport-map-button) {
+  border-radius: var(--md-sys-shape-corner-large);
+  background: var(--md-sys-color-surface-container);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+}
+
+:global(:root[data-ui="modern"] .container .transport-map-button:hover) {
+  border-color: var(--md-sys-color-primary);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 8%, var(--md-sys-color-surface-container));
 }
 

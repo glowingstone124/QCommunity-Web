@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import {computed, ref, onMounted} from "vue";
 import { useI18n } from 'vue-i18n';
+import UiButton from '@/components/ui/UiButton.vue';
+import UiStatCard from '@/components/ui/UiStatCard.vue';
+import UiStatGrid from '@/components/ui/UiStatGrid.vue';
+import UiStatePanel from '@/components/ui/UiStatePanel.vue';
 
 interface AffiliatedAccount {
 	name: string;
@@ -151,7 +155,7 @@ onMounted(fetchAccounts);
 	<div class="affiliated">
 		<header class="page-header">
 			<div>
-				<h1 class="headline">{{ t('affiliatedPage.title') }}</h1>
+				<h2 class="headline">{{ t('affiliatedPage.title') }}</h2>
 				<p class="subhead">{{ t('affiliatedPage.description') }}</p>
 			</div>
 			<div class="header-meter" :aria-label="t('affiliatedPage.capacity')">
@@ -162,20 +166,24 @@ onMounted(fetchAccounts);
 			</div>
 		</header>
 
-		<div class="summary-grid">
-			<div class="summary-item">
-				<span>{{ t('affiliatedPage.registered') }}</span>
-				<strong>{{ accounts.length }}</strong>
-			</div>
-			<div class="summary-item">
-				<span>{{ t('affiliatedPage.remaining') }}</span>
-				<strong>{{ accountSlots }}</strong>
-			</div>
-			<div class="summary-item">
-				<span>{{ t('affiliatedPage.management') }}</span>
-				<strong>{{ t('affiliatedPage.readOnlyDeletable') }}</strong>
-			</div>
-		</div>
+		<UiStatGrid :columns="3" class="affiliated-summary-grid">
+			<UiStatCard
+				:label="t('affiliatedPage.registered')"
+				:value="accounts.length"
+				icon="group"
+			/>
+			<UiStatCard
+				:label="t('affiliatedPage.remaining')"
+				:value="accountSlots"
+				icon="person_add"
+				tone="primary"
+			/>
+			<UiStatCard
+				:label="t('affiliatedPage.management')"
+				:value="t('affiliatedPage.readOnlyDeletable')"
+				icon="admin_panel_settings"
+			/>
+		</UiStatGrid>
 
 		<div class="grid">
 			<section class="panel">
@@ -184,14 +192,22 @@ onMounted(fetchAccounts);
 						<div class="section-title">{{ t('affiliatedPage.registeredAccounts') }}</div>
 						<p class="section-sub">{{ t('affiliatedPage.registeredDescription') }}</p>
 					</div>
-					<button type="button" class="ghost-button" @click="fetchAccounts" :disabled="isLoading">
-
+					<UiButton
+						type="button"
+						variant="tonal"
+						size="sm"
+						icon="refresh"
+						class="ghost-button"
+						:loading="isLoading"
+						:disabled="isLoading"
+						@click="fetchAccounts"
+					>
 						{{ isLoading ? t('common.refreshing') : t('common.refresh') }}
-					</button>
+					</UiButton>
 				</div>
 
-				<div v-if="isLoading" class="state-box">{{ t('affiliatedPage.loading') }}</div>
-				<p v-else-if="loadError" class="state-box error">{{ loadError }}</p>
+				<UiStatePanel v-if="isLoading" state="loading" :message="t('affiliatedPage.loading')" />
+				<UiStatePanel v-else-if="loadError" state="error" compact role="alert" :message="loadError" />
 				<TransitionGroup v-else-if="accounts.length" name="account-list" tag="div" class="account-grid">
 					<div v-for="account in accounts" :key="account.name" class="account-card" :class="{ 'is-confirming': pendingDelete === account.name }">
 						<div class="avatar">{{ initialOf(account.name) }}</div>
@@ -201,24 +217,34 @@ onMounted(fetchAccounts);
 						</div>
 						<div class="account-actions">
 							<span class="account-status">{{ t('affiliatedPage.readOnly') }}</span>
-							<button
+							<UiButton
 								type="button"
+								variant="outlined"
+								size="sm"
+								icon="delete"
 								class="icon-button"
 								:disabled="deletingAccount !== ''"
 								:aria-label="t('affiliatedPage.deleteAccount', { name: account.name })"
 								:title="t('affiliatedPage.deleteTitle', { name: account.name })"
 								@click="requestDelete(account.name)"
-							>
-								<font-awesome-icon :icon="['far', 'trash-can']" aria-hidden="true" />
-							</button>
+							/>
 						</div>
 						<div v-if="pendingDelete === account.name" class="delete-confirm">
 							<p>{{ t('affiliatedPage.deleteConfirm') }}</p>
 							<div>
-								<button type="button" class="confirm-cancel" :disabled="deletingAccount !== ''" @click="cancelDelete">{{ t('common.cancel') }}</button>
-								<button type="button" class="confirm-delete" :disabled="deletingAccount !== ''" @click="deleteAccount(account.name)">
+								<UiButton type="button" variant="text" size="sm" :disabled="deletingAccount !== ''" @click="cancelDelete">
+									{{ t('common.cancel') }}
+								</UiButton>
+								<UiButton
+									type="button"
+									variant="danger"
+									size="sm"
+									:loading="deletingAccount === account.name"
+									:disabled="deletingAccount !== ''"
+									@click="deleteAccount(account.name)"
+								>
 									{{ deletingAccount === account.name ? t('common.deleting') : t('common.delete') }}
-								</button>
+								</UiButton>
 							</div>
 						</div>
 						<div v-else class="account-foot">
@@ -226,10 +252,13 @@ onMounted(fetchAccounts);
 						</div>
 					</div>
 				</TransitionGroup>
-				<div v-else class="state-box">
-					<strong>{{ t('affiliatedPage.noAccounts') }}</strong>
-					<span>{{ t('affiliatedPage.noAccountsDescription') }}</span>
-				</div>
+				<UiStatePanel
+					v-else
+					state="empty"
+					icon="manage_accounts"
+					:title="t('affiliatedPage.noAccounts')"
+					:message="t('affiliatedPage.noAccountsDescription')"
+				/>
 			</section>
 
 			<section class="panel">
@@ -264,9 +293,15 @@ onMounted(fetchAccounts);
 					</label>
 
 					<div class="form-actions">
-						<button type="submit" class="filled-button" :disabled="!canSubmit">
+						<UiButton
+							type="submit"
+							variant="filled"
+							class="filled-button"
+							:loading="isSubmitting"
+							:disabled="!canSubmit"
+						>
 							{{ isSubmitting ? t('affiliatedPage.creating') : t('affiliatedPage.create') }}
-						</button>
+						</UiButton>
 						<span class="quota-text">{{ t('affiliatedPage.canCreate', { count: accountSlots }) }}</span>
 					</div>
 
@@ -275,13 +310,14 @@ onMounted(fetchAccounts);
 						<a href="https://qoriginal.vip/guides/affiliatedaccount" class="link-text">{{ t('affiliatedPage.termsLink') }}</a>
 					</p>
 
-					<p
+					<UiStatePanel
 						v-if="currentHint !== ''"
+						:state="hintType === 'success' ? 'info' : 'error'"
+						compact
+						:icon="hintType === 'success' ? 'check_circle' : 'error_outline'"
 						role="status"
-						:class="['inline-hint', hintType === 'success' ? 'hint-success' : 'hint-error']"
-					>
-						{{ currentHint }}
-					</p>
+						:message="currentHint"
+					/>
 				</form>
 			</section>
 		</div>

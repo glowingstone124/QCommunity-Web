@@ -1,4 +1,8 @@
 <script setup>
+import { useUiPreferences } from '@/composables/useUiPreferences.js'
+
+const { isModernUi } = useUiPreferences()
+
 defineProps({
 	activeKey: {
 		type: [String, Number],
@@ -43,15 +47,21 @@ const emit = defineEmits(['activate', 'clear', 'select'])
 			<button
 				type="button"
 				class="app-navigation-item"
-				:class="{ 'is-active': activeKey === item.key }"
-				:aria-current="activeKey === item.key ? 'page' : undefined"
+				:class="{
+					'is-active': activeKey === item.key,
+					'is-route-current': Boolean(item.current),
+				}"
+				:aria-current="item.current ? 'page' : undefined"
+				:aria-expanded="item.hasSubmenu ? String(activeKey === item.key) : undefined"
 				:disabled="item.disabled"
 				@click="emit('select', item)"
 				@focus="emit('activate', item)"
 				@mouseenter="emit('activate', item)"
 			>
+				<md-ripple v-if="isModernUi" :disabled="Boolean(item.disabled)" />
 				<span class="app-navigation-copy">
 					<span class="app-navigation-title">{{ item.label }}</span>
+					<span v-if="item.description" class="app-navigation-desc">{{ item.description }}</span>
 				</span>
 				<span class="app-navigation-indicator" aria-hidden="true"></span>
 			</button>
@@ -170,6 +180,15 @@ const emit = defineEmits(['activate', 'clear', 'select'])
 	white-space: nowrap;
 }
 
+.app-navigation-desc {
+	display: none;
+	color: var(--navigation-muted);
+	font-size: 0.82rem;
+	font-weight: 450;
+	line-height: 1.45;
+	white-space: normal;
+}
+
 .app-navigation-item.is-active .app-navigation-title {
 	font-weight: 700;
 }
@@ -201,7 +220,11 @@ const emit = defineEmits(['activate', 'clear', 'select'])
 .app-navigation.is-panel .app-navigation-item.is-active {
 	background: var(--navigation-accent);
 	color: var(--background);
-	outline: none;
+}
+
+.app-navigation.is-panel .app-navigation-item:focus-visible {
+	outline: 2px solid var(--focus-ring, var(--primary));
+	outline-offset: -2px;
 }
 
 .app-navigation.is-header .app-navigation-item:focus-visible,
@@ -209,7 +232,12 @@ const emit = defineEmits(['activate', 'clear', 'select'])
 .app-navigation.is-compact .app-navigation-item:focus-visible,
 .app-navigation.is-compact .app-navigation-item.is-active {
 	background: var(--navigation-hover-bg);
-	outline: none;
+}
+
+.app-navigation.is-header .app-navigation-item:focus-visible,
+.app-navigation.is-compact .app-navigation-item:focus-visible {
+	outline: 2px solid var(--focus-ring, var(--primary));
+	outline-offset: -2px;
 }
 
 .app-navigation.is-compact .app-navigation-item:focus-visible {
@@ -283,6 +311,120 @@ const emit = defineEmits(['activate', 'clear', 'select'])
 @media (max-width: 640px) {
 	.app-navigation.is-panel .app-navigation-entry {
 		flex: 1 1 100%;
+	}
+}
+
+/* Material Design 3 Navigation Bar, Drawer Pills & Menu Cards */
+:global(:root[data-ui="modern"] .app-navigation) {
+	--navigation-accent: var(--md-sys-color-primary);
+	--navigation-hover-bg: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
+}
+
+:global(:root[data-ui="modern"] .app-navigation.is-header) {
+	gap: 0.35rem;
+	align-items: center;
+}
+
+:global(:root[data-ui="modern"] .app-navigation.is-header .app-navigation-item) {
+	min-height: 40px;
+	padding: 0.45rem 0.95rem;
+	border-radius: var(--md-sys-shape-corner-full);
+	color: var(--md-sys-color-on-surface-variant);
+	transition: background-color 160ms var(--md-sys-motion-easing-standard), color 160ms var(--md-sys-motion-easing-standard);
+}
+
+:global(:root[data-ui="modern"] .app-navigation.is-header .app-navigation-indicator),
+:global(:root[data-ui="modern"] .app-navigation.is-panel .app-navigation-indicator) {
+	display: none;
+}
+
+:global(:root[data-ui="modern"] .app-navigation.is-header .app-navigation-item.is-route-current),
+:global(:root[data-ui="modern"] .app-navigation.is-header .app-navigation-item.is-active) {
+	background: var(--md-sys-color-secondary-container);
+	color: var(--md-sys-color-on-secondary-container);
+}
+
+:global(:root[data-ui="modern"] .app-navigation.is-header .app-navigation-item.is-route-current .app-navigation-title),
+:global(:root[data-ui="modern"] .app-navigation.is-header .app-navigation-item.is-active .app-navigation-title) {
+	font-weight: 700;
+}
+
+@media (hover: hover) and (pointer: fine) {
+	:global(:root[data-ui="modern"] .app-navigation.is-header .app-navigation-item:not(.is-active):not(.is-route-current):hover) {
+		background: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
+		color: var(--md-sys-color-on-surface);
+	}
+
+	:global(:root[data-ui="modern"] .app-navigation.is-header .app-navigation-item.is-active:hover),
+	:global(:root[data-ui="modern"] .app-navigation.is-header .app-navigation-item.is-route-current:hover) {
+		background: color-mix(in srgb, var(--md-sys-color-on-secondary-container) 8%, var(--md-sys-color-secondary-container));
+	}
+}
+
+:global(:root[data-ui="modern"] .app-navigation.is-panel) {
+	gap: 0.35rem;
+	border: none;
+	padding: 0;
+}
+
+:global(:root[data-ui="modern"] .app-navigation.is-panel .app-navigation-item) {
+	min-height: 48px;
+	padding: 0.7rem 1.15rem;
+	border: none;
+	border-radius: var(--md-sys-shape-corner-full);
+	color: var(--md-sys-color-on-surface-variant);
+}
+
+:global(:root[data-ui="modern"] .app-navigation.is-panel .app-navigation-item.is-active),
+:global(:root[data-ui="modern"] .app-navigation.is-panel .app-navigation-item.is-route-current),
+:global(:root[data-ui="modern"] .app-navigation.is-panel .app-navigation-item:focus-visible) {
+	background: var(--md-sys-color-secondary-container);
+	color: var(--md-sys-color-on-secondary-container);
+	padding-left: 1.15rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+	:global(:root[data-ui="modern"] .app-navigation.is-panel .app-navigation-item:not(.is-active):not(.is-route-current):hover) {
+		background: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
+		color: var(--md-sys-color-on-surface);
+	}
+
+	:global(:root[data-ui="modern"] .app-navigation.is-panel .app-navigation-item.is-active:hover),
+	:global(:root[data-ui="modern"] .app-navigation.is-panel .app-navigation-item.is-route-current:hover) {
+		background: color-mix(in srgb, var(--md-sys-color-on-secondary-container) 8%, var(--md-sys-color-secondary-container));
+		color: var(--md-sys-color-on-secondary-container);
+	}
+}
+
+:global(:root[data-ui="modern"] .app-navigation.is-compact) {
+	gap: 0.65rem;
+}
+
+:global(:root[data-ui="modern"] .app-navigation.is-compact .app-navigation-desc) {
+	display: block;
+}
+
+:global(:root[data-ui="modern"] .app-navigation.is-compact .app-navigation-item) {
+	border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+	border-radius: var(--md-sys-shape-corner-large);
+	padding: 0.9rem 1.05rem;
+	background: var(--md-sys-color-surface-container-low);
+	color: var(--md-sys-color-on-surface);
+	transition: background-color 160ms var(--md-sys-motion-easing-standard), border-color 160ms var(--md-sys-motion-easing-standard), transform 140ms var(--md-sys-motion-easing-emphasized);
+}
+
+:global(:root[data-ui="modern"] .app-navigation.is-compact .app-navigation-item.is-active),
+:global(:root[data-ui="modern"] .app-navigation.is-compact .app-navigation-item.is-route-current) {
+	background: var(--md-sys-color-secondary-container);
+	color: var(--md-sys-color-on-secondary-container);
+	border-color: transparent;
+}
+
+@media (hover: hover) and (pointer: fine) {
+	:global(:root[data-ui="modern"] .app-navigation.is-compact .app-navigation-item:not(.is-active):not(.is-route-current):hover) {
+		background: color-mix(in srgb, var(--md-sys-color-primary) 8%, var(--md-sys-color-surface-container-low));
+		border-color: color-mix(in srgb, var(--md-sys-color-primary) 35%, transparent);
+		transform: translateX(2px);
 	}
 }
 </style>

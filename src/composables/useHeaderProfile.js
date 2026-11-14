@@ -2,13 +2,10 @@ import { onMounted, ref } from 'vue'
 import { fetchAvatar } from '@/services/avatar.js'
 import { fetchSessionAccount } from '@/services/accountSession.js'
 import { redirectInvalidSession, SessionExpiredError } from '@/utils/authSession.js'
-
-const sharedTheme = ref(
-	typeof window !== 'undefined' && localStorage.getItem('theme') === 'dark' ? 'dark' : 'light',
-)
+import { resolvedTheme } from '@/composables/useUiPreferences.js'
 
 export function useThemePreference() {
-	return sharedTheme
+	return resolvedTheme
 }
 
 export function useHeaderProfile() {
@@ -17,7 +14,7 @@ export function useHeaderProfile() {
 	const loggedIn = ref(false)
 	const playtime = ref(0)
 	const avatarUrl = ref('https://example.com/avatar.jpg')
-	const theme = sharedTheme
+	const theme = resolvedTheme
 
 	const getAvatar = async (name) => {
 		try {
@@ -34,8 +31,6 @@ export function useHeaderProfile() {
 	}
 
 	const loadProfile = async () => {
-		theme.value = document.documentElement.dataset.theme || 'light'
-
 		if (!token.value) {
 			username.value = ''
 			getAvatar('steve')

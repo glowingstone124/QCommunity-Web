@@ -340,8 +340,8 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.preset-button,
-.apply-button {
+:global(:root:not([data-ui="modern"]) .options-popup .preset-button),
+:global(:root:not([data-ui="modern"]) .options-popup .apply-button) {
   min-height: 38px;
   padding: 0 0.85rem;
   border: 1px solid var(--transport-line);
@@ -349,10 +349,11 @@
   color: var(--text-main);
   cursor: pointer;
   font-weight: 700;
+  border-radius: 0;
 }
 
-.preset-button:hover,
-.apply-button:hover {
+:global(:root:not([data-ui="modern"]) .options-popup .preset-button:hover),
+:global(:root:not([data-ui="modern"]) .options-popup .apply-button:hover) {
   border-color: var(--primary);
   background: var(--transport-active);
 }
@@ -410,5 +411,26 @@
 @keyframes route-node-pop {
   from { opacity: 0; transform: scale(0.55); }
   to { opacity: 1; transform: scale(1); }
+}
+
+/* Material Design 3 Route Modals & Timeline Surfaces */
+:global(:root[data-ui="modern"] .map-preview-overlay .map-preview-shell) {
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+  background: var(--md-sys-color-surface-container-low);
+  box-shadow: var(--md-sys-elevation-level4);
+  overflow: hidden;
+}
+
+:global(:root[data-ui="modern"] .map-preview-overlay .map-close-button) {
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--md-sys-color-surface-container);
+  border-color: transparent;
+}
+
+:global(:root[data-ui="modern"] .options-popup .checkbox-label) {
+  border-radius: var(--md-sys-shape-corner-medium);
+  border-color: transparent;
+  background: var(--md-sys-color-surface-container-low);
 }
 

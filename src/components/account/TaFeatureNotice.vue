@@ -1,6 +1,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import UiButton from '@/components/ui/UiButton.vue'
 
 const props = defineProps({
 	title: { type: String, required: true },
@@ -28,17 +29,19 @@ function handleAction() {
 		<h2 class="ta-notice-title">{{ title }}</h2>
 		<p class="ta-notice-body">{{ message }}</p>
 		<div class="ta-notice-actions">
-			<button v-if="actionLabel" type="button" class="ta-notice-btn" @click="handleAction">
+			<UiButton v-if="actionLabel" type="button" variant="filled" class="ta-notice-btn" @click="handleAction">
 				{{ actionLabel }}
-			</button>
-			<a
+			</UiButton>
+			<UiButton
+				variant="tonal"
 				href="https://qm.qq.com/q/ca25kxwf0k"
 				target="_blank"
 				rel="noopener noreferrer"
+				trailing-icon="open_in_new"
 				class="ta-notice-link"
 			>
 				{{ t('nav.join_us_qq') }}
-			</a>
+			</UiButton>
 		</div>
 	</section>
 </template>
@@ -84,7 +87,7 @@ function handleAction() {
 	margin-top: 0.25rem;
 }
 
-.ta-notice-btn {
+:global(:root:not([data-ui="modern"]) .account .ta-notice-btn) {
 	border: 1px solid var(--primary);
 	background: var(--button-primary-bg);
 	color: var(--button-primary-text);
@@ -93,13 +96,29 @@ function handleAction() {
 	cursor: pointer;
 }
 
-.ta-notice-btn:hover {
+:global(:root:not([data-ui="modern"]) .account .ta-notice-btn:hover) {
 	background: var(--button-primary-hover);
 }
 
-.ta-notice-link {
+:global(:root:not([data-ui="modern"]) .account .ta-notice-link) {
 	color: var(--primary);
 	font-weight: 600;
 	text-decoration: underline;
+}
+
+:global(:root[data-ui="modern"] .account .ta-notice-card) {
+	border: none;
+	border-radius: var(--md-sys-shape-corner-large);
+	background: var(--md-sys-color-surface-container);
+	box-shadow: var(--md-sys-elevation-level1);
+	padding: 1.5rem;
+}
+
+:global(:root[data-ui="modern"] .account .ta-notice-badge) {
+	border: none;
+	border-radius: var(--md-sys-shape-corner-full);
+	background: var(--md-sys-color-tertiary-container);
+	color: var(--md-sys-color-on-tertiary-container);
+	padding: 0.22rem 0.7rem;
 }
 </style>

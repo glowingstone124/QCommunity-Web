@@ -55,12 +55,20 @@
 	color: var(--text-secondary);
 }
 
-.text-input:focus {
+.text-input:focus:not(:focus-visible) {
 	outline: none;
+}
+
+.text-input:focus {
 	border-color: var(--primary);
 }
 
-.filled-button {
+.text-input:focus-visible {
+	outline: 2px solid var(--focus-ring);
+	outline-offset: 2px;
+}
+
+:global(:root:not([data-ui="modern"]) .affiliated .filled-button) {
 	padding: 0.78rem 1.25rem;
 	border-radius: 0;
 	background-color: var(--button-primary-bg);
@@ -72,7 +80,7 @@
 	width: fit-content;
 }
 
-.ghost-button {
+:global(:root:not([data-ui="modern"]) .affiliated .ghost-button) {
 	border: 1px solid var(--border-soft);
 	background: transparent;
 	color: var(--text-main);
@@ -85,12 +93,12 @@
 	white-space: nowrap;
 }
 
-.ghost-button:hover {
+:global(:root:not([data-ui="modern"]) .affiliated .ghost-button:hover) {
 	border-color: var(--primary);
 	background: var(--surface-soft);
 }
 
-.ghost-button:disabled {
+:global(:root:not([data-ui="modern"]) .affiliated .ghost-button:disabled) {
 	opacity: 0.55;
 	cursor: not-allowed;
 }
@@ -107,12 +115,12 @@
 	font-size: 0.88rem;
 }
 
-.filled-button:disabled {
+:global(:root:not([data-ui="modern"]) .affiliated .filled-button:disabled) {
 	opacity: 0.5;
 	cursor: not-allowed;
 }
 
-.filled-button:hover:not(:disabled) {
+:global(:root:not([data-ui="modern"]) .affiliated .filled-button:hover:not(:disabled)) {
 	background-color: var(--button-primary-hover);
 }
 
@@ -254,4 +262,44 @@
 		animation: none;
 		transform: none;
 	}
+}
+
+/* Material Design 3 Affiliated Accounts */
+.affiliated-summary-grid {
+	gap: 0.75rem;
+}
+
+:global(:root[data-ui="modern"] .affiliated .affiliated-summary-grid .ui-stat-card),
+:global(:root[data-ui="modern"] .affiliated .account-card),
+:global(:root[data-ui="modern"] .affiliated .delete-confirm) {
+	border: none;
+	border-radius: var(--md-sys-shape-corner-large);
+	background: var(--md-sys-color-surface-container);
+	box-shadow: var(--md-sys-elevation-level1);
+}
+
+:global(:root[data-ui="modern"] .affiliated .panel) {
+	border: none;
+	border-radius: var(--md-sys-shape-corner-large);
+	background: var(--md-sys-color-surface-container-low);
+	box-shadow: var(--md-sys-elevation-level1);
+}
+
+:global(:root[data-ui="modern"] .affiliated .account-status) {
+	border-radius: var(--md-sys-shape-corner-full);
+	padding: 0.22rem 0.65rem;
+	border-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 55%, transparent);
+	background: var(--md-sys-color-surface-container-high);
+	color: var(--md-sys-color-on-surface-variant);
+}
+
+:global(:root[data-ui="modern"] .affiliated .icon-button) {
+	min-width: 36px;
+	padding-inline: 0.55rem;
+}
+
+:global(:root[data-ui="modern"] .affiliated .avatar) {
+	border-radius: var(--md-sys-shape-corner-full);
+	background: var(--md-sys-color-primary-container);
+	color: var(--md-sys-color-on-primary-container);
 }

@@ -7,20 +7,37 @@
     <meta name="color-scheme" content="light dark">
     <title>QHub</title>
     <script>
-      // Apply the saved theme before first paint so the loader and page never flash the wrong palette.
+      // Apply saved UI mode, color scheme, and locale before first paint to prevent FOUC.
       try {
+        var metaColorScheme = document.querySelector('meta[name="color-scheme"]');
         var savedTheme = localStorage.getItem('theme');
-        document.documentElement.dataset.theme = savedTheme === 'dark' ? 'dark' : 'light';
+        var prefersDark = Boolean(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (savedTheme === 'dark' || savedTheme === 'light') {
+          if (metaColorScheme) metaColorScheme.content = savedTheme;
+          document.documentElement.dataset.theme = savedTheme;
+        } else {
+          if (metaColorScheme) metaColorScheme.content = 'light dark';
+          document.documentElement.dataset.theme = prefersDark ? 'dark' : 'light';
+        }
+        var savedUi = localStorage.getItem('qhub.ui-mode');
+        document.documentElement.dataset.ui = savedUi === 'classic' ? 'classic' : 'modern';
         document.documentElement.lang = localStorage.getItem('locale') === 'en' ? 'en' : 'zh-CN';
-      } catch (e) {}
+      } catch (e) {
+        document.documentElement.dataset.theme = document.documentElement.dataset.theme || 'light';
+        document.documentElement.dataset.ui = document.documentElement.dataset.ui || 'modern';
+      }
     </script>
     <style>
       :root {
-        color-scheme: light;
+        color-scheme: light dark;
       }
 
       :root[data-theme="dark"] {
         color-scheme: dark;
+      }
+
+      :root[data-theme="light"] {
+        color-scheme: light;
       }
 
       body {

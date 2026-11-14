@@ -35,6 +35,12 @@
     "nav": {
         "theme_light": "切换到浅色模式",
         "theme_dark": "切换到深色模式",
+        "theme_switch": "切换深浅配色",
+        "ui_switch_label": "界面版本切换",
+        "ui_mode_modern": "新版 UI",
+        "ui_mode_classic": "经典 UI",
+        "ui_switch_to_classic": "当前：新版 UI（点击切回经典界面）",
+        "ui_switch_to_modern": "当前：经典界面（点击体验新版 UI）",
         "language_english": "EN",
         "language_chinese": "中文",
         "community": "社区",
@@ -90,7 +96,10 @@
         "read_more": "查看详情",
         "footer_rights": "版权所有。",
         "footer_news": "新闻动态",
-        "footer_guides": "Wiki 指南"
+        "footer_guides": "Wiki 指南",
+        "latest_news": "最新动态",
+        "social_xiaohongshu": "访问 Quantum Original 小红书主页",
+        "social_bilibili": "访问 Quantum Original 哔哩哔哩主页"
     },
     "newsPage": {
         "title": "新闻动态",

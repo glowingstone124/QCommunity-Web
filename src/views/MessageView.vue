@@ -1,6 +1,9 @@
 <script setup>
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import UiPageHeader from '@/components/ui/UiPageHeader.vue'
+import UiButton from '@/components/ui/UiButton.vue'
+import UiStatePanel from '@/components/ui/UiStatePanel.vue'
 
 const { t, locale } = useI18n()
 
@@ -231,13 +234,12 @@ function formatMessageTime(timestamp) {
 
 
 <template>
-	<div class="chat">
-		<header class="chat-header">
-			<div>
-				<h1 class="title">{{ t('messagesPage.title') }}</h1>
-			</div>
-			<span class="status-pill">{{ loginstat ? t('messagesPage.connected') : t('messagesPage.loggedOut') }}</span>
-		</header>
+	<div class="chat page-shell">
+		<UiPageHeader
+			:title="t('messagesPage.title')"
+			:badge="loginstat ? t('messagesPage.connected') : t('messagesPage.loggedOut')"
+			:divider="false"
+		/>
 
 		<div class="chat-body">
 			<div
@@ -245,9 +247,22 @@ function formatMessageTime(timestamp) {
 				ref="messageContainer"
 				class="message-container"
 			>
-				<div v-if="loading" class="state-panel">{{ t('messagesPage.loading') }}</div>
-				<div v-else-if="fetchError" class="state-panel error">{{ fetchError }}</div>
-				<div v-else-if="!messageList.length" class="state-panel">{{ t('messagesPage.empty') }}</div>
+				<UiStatePanel
+					v-if="loading"
+					state="loading"
+					:message="t('messagesPage.loading')"
+				/>
+				<UiStatePanel
+					v-else-if="fetchError"
+					state="error"
+					:message="fetchError"
+				/>
+				<UiStatePanel
+					v-else-if="!messageList.length"
+					state="empty"
+					icon="forum"
+					:message="t('messagesPage.empty')"
+				/>
 				<div
 					v-for="(message, index) in messageList"
 					:key="index"
@@ -284,7 +299,14 @@ function formatMessageTime(timestamp) {
 				</div>
 			</div>
 			<div class="message-container empty" v-else>
-					<p class="notification">{{ t('messagesPage.loginRequired') }}</p>
+				<UiStatePanel
+					state="info"
+					icon="lock"
+					:title="t('messagesPage.loggedOut')"
+					:message="t('messagesPage.loginRequired')"
+					:action-label="t('fortunePage.loginNow')"
+					action-to="/login"
+				/>
 			</div>
 		</div>
 
@@ -293,16 +315,20 @@ function formatMessageTime(timestamp) {
 				<input
 					v-model="messageInput"
 					class="message-input"
-						:placeholder="t('messagesPage.placeholder')"
-					@keydown.enter="sendMessage"
+					:aria-label="t('messagesPage.placeholder')"
+					:placeholder="t('messagesPage.placeholder')"
+					enterkeyhint="send"
+					@keydown.enter="!$event.isComposing && sendMessage()"
 				/>
-				<button
-					@click="sendMessage"
-					class="send-button"
+				<UiButton
+					variant="filled"
+					icon="send"
+					:loading="sendButtonDisabled"
 					:disabled="sendButtonDisabled"
+					@click="sendMessage"
 				>
-						{{ sendButtonDisabled ? t('messagesPage.sending') : t('messagesPage.send') }}
-				</button>
+					{{ sendButtonDisabled ? t('messagesPage.sending') : t('messagesPage.send') }}
+				</UiButton>
 			</div>
 		</div>
 	</div>

@@ -39,6 +39,9 @@
   --button-ghost-bg: transparent;
   --button-ghost-text: #2563EB;
   --button-ghost-hover: #EFF6FF;
+  --accent-surface-bg: #1D4ED8;
+  --accent-surface-text: #FFFFFF;
+  --focus-ring: var(--primary);
   --dark-bg: #090C12;
   --dark-card: #111722;
   --dark-border: #2B3748;
@@ -98,6 +101,12 @@
   --success-text: var(--success);
   --warning-text: var(--warning);
   --error-text: var(--error);
+  --button-primary-bg: #2563EB;
+  --button-primary-text: #FFFFFF;
+  --button-primary-hover: #3B82F6;
+  --accent-surface-bg: #1D4ED8;
+  --accent-surface-text: #FFFFFF;
+  --focus-ring: #7BB2FF;
   --button-secondary-bg: #161E2A;
   --button-secondary-border: #7BB2FF;
   --button-secondary-text: #C9E0FF;
@@ -170,10 +179,10 @@
   src: url("/src/assets/bahnschrift.ttf");
   font-display: swap;
 }
-* {
-  font-family: var(--font-sans);
+*,
+*::before,
+*::after {
   box-sizing: border-box;
-  font-optical-sizing: auto;
 }
 
 html {
@@ -183,9 +192,9 @@ html {
 
 body {
   margin: 0;
-  background:
-    radial-gradient(circle at 8% -10%, color-mix(in srgb, var(--primary-light) 10%, transparent), transparent 28rem),
-    var(--background);
+  font-family: var(--font-sans);
+  font-optical-sizing: auto;
+  background: var(--background);
   color: var(--text-main);
   width: 100%;
   height: 100dvh;
@@ -195,9 +204,7 @@ body {
 }
 
 :root[data-theme="dark"] body {
-  background:
-    radial-gradient(circle at 8% -10%, color-mix(in srgb, var(--primary) 13%, transparent), transparent 28rem),
-    linear-gradient(180deg, #0E141D 0%, var(--background) 48%, #07090E 100%);
+  background: var(--background);
 }
 
 :root[data-theme="dark"] :where(input, textarea, select) {

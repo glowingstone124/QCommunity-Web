@@ -1,6 +1,9 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import UiButton from '@/components/ui/UiButton.vue'
+import UiStatGrid from '@/components/ui/UiStatGrid.vue'
+import UiStatCard from '@/components/ui/UiStatCard.vue'
 
 const { t } = useI18n()
 
@@ -96,12 +99,12 @@ function calculate() {
 
 <template>
 	<section class="beacon-panel">
-		<header class="tool-header">
+		<div class="tool-bar">
 			<div>
 				<h2>{{ t('beaconPage.title') }}</h2>
 			</div>
 			<span class="edition-badge">{{ t('beaconPage.javaOnly') }}</span>
-		</header>
+		</div>
 
 		<div class="control-panel">
 			<label class="field">
@@ -119,21 +122,27 @@ function calculate() {
 				</select>
 			</label>
 
-			<button type="button" class="primary-button" @click="calculate">{{ t('beaconPage.calculate') }}</button>
+			<UiButton variant="filled" icon="palette" @click="calculate">
+				{{ t('beaconPage.calculate') }}
+			</UiButton>
 		</div>
 
-		<div class="result-grid">
-			<div class="result-card">
-				<span>{{ t('beaconPage.approximate') }}</span>
-				<strong>{{ rgbToHex(result.rgb) }}</strong>
+		<UiStatGrid :columns="2">
+			<UiStatCard
+				:label="t('beaconPage.approximate')"
+				:value="rgbToHex(result.rgb)"
+				icon="colorize"
+				tone="primary"
+			>
 				<div class="color-preview" :style="{ backgroundColor: rgbToHex(result.rgb) }"></div>
-			</div>
-			<div class="result-card">
-				<span>{{ t('beaconPage.error') }}</span>
-				<strong>{{ result.error.toFixed(2) }}</strong>
-				<p>{{ t('beaconPage.errorHint') }}</p>
-			</div>
-		</div>
+			</UiStatCard>
+			<UiStatCard
+				:label="t('beaconPage.error')"
+				:value="result.error.toFixed(2)"
+				:helper="t('beaconPage.errorHint')"
+				icon="difference"
+			/>
+		</UiStatGrid>
 
 		<div class="sequence-panel">
 			<div class="section-head">
@@ -158,48 +167,39 @@ function calculate() {
 	--tool-border: var(--border-soft, var(--split));
 	display: flex;
 	flex-direction: column;
-	gap: 1rem;
+	gap: 1.15rem;
 	width: 100%;
-	max-width: 1180px;
-	margin: 0 auto;
 	color: var(--text-main);
 }
 
-.tool-header,
 .control-panel,
-.result-card,
 .sequence-panel {
 	border: 1px solid var(--tool-border);
 	background: var(--background);
-	padding: 1rem;
+	padding: 1.15rem;
 }
 
-.tool-header {
+.tool-bar {
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
 	justify-content: space-between;
-	gap: 1rem;
+	flex-wrap: wrap;
+	gap: 0.75rem 1rem;
 }
 
-.tool-header h2 {
+.tool-bar h2 {
 	margin: 0;
 	color: var(--title-color);
-	font-size: clamp(1.25rem, 1.8vw, 1.65rem);
+	font-size: clamp(1.2rem, 1.8vw, 1.5rem);
 	line-height: 1.2;
-}
-
-.tool-header p {
-	margin: 0.32rem 0 0;
-	color: var(--text-secondary);
-	line-height: 1.5;
 }
 
 .edition-badge {
 	border: 1px solid var(--primary);
 	color: var(--primary);
-	padding: 0.35rem 0.58rem;
+	padding: 0.32rem 0.65rem;
 	font-size: 0.82rem;
-	font-weight: 800;
+	font-weight: 700;
 	white-space: nowrap;
 }
 
@@ -217,7 +217,6 @@ function calculate() {
 }
 
 .field span,
-.result-card span,
 .glass-item span {
 	color: var(--text-secondary);
 	font-size: 0.86rem;
@@ -232,7 +231,7 @@ function calculate() {
 .color-picker,
 .text-input {
 	width: 100%;
-	height: 42px;
+	height: 44px;
 	box-sizing: border-box;
 	border: 1px solid var(--tool-border);
 	background: var(--background-secondary);
@@ -249,53 +248,25 @@ function calculate() {
 	font: inherit;
 }
 
+.text-input:focus:not(:focus-visible),
+.color-picker:focus:not(:focus-visible) {
+	outline: none;
+}
+
 .text-input:focus,
 .color-picker:focus {
-	outline: none;
 	border-color: var(--primary);
 }
 
-.primary-button {
-	height: 42px;
-	border: 1px solid var(--primary);
-	background: var(--button-primary-bg);
-	color: var(--button-primary-text);
-	padding: 0 1rem;
-	font-weight: 800;
-	cursor: pointer;
-	white-space: nowrap;
-}
-
-.primary-button:hover {
-	background: var(--button-primary-hover);
-}
-
-.result-grid {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 1rem;
-}
-
-.result-card {
-	display: grid;
-	gap: 0.45rem;
-	min-width: 0;
-}
-
-.result-card strong {
-	color: var(--text-main);
-	font-size: 1.15rem;
-	overflow-wrap: anywhere;
-}
-
-.result-card p {
-	margin: 0;
-	color: var(--text-secondary);
-	line-height: 1.5;
+.text-input:focus-visible,
+.color-picker:focus-visible {
+	outline: 2px solid var(--focus-ring);
+	outline-offset: 2px;
 }
 
 .color-preview {
-	height: 34px;
+	height: 36px;
+	margin-top: 0.25rem;
 	border: 1px solid var(--tool-border);
 }
 
@@ -354,17 +325,37 @@ function calculate() {
 	}
 }
 
-@media (max-width: 640px) {
-	.tool-header {
-		flex-direction: column;
-	}
+:global(:root[data-ui="modern"] .beacon-panel .control-panel),
+:global(:root[data-ui="modern"] .beacon-panel .sequence-panel) {
+	border-radius: var(--md-sys-shape-corner-large);
+	border-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+	background: var(--md-sys-color-surface-container-low);
+	box-shadow: var(--md-sys-elevation-level1);
+}
 
-	.result-grid {
-		grid-template-columns: 1fr;
-	}
+:global(:root[data-ui="modern"] .beacon-panel .edition-badge) {
+	border: none;
+	border-radius: var(--md-sys-shape-corner-full);
+	background: var(--md-sys-color-tertiary-container);
+	color: var(--md-sys-color-on-tertiary-container);
+	padding: 0.35rem 0.85rem;
+}
 
-	.primary-button {
-		width: 100%;
-	}
+:global(:root[data-ui="modern"] .beacon-panel .color-picker),
+:global(:root[data-ui="modern"] .beacon-panel .text-input) {
+	border-radius: var(--md-sys-shape-corner-medium);
+	background: var(--md-sys-color-surface-container-highest);
+	border-color: color-mix(in srgb, var(--md-sys-color-outline) 45%, transparent);
+}
+
+:global(:root[data-ui="modern"] .beacon-panel .color-preview),
+:global(:root[data-ui="modern"] .beacon-panel .glass-item),
+:global(:root[data-ui="modern"] .beacon-panel .swatch) {
+	border-radius: var(--md-sys-shape-corner-medium);
+}
+
+:global(:root[data-ui="modern"] .beacon-panel .glass-item) {
+	background: var(--md-sys-color-surface-container);
+	border-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
 }
 </style>

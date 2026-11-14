@@ -129,4 +129,31 @@ defineProps({
 		border-radius: 22px;
 	}
 }
+
+/* Material Design 3 Home Hero */
+:global(:root[data-ui="modern"] .home .hero-copy) {
+	border-radius: var(--md-sys-shape-corner-extra-large);
+	background: color-mix(in srgb, var(--md-sys-color-primary-container) 30%, var(--md-sys-color-surface-container-low));
+	border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+	box-shadow: var(--md-sys-elevation-level1);
+}
+
+:global(:root[data-ui="modern"] .home .action) {
+	border-radius: var(--md-sys-shape-corner-full);
+	min-height: 44px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-inline: 1.5rem;
+}
+
+:global(:root[data-ui="modern"] .home .action.ghost) {
+	border-color: var(--md-sys-color-outline);
+	background: var(--md-sys-color-surface-container-lowest);
+	color: var(--md-sys-color-primary);
+}
+
+:global(:root[data-ui="modern"] .home .action.ghost:hover) {
+	background: color-mix(in srgb, var(--md-sys-color-primary) 8%, var(--md-sys-color-surface-container-lowest));
+}
 </style>

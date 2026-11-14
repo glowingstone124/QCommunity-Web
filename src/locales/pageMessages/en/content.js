@@ -2,6 +2,7 @@ export default {
 	termsPage: {
 		title: 'User Notice and Terms of Service',
 		description: 'Service eligibility, conduct, privacy and service responsibility for Quantum Original.',
+		toc: 'Contents',
 		backToGuides: 'Back to guides',
 		loading: 'Loading the user notice…',
 		loadFailed: 'The user notice could not be loaded. Check your connection and try again.',

@@ -1,6 +1,13 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import UiButton from '@/components/ui/UiButton.vue'
+import UiStatePanel from '@/components/ui/UiStatePanel.vue'
+import UiSwitch from '@/components/ui/UiSwitch.vue'
+import UiTabs from '@/components/ui/UiTabs.vue'
+import { useUiPreferences } from '@/composables/useUiPreferences.js'
+
+const { isModernUi } = useUiPreferences()
 
 const props = defineProps({
 	quota: { type: Object, default: null },
@@ -28,6 +35,19 @@ const { t, locale } = useI18n()
 
 const selectedChannelFilter = ref('all')
 const selectedStatusFilter = ref('all')
+
+const channelFilterItems = computed(() => [
+	{ key: 'all', label: t('kotshiPage.filterAllChannels') },
+	{ key: 'qq', label: 'QQ' },
+	{ key: 'web', label: 'Web' },
+	{ key: 'minecraft', label: 'MC' },
+])
+
+const statusFilterItems = computed(() => [
+	{ key: 'all', label: t('kotshiPage.filterAllStatuses') },
+	{ key: 'completed', label: t('kotshiPage.filterSuccessOnly') },
+	{ key: 'failed', label: t('kotshiPage.filterFailedOnly') },
+])
 
 const limit = computed(() => Number(props.quota?.limit || 0))
 const remaining = computed(() => Number(props.quota?.remaining || 0))
@@ -173,16 +193,32 @@ function sourceLabel(source) {
 				<h2 class="panel-title">{{ t('kotshiPage.title') }}</h2>
 				<p class="panel-sub">{{ t('kotshiPage.description') }}</p>
 			</div>
-			<button class="secondary-button" type="button" :disabled="isLoading" @click="emit('refresh')">
+			<UiButton
+				class="secondary-button"
+				type="button"
+				variant="tonal"
+				size="sm"
+				icon="refresh"
+				:loading="isLoading"
+				:disabled="isLoading"
+				@click="emit('refresh')"
+			>
 				{{ isLoading ? t('common.refreshing') : t('kotshiPage.refresh') }}
-			</button>
+			</UiButton>
 		</header>
 
 		<!-- Feedback message -->
-		<p v-if="feedback" class="feedback" :class="feedbackType" role="status">{{ feedback }}</p>
+		<UiStatePanel
+			v-if="feedback"
+			:state="feedbackType === 'error' ? 'error' : 'info'"
+			compact
+			:icon="feedbackType === 'success' ? 'check_circle' : 'info'"
+			role="status"
+			:message="feedback"
+		/>
 
 		<!-- Loading State -->
-		<div v-if="isLoading && !quota" class="loading-state">{{ t('kotshiPage.loading') }}</div>
+		<UiStatePanel v-if="isLoading && !quota" state="loading" :message="t('kotshiPage.loading')" />
 
 		<template v-else>
 			<!-- 1. Services & Feature Toggles Section -->
@@ -204,15 +240,13 @@ function sourceLabel(source) {
 								</span>
 								<h4 class="control-name">{{ t('kotshiPage.qbotActiveResponse') }}</h4>
 							</div>
-							<label class="switch-toggle" :aria-label="t('kotshiPage.qbotActiveResponse')">
-								<input
-									type="checkbox"
-									:checked="props.qbotActiveResponseEnabled"
-									:disabled="!props.qbotActiveResponseSettingLoaded || props.qbotActiveResponseSettingSaving"
-									@change="emit('update:qbotActiveResponseEnabled', $event.target.checked)"
-								/>
-								<span class="switch-slider"></span>
-							</label>
+							<UiSwitch
+								:model-value="props.qbotActiveResponseEnabled"
+								:disabled="!props.qbotActiveResponseSettingLoaded || props.qbotActiveResponseSettingSaving"
+								:aria-label="t('kotshiPage.qbotActiveResponse')"
+								size="compact"
+								@update:model-value="emit('update:qbotActiveResponseEnabled', $event)"
+							/>
 						</div>
 						<p class="control-desc">{{ t('kotshiPage.qbotActiveResponseDesc') }}</p>
 						<span v-if="props.qbotActiveResponseSettingSaving" class="saving-hint">{{ t('kotshiPage.toggleSaving') }}</span>
@@ -227,15 +261,13 @@ function sourceLabel(source) {
 								</span>
 								<h4 class="control-name">{{ t('kotshiPage.profileQuery') }}</h4>
 							</div>
-							<label class="switch-toggle" :aria-label="t('kotshiPage.profileQuery')">
-								<input
-									type="checkbox"
-									:checked="props.kotshiQueryEnabled"
-									:disabled="!props.kotshiQuerySettingLoaded || props.kotshiQuerySettingSaving"
-									@change="emit('update:kotshiQueryEnabled', $event.target.checked)"
-								/>
-								<span class="switch-slider"></span>
-							</label>
+							<UiSwitch
+								:model-value="props.kotshiQueryEnabled"
+								:disabled="!props.kotshiQuerySettingLoaded || props.kotshiQuerySettingSaving"
+								:aria-label="t('kotshiPage.profileQuery')"
+								size="compact"
+								@update:model-value="emit('update:kotshiQueryEnabled', $event)"
+							/>
 						</div>
 						<p class="control-desc">{{ t('kotshiPage.profileQueryDesc') }}</p>
 						<span v-if="props.kotshiQuerySettingSaving" class="saving-hint">{{ t('kotshiPage.toggleSaving') }}</span>
@@ -255,7 +287,12 @@ function sourceLabel(source) {
 						<strong>{{ number(remaining) }}</strong>
 						<span>/ {{ number(limit) }}</span>
 					</div>
-					<div class="quota-track" :title="`剩余: ${number(remaining)} (${remainingPercent.toFixed(1)}%)`">
+					<md-linear-progress
+						v-if="isModernUi"
+						:value.prop="Math.max(0, Math.min(1, remainingPercent / 100))"
+						:title="`剩余: ${number(remaining)} (${remainingPercent.toFixed(1)}%)`"
+					/>
+					<div v-else class="quota-track" :title="`剩余: ${number(remaining)} (${remainingPercent.toFixed(1)}%)`">
 						<span :style="{ width: `${remainingPercent}%` }"></span>
 					</div>
 					<div class="quota-meta-split">
@@ -302,7 +339,7 @@ function sourceLabel(source) {
 						<span class="metric-label">{{ t('kotshiPage.usageTitle') }}</span>
 						<strong class="metric-number">{{ number(totalRequests) }}</strong>
 						<span class="metric-sub">
-							{{ t('kotshiPage.completed') }} {{ number(completedRequests) }} · {{ t('kotshiPage.failed') }} {{ number(failedRequests) }}
+							{{ t('kotshiPage.completed') }} {{ number(completedRequests) }} / {{ t('kotshiPage.failed') }} {{ number(failedRequests) }}
 						</span>
 					</div>
 
@@ -312,7 +349,11 @@ function sourceLabel(source) {
 						<strong class="metric-number" :class="{ 'is-high': successRate >= 90, 'is-warn': successRate < 90 }">
 							{{ successRate }}%
 						</strong>
-						<div class="metric-bar-track">
+						<md-linear-progress
+							v-if="isModernUi"
+							:value.prop="Math.max(0, Math.min(1, successRate / 100))"
+						/>
+						<div v-else class="metric-bar-track">
 							<span class="metric-bar-fill" :style="{ width: `${successRate}%` }"></span>
 						</div>
 					</div>
@@ -400,69 +441,18 @@ function sourceLabel(source) {
 
 					<!-- Filters bar -->
 					<div class="filters-row">
-						<!-- Channel Filter Pills -->
-						<div class="filter-pills" role="group" :aria-label="t('kotshiPage.channelBreakdownTitle')">
-							<button
-								type="button"
-								class="filter-pill"
-								:class="{ 'is-active': selectedChannelFilter === 'all' }"
-								@click="selectedChannelFilter = 'all'"
-							>
-								{{ t('kotshiPage.filterAllChannels') }}
-							</button>
-							<button
-								type="button"
-								class="filter-pill"
-								:class="{ 'is-active': selectedChannelFilter === 'qq' }"
-								@click="selectedChannelFilter = 'qq'"
-							>
-								QQ
-							</button>
-							<button
-								type="button"
-								class="filter-pill"
-								:class="{ 'is-active': selectedChannelFilter === 'web' }"
-								@click="selectedChannelFilter = 'web'"
-							>
-								Web
-							</button>
-							<button
-								type="button"
-								class="filter-pill"
-								:class="{ 'is-active': selectedChannelFilter === 'minecraft' }"
-								@click="selectedChannelFilter = 'minecraft'"
-							>
-								MC
-							</button>
-						</div>
-
-						<!-- Status Filter Pills -->
-						<div class="filter-pills" role="group" :aria-label="t('kotshiPage.completed')">
-							<button
-								type="button"
-								class="filter-pill"
-								:class="{ 'is-active': selectedStatusFilter === 'all' }"
-								@click="selectedStatusFilter = 'all'"
-							>
-								{{ t('kotshiPage.filterAllStatuses') }}
-							</button>
-							<button
-								type="button"
-								class="filter-pill"
-								:class="{ 'is-active': selectedStatusFilter === 'completed' }"
-								@click="selectedStatusFilter = 'completed'"
-							>
-								{{ t('kotshiPage.filterSuccessOnly') }}
-							</button>
-							<button
-								type="button"
-								class="filter-pill"
-								:class="{ 'is-active': selectedStatusFilter === 'failed' }"
-								@click="selectedStatusFilter = 'failed'"
-							>
-								{{ t('kotshiPage.filterFailedOnly') }}
-							</button>
-						</div>
+						<UiTabs
+							v-model="selectedChannelFilter"
+							:items="channelFilterItems"
+							variant="chips"
+							:aria-label="t('kotshiPage.channelBreakdownTitle')"
+						/>
+						<UiTabs
+							v-model="selectedStatusFilter"
+							:items="statusFilterItems"
+							variant="chips"
+							:aria-label="t('kotshiPage.completed')"
+						/>
 					</div>
 				</header>
 
@@ -517,10 +507,13 @@ function sourceLabel(source) {
 					</div>
 				</div>
 
-				<div v-else class="empty-state">
-					<strong>{{ recentUsage.length ? t('kotshiPage.emptyFiltered') : t('kotshiPage.noUsage') }}</strong>
-					<span>{{ recentUsage.length ? t('kotshiPage.emptyFilteredDesc') : t('kotshiPage.noUsageDescription') }}</span>
-				</div>
+				<UiStatePanel
+					v-else
+					state="empty"
+					icon="history"
+					:title="recentUsage.length ? t('kotshiPage.emptyFiltered') : t('kotshiPage.noUsage')"
+					:message="recentUsage.length ? t('kotshiPage.emptyFilteredDesc') : t('kotshiPage.noUsageDescription')"
+				/>
 			</section>
 		</template>
 	</section>
@@ -553,9 +546,9 @@ function sourceLabel(source) {
 
 .panel-title { margin: 0; color: var(--title-color); font-size: clamp(1.35rem, 2vw, 1.65rem); line-height: 1.2; font-weight: 800; }
 .panel-sub, .section-head p, .controls-sub { margin: 0.35rem 0 0; color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem; }
-.secondary-button { padding: 0.5rem 0.85rem; border: 1px solid var(--border-soft); background: transparent; color: var(--text-main); cursor: pointer; font-weight: 600; white-space: nowrap; transition: all 160ms var(--ease-out); }
-.secondary-button:hover:not(:disabled) { border-color: var(--primary); background: var(--surface-soft); }
-.secondary-button:disabled { opacity: 0.46; cursor: not-allowed; }
+:global(:root:not([data-ui="modern"]) .account .secondary-button) { padding: 0.5rem 0.85rem; border: 1px solid var(--border-soft); background: transparent; color: var(--text-main); cursor: pointer; font-weight: 600; white-space: nowrap; transition: all 160ms var(--ease-out); }
+:global(:root:not([data-ui="modern"]) .account .secondary-button:hover:not(:disabled)) { border-color: var(--primary); background: var(--surface-soft); }
+:global(:root:not([data-ui="modern"]) .account .secondary-button:disabled) { opacity: 0.46; cursor: not-allowed; }
 .feedback { margin: 0; padding: 0.75rem 0.85rem; border-left: 3px solid var(--error); background: color-mix(in srgb, var(--error) 7%, transparent); color: var(--error-text); font-size: 0.9rem; }
 .feedback.success { border-color: var(--success); background: color-mix(in srgb, var(--success) 7%, transparent); color: var(--success-text); }
 .loading-state, .empty-state { padding: 2.5rem 1rem; text-align: center; color: var(--text-secondary); }
@@ -678,6 +671,10 @@ function sourceLabel(source) {
 .switch-toggle input:disabled + .switch-slider {
 	opacity: 0.45;
 	cursor: not-allowed;
+}
+.switch-toggle input:focus-visible + .switch-slider {
+	outline: 2px solid var(--focus-ring, var(--primary));
+	outline-offset: 2px;
 }
 
 /* 2. Quota & Paid summary */
@@ -892,5 +889,48 @@ function sourceLabel(source) {
 	.usage-copy { grid-column: 2 / -1; }
 	.usage-status { grid-column: 3; grid-row: 1; }
 	.usage-tokens-col { grid-column: 2 / -1; align-items: flex-start; flex-direction: row; gap: 0.4rem; }
+}
+
+/* Material Design 3 Kotshi Workspace */
+:global(:root[data-ui="modern"] .account .controls-card),
+:global(:root[data-ui="modern"] .account .summary-card),
+:global(:root[data-ui="modern"] .account .metrics-section),
+:global(:root[data-ui="modern"] .account .channels-section),
+:global(:root[data-ui="modern"] .account .usage-section) {
+	border: none;
+	border-radius: var(--md-sys-shape-corner-large);
+	background: var(--md-sys-color-surface-container);
+	box-shadow: var(--md-sys-elevation-level1);
+}
+
+:global(:root[data-ui="modern"] .account .control-tile),
+:global(:root[data-ui="modern"] .account .metric-tile),
+:global(:root[data-ui="modern"] .account .channel-card),
+:global(:root[data-ui="modern"] .account .usage-row) {
+	border-radius: var(--md-sys-shape-corner-medium);
+	border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+	background: var(--md-sys-color-surface-container-low);
+}
+
+:global(:root[data-ui="modern"] .account .control-badge),
+:global(:root[data-ui="modern"] .account .quota-pill),
+:global(:root[data-ui="modern"] .account .paid-pill),
+:global(:root[data-ui="modern"] .account .channel-badge),
+:global(:root[data-ui="modern"] .account .channel-icon-pill) {
+	border-radius: var(--md-sys-shape-corner-full);
+	border: none;
+}
+
+:global(:root[data-ui="modern"] .account .quota-pill),
+:global(:root[data-ui="modern"] .account .paid-pill) {
+	padding: 0.2rem 0.65rem;
+	background: var(--md-sys-color-primary-container);
+	color: var(--md-sys-color-on-primary-container);
+}
+
+:global(:root[data-ui="modern"] .account .rules-box) {
+	border-radius: var(--md-sys-shape-corner-medium);
+	border-left: none;
+	background: var(--md-sys-color-surface-container-highest);
 }
 </style>

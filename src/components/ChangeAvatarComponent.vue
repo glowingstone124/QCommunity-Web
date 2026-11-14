@@ -1,7 +1,7 @@
 <template>
-	<h1>
+	<h4>
 		{{ t('avatarPage.choose') }}
-	</h1>
+	</h4>
 	<div class="avatar-list">
 		<div
 			class="avatar-item"
@@ -13,10 +13,11 @@
 			<img :src="avatar.url" :alt="avatar.id" class="avatar-image" />
 		</div>
 	</div>
-	<button class="save-avatar-btn" @click="saveAvatar">{{ t('avatarPage.save') }}</button>
+	<UiButton type="button" variant="filled" class="save-avatar-btn" @click="saveAvatar">{{ t('avatarPage.save') }}</UiButton>
 </template>
 
 <script setup lang="ts">
+import UiButton from '@/components/ui/UiButton.vue';
 import { ref, onMounted } from "vue"
 import axios from "axios"
 import { useI18n } from 'vue-i18n'
@@ -67,7 +68,7 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-h1 {
+h4 {
 	font-size: 1rem;
 	color: var(--title-color);
 	margin: 0;
@@ -108,7 +109,7 @@ h1 {
 	padding: 0.25rem 0;
 	align-items: start;
 }
-.save-avatar-btn {
+:global(:root:not([data-ui="modern"]) .save-avatar-btn) {
 	margin: 0;
 	padding: 0.78rem 1.25rem;
 	background-color: var(--button-primary-bg);
@@ -119,7 +120,7 @@ h1 {
 	transition: background-color 0.18s var(--ease-out);
 	width: fit-content;
 }
-.save-avatar-btn:hover {
+:global(:root:not([data-ui="modern"]) .save-avatar-btn:hover) {
 	background-color: var(--button-primary-hover);
 }
 

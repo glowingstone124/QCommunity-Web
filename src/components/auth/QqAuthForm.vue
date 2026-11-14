@@ -9,16 +9,18 @@
 			<code>.auth {{ challenge.code }}</code>
 			<p>{{ t('casAuth.qqWaiting') }}</p>
 		</div>
-		<p v-if="errorMessage" class="error-message" role="alert">{{ errorMessage }}</p>
-		<button v-if="authorizedToken" type="button" :disabled="busy" @click="finish">{{ t('loginPage.cas_link') }}</button>
-		<button v-else-if="!challenge" type="submit" :disabled="busy">{{ t('casAuth.qqStart') }}</button>
-		<button v-else type="button" :disabled="busy" @click="reset">{{ t('casAuth.qqRestart') }}</button>
+		<UiStatePanel v-if="errorMessage" state="error" compact role="alert" :message="errorMessage" />
+		<UiButton v-if="authorizedToken" type="button" variant="filled" full-width :disabled="busy" @click="finish">{{ t('loginPage.cas_link') }}</UiButton>
+		<UiButton v-else-if="!challenge" type="submit" variant="filled" full-width :disabled="busy">{{ t('casAuth.qqStart') }}</UiButton>
+		<UiButton v-else type="button" variant="tonal" full-width :disabled="busy" @click="reset">{{ t('casAuth.qqRestart') }}</UiButton>
 	</form>
 </template>
 
 <script setup>
 import { onBeforeUnmount, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import UiButton from '@/components/ui/UiButton.vue'
+import UiStatePanel from '@/components/ui/UiStatePanel.vue'
 
 const props = defineProps({ onAuthorized: { type: Function, required: true } })
 const { t } = useI18n()
@@ -109,8 +111,6 @@ onBeforeUnmount(reset)
 .qq-auth { display: grid; gap: 1rem; }
 label { display: grid; gap: .5rem; color: var(--text-main); }
 input { width: 100%; box-sizing: border-box; padding: .9rem; border: 1px solid var(--split); background: var(--background-secondary); color: var(--text-main); font: inherit; }
-button { padding: .9rem; background: var(--primary); color: var(--background); border: 0; cursor: pointer; font: inherit; }
-button:disabled { opacity: .6; cursor: wait; }
 .qq-challenge { padding: 1rem; background: var(--background-secondary); }
 code { font-size: 1.1rem; overflow-wrap: anywhere; user-select: text; }
 .error-message { color: #ef4444; }

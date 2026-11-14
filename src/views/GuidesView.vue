@@ -4,7 +4,11 @@ import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { defaultGuideId, guideItems, guideSections } from '@/data/guides.js'
 import CommandReference from '@/components/guides/CommandReference.vue'
+import UiDocLayout from '@/components/ui/UiDocLayout.vue'
+import UiButton from '@/components/ui/UiButton.vue'
+import UiStatePanel from '@/components/ui/UiStatePanel.vue'
 import { loadGuideMarkdown } from '@/utils/guides.js'
+import { useUiPreferences } from '@/composables/useUiPreferences.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -12,6 +16,7 @@ const guide = ref(null)
 const isLoading = ref(true)
 const isGuideMenuOpen = ref(false)
 const { t } = useI18n()
+const { isModernUi } = useUiPreferences()
 
 const localizedGuideSections = computed(() => guideSections.map((section) => ({
 	...section,
@@ -101,39 +106,32 @@ watch(
 </script>
 
 <template>
-	<main class="guides-page page-shell">
-		<aside class="guides-sidebar" :aria-label="t('guidesPage.index')">
+	<UiDocLayout
+		class="guides-page"
+		:nav-label="t('guidesPage.index')"
+		:wide-content="isCommandReference"
+	>
+		<template #sidebar-header>
 			<div class="guides-sidebar-heading">
-				<h1>{{ t('guidesPage.title') }}</h1>
-				<button
-					type="button"
+				<p v-if="!isLoading && (guide || isCommandReference)" class="guides-sidebar-title">
+					{{ t('guidesPage.title') }}
+				</p>
+				<h1 v-else>{{ t('guidesPage.title') }}</h1>
+				<UiButton
 					class="guide-menu-toggle"
+					variant="tonal"
+					size="sm"
+					:icon="isGuideMenuOpen ? 'close' : 'menu'"
 					:aria-expanded="isGuideMenuOpen"
 					aria-controls="guide-nav-list"
 					@click="isGuideMenuOpen = !isGuideMenuOpen"
 				>
 					{{ isGuideMenuOpen ? t('guidesPage.collapse') : t('guidesPage.expand') }}
-				</button>
+				</UiButton>
 			</div>
+		</template>
 
-			<nav id="guide-nav-list" class="guide-nav" :class="{ 'is-open': isGuideMenuOpen }">
-				<section v-for="section in localizedGuideSections" :key="section.key" class="guide-section">
-					<h2>{{ section.title }}</h2>
-					<button
-						v-for="item in section.items"
-						:key="item.id"
-						type="button"
-						class="guide-nav-item"
-						:class="{ 'is-active': item.id === activeId }"
-						@click="goToGuide(item.id)"
-					>
-						<span>{{ item.title }}</span>
-					</button>
-				</section>
-			</nav>
-		</aside>
-
-		<section class="guide-reader">
+		<template #mobile-toolbar>
 			<div class="guide-toolbar">
 				<div>
 					<strong>{{ guideTitle(activeGuide) || t('guidesPage.title') }}</strong>
@@ -145,7 +143,7 @@ watch(
 					@change="goToGuide($event.target.value)"
 				>
 					<optgroup
-					v-for="section in localizedGuideSections"
+						v-for="section in localizedGuideSections"
 						:key="section.key"
 						:label="section.title"
 					>
@@ -159,51 +157,76 @@ watch(
 					</optgroup>
 				</select>
 			</div>
+		</template>
 
-			<article v-if="isLoading" class="guide-article guide-article--loading" aria-busy="true">
-				<div class="guide-skeleton guide-skeleton--title"></div>
-				<div class="guide-skeleton guide-skeleton--text"></div>
-				<div class="guide-skeleton guide-skeleton--text"></div>
-				<div class="guide-skeleton guide-skeleton--short"></div>
-			</article>
-
-			<section v-else-if="!guide" class="guide-empty">
-				<h2>{{ t('guidesPage.notFoundTitle') }}</h2>
-				<p>{{ t('guidesPage.notFoundDescription') }}</p>
-			</section>
-
-			<CommandReference v-else-if="isCommandReference" />
-
-			<article v-else class="guide-article">
-				<header class="guide-header">
-					<h1>{{ guideTitle(activeGuide) }}</h1>
-				</header>
-
-				<div class="guide-content" v-html="guide.html" @click="openGuideLink"></div>
-
-				<footer class="guide-footer" :aria-label="t('guidesPage.pagination')">
+		<template #sidebar>
+			<div id="guide-nav-list" class="guide-nav" :class="{ 'is-open': isGuideMenuOpen }">
+				<section v-for="section in localizedGuideSections" :key="section.key" class="guide-section">
+					<h2>{{ section.title }}</h2>
 					<button
+						v-for="item in section.items"
+						:key="item.id"
 						type="button"
-						class="guide-pager"
-						:disabled="!previousGuide"
-						@click="previousGuide && goToGuide(previousGuide.id)"
+						class="ui-doc-nav-item guide-nav-item"
+						:class="{ 'is-active': item.id === activeId }"
+						:aria-current="item.id === activeId ? 'page' : undefined"
+						@click="goToGuide(item.id)"
 					>
-						<span>{{ t('guidesPage.previous') }}</span>
-						<strong>{{ guideTitle(previousGuide) || t('guidesPage.first') }}</strong>
+						<md-ripple v-if="isModernUi" />
+						<span>{{ item.title }}</span>
 					</button>
-					<button
-						type="button"
-						class="guide-pager guide-pager--next"
-						:disabled="!nextGuide"
-						@click="nextGuide && goToGuide(nextGuide.id)"
-					>
-						<span>{{ t('guidesPage.next') }}</span>
-						<strong>{{ guideTitle(nextGuide) || t('guidesPage.last') }}</strong>
-					</button>
-				</footer>
-			</article>
-		</section>
-	</main>
+				</section>
+			</div>
+		</template>
+
+		<article v-if="isLoading" class="guide-article guide-article--loading" aria-busy="true">
+			<div class="guide-skeleton guide-skeleton--title"></div>
+			<div class="guide-skeleton guide-skeleton--text"></div>
+			<div class="guide-skeleton guide-skeleton--text"></div>
+			<div class="guide-skeleton guide-skeleton--short"></div>
+		</article>
+
+		<UiStatePanel
+			v-else-if="!guide"
+			state="empty"
+			icon="menu_book"
+			:title="t('guidesPage.notFoundTitle')"
+			:message="t('guidesPage.notFoundDescription')"
+		/>
+
+		<CommandReference v-else-if="isCommandReference" />
+
+		<article v-else class="guide-article">
+			<header class="guide-header">
+				<h1>{{ guideTitle(activeGuide) }}</h1>
+			</header>
+
+			<div class="guide-content" v-html="guide.html" @click="openGuideLink"></div>
+
+			<footer class="guide-footer" :aria-label="t('guidesPage.pagination')">
+				<button
+					type="button"
+					class="guide-pager"
+					:disabled="!previousGuide"
+					@click="previousGuide && goToGuide(previousGuide.id)"
+				>
+					<md-ripple v-if="isModernUi" />
+					<span>{{ t('guidesPage.previous') }}</span>
+					<strong>{{ guideTitle(previousGuide) || t('guidesPage.first') }}</strong>
+				</button>
+				<button
+					type="button"
+					class="guide-pager guide-pager--next"
+					:disabled="!nextGuide"
+					@click="nextGuide && goToGuide(nextGuide.id)"
+				>
+					<md-ripple v-if="isModernUi" />
+					<span>{{ t('guidesPage.next') }}</span>
+					<strong>{{ guideTitle(nextGuide) || t('guidesPage.last') }}</strong>
+				</button>
+			</footer>
+		</article>
+	</UiDocLayout>
 </template>
 
 <style scoped src="./GuidesViewLayout.css"></style>

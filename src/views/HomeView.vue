@@ -3,11 +3,14 @@ import {computed, nextTick, onBeforeUnmount, onMounted, ref, watch} from 'vue'
 import {useI18n} from 'vue-i18n'
 import {loadNewsFeed} from '@/utils/newsFeed'
 import {initHomeShaderBackground} from '@/utils/homeShader'
+import UiButton from '@/components/ui/UiButton.vue'
+import {useUiPreferences} from '@/composables/useUiPreferences.js'
 import {homeCampaign, regularHome} from '@/data/home'
 import {collapseSchedule} from '@/data/collapse.js'
 import XiaohongshuIcon from '@iconify-vue/simple-icons/xiaohongshu';
 import BilibiliIcon from '@iconify-vue/simple-icons/bilibili';
 const {locale, t} = useI18n()
+const {isModernUi} = useUiPreferences()
 const shaderCanvas = ref(null)
 const homeRoot = ref(null)
 const newsItems = ref([])
@@ -98,23 +101,6 @@ onBeforeUnmount(() => {
 	revealObserver?.disconnect()
 	cleanupShader()
 })
-
-function toSocialMedias(target) {
-	const links = {
-		bilibili: 'https://space.bilibili.com/1092677075',
-		xiaohongshu:
-			'https://www.xiaohongshu.com/user/profile/68d2279d000000001a0061da',
-	};
-
-	const link = links[target];
-
-	if (!link) {
-		console.warn(`未知的社交平台：${target}`);
-		return;
-	}
-
-	window.open(link, '_blank', 'noopener,noreferrer');
-}
 </script>
 
 <template>
@@ -133,10 +119,15 @@ function toSocialMedias(target) {
 							<strong>{{ t(locale === 'zh' ? 'homeCampaign.launches' : 'homeCampaign.launchesEn', { date: collapseSchedule.startDateShortText[locale] || collapseSchedule.startDateShortText.zh }) }}</strong>
 							<p>{{ t(locale === 'zh' ? 'homeCampaign.description' : 'homeCampaign.descriptionEn') }}</p>
 						</div>
-						<router-link class="choice-prompt-action" to="/collapse">
-							{{ t(locale === 'zh' ? 'homeCampaign.explore' : 'homeCampaign.exploreEn') }}
-							<span aria-hidden="true">→</span>
-						</router-link>
+						<UiButton
+							class="choice-prompt-action"
+							variant="filled"
+							to="/collapse"
+							trailing-icon="arrow_forward"
+						>
+							<span>{{ t(locale === 'zh' ? 'homeCampaign.explore' : 'homeCampaign.exploreEn') }}</span>
+							<span v-if="!isModernUi" aria-hidden="true">→</span>
+						</UiButton>
 					</div>
 				</div>
 				<a class="scroll-cue" href="#home-news" :aria-label="t('homePage.scroll_to_feed')">
@@ -147,6 +138,9 @@ function toSocialMedias(target) {
 
 
 			<section id="home-news" class="news-feed" aria-labelledby="news-title" data-guide-target="home-news">
+				<header class="section-heading">
+					<h2 id="news-title">{{ t('homePage.latest_news') }}</h2>
+				</header>
 				<article
 					v-if="featuredNews"
 					class="news-item news-item--featured reveal-item"
@@ -165,10 +159,16 @@ function toSocialMedias(target) {
 							<time :datetime="featuredNews.date">{{ featuredNews.date }}</time>
 						</div>
 						<p v-if="featuredNews.id === '2026collapse'" class="news-deck">{{ featuredNews.description }}</p>
-						<router-link :to="featuredNews.to" class="news-link">
+						<UiButton
+							class="news-link"
+							:variant="featuredNews.id === '2026collapse' ? 'danger' : 'tonal'"
+							size="sm"
+							:to="featuredNews.to"
+							trailing-icon="arrow_forward"
+						>
 							<span>{{ t('homePage.read_more') }}</span>
-							<span class="news-link-arrow" aria-hidden="true"></span>
-						</router-link>
+							<span v-if="!isModernUi" class="news-link-arrow" aria-hidden="true"></span>
+						</UiButton>
 					</div>
 				</article>
 
@@ -192,10 +192,16 @@ function toSocialMedias(target) {
 								<span>{{ item.type }}</span>
 								<time :datetime="item.date">{{ item.date }}</time>
 							</div>
-							<router-link :to="item.to" class="news-link">
+							<UiButton
+								class="news-link"
+								variant="tonal"
+								size="sm"
+								:to="item.to"
+								trailing-icon="arrow_forward"
+							>
 								<span>{{ t('homePage.read_more') }}</span>
-								<span class="news-link-arrow" aria-hidden="true"></span>
-							</router-link>
+								<span v-if="!isModernUi" class="news-link-arrow" aria-hidden="true"></span>
+							</UiButton>
 						</div>
 					</article>
 				</div>
@@ -205,12 +211,26 @@ function toSocialMedias(target) {
 				<div class="footer-brand">
 					<strong>Quantum Original</strong>
 					<div class="logos">
-						<div class="logo" @click="toSocialMedias('xiaohongshu')">
-							<XiaohongshuIcon height="1.5em" />
-						</div>
-						<div class="logo" @click="toSocialMedias('bilibili')">
-							<BilibiliIcon height="1.5em" />
-						</div>
+						<a
+							class="logo"
+							href="https://www.xiaohongshu.com/user/profile/68d2279d000000001a0061da"
+							target="_blank"
+							rel="noopener noreferrer"
+							:aria-label="t('homePage.social_xiaohongshu')"
+							:title="t('homePage.social_xiaohongshu')"
+						>
+							<XiaohongshuIcon height="1.5em" aria-hidden="true" />
+						</a>
+						<a
+							class="logo"
+							href="https://space.bilibili.com/1092677075"
+							target="_blank"
+							rel="noopener noreferrer"
+							:aria-label="t('homePage.social_bilibili')"
+							:title="t('homePage.social_bilibili')"
+						>
+							<BilibiliIcon height="1.5em" aria-hidden="true" />
+						</a>
 					</div>
 					<p>Copyright {{ currentYear }} Quantum Original & Holographic Lab. All rights reserved.</p>
 				</div>

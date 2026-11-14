@@ -3,9 +3,11 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { useOnboardingGuide } from '@/composables/useOnboardingGuide.js'
+import { useUiPreferences } from '@/composables/useUiPreferences.js'
 
 const { locale, t } = useI18n()
 const router = useRouter()
+const { isModernUi } = useUiPreferences()
 const { closeGuide, dismissPrompt, isGuideOpen, isPromptOpen, startGuideFromPrompt } =
     useOnboardingGuide()
 const currentStepIndex = ref(0)
@@ -206,6 +208,7 @@ onBeforeUnmount(() => {
                             class="onboarding-prompt-later"
                             @click="dismissPrompt"
                         >
+                            <md-ripple v-if="isModernUi" />
 							{{ t('onboardingPage.later') }}
                         </button>
                         <button
@@ -213,8 +216,14 @@ onBeforeUnmount(() => {
                             class="onboarding-prompt-start"
                             @click="startGuideFromPrompt"
                         >
+                            <md-ripple v-if="isModernUi" />
 							{{ t('onboardingPage.start') }}
-                            <span aria-hidden="true">→</span>
+                            <span
+                                v-if="isModernUi"
+                                class="material-symbols-rounded onboarding-btn-icon"
+                                aria-hidden="true"
+                            >arrow_forward</span>
+                            <span v-else aria-hidden="true">→</span>
                         </button>
                     </div>
                 </section>
@@ -259,11 +268,23 @@ onBeforeUnmount(() => {
 							:aria-label="t('onboardingPage.close')"
                             @click="closeGuide"
                         >
-                            <span aria-hidden="true">×</span>
+                            <md-ripple v-if="isModernUi" />
+                            <span
+                                v-if="isModernUi"
+                                class="material-symbols-rounded"
+                                aria-hidden="true"
+                            >close</span>
+                            <span v-else aria-hidden="true">×</span>
                         </button>
                     </header>
 
-                    <div class="onboarding-progress-bar" aria-hidden="true">
+                    <md-linear-progress
+                        v-if="isModernUi"
+                        class="m3-onboarding-progress"
+                        :value="(currentStepIndex + 1) / steps.length"
+                        :aria-label="progressLabel"
+                    />
+                    <div v-else class="onboarding-progress-bar" aria-hidden="true">
                         <span
                             :style="{ width: `${((currentStepIndex + 1) / steps.length) * 100}%` }"
                         ></span>
@@ -288,21 +309,40 @@ onBeforeUnmount(() => {
                             class="onboarding-action onboarding-action--primary"
                             @click="goTo('/register')"
                         >
+                            <md-ripple v-if="isModernUi" />
 							{{ t('onboardingPage.register') }}
-                            <span aria-hidden="true">↗</span>
+                            <span
+                                v-if="isModernUi"
+                                class="material-symbols-rounded onboarding-btn-icon"
+                                aria-hidden="true"
+                            >open_in_new</span>
+                            <span v-else aria-hidden="true">↗</span>
                         </button>
                         <button type="button" class="onboarding-action" @click="goTo('/query')">
+                            <md-ripple v-if="isModernUi" />
 							{{ t('onboardingPage.query') }}
-                            <span aria-hidden="true">↗</span>
+                            <span
+                                v-if="isModernUi"
+                                class="material-symbols-rounded onboarding-btn-icon"
+                                aria-hidden="true"
+                            >open_in_new</span>
+                            <span v-else aria-hidden="true">↗</span>
                         </button>
                         <button type="button" class="onboarding-action" @click="goTo('/guides')">
+                            <md-ripple v-if="isModernUi" />
 							{{ t('onboardingPage.guides') }}
-                            <span aria-hidden="true">↗</span>
+                            <span
+                                v-if="isModernUi"
+                                class="material-symbols-rounded onboarding-btn-icon"
+                                aria-hidden="true"
+                            >open_in_new</span>
+                            <span v-else aria-hidden="true">↗</span>
                         </button>
                     </div>
 
                     <footer class="onboarding-footer">
                         <button type="button" class="onboarding-skip" @click="closeGuide">
+                            <md-ripple v-if="isModernUi" />
 							{{ t('onboardingPage.skip') }}
                         </button>
                         <div class="onboarding-navigation">
@@ -312,12 +352,24 @@ onBeforeUnmount(() => {
                                 :disabled="isFirstStep"
                                 @click="previousStep"
                             >
-                                <span aria-hidden="true">←</span>
+                                <md-ripple v-if="isModernUi" />
+                                <span
+                                    v-if="isModernUi"
+                                    class="material-symbols-rounded onboarding-btn-icon"
+                                    aria-hidden="true"
+                                >arrow_back</span>
+                                <span v-else aria-hidden="true">←</span>
 								{{ t('onboardingPage.back') }}
                             </button>
                             <button type="button" class="onboarding-next" @click="nextStep">
+                                <md-ripple v-if="isModernUi" />
 								{{ t(isLastStep ? 'onboardingPage.startExploring' : 'onboardingPage.next') }}
-                                <span aria-hidden="true">→</span>
+                                <span
+                                    v-if="isModernUi"
+                                    class="material-symbols-rounded onboarding-btn-icon"
+                                    aria-hidden="true"
+                                >arrow_forward</span>
+                                <span v-else aria-hidden="true">→</span>
                             </button>
                         </div>
                     </footer>

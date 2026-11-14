@@ -5,6 +5,10 @@ import { useI18n } from 'vue-i18n'
 import TaFeatureNotice from '@/components/account/TaFeatureNotice.vue'
 import { buildOptionalAuthHeaders, parseTaRestrictedResponse } from '@/utils/taAccess.js'
 import PlayerInfoCard from '@/components/PlayerCard.vue'
+import UiPageHeader from '@/components/ui/UiPageHeader.vue'
+import UiSearchField from '@/components/ui/UiSearchField.vue'
+import UiButton from '@/components/ui/UiButton.vue'
+import UiStatePanel from '@/components/ui/UiStatePanel.vue'
 import { fetchAvatar } from '@/services/avatar.js'
 
 const inputId = ref('')
@@ -118,41 +122,51 @@ function submitSearch() {
 </script>
 
 <template>
-	<main class="query-page page-shell">
+	<div class="query-page page-shell">
+		<UiPageHeader
+			class="query-page__header"
+			:title="t('queryPage.title')"
+			:subtitle="t('queryPage.description')"
+		/>
+
 		<section class="query-shell">
 			<div class="query-panel">
-				<div class="panel-heading">
-					<h1>{{ t('queryPage.title') }}</h1>
-					<p>{{ t('queryPage.description') }}</p>
-				</div>
-
-				<form class="search-form" @submit.prevent="submitSearch">
-					<label class="search-field">
-						<span>{{ t('queryPage.playerId') }}</span>
-						<input
-							v-model="inputId"
-							type="text"
-							:placeholder="t('queryPage.placeholder')"
-							autocomplete="off"
-							@input="handleSearch"
-						/>
-					</label>
-					<button type="submit" class="search-btn" :disabled="!canSearch">
-						{{ loading ? t('queryPage.searching') : t('queryPage.search') }}
-					</button>
-				</form>
+				<UiSearchField
+					v-model="inputId"
+					:label="t('queryPage.playerId')"
+					:placeholder="t('queryPage.placeholder')"
+					@update:model-value="handleSearch"
+					@submit="submitSearch"
+				>
+					<template #actions>
+						<UiButton
+							variant="filled"
+							icon="search"
+							:loading="loading"
+							:disabled="!canSearch"
+							@click="submitSearch"
+						>
+							{{ loading ? t('queryPage.searching') : t('queryPage.search') }}
+						</UiButton>
+					</template>
+				</UiSearchField>
 			</div>
 
 			<section class="result-panel">
-				<div v-if="!searched" class="empty-state">
-					<h2>{{ t('queryPage.waitingTitle') }}</h2>
-					<p>{{ t('queryPage.waitingDescription') }}</p>
-				</div>
+				<UiStatePanel
+					v-if="!searched"
+					state="info"
+					icon="person_search"
+					:title="t('queryPage.waitingTitle')"
+					:message="t('queryPage.waitingDescription')"
+				/>
 
-				<div v-else-if="loading" class="empty-state">
-					<h2>{{ t('queryPage.loadingTitle') }}</h2>
-					<p>{{ t('queryPage.loadingDescription') }}</p>
-				</div>
+				<UiStatePanel
+					v-else-if="loading"
+					state="loading"
+					:title="t('queryPage.loadingTitle')"
+					:message="t('queryPage.loadingDescription')"
+				/>
 
 				<TaFeatureNotice
 					v-else-if="taRestrictedMessage"
@@ -162,15 +176,22 @@ function submitSearch() {
 					action-route="/account"
 				/>
 
-				<div v-else-if="errorMessage" class="empty-state error">
-					<h2>{{ t('queryPage.failedTitle') }}</h2>
-					<p>{{ errorMessage }}</p>
-				</div>
+				<UiStatePanel
+					v-else-if="errorMessage"
+					state="error"
+					:title="t('queryPage.failedTitle')"
+					:message="errorMessage"
+					:action-label="t('queryPage.search')"
+					@action="submitSearch"
+				/>
 
-				<div v-else-if="!found" class="empty-state">
-					<h2>{{ t('queryPage.notFoundTitle') }}</h2>
-					<p>{{ t('queryPage.notFound', { id: queryId }) }}</p>
-				</div>
+				<UiStatePanel
+					v-else-if="!found"
+					state="empty"
+					icon="person_off"
+					:title="t('queryPage.notFoundTitle')"
+					:message="t('queryPage.notFound', { id: queryId })"
+				/>
 
 				<div v-else-if="affiliated" class="affiliated-result">
 					<div class="result-heading">
@@ -198,7 +219,7 @@ function submitSearch() {
 				/>
 			</section>
 		</section>
-	</main>
+	</div>
 </template>
 
 <style scoped src="./QueryView.css"></style>

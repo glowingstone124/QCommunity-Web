@@ -1,4 +1,4 @@
-:global(:root) {
+.chat {
 	--chat-bg: var(--page-background);
 	--chat-card: color-mix(in srgb, var(--background) 96%, var(--primary));
 	--chat-soft: color-mix(in srgb, var(--text-main) 4%, transparent);
@@ -6,7 +6,7 @@
 	--chat-border-strong: color-mix(in srgb, var(--text-main) 24%, transparent);
 }
 
-:global(:root[data-theme="dark"]) {
+:global(:root[data-theme="dark"] .chat) {
 	--chat-bg: var(--page-background);
 	--chat-card: color-mix(in srgb, var(--background-secondary) 92%, var(--primary));
 	--chat-soft: color-mix(in srgb, var(--dark-text-primary) 7%, transparent);
@@ -233,15 +233,18 @@
 
 .message-input:focus {
 	border-color: var(--primary);
-	outline: none;
 	background: var(--background);
+}
+
+.message-input:focus:not(:focus-visible) {
+	outline: none;
 }
 
 .send-button {
 	padding: 0.85rem 1.5rem;
 	background: var(--button-primary-bg);
 	color: var(--button-primary-text);
-	border: 1px solid var(--primary);
+	border: 1px solid var(--button-primary-bg);
 	cursor: pointer;
 	transition:
 		background-color 160ms var(--ease-out),
@@ -254,7 +257,9 @@
 }
 
 .send-button:disabled {
-	background: var(--split);
+	background: var(--surface-soft);
+	border-color: var(--split);
+	color: var(--text-secondary);
 	cursor: not-allowed;
 }
 
@@ -286,4 +291,69 @@
 	.send-button {
 		width: 100%;
 	}
+}
+
+/* Material Design 3 Messages Workspace */
+:global(:root[data-ui="modern"] .chat) {
+	background: var(--md-sys-color-surface);
+	--chat-card: var(--md-sys-color-surface-container-low);
+	--chat-soft: var(--md-sys-color-surface-container);
+	--chat-border: color-mix(in srgb, var(--md-sys-color-outline-variant) 55%, transparent);
+}
+
+:global(:root[data-ui="modern"] .chat .status-pill),
+:global(:root[data-ui="modern"] .chat .source-label) {
+	border-radius: var(--md-sys-shape-corner-full);
+	border-color: transparent;
+	background: var(--md-sys-color-secondary-container);
+	color: var(--md-sys-color-on-secondary-container);
+	padding: 0.3rem 0.8rem;
+}
+
+:global(:root[data-ui="modern"] .chat .source-label) {
+	background: var(--md-sys-color-surface-container-high);
+	color: var(--md-sys-color-on-surface-variant);
+	padding: 0.18rem 0.6rem;
+}
+
+:global(:root[data-ui="modern"] .chat .chat-body),
+:global(:root[data-ui="modern"] .chat .input-container) {
+	border-radius: var(--md-sys-shape-corner-extra-large);
+	background: var(--md-sys-color-surface-container-low);
+	border-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+	box-shadow: var(--md-sys-elevation-level1);
+}
+
+:global(:root[data-ui="modern"] .chat .message-bubble),
+:global(:root[data-ui="modern"] .chat .state-panel),
+:global(:root[data-ui="modern"] .chat .message-image-link) {
+	border-radius: var(--md-sys-shape-corner-large);
+	background: var(--md-sys-color-surface-container);
+	border-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+}
+
+:global(:root[data-ui="modern"] .chat .state-loading) {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+:global(:root[data-ui="modern"] .chat .message-input) {
+	border-radius: var(--md-sys-shape-corner-full);
+	background: var(--md-sys-color-surface-container-highest);
+	border-color: transparent;
+	padding-inline: 1.25rem;
+}
+
+:global(:root[data-ui="modern"] .chat .send-button) {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.45rem;
+	min-height: 48px;
+	border-radius: var(--md-sys-shape-corner-full);
+	border-color: transparent;
+	background: var(--md-sys-color-primary);
+	color: var(--md-sys-color-on-primary);
 }

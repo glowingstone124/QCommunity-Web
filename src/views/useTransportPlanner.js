@@ -94,7 +94,7 @@ export function useTransportPlanner() {
 
   const searchRoute = async () => {
     if (!startStationId.value || !endStationId.value) {
-  		alert(t('transportPage.selectStations'))
+      routeResult.value = { error: t('transportPage.selectStations') }
       return
     }
     isLoading.value = true

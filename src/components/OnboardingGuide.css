@@ -63,7 +63,11 @@
 .onboarding-prompt-later:focus-visible {
     border-color: var(--primary-light);
     background: var(--button-secondary-hover);
-    outline: none;
+}
+
+.onboarding-prompt-later:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
 }
 
 .onboarding-prompt-start {
@@ -79,7 +83,11 @@
 .onboarding-prompt-start:focus-visible {
     border-color: var(--primary-light);
     background: var(--button-primary-hover);
-    outline: none;
+}
+
+.onboarding-prompt-start:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
 }
 
 .onboarding-prompt-later:active,
