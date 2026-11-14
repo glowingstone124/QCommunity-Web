@@ -29,10 +29,16 @@ const routeResult = {
       channel: process.env.PLAYWRIGHT_CHANNEL || (process.platform === 'darwin' ? 'chrome' : 'chromium'),
       headless: true,
     })
-    const page = await browser.newPage({ reducedMotion: 'reduce' })
+    const page = await browser.newPage()
     page.setDefaultTimeout(10000)
     const errors = []
+    const i18nWarnings = []
     page.on('pageerror', error => errors.push(error.message))
+    page.on('console', msg => {
+      if (msg.type() === 'warning' && msg.text().includes('[intlify]') && msg.text().includes('Not found')) {
+        i18nWarnings.push(msg.text())
+      }
+    })
     await page.route('**/*', route => {
       const url = new URL(route.request().url())
       if (url.origin === origin) return route.continue()
@@ -72,11 +78,45 @@ const routeResult = {
     await page.locator('.end-input-container .suggestion-item').first().click()
     await page.locator('.search-button').click()
     await page.locator('.route-result-content').waitFor()
+    await page.waitForFunction(() => {
+      const seg = document.querySelector('.route-segment')
+      const step = document.querySelector('.route-station-step')
+      const bar = seg ? getComputedStyle(seg, '::before') : null
+      return seg
+        && step
+        && getComputedStyle(seg).opacity === '1'
+        && getComputedStyle(step).opacity === '1'
+        && bar?.transform !== 'matrix(1, 0, 0, 0, 0, 0)'
+    })
+    assert.ok((await page.locator('.line_name').textContent()).includes('测试线路'), 'Route line name should be rendered')
+
+    await page.locator('.options-button').click()
+    await page.locator('.options-popup').waitFor()
+    const zhOptionsText = await page.locator('.options-popup').innerText()
+    assert.ok(zhOptionsText.includes('地铁') && zhOptionsText.includes('主世界'), 'Options modal should use translated zh transport and dimension labels')
+    assert.ok(!zhOptionsText.includes('transportPage.'), 'Options modal should not leak raw transportPage i18n keys')
+    await page.locator('.preset-button').nth(1).click()
+    const zhDisabledText = await page.locator('.current-settings').innerText()
+    assert.ok(zhDisabledText.includes('蓝冰船') && !zhDisabledText.includes('transportPage.'), 'Disabled summary should translate transport type names')
+    await page.locator('.apply-button').click()
+    await page.locator('.options-popup').waitFor({ state: 'hidden' })
+
     await page.locator('.transport-map-button').click()
     await page.locator('.line-layer .route-edge:not(.is-dimmed)').first().waitFor({ state: 'attached' })
     assert.ok(await page.locator('.line-layer .route-edge.is-dimmed').count() > 0, 'Unselected routes should be dimmed')
-    assert.deepEqual(errors, [], 'Map interactions should not throw')
-    console.log('PASS: transport map rendering, zoom, reset and route highlighting')
+    await page.locator('.map-close-button').click()
+
+    await page.evaluate(() => localStorage.setItem('locale', 'en'))
+    await page.reload()
+    await page.locator('.options-button').click()
+    await page.locator('.options-popup').waitFor()
+    const enOptionsText = await page.locator('.options-popup').innerText()
+    assert.ok(enOptionsText.includes('Metro') && enOptionsText.includes('Overworld'), 'Options modal should translate en labels')
+    assert.ok(!enOptionsText.includes('transportPage.'), 'English options modal should not leak raw transportPage i18n keys')
+
+    assert.deepEqual(errors, [], 'Map and route interactions should not throw')
+    assert.deepEqual(i18nWarnings, [], 'Transport view should not emit missing i18n key warnings')
+    console.log('PASS: transport route details, options i18n, map rendering, zoom, reset and route highlighting')
   } finally {
     if (browser) await browser.close()
     await server.close()

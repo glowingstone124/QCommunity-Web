@@ -170,7 +170,7 @@ const {
 		<h3>{{ t('mapPage.searchResult') }}</h3>
         <p v-if="routeResult.message">{{ routeResult.message }}</p>
         <p v-if="routeResult.error" class="error">{{ routeResult.error }}</p>
-        <div v-if="routeResult.data" class="result-main route-timeline">
+        <div v-if="routeResult.data?.segments?.length" class="result-main route-timeline">
           <div
               v-for="(segment, seg) in routeResult.data.segments"
               :key="`${segment.lineName}-${seg}`"
@@ -183,7 +183,7 @@ const {
             </div>
             <div class="timeline-row line-row">
               <div class="timeline-line" aria-hidden="true"></div>
-				<h3 class="line_name">{{ locale === 'en' ? segment.name_en : segment.lineName }}</h3>
+				<h3 class="line_name">{{ locale === 'en' ? (segment.name_en || segment.lineName) : (segment.lineName || segment.name_en) }}</h3>
             </div>
             <div
                 v-for="(stationId, seq) in segment.stationIds"
@@ -212,11 +212,18 @@ const {
   </div>
 
   <Transition name="options-modal">
-  <div v-if="showOptions" class="options-popup-overlay" @click="closeOnOutsideClick">
+  <div
+      v-if="showOptions"
+      class="options-popup-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="options-popup-title"
+      @click="closeOnOutsideClick"
+  >
     <div class="options-popup">
       <div class="popup-header">
-		<h2>{{ t('mapPage.optionsTitle') }}</h2>
-		<button class="close-button" :aria-label="t('mapPage.close')" @click="closeOptions">&times;</button>
+		<h2 id="options-popup-title">{{ t('mapPage.optionsTitle') }}</h2>
+		<button type="button" class="close-button" :aria-label="t('mapPage.close')" @click="closeOptions">&times;</button>
       </div>
 
       <div class="popup-content">
@@ -225,18 +232,21 @@ const {
 			<h3>{{ t('mapPage.presets') }}</h3>
           <div class="preset-buttons">
             <button
+                type="button"
                 class="preset-button"
                 @click="applyPreset('all')"
             >
 				{{ t('mapPage.allPresets') }}
             </button>
             <button
+                type="button"
                 class="preset-button"
                 @click="applyPreset('rail')"
             >
 				{{ t('mapPage.railPreset') }}
             </button>
             <button
+                type="button"
                 class="preset-button"
                 @click="applyPreset('overworld')"
             >
@@ -298,7 +308,7 @@ const {
       </div>
 
       <div class="popup-footer">
-		<button class="apply-button" @click="closeOptions">{{ t('mapPage.applyOptions') }}</button>
+		<button type="button" class="apply-button" @click="closeOptions">{{ t('mapPage.applyOptions') }}</button>
       </div>
     </div>
   </div>

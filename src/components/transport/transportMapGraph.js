@@ -190,7 +190,7 @@ export function useTransportMapStations(props, t, query) {
   			nameEn: names[1] || '',
   			apiStation,
   			label: stationLabelLayout(type, payload, names),
-  			typeName: t(stationTypeNames[type] || 'transportPage.stationTypes.default'),
+  			typeName: t(stationTypeNames[type] || 'mapPage.stationTypes.default'),
   			connections: stationConnections(node.key, payload),
   		}
   	})

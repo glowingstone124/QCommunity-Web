@@ -39,45 +39,6 @@ button:focus-visible,
   outline-offset: 2px;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes transport-title-in {
-  from { opacity: 0; transform: translateY(14px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes transport-workspace-in {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes skeleton-pulse {
-  from { opacity: 0.38; transform: scaleX(0.96); transform-origin: left; }
-  to { opacity: 0.9; transform: scaleX(1); transform-origin: left; }
-}
-
-@keyframes route-segment-in {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes route-line-grow {
-  to { transform: scaleY(1); }
-}
-
-@keyframes route-station-in {
-  to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes route-node-pop {
-  from { opacity: 0; transform: scale(0.55); }
-  to { opacity: 1; transform: scale(1); }
-}
-
 @media (min-width: 901px) {
   .container {
     min-height: 38rem;

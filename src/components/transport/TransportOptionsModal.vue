@@ -54,7 +54,7 @@ function closeOnOutsideClick(event) {
 		<div class="options-popup">
 			<div class="popup-header">
 				<h2>{{ t('mapPage.optionsTitle') }}</h2>
-				<button class="close-button" @click="emit('close')">&times;</button>
+				<button type="button" class="close-button" :aria-label="t('mapPage.close')" @click="emit('close')">&times;</button>
 			</div>
 
 			<div class="popup-content">
@@ -108,7 +108,7 @@ function closeOnOutsideClick(event) {
 						{{ t('mapPage.disabledTypes', { types: displayTransportTypes(bannedTypes) }) }}
 					</p>
 					<p v-if="bannedDims.length > 0">
-						{{ t('transportPage.disabledDimensions', { dimensions: displayDimensions(bannedDims) }) }}
+						{{ t('mapPage.disabledDimensions', { dimensions: displayDimensions(bannedDims) }) }}
 					</p>
 					<p v-if="bannedTypes.length === 0 && bannedDims.length === 0">{{ t('mapPage.noDisabled') }}</p>
 				</div>

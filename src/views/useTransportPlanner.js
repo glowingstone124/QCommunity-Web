@@ -24,20 +24,20 @@ export function useTransportPlanner() {
   const showMapPreview = ref(false)
   // 交通方式映射
   const transportTypes = ref([
-    {id: 0, nameKey: 'transportPage.metro', int_name: 'METRO', disabled: false},
-    {id: 1, nameKey: 'transportPage.rapid', int_name: 'RAPID', disabled: false},
-    {id: 2, nameKey: 'transportPage.blueIce', int_name: 'BLUEICE', disabled: false},
-    {id: 3, nameKey: 'transportPage.cityMetro', int_name: 'CITYMETRO', disabled: false},
-    {id: 4, nameKey: 'transportPage.nether', int_name: 'NETHER', disabled: false},
-    {id: 5, nameKey: 'transportPage.pearl', int_name: 'PEARL', disabled: false},
-    {id: 6, nameKey: 'transportPage.airplane', int_name: 'AIRPLANE', disabled: false},
-    {id: 7, nameKey: 'transportPage.boat', int_name: 'BOAT', disabled: false}
+    {id: 0, nameKey: 'mapPage.metro', int_name: 'METRO', disabled: false},
+    {id: 1, nameKey: 'mapPage.rapid', int_name: 'RAPID', disabled: false},
+    {id: 2, nameKey: 'mapPage.blueIce', int_name: 'BLUEICE', disabled: false},
+    {id: 3, nameKey: 'mapPage.cityMetro', int_name: 'CITYMETRO', disabled: false},
+    {id: 4, nameKey: 'mapPage.nether', int_name: 'NETHER', disabled: false},
+    {id: 5, nameKey: 'mapPage.pearl', int_name: 'PEARL', disabled: false},
+    {id: 6, nameKey: 'mapPage.airplane', int_name: 'AIRPLANE', disabled: false},
+    {id: 7, nameKey: 'mapPage.boat', int_name: 'BOAT', disabled: false}
   ])
   // 维度选项
   const dimensionOptions = ref([
-    {id: 'OVERWORLD', nameKey: 'transportPage.overworld', disabled: false},
-    {id: 'NETHER', nameKey: 'transportPage.netherDimension', disabled: false},
-    {id: 'THE_END', nameKey: 'transportPage.theEnd', disabled: false}
+    {id: 'OVERWORLD', nameKey: 'mapPage.overworld', disabled: false},
+    {id: 'NETHER', nameKey: 'mapPage.netherDimension', disabled: false},
+    {id: 'THE_END', nameKey: 'mapPage.theEnd', disabled: false}
   ])
 
   const fetchAllStations = async () => {
@@ -156,14 +156,14 @@ export function useTransportPlanner() {
   }
 
   const setMapStartStation = async (station) => {
-    startInput.value = station.name
+    startInput.value = locale.value === 'en' ? (station.name_en || station.name) : (station.name || station.name_en)
     startStationId.value = station.id
     routeResult.value = null
     if (endStationId.value) await searchRoute()
   }
 
   const setMapEndStation = async (station) => {
-    endInput.value = station.name
+    endInput.value = locale.value === 'en' ? (station.name_en || station.name) : (station.name || station.name_en)
     endStationId.value = station.id
     routeResult.value = null
     if (startStationId.value) await searchRoute()

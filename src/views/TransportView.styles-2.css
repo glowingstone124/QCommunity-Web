@@ -389,3 +389,26 @@
   transform: scale(1.06);
 }
 
+@keyframes skeleton-pulse {
+  from { opacity: 0.38; transform: scaleX(0.96); transform-origin: left; }
+  to { opacity: 0.9; transform: scaleX(1); transform-origin: left; }
+}
+
+@keyframes route-segment-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes route-line-grow {
+  to { transform: scaleY(1); }
+}
+
+@keyframes route-station-in {
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes route-node-pop {
+  from { opacity: 0; transform: scale(0.55); }
+  to { opacity: 1; transform: scale(1); }
+}
+
