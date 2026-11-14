@@ -9,7 +9,7 @@ interface AffiliatedAccount {
 
 const accounts = ref<AffiliatedAccount[]>([]);
 
-const token = localStorage.getItem("token");
+const getAuthToken = () => localStorage.getItem("token") || "";
 const newAccountName = ref("");
 const newAccountPassword = ref("");
 const currentHint = ref("");
@@ -40,13 +40,16 @@ const fetchAccounts = async () => {
 			"https://api.qoriginal.vip/qo/authorization/affiliated/query",
 			{
 				headers: {
-					"token": token,
+					"token": getAuthToken(),
 					"Content-Type": "application/json"
 				}
 			}
 		);
 		if (!response.ok) throw new Error(`HTTP ${response.status}`);
-		const data: AffiliatedAccount[] = await response.json();
+		const data = await response.json();
+		if (!Array.isArray(data)) {
+			throw new Error(data?.reason || data?.message || "Invalid affiliated account payload");
+		}
 		accounts.value = data;
 	} catch (err) {
 		console.error("获取附属账户失败:", err);
@@ -70,7 +73,7 @@ const createAccount = async () => {
 			{
 				method: "POST",
 				headers: {
-					"token": token || "",
+					"token": getAuthToken(),
 					"Content-Type": "application/json"
 				},
 				body: JSON.stringify({
@@ -82,7 +85,7 @@ const createAccount = async () => {
 		if (!response.ok) throw new Error(`HTTP ${response.status}`);
 		const result = await response.json();
 		if (result.result === true) {
-		currentHint.value = t('affiliatedPage.created');
+			currentHint.value = t('affiliatedPage.created');
 			hintType.value = 'success';
 			newAccountName.value = "";
 			newAccountPassword.value = "";
@@ -119,7 +122,7 @@ const deleteAccount = async (name: string) => {
 			`https://api.qoriginal.vip/qo/authorization/affiliated/remove?name=${encodeURIComponent(name)}`,
 			{
 				method: "DELETE",
-				headers: { "token": token || "" }
+				headers: { "token": getAuthToken() }
 			}
 		);
 		if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -235,7 +238,7 @@ onMounted(fetchAccounts);
 						<div class="section-title">{{ t('affiliatedPage.newAccount') }}</div>
 					</div>
 				</div>
-				<div class="new-account-form">
+				<form class="new-account-form" @submit.prevent="createAccount">
 					<label class="field">
 						<span class="field-label">{{ t('affiliatedPage.username') }}</span>
 						<input
@@ -244,6 +247,9 @@ onMounted(fetchAccounts);
 							:placeholder="t('affiliatedPage.usernamePlaceholder')"
 							class="text-input"
 							autocomplete="username"
+							autocorrect="off"
+							autocapitalize="none"
+							spellcheck="false"
 						/>
 					</label>
 					<label class="field">
@@ -258,7 +264,7 @@ onMounted(fetchAccounts);
 					</label>
 
 					<div class="form-actions">
-						<button type="button" @click="createAccount" class="filled-button" :disabled="!canSubmit">
+						<button type="submit" class="filled-button" :disabled="!canSubmit">
 							{{ isSubmitting ? t('affiliatedPage.creating') : t('affiliatedPage.create') }}
 						</button>
 						<span class="quota-text">{{ t('affiliatedPage.canCreate', { count: accountSlots }) }}</span>
@@ -271,11 +277,12 @@ onMounted(fetchAccounts);
 
 					<p
 						v-if="currentHint !== ''"
+						role="status"
 						:class="['inline-hint', hintType === 'success' ? 'hint-success' : 'hint-error']"
 					>
 						{{ currentHint }}
 					</p>
-				</div>
+				</form>
 			</section>
 		</div>
 	</div>

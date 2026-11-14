@@ -15,7 +15,7 @@ import AccountKotshiPanel from '@/components/account/AccountKotshiPanel.vue'
 import AffiliatedAccountComponent from '@/components/AffiliatedAccountComponent.vue'
 import TaFeatureNotice from '@/components/account/TaFeatureNotice.vue'
 import TaUpgradeCard from '@/components/account/TaUpgradeCard.vue'
-import { buildOptionalAuthHeaders, computeTaUpgradeState, normalizeAccountType } from '@/utils/taAccess.js'
+import { buildOptionalAuthHeaders, computeTaUpgradeState, normalizeAccountType, parseTaRestrictedResponse } from '@/utils/taAccess.js'
 import PlayerCardsListComponent from '@/components/PlayerCardsListComponent.vue'
 import { useIpAddressValidation } from '@/composables/useIpAddressValidation.js'
 import { accountTabs } from '@/data/accountCenter'
@@ -57,6 +57,8 @@ const isLoadingKotshi = ref(false)
 const kotshiFeedback = ref('')
 const kotshiFeedbackType = ref('')
 const accountType = ref('qo')
+const accountDataLoaded = ref(false)
+let accountDataPromise = null
 const requiredPlaytime = ref(180)
 const taSubmittingBind = ref(false)
 const taUpgradeError = ref('')
@@ -74,18 +76,18 @@ function selectTab(tabId) {
 }
 
 function queryAccountData() {
-	fetch('https://api.qoriginal.vip/qo/authorization/account', {
+	const request = fetch('https://api.qoriginal.vip/qo/authorization/account', {
 		headers: {
-			token: localStorage.getItem('token'),
+			token: localStorage.getItem('token') || '',
 		},
 	})
 		.then((res) => res.json())
 		.then((data) => {
-			username.value = data.username
+			username.value = data.username || ''
 			uid.value = data.uid
-			playtime.value = data.playtime
+			playtime.value = Number(data.playtime || 0)
 			statistics.value = data.statistics || {}
-			logins.value = data.logins
+			logins.value = Array.isArray(data.logins) ? data.logins : []
 			accountType.value = normalizeAccountType(data)
 			requiredPlaytime.value = Number(data.required_playtime || 180)
 			if (accountType.value === 'ta') {
@@ -105,7 +107,15 @@ function queryAccountData() {
 			}
 			queryAccountStatus()
 		})
+		.catch((error) => {
+			console.error('加载账户信息失败:', error)
+		})
+		.finally(() => {
+			accountDataLoaded.value = true
+		})
+	accountDataPromise = request
 	queryFallenTeam()
+	return request
 }
 
 function setKotshiFeedback(message, type = 'error') {
@@ -114,14 +124,22 @@ function setKotshiFeedback(message, type = 'error') {
 }
 
 async function queryKotshiData() {
-	if (isLoadingKotshi.value) return
+	if (accountDataPromise) {
+		await accountDataPromise
+	}
+	if (isLoadingKotshi.value || accountType.value === 'ta') return
 	isLoadingKotshi.value = true
 	kotshiFeedback.value = ''
 	try {
 		const response = await fetch('https://api.qoriginal.vip/qo/authorization/account/kotshi', {
 			headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` },
 		})
-		const data = await response.json()
+		const data = await response.json().catch(() => ({}))
+		if (parseTaRestrictedResponse(response.status, data).restricted) {
+			accountType.value = 'ta'
+			kotshiFeedback.value = ''
+			return
+		}
 		if (!response.ok) throw new Error(data?.message || t('kotshiPage.loadFailed'))
 		kotshiQueryEnabled.value = data.kotshi_query_enabled !== false
 		kotshiQuerySettingLoaded.value = true
@@ -154,7 +172,7 @@ async function updateKotshiQueryEnabled(enabled) {
 			},
 			body: JSON.stringify({ kotshi_query_enabled: enabled }),
 		})
-		const data = await response.json()
+		const data = await response.json().catch(() => ({}))
 		if (!response.ok) throw new Error(data?.message || t('preferencesPage.saveFailed'))
 		kotshiQueryEnabled.value = data.kotshi_query_enabled !== false
 		setKotshiFeedback(t('preferencesPage.saved'), 'success')
@@ -184,7 +202,7 @@ async function updateQbotActiveResponseEnabled(enabled) {
 				qbot_active_response_enabled: enabled,
 			}),
 		})
-		const data = await response.json()
+		const data = await response.json().catch(() => ({}))
 		if (!response.ok) throw new Error(data?.message || t('preferencesPage.saveFailed'))
 		qbotActiveResponseEnabled.value = data.active_response_enabled !== false && data.qbot_active_response_enabled !== false
 		setKotshiFeedback(t('preferencesPage.saved'), 'success')
@@ -368,13 +386,15 @@ function logout() {
 }
 
 onMounted(() => {
-	const storedSetting = Number.parseInt(localStorage.getItem('currentSetting'), 10)
-	currentSetting.value = Number.isNaN(storedSetting) ? 0 : storedSetting
 	queryAccountData()
+	const storedSetting = Number.parseInt(localStorage.getItem('currentSetting'), 10)
+	currentSetting.value = accountTabs.some((tab) => tab.id === storedSetting) ? storedSetting : 0
 })
 
 watch(currentSetting, (newValue) => {
 	localStorage.setItem('currentSetting', String(newValue))
+	kotshiFeedback.value = ''
+	kotshiFeedbackType.value = ''
 	switch (newValue) {
 		case 0:
 			queryAccountData()
@@ -390,11 +410,15 @@ watch(currentSetting, (newValue) => {
 			break
 		case 4:
 			isImmersive.value = false
-			queryKotshiData()
+			if (accountType.value !== 'ta') {
+				queryKotshiData()
+			}
 			break
 		case 5:
 			isImmersive.value = false
-			queryKotshiData()
+			if (accountType.value !== 'ta') {
+				queryKotshiData()
+			}
 			break
 	}
 })
@@ -473,7 +497,7 @@ watch(currentSetting, (newValue) => {
 							@action="selectTab(0)"
 						/>
 					</div>
-					<AffiliatedAccountComponent v-else />
+					<AffiliatedAccountComponent v-else-if="accountDataLoaded" />
 				</section>
 			</transition>
 
@@ -481,6 +505,8 @@ watch(currentSetting, (newValue) => {
 				<AccountPreferencesPanel
 					v-if="currentSetting === 4"
 					key="preferences"
+					:is-ta-account="accountType === 'ta'"
+					:required-playtime="requiredPlaytime"
 					:kotshi-query-enabled="kotshiQueryEnabled"
 					:kotshi-query-setting-loaded="kotshiQuerySettingLoaded"
 					:kotshi-query-setting-saving="kotshiQuerySettingSaving"
@@ -491,6 +517,7 @@ watch(currentSetting, (newValue) => {
 					:qbot-active-response-setting-saving="qbotActiveResponseSettingSaving"
 					@update:kotshi-query-enabled="updateKotshiQueryEnabled"
 					@update:qbot-active-response-enabled="updateQbotActiveResponseEnabled"
+					@go-overview="selectTab(0)"
 				/>
 			</transition>
 
@@ -506,7 +533,7 @@ watch(currentSetting, (newValue) => {
 					</div>
 				</section>
 				<AccountKotshiPanel
-					v-else-if="currentSetting === 5"
+					v-else-if="currentSetting === 5 && accountDataLoaded"
 					key="kotshi"
 					:quota="kotshiQuota"
 					:usage="kotshiUsage"

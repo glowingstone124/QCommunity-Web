@@ -2,10 +2,13 @@
 import { useOnboardingGuide } from '@/composables/useOnboardingGuide.js'
 import { useThemePreference } from '@/composables/useHeaderProfile.js'
 import { useI18n } from 'vue-i18n'
+import TaFeatureNotice from '@/components/account/TaFeatureNotice.vue'
 
 const { isGuideButtonVisible, setGuideButtonVisible } = useOnboardingGuide()
 const theme = useThemePreference()
 const props = defineProps({
+    isTaAccount: { type: Boolean, default: false },
+    requiredPlaytime: { type: Number, default: 180 },
     kotshiQueryEnabled: { type: Boolean, default: true },
     kotshiQuerySettingLoaded: { type: Boolean, default: false },
     kotshiQuerySettingSaving: { type: Boolean, default: false },
@@ -15,7 +18,7 @@ const props = defineProps({
     qbotActiveResponseSettingLoaded: { type: Boolean, default: false },
     qbotActiveResponseSettingSaving: { type: Boolean, default: false },
 })
-const emit = defineEmits(['update:kotshiQueryEnabled', 'update:qbotActiveResponseEnabled'])
+const emit = defineEmits(['update:kotshiQueryEnabled', 'update:qbotActiveResponseEnabled', 'goOverview'])
 const { t } = useI18n()
 
 function setTheme(nextTheme) {
@@ -108,7 +111,15 @@ function setTheme(nextTheme) {
 					<h3>{{ t('preferencesPage.privacyGroup') }}</h3>
 					<p>{{ t('preferencesPage.privacyGroupDescription') }}</p>
 				</header>
-				<div class="preference-list">
+				<div v-if="props.isTaAccount" class="preference-ta-gate">
+					<TaFeatureNotice
+						:title="t('taAccount.featureGateTitle')"
+						:message="t('taAccount.featureGateKotshi', { required: props.requiredPlaytime })"
+						:action-label="t('taAccount.goOverview')"
+						@action="emit('goOverview')"
+					/>
+				</div>
+				<div v-else class="preference-list">
 					<section class="preference-row">
 						<div class="preference-copy">
 							<h3>{{ t('preferencesPage.kotshiQuery') }}</h3>
@@ -315,9 +326,21 @@ function setTheme(nextTheme) {
     cursor: pointer;
 }
 
+.preference-ta-gate {
+    margin-top: 0.85rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--border-soft);
+}
+
 @media (max-width: 640px) {
     .panel {
         padding: 1rem;
+    }
+
+    .preference-group-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.2rem;
     }
 
     .preference-row {

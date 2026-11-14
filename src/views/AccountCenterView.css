@@ -58,16 +58,23 @@
 }
 
 .panel-full {
-	height: 100%;
+	min-height: 100%;
 	padding: 1rem;
 	background: var(--glass-strong);
 	border: none;
-	min-height: 0;
-	overflow: hidden;
+	display: flex;
+	flex-direction: column;
 	max-width: 1400px;
 	width: 100%;
 	margin: 0 auto;
 	box-sizing: border-box;
+}
+
+.content.personalization-layout .panel-full {
+	display: block;
+	height: 100%;
+	min-height: 0;
+	overflow: hidden;
 }
 
 .overview-stack {
@@ -78,6 +85,7 @@
 
 .ta-panel-center {
 	display: flex;
+	flex: 1;
 	align-items: center;
 	justify-content: center;
 	min-height: 100%;
@@ -94,10 +102,14 @@
 
 @media (max-width: 960px) {
 	.account {
-		grid-template-columns: 1fr;
+		grid-template-columns: minmax(0, 1fr);
 		padding: 0.85rem;
 		height: 100%;
 		overflow: auto;
+	}
+
+	.account > :deep(*) {
+		min-width: 0;
 	}
 
 	.content {
@@ -108,8 +120,10 @@
 		overflow: visible;
 	}
 
-	.panel-full {
+	.panel-full,
+	.content.personalization-layout .panel-full {
 		height: auto;
+		min-height: 0;
 		overflow: visible;
 		max-width: none;
 	}
